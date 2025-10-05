@@ -1,0 +1,28 @@
+id,activity_name,category,head,soft_delete
+1,Design Drawing Study,Productive,Modelling,false
+2,Project Meeting,Productive,Modelling,false
+3,Kick Off Meeting,Productive,Modelling,false
+4,Model Member Placement,Productive,Modelling,false
+5,Macro Creation,Productive,Modelling,false
+6,Main Steel Modelling,Productive,Modelling,false
+7,Misc Steel Modelling,Productive,Modelling,false
+8,E Sheet Editing,Productive,Modelling,false
+9,Shop Drawing Editing,Productive,Modelling,false
+10,Model Checking,Productive,Checking,false
+11,E Sheet Checking,Productive,Checking,false
+12,Shop Drawing Checking,Productive,Checking,false
+13,RFI Creation,Productive,Detailing,false
+14,Submission Process,Productive,Detailing,false
+15,Field Work,Productive,Detailing,false
+16,COR Evaluation,Productive,Detailing,false
+17,COR Updation,Productive,Detailing,false
+18,Model Maintenance,Non-Productive,Modelling,false
+19,Other Discipline Coord,Productive,Detailing,false
+20,Team Coord,Productive,Detailing,false
+21,Shop Requirement Reports,Productive,Detailing,false
+22,Template Creation,Non-Productive,Detailing,false
+23,Idle,Non-Productive,Detailing,false
+24,Training,Non-Productive,Detailing,false
+25,Leave/Vacation,Non-Productive,Detailing,false
+26,Permission,Non-Productive,Detailing,false
+27,Break/Lunch/Dinner/Breakfast,Non-Productive,Detailing,false

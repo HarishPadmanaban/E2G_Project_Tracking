@@ -1,0 +1,27 @@
+id,project_name,client_name,manager_id,assigned_hours,working_hours,assigned_date,project_status,soft_delete
+1,Alpha Tower,ABC Constructions,3,500,120.5,2025-01-10,TRUE,FALSE
+2,Beta Plaza,XYZ Builders,3,300,75.0,2025-02-15,TRUE,FALSE
+3,Gamma Heights,Acme Corp,4,400,90.0,2025-01-20,TRUE,FALSE
+4,Delta Residency,Prime Estates,4,350,60.5,2025-03-05,TRUE,FALSE
+5,Epsilon Mall,Urban Developers,5,600,150.0,2025-02-01,TRUE,FALSE
+6,Zeta Complex,Global Constructions,5,450,110.0,2025-02-18,TRUE,FALSE
+7,Eta Gardens,Sunrise Builders,6,500,130.0,2025-03-01,TRUE,FALSE
+8,Theta Residency,Metro Homes,6,400,95.0,2025-03-10,TRUE,FALSE
+9,Iota Towers,Greenfield Constructions,7,550,125.0,2025-01-25,TRUE,FALSE
+10,Kappa Plaza,BlueSky Builders,7,300,80.0,2025-02-12,TRUE,FALSE
+11,Lambda Heights,Omega Corp,8,600,140.0,2025-01-15,TRUE,FALSE
+12,Mu Residency,Peak Estates,8,450,100.0,2025-02-05,TRUE,FALSE
+13,Nu Mall,Sunrise Developers,9,500,120.0,2025-03-01,TRUE,FALSE
+14,Xi Complex,Prime Builders,9,350,85.0,2025-03-08,TRUE,FALSE
+15,Omicron Gardens,Global Estates,10,400,90.0,2025-01-28,TRUE,FALSE
+16,Pi Residency,Urban Constructions,10,300,75.0,2025-02-18,TRUE,FALSE
+17,Rho Tower,Sunrise Constructions,3,420,110.0,2025-03-12,TRUE,FALSE
+18,Sigma Plaza,Blue Horizon Builders,3,360,90.0,2025-03-18,TRUE,FALSE
+19,Tau Heights,Greenfield Estates,4,480,105.0,2025-02-22,TRUE,FALSE
+20,Upsilon Residency,Metro Developers,4,390,95.0,2025-02-28,TRUE,FALSE
+21,Phi Mall,Omega Builders,5,520,130.0,2025-03-05,TRUE,FALSE
+22,Chi Complex,Urban Estates,5,430,115.0,2025-03-10,TRUE,FALSE
+23,Psi Gardens,Acme Developers,6,460,120.0,2025-02-25,TRUE,FALSE
+24,Omega Residency,Prime Constructions,6,380,100.0,2025-03-02,TRUE,FALSE
+25,Alpha Plaza,Sunrise Estates,7,500,125.0,2025-03-07,TRUE,FALSE
+26,Beta Heights,BlueSky Developers,8,420,110.0,2025-03-12,TRUE,FALSE
