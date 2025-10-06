@@ -1,9 +1,12 @@
 package com.example.project_tracking.DataLoader;
 
+import com.example.project_tracking.DataLoader.Reset.EmployeeResetter;
 import com.example.project_tracking.Model.Employee;
 import com.example.project_tracking.Repository.EmployeeRepository;
 import com.opencsv.CSVReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStreamReader;
@@ -11,9 +14,13 @@ import java.io.Reader;
 import java.util.*;
 
 @Component
+@Order(2)
 public class CSVLoader implements CommandLineRunner {
 
     private final EmployeeRepository employeeRepository;
+
+    @Autowired
+    private EmployeeResetter resetter;
 
     public CSVLoader(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
@@ -24,12 +31,12 @@ public class CSVLoader implements CommandLineRunner {
         if (employeeRepository.count() > 0) {
             return; // prevent duplicate inserts
         }
-
+        //resetter.resetEmployeeTable();
         Map<Long, Employee> tempMap = new HashMap<>();
         List<String[]> rows;
 
         try (Reader reader = new InputStreamReader(
-                getClass().getResourceAsStream("/data/employee.csv"))) {
+                getClass().getResourceAsStream("/data/employee1.csv"))) {
 
             CSVReader csvReader = new CSVReader(reader);
             rows = csvReader.readAll();

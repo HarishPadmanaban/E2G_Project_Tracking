@@ -3,6 +3,7 @@ body {
   margin: 0;
   padding: 0;
 }
+
 .loginContainer {
   display: flex;
   justify-content: center;
@@ -168,6 +169,10 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 .loginInstructions strong {
   color: #2d3748;
   font-size: 14px;
+}
+
+.errorMsg{
+  color:red;
 }
 
 /* Responsive Design */

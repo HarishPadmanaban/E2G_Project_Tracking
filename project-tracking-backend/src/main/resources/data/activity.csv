@@ -1,4 +1,4 @@
-id,activity_name,category,head,soft_delete
+id,activity_name,category,main_type,soft_delete
 1,Design Drawing Study,Productive,Modelling,false
 2,Project Meeting,Productive,Modelling,false
 3,Kick Off Meeting,Productive,Modelling,false
@@ -6,23 +6,37 @@ id,activity_name,category,head,soft_delete
 5,Macro Creation,Productive,Modelling,false
 6,Main Steel Modelling,Productive,Modelling,false
 7,Misc Steel Modelling,Productive,Modelling,false
-8,E Sheet Editing,Productive,Modelling,false
-9,Shop Drawing Editing,Productive,Modelling,false
+8,E Sheet Editing,Productive,Detailing,false
+9,Shop Drawing Editing,Productive,Detailing,false
 10,Model Checking,Productive,Checking,false
 11,E Sheet Checking,Productive,Checking,false
 12,Shop Drawing Checking,Productive,Checking,false
-13,RFI Creation,Productive,Detailing,false
-14,Submission Process,Productive,Detailing,false
-15,Field Work,Productive,Detailing,false
-16,COR Evaluation,Productive,Detailing,false
-17,COR Updation,Productive,Detailing,false
+13,RFI Creation,Productive,Checking,false
+14,Submission Process,Productive,Modelling,false
+15,Field Work,Productive,Modelling,false
+16,COR Evaluation,Productive,Checking,false
+17,COR Updation,Productive,Checking,false
 18,Model Maintenance,Non-Productive,Modelling,false
-19,Other Discipline Coord,Productive,Detailing,false
-20,Team Coord,Productive,Detailing,false
-21,Shop Requirement Reports,Productive,Detailing,false
-22,Template Creation,Non-Productive,Detailing,false
-23,Idle,Non-Productive,Detailing,false
-24,Training,Non-Productive,Detailing,false
-25,Leave/Vacation,Non-Productive,Detailing,false
-26,Permission,Non-Productive,Detailing,false
-27,Break/Lunch/Dinner/Breakfast,Non-Productive,Detailing,false
+19,Other Discipline Coord,Productive,Modelling,false
+20,Team Coord,Productive,Modelling,false
+21,Shop Requirement Reports,Productive,Modelling,false
+22,Template Creation,Non-Productive,Modelling,false
+23,Idle,Non-Productive,Common,false
+24,Training,Non-Productive,Common,false
+25,Leave/Vacation,Non-Productive,Common,false
+26,Permission,Non-Productive,Common,false
+27,Break/Lunch/Dinner/Breakfast,Non-Productive,Common,false
+28,BFA Comment Update,Productive,Modelling,false
+29,Mail Checking,Productive,Modelling,false
+30,Clash Check,Productive,Modelling,false
+31,1 to 1 Changes Review,Productive,Modelling,false
+32,Model Correction,Productive,Modelling,false
+33,Project discussion/Doubt clarification,Productive,Modelling,false
+34,Back Draft,Productive,Detailing,false
+35,Design Drawing Study(Checking),Productive,Checking,false
+36,Team Coord,Productive,Modelling,false
+37,Mail Checking(Checking),Productive,Modelling,false
+38,Clash Check(Checking),Productive,Modelling,false
+39,1 to 1 Changes Review(Checking),Productive,Modelling,false
+40,Project discussion/Doubt clarification(Checking),Productive,Modelling,false
+41,Back Checking(Checking),Productive,Detailing,false

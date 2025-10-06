@@ -82,11 +82,6 @@ const LeavePermissionForm = () => {
 
   return (
     <div>
-        
-        <div className={styles.header}>
-                <h1>E2G ENGINEERING SERVICES PRIVATE LIMITED</h1>
-        </div>
-
         <div className={styles.container}>
       <h2>Leave / Permission Form</h2>
 

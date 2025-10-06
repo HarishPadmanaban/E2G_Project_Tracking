@@ -29,4 +29,14 @@ public class EmployeeController {
         System.out.println(emp.toString());
         return ResponseEntity.ok(emp);
     }
+
+    @GetMapping("/get")
+    public ResponseEntity<?> getById(@RequestParam long id)
+    {
+        DataTransfer emp = employeeService.getEmployeeById(id);
+        if(emp==null){
+            return new ResponseEntity<String>(HttpStatus.UNAUTHORIZED);
+        }
+        return ResponseEntity.ok(emp);
+    }
 }

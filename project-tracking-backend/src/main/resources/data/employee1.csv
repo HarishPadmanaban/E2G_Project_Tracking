@@ -1,8 +1,6 @@
 id,emp_id,name,designation,is_manager,is_tl,reporting_to,username,password
 1,E002,Amelia Johnson,Assistant General Manager,False,False,,amelia.johnson,agm123
 2,E001,Oliver Smith,Admin,False,False,,oliver.smith,admin123
-
--- Project Manager 1
 3,E101,John Williams,Project Manager,True,False,1,john.williams,pmjohn123
 4,E102,Liam Davis,Project Coordinator,False,True,3,liam.davis,tl123
 5,E103,Charlotte Miller,Project Coordinator,False,True,3,charlotte.miller,tl123
@@ -16,8 +14,6 @@ id,emp_id,name,designation,is_manager,is_tl,reporting_to,username,password
 13,E111,Sofia Harris,checker,False,False,3,sofia.harris,checker123
 14,E112,Benjamin Martin,checker,False,False,3,benjamin.martin,checker123
 15,E113,Amelia Thompson,checker,False,False,3,amelia.thompson,checker123
-
--- Project Manager 2
 16,E114,Emily Brown,Project Manager,True,False,1,emily.brown,pmemily123
 17,E115,Lucas Garcia,Project Coordinator,False,True,16,lucas.garcia,tl123
 18,E116,Harper Martinez,Project Coordinator,False,True,16,harper.martinez,tl123
@@ -31,8 +27,6 @@ id,emp_id,name,designation,is_manager,is_tl,reporting_to,username,password
 26,E124,Hannah Allen,checker,False,False,16,hannah.allen,checker123
 27,E125,Daniel Young,checker,False,False,16,daniel.young,checker123
 28,E126,Grace Hernandez,checker,False,False,16,grace.hernandez,checker123
-
--- Project Manager 3
 29,E127,Michael Jones,Project Manager,True,False,1,michael.jones,pmmichael123
 30,E128,Henry King,Project Coordinator,False,True,29,henry.king,tl123
 31,E129,Ella Wright,Project Coordinator,False,True,29,ella.wright,tl123
@@ -46,8 +40,6 @@ id,emp_id,name,designation,is_manager,is_tl,reporting_to,username,password
 39,E137,Zoe Perez,checker,False,False,29,zoe.perez,checker123
 40,E138,Anthony Roberts,checker,False,False,29,anthony.roberts,checker123
 41,E139,Samantha Turner,checker,False,False,29,samantha.turner,checker123
-
--- Project Manager 4
 42,E140,Sophia Garcia,Project Manager,True,False,1,sophia.garcia,pmsophia123
 43,E141,Jackson Phillips,Project Coordinator,False,True,42,jackson.phillips,tl123
 44,E142,Penelope Campbell,Project Coordinator,False,True,42,penelope.campbell,tl123
@@ -61,8 +53,6 @@ id,emp_id,name,designation,is_manager,is_tl,reporting_to,username,password
 52,E150,Nora Rogers,checker,False,False,42,nora.rogers,checker123
 53,E151,Christian Reed,checker,False,False,42,christian.reed,checker123
 54,E152,Stella Cook,checker,False,False,42,stella.cook,checker123
-
--- Project Manager 5
 55,E153,David Martinez,Project Manager,True,False,1,david.martinez,pmdavid123
 56,E154,Leo Morgan,Project Coordinator,False,True,55,leo.morgan,tl123
 57,E155,Layla Bell,Project Coordinator,False,True,55,layla.bell,tl123
@@ -76,8 +66,6 @@ id,emp_id,name,designation,is_manager,is_tl,reporting_to,username,password
 65,E163,Scarlett Ward,checker,False,False,55,scarlett.ward,checker123
 66,E164,Easton Torres,checker,False,False,55,easton.torres,checker123
 67,E165,Hazel Peterson,checker,False,False,55,hazel.peterson,checker123
-
--- Project Manager 6
 68,E166,Olivia Hernandez,Project Manager,True,False,1,olivia.hernandez,pmolivia123
 69,E167,Henry Gray,Project Coordinator,False,True,68,henry.gray,tl123
 70,E168,Victoria Ramirez,Project Coordinator,False,True,68,victoria.ramirez,tl123
@@ -91,8 +79,6 @@ id,emp_id,name,designation,is_manager,is_tl,reporting_to,username,password
 78,E176,Lila Wood,checker,False,False,68,lila.wood,checker123
 79,E177,Grayson Barnes,checker,False,False,68,grayson.barnes,checker123
 80,E178,Zoey Ross,checker,False,False,68,zoey.ross,checker123
-
--- Project Manager 7
 81,E179,James Lopez,Project Manager,True,False,1,james.lopez,pmjames123
 82,E180,Jack Henderson,Project Coordinator,False,True,81,jack.henderson,tl123
 83,E181,Luna Coleman,Project Coordinator,False,True,81,luna.coleman,tl123
@@ -106,8 +92,6 @@ id,emp_id,name,designation,is_manager,is_tl,reporting_to,username,password
 91,E189,Aurora Washington,checker,False,False,81,aurora.washington,checker123
 92,E190,Wyatt Butler,checker,False,False,81,wyatt.butler,checker123
 93,E191,Hazel Simmons,checker,False,False,81,hazel.simmons,checker123
-
--- Project Manager 8
 94,E192,Isabella Gonzalez,Project Manager,True,False,1,isabella.gonzalez,pmisabella123
 95,E193,Logan Foster,Project Coordinator,False,True,94,logan.foster,tl123
 96,E194,Scarlett Gonzales,Project Coordinator,False,True,94,scarlett.gonzales,tl123

@@ -33,4 +33,23 @@ public class EmployeeService {
         }
     }
 
+    public DataTransfer getEmployeeById(long id)
+    {
+        Employee employee = employeeRepository.findById(id).orElse(null);
+        if (employee != null) {
+            // Map Employee entity to DataTransfer DTO
+            return new DataTransfer(
+                    employee.getId(),
+                    employee.getEmpId(),
+                    employee.getName(),
+                    employee.getDesignation(),
+                    employee.getManager(),  // isManager
+                    employee.getTL(),       // isTL
+                    employee.getReportingTo() // reporting manager, DTO constructor handles null
+            );
+        } else {
+            return null; // Will trigger 401 in controller
+        }
+    }
+
 }

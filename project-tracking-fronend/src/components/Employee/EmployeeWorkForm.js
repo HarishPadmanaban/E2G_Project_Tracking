@@ -4,9 +4,10 @@ import styles from "../../styles/Employee/EmployeeWorkForm.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
 
 const EmployeeWorkForm = () => {
-  const { employee } = useEmployee();
+  const { employee,loading } = useEmployee();
   const [projects, setProjects] = useState([]);
   const [activities, setActivities] = useState([]);
+  const [filteredActivities, setFilteredActivities] = useState([]);
   const [startDisabled, setStartDisabled] = useState(false);
   const [stopDisabled, setStopDisabled] = useState(true);
   const [submitDisabled, setSubmitDisabled] = useState(true);
@@ -14,6 +15,7 @@ const EmployeeWorkForm = () => {
   const [formData, setFormData] = useState({
     projectId: "",
     clientName: "",
+    projectActivityType: "", 
     activityId: "",
     category: "",
     startTime: "",
@@ -30,23 +32,77 @@ const EmployeeWorkForm = () => {
   // Fetch projects and activities when employee context is available
   useEffect(() => {
     if (employee) {
-      // Fetch projects under the employee's manager
+     if (!employee || !employee.reportingToId) return;
+  console.log("Fetching projects for managerId:", employee.reportingToId);
       axios
-        .get(`http://localhost:8080/api/projects/manager/${employee.reporting_to}`)
-        .then((res) => setProjects(res.data))
+        .get(`http://localhost:8080/project/${employee.reporting_toId}`)
+        .then((res) => {
+    setProjects(res.data);
+    console.log("Fetched projects:", res.data);
+  })
         .catch((err) => console.error("Error fetching projects:", err));
 
       // Fetch all activities
+      console.log(employee);
+      console.log(projects);
       axios
-        .get("http://localhost:8080/api/activities")
-        .then((res) => setActivities(res.data))
+        .get("http://localhost:8080/activity/")
+        .then((res) => {
+    setActivities(res.data);
+    console.log("Fetched activities:", res.data); // ✅ actual data here
+  })
         .catch((err) => console.error("Error fetching activities:", err));
+        console.log(activities);
     }
   }, [employee]);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  useEffect(() => {
+  // Prevent going back to login when on employee pages
+  const handlePopState = () => {
+    if (window.location.pathname.startsWith("/employee")) {
+      window.history.pushState(null, "", window.location.pathname);
+    }
   };
+
+  // Push a dummy entry to block going back
+  window.history.pushState(null, "", window.location.pathname);
+  window.addEventListener("popstate", handlePopState);
+
+  return () => {
+    window.removeEventListener("popstate", handlePopState);
+  };
+}, []);
+
+useEffect(() => {
+  setFilteredActivities(activities);
+}, [activities]);
+
+
+  const handleChange = (e) => {
+  const { name, value } = e.target;
+
+  // Update the form data normally
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value
+  }));
+
+  // If the field changed is Activity Type, filter activities
+  if (name === "projectActivityType") {
+    const filtered = activities.filter(
+      (act) => act.category.toLowerCase() === value.toLowerCase()
+    );
+    setFilteredActivities(filtered);
+
+    // Reset previously selected activity
+    setFormData((prev) => ({
+      ...prev,
+      activityId: "",
+      category: value
+    }));
+  }
+};
+
 
   const handleProjectChange = (e) => {
     const selectedProject = projects.find(
@@ -144,14 +200,10 @@ const EmployeeWorkForm = () => {
       });
   };
 
-  if (!employee) return <p>Loading employee details...</p>;
+  if (loading) return <p>Loading employee details...</p>;
 
   return (
     <div>
-      <div className={styles.header}>
-        <h1>E2G ENGINEERING SERVICES PRIVATE LIMITED</h1>
-      </div>
-
       <div className={styles.container}>
         <form className={styles.form} onSubmit={handleSubmit}>
           {/* Employee details */}
@@ -177,22 +229,30 @@ const EmployeeWorkForm = () => {
 
           {/* Activity row */}
           <div className={styles.row}>
+            <select name="projectActivityType" value={formData.projectActivityType} onChange={handleChange}>
+              <option value="">Activity Type</option>
+              <option value="Modelling">Modelling</option>
+              <option value="Checking">Checking</option>
+              <option value="Detailing">Detailing</option>
+              <option value="Common">Common</option>
+            </select>
             <select name="activityId" value={formData.activityId} onChange={handleActivityChange}>
               <option value="">Activity</option>
-              {activities.map((act) => (
+              {filteredActivities.map((act) => (
                 <option key={act.id} value={act.id}>
                   {act.activity_name}
                 </option>
               ))}
             </select>
             <input type="text" value={formData.category} readOnly placeholder="Category" />
-            <input type="text" value={formData.workHours} readOnly placeholder="Work Hours" />
+            
           </div>
 
           {/* Time row */}
           <div className={styles.row}>
             <input type="text" value={formData.startTime} readOnly placeholder="Start Time" />
             <input type="text" value={formData.endTime} readOnly placeholder="End Time" />
+            <input type="text" value={formData.workHours} readOnly placeholder="Work Hours" />
           </div>
 
           {/* Work details */}
