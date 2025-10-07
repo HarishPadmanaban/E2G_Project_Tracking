@@ -1,7 +1,9 @@
 package com.example.project_tracking.DataLoader;
+import com.example.project_tracking.DataLoader.Reset.EmployeeResetter;
 import com.example.project_tracking.Model.Project;
 import com.example.project_tracking.Repository.ProjectRepository;
 import com.opencsv.CSVReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -19,12 +21,21 @@ public class ProjectCSVLoader implements CommandLineRunner {
 
     private final ProjectRepository projectRepository;
 
+    @Autowired
+    private EmployeeResetter employeeResetter;
+
     public ProjectCSVLoader(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
     }
 
     @Override
     public void run(String... args) throws Exception {
+
+        if (projectRepository.count() > 0) {
+            return; // prevent duplicate inserts
+        }
+
+        //employeeResetter.resetProjectTable();
 
         List<String[]> rows;
         try (Reader reader = new InputStreamReader(

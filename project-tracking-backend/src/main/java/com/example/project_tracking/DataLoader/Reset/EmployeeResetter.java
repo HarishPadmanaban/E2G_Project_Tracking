@@ -18,5 +18,12 @@ public class EmployeeResetter {
         jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS=1");
 
     }
+
+    public void resetProjectTable() {
+        jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS=0");
+        jdbcTemplate.execute("DELETE FROM project");
+        jdbcTemplate.execute("ALTER TABLE project AUTO_INCREMENT = 1");
+        jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS=1");
+    }
 }
 
