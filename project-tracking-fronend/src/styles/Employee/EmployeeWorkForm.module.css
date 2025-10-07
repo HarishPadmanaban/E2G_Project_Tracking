@@ -157,9 +157,10 @@ select {
 /* Label blends smoothly with input box */
 .field label {
   position: absolute;
-  top: -19px;
-  left: 10px;
-  font-size: 13px;
+  top: -21px;
+  left: 8px;
+  font-size: 15px;
+  font-weight: bold;
   color: #666; /* softer text color */
   padding: 0 4px;
   border-radius: 4px;

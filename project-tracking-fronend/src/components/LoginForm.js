@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import styles from "../styles/Login.module.css"; // your CSS file
 import axios from "axios";
 import { useEmployee } from "../context/EmployeeContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // error messages
-
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { login } = useEmployee();
 
@@ -85,18 +87,27 @@ const LoginForm = () => {
             </div>
 
             <div className={styles.inputGroup}>
-              <label className={styles.loginLabel} htmlFor="password">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                className={styles.loginInput}
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+  <label className={styles.loginLabel} htmlFor="password">
+    Password
+  </label>
+
+  <div className={styles.passwordWrapper}>
+    <input
+      type={showPassword ? "text" : "password"}
+      id="password"
+      className={styles.loginInput}
+      placeholder="Enter password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+    />
+    <FontAwesomeIcon
+      icon={showPassword ? faEyeSlash : faEye}
+      className={styles.eyeIcon}
+      onClick={() => setShowPassword((prev) => !prev)}
+    />
+  </div>
+</div>
+
 
             {error && <p className={styles.errorMsg}>{error}</p>}
 

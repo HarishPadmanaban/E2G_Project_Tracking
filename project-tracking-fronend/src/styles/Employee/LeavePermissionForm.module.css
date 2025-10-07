@@ -25,7 +25,7 @@ body {
 
 
 .container {
-  max-width: 900px;
+  max-width: 550px;
   margin: 30px auto;
   padding: 30px;
   background: #fff;
@@ -46,7 +46,27 @@ h2 {
   flex-direction: column;
   gap: 20px;
 }
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 11px;
+}
 
+/* Label blends smoothly with input box */
+.field label {
+  position: absolute;
+  top: -21px;
+  left: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #666; /* softer text color */
+  padding: 0 4px;
+  border-radius: 4px;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
 input,
 select,
 textarea {

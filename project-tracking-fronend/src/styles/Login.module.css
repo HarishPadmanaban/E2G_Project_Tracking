@@ -13,6 +13,33 @@ body {
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.eyeIcon {
+  position: absolute;
+  right: 12px;
+  cursor: pointer;
+  color: #888;
+  font-size: 1.1rem;
+  transition: color 0.2s ease;
+}
+
+.eyeIcon:hover {
+  color: #333;
+}
+
+.loginInput {
+  width: 100%;
+  padding: 10px 40px 10px 10px; /* space for the eye icon */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  font-size: 1rem;
+}
 
 /* Wrapper */
 .loginWrapper {

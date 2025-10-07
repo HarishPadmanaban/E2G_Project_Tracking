@@ -1,14 +1,9 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import styles from "../../styles/Employee/LeavePermissionForm.module.css";
+import { useEmployee } from "../../context/EmployeeContext";
 
 const LeavePermissionForm = () => {
-  const [employee] = useState({
-    id: 101,
-    emp_id: "EMP101",
-    name: "Harish Padmanaban",
-    designation: "Software Engineer",
-  });
-
+  const {employee,loading} = useEmployee();
   const [formData, setFormData] = useState({
     type: "", // Leave / Permission
     leaveDuration: "", // One Day / Multiple Days
@@ -22,6 +17,12 @@ const LeavePermissionForm = () => {
     permissionHours: "",
     permissionMinutes: "",
   });
+
+   useEffect(() => {
+    if (!loading && !employee) {
+      alert("Employee not found or not logged in!");
+    }
+  }, [loading, employee]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -62,185 +63,272 @@ const LeavePermissionForm = () => {
 
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Submitted data:", formData);
-    alert("Leave/Permission submitted!");
-    setFormData({
-      type: "",
-      leaveDuration: "",
-      fromDate: "",
-      toDate: "",
-      leaveDays: "",
-      leaveType: "",
-      reason: "",
-      permissionInTime: "",
-      permissionOutTime: "",
-      permissionHours: "",
-      permissionMinutes: "",
-    });
-  };
+  e.preventDefault();
+
+  const validation = validateForm();
+  if (!validation.valid) {
+    alert(validation.msg);
+    return;
+  }
+
+  // ✅ All fields are filled, submit data
+  console.log("Submitted data:", formData);
+  alert("Leave/Permission submitted successfully!");
+
+  // Reset form
+  setFormData({
+    type: "",
+    leaveDuration: "",
+    fromDate: "",
+    toDate: "",
+    leaveDays: "",
+    leaveType: "",
+    reason: "",
+    permissionInTime: "",
+    permissionOutTime: "",
+    permissionHours: "",
+    permissionMinutes: "",
+  });
+};
+
+  const validateForm = () => {
+  if (!employee) return { valid: false, msg: "Employee not found or not logged in!" };
+
+  if (!formData.type) return { valid: false, msg: "Please select Leave or Permission type." };
+
+  if (formData.type === "Leave") {
+    if (!formData.leaveDuration) return { valid: false, msg: "Please select Leave Duration." };
+
+    if (formData.leaveDuration === "One Day" && !formData.fromDate)
+      return { valid: false, msg: "Please select Leave Date." };
+
+    if (formData.leaveDuration === "Multiple Days") {
+      if (!formData.fromDate || !formData.toDate)
+        return { valid: false, msg: "Please select both From and To Dates." };
+    }
+
+    if (!formData.leaveType) return { valid: false, msg: "Please select Leave Type." };
+    if (!formData.reason.trim()) return { valid: false, msg: "Please provide a reason for Leave." };
+  }
+
+  if (formData.type === "Permission") {
+    if (!formData.fromDate) return { valid: false, msg: "Please select a Date for Permission." };
+    if (!formData.permissionOutTime || !formData.permissionInTime)
+      return { valid: false, msg: "Please fill both Out Time and In Time." };
+    if (!formData.reason.trim()) return { valid: false, msg: "Please provide a reason for Permission." };
+  }
+
+  return { valid: true };
+};
+
 
   return (
-    <div>
-        <div className={styles.container}>
+  <div>
+    <div className={styles.container}>
       <h2>Leave / Permission Form</h2>
 
       <form onSubmit={handleSubmit} className={styles.form}>
         {/* Employee Info */}
-        <label>Employee ID</label>
-        <input type="text" value={employee.emp_id} readOnly />
+        <div className={styles.field}>
+          <label>Employee ID</label>
+          <input type="text" value={employee.emp_id || ""} readOnly />
+        </div>
 
-        <label>Employee Name</label>
-        <input type="text" value={employee.name} readOnly />
+        <div className={styles.field}>
+          <label>Employee Name</label>
+          <input type="text" value={employee.name || ""} readOnly />
+        </div>
 
-        <label>Role</label>
-        <input type="text" value={employee.designation} readOnly />
+        <div className={styles.field}>
+          <label>Role</label>
+          <input type="text" value={employee.designation || ""} readOnly />
+        </div>
 
-        <label>Applied Date</label>
-        <input type="text" value={new Date().toISOString().split("T")[0]} readOnly />
+        <div className={styles.field}>
+          <label>Applied Date</label>
+          <input type="text" value={new Date().toISOString().split("T")[0]} readOnly />
+        </div>
 
         {/* Type Selection */}
-        <label>Type</label>
-        <select name="type" value={formData.type} onChange={handleChange}>
-          <option value="">Select Type</option>
-          <option value="Leave">Leave</option>
-          <option value="Permission">Permission</option>
-        </select>
+        <div className={styles.field}>
+          <label>Type</label>
+          <select name="type" value={formData.type} onChange={handleChange}>
+            <option value="">Select Type</option>
+            <option value="Leave">Leave</option>
+            <option value="Permission">Permission</option>
+          </select>
+        </div>
 
         {/* Leave Form */}
         {formData.type === "Leave" && (
           <>
-            <label>Leave Duration</label>
-            <select name="leaveDuration" value={formData.leaveDuration} onChange={handleChange}>
-              <option value="">Select Duration</option>
-              <option value="One Day">One Day</option>
-              <option value="Multiple Days">Multiple Days</option>
-            </select>
+            <div className={styles.field}>
+              <label>Leave Duration</label>
+              <select
+                name="leaveDuration"
+                value={formData.leaveDuration}
+                onChange={handleChange}
+              >
+                <option value="">Select Duration</option>
+                <option value="One Day">One Day</option>
+                <option value="Multiple Days">Multiple Days</option>
+              </select>
+            </div>
 
             {formData.leaveDuration === "One Day" && (
               <>
-                <label>Leave Date</label>
-                <input
-                  type="date"
-                  name="fromDate"
-                  value={formData.fromDate}
-                  onChange={(e) =>
-                    setFormData({ ...formData, fromDate: e.target.value, leaveDays: 1 })
-                  }
-                />
-                <label>No of Days</label>
-                <input type="number" value={formData.leaveDays || 1} readOnly />
+                <div className={styles.field}>
+                  <label>Leave Date</label>
+                  <input
+                    type="date"
+                    name="fromDate"
+                    value={formData.fromDate}
+                    min={new Date().toISOString().split("T")[0]}
+                    onChange={(e) =>
+                      setFormData({ ...formData, fromDate: e.target.value, leaveDays: 1 })
+                    }
+                  />
+                </div>
+
+                <div className={styles.field}>
+                  <label>No of Days</label>
+                  <input type="number" value={formData.leaveDays || 1} readOnly />
+                </div>
               </>
             )}
 
             {formData.leaveDuration === "Multiple Days" && (
               <>
-                <label>From Date</label>
-                <input
-                  type="date"
-                  name="fromDate"
-                  value={formData.fromDate}
-                  onChange={(e) => {
-                    setFormData((prev) => ({ ...prev, fromDate: e.target.value }));
-                    calculateLeaveDays(e.target.value, formData.toDate);
-                  }}
-                />
-                <label>To Date</label>
-                <input
-                  type="date"
-                  name="toDate"
-                  value={formData.toDate}
-                  onChange={(e) => {
-                    setFormData((prev) => ({ ...prev, toDate: e.target.value }));
-                    calculateLeaveDays(formData.fromDate, e.target.value);
-                  }}
-                />
-                <label>No of Days</label>
-                <input type="number" value={formData.leaveDays || ""} readOnly />
+                <div className={styles.field}>
+                  <label>From Date</label>
+                  <input
+                    type="date"
+                    name="fromDate"
+                    value={formData.fromDate}
+                    min={new Date().toISOString().split("T")[0]}
+                    onChange={(e) => {
+                      setFormData((prev) => ({ ...prev, fromDate: e.target.value }));
+                      calculateLeaveDays(e.target.value, formData.toDate);
+                    }}
+                  />
+                </div>
+
+                <div className={styles.field}>
+                  <label>To Date</label>
+                  <input
+                    type="date"
+                    name="toDate"
+                    value={formData.toDate}
+                    min={new Date().toISOString().split("T")[0]}
+                    onChange={(e) => {
+                      setFormData((prev) => ({ ...prev, toDate: e.target.value }));
+                      calculateLeaveDays(formData.fromDate, e.target.value);
+                    }}
+                  />
+                </div>
+
+                <div className={styles.field}>
+                  <label>No of Days</label>
+                  <input type="number" value={formData.leaveDays || ""} readOnly />
+                </div>
               </>
             )}
 
-            <label>Leave Type</label>
-            <select name="leaveType" value={formData.leaveType} onChange={handleChange}>
-              <option value="">Select Leave Type</option>
-              <option value="CL">CL</option>
-              <option value="SL">SL</option>
-              <option value="LOP">LOP</option>
-            </select>
+            <div className={styles.field}>
+              <label>Leave Type</label>
+              <select name="leaveType" value={formData.leaveType} onChange={handleChange}>
+                <option value="">Select Leave Type</option>
+                <option value="CL">CL</option>
+                <option value="SL">SL</option>
+                <option value="LOP">LOP</option>
+              </select>
+            </div>
 
-            <label>Reason</label>
-            <textarea
-              name="reason"
-              value={formData.reason}
-              onChange={handleChange}
-              placeholder="Reason for Leave"
-            />
+            <div className={styles.field}>
+              <label>Reason</label>
+              <textarea
+                name="reason"
+                value={formData.reason}
+                onChange={handleChange}
+                placeholder="Reason for Leave"
+              />
+            </div>
           </>
         )}
 
         {/* Permission Form */}
-        {/* Permission Form */}
-{formData.type === "Permission" && (
-  <>
-    <label>Date</label>
-    <input
-      type="date"
-      name="fromDate"
-      value={formData.fromDate}
-      onChange={handleChange}
-    />
+        {formData.type === "Permission" && (
+          <>
+            <div className={styles.field}>
+              <label>Date</label>
+              <input
+                type="date"
+                name="fromDate"
+                min={new Date().toISOString().split("T")[0]}
+                value={formData.fromDate}
+                onChange={handleChange}
+              />
+            </div>
 
-    <label>Out Time (Leave Time)</label>
-    <input
-      type="time"
-      name="permissionOutTime"
-      value={formData.permissionOutTime}
-      onChange={(e) => {
-        setFormData((prev) => ({ ...prev, permissionOutTime: e.target.value }));
-        // Only calculate if In Time already exists
-        if (formData.permissionInTime) {
-          calculatePermissionTime(formData.permissionInTime, e.target.value);
-        }
-      }}
-    />
+            <div className={styles.field}>
+              <label>Out Time (Leave Time)</label>
+              <input
+                type="time"
+                name="permissionOutTime"
+                value={formData.permissionOutTime}
+                onChange={(e) => {
+                  setFormData((prev) => ({ ...prev, permissionOutTime: e.target.value }));
+                  if (formData.permissionInTime) {
+                    calculatePermissionTime(formData.permissionInTime, e.target.value);
+                  }
+                }}
+              />
+            </div>
 
-    <label>In Time (Return Time)</label>
-    <input
-      type="time"
-      name="permissionInTime"
-      value={formData.permissionInTime}
-      onChange={(e) => {
-        setFormData((prev) => ({ ...prev, permissionInTime: e.target.value }));
-        // Calculate hours/minutes after both Out and In times exist
-        if (formData.permissionOutTime) {
-          calculatePermissionTime(e.target.value, formData.permissionOutTime);
-        }
-      }}
-    />
+            <div className={styles.field}>
+              <label>In Time (Return Time)</label>
+              <input
+                type="time"
+                name="permissionInTime"
+                value={formData.permissionInTime}
+                onChange={(e) => {
+                  setFormData((prev) => ({ ...prev, permissionInTime: e.target.value }));
+                  if (formData.permissionOutTime) {
+                    calculatePermissionTime(e.target.value, formData.permissionOutTime);
+                  }
+                }}
+              />
+            </div>
 
-    <label>Permission Hours</label>
-    <input type="text" value={formData.permissionHours} readOnly />
+            <div className={styles.field}>
+              <label>Permission Hours</label>
+              <input type="text" value={formData.permissionHours} readOnly />
+            </div>
 
-    <label>Permission Minutes</label>
-    <input type="text" value={formData.permissionMinutes} readOnly />
+            <div className={styles.field}>
+              <label>Permission Minutes</label>
+              <input type="text" value={formData.permissionMinutes} readOnly />
+            </div>
 
-    <label>Reason</label>
-    <textarea
-      name="reason"
-      value={formData.reason}
-      onChange={handleChange}
-      placeholder="Reason for Permission"
-    />
-  </>
-)}
+            <div className={styles.field}>
+              <label>Reason</label>
+              <textarea
+                name="reason"
+                value={formData.reason}
+                onChange={handleChange}
+                placeholder="Reason for Permission"
+              />
+            </div>
+          </>
+        )}
 
-
-        <button type="submit" className={styles.submitBtn}>Submit</button>
+        <button type="submit" className={styles.submitBtn}>
+          Submit
+        </button>
       </form>
     </div>
-        
-    </div>
-  );
+  </div>
+);
 };
 
 export default LeavePermissionForm;
