@@ -18,12 +18,14 @@
 /* Left side: Back button */
 .navLeft {
   display: flex;
+
   align-items: center;
 }
 
 /* Center: Heading */
 .navCenter {
   flex: 1;
+  margin-left: 12%;
   text-align: center;
 }
 
@@ -74,6 +76,7 @@
   font-weight: 500;
   transition: all 0.2s ease-in-out;
 }
+
 
 .backBtn {
   background-color: #3498db;

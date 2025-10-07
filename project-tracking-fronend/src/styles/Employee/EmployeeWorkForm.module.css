@@ -129,6 +129,54 @@ select {
   cursor: pointer;
 }
 
+.buttonDisabled {
+  background: #ccc !important;     /* Light gray background */
+  color: #666 !important;          /* Dark gray text */
+  cursor: not-allowed !important;  /* Show disabled cursor */
+  box-shadow: none !important;     /* Remove shadow */
+  transform: none !important;      /* Prevent transform */
+}
+
+
+.startBtn:not(.buttonDisabled):hover,
+.stopBtn:not(.buttonDisabled):hover,
+.submitBtn:not(.buttonDisabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.3);
+}
+
+
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 11px;
+}
+
+/* Label blends smoothly with input box */
+.field label {
+  position: absolute;
+  top: -19px;
+  left: 10px;
+  font-size: 13px;
+  color: #666; /* softer text color */
+  padding: 0 4px;
+  border-radius: 4px;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+/* Optional — when input is focused, highlight label slightly */
+.field input:focus + label,
+.field select:focus + label,
+.field textarea:focus + label {
+  color: #333;
+}
+
+
+
+
 @media (max-width: 768px) {
   .container {
     padding: 30px 20px;

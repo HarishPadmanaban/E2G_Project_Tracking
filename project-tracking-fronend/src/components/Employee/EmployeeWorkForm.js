@@ -133,19 +133,22 @@ useEffect(() => {
   const handleStartStop = () => {
   if (!isRunning) {
     // START clicked
+     if (!isFormValid(false)) {
+      alert("Please fill in all required fields before starting.");
+      return;
+    }
     const now = new Date();
     const start = now.getHours().toString().padStart(2, "0") + ":" + now.getMinutes().toString().padStart(2, "0");
 
     setFormData((prev) => ({ ...prev, startTime: start }));
     setIsRunning(true);
-    setStartDisabled(true);
     setStopDisabled(true);  // disable stop initially
     setSubmitDisabled(true);
 
-    // Enable STOP after 5 minutes
+    // Enable STOP after 2 minutes
     setTimeout(() => {
       setStopDisabled(false);
-    }, 1 * 60 * 1000); // 5 minutes
+    }, 2 * 60 * 1000); // 2 minutes
   } else {
     // STOP clicked
     const now = new Date();
@@ -170,7 +173,8 @@ useEffect(() => {
     // Update states
     setIsRunning(false);
     setStopDisabled(true);
-    setSubmitDisabled(false); // enable submit after stop
+    setStartDisabled(true);      // 👈 Start disabled after stop
+    setSubmitDisabled(false);// enable submit after stop
   }
 };
 
@@ -179,7 +183,10 @@ useEffect(() => {
   const handleSubmit = (e) => {
   e.preventDefault();
   if (!employee) return;
-
+  if (!isFormValid(true)) {
+    alert("Please fill in all required fields before submitting.");
+    return;
+  }
   const payload = {
     employee_id: employee.id,
     manager_id: employee.reportingToId,
@@ -197,16 +204,12 @@ useEffect(() => {
 
   // 🟢 Print the entire data clearly before sending
   console.log("📦 Submitting Work Form Data:", payload);
-
-  axios
-    .post("http://localhost:8080/api/userform", payload)
-    .then(() => {
-      alert("Work submitted successfully!");
-      setFormData({
+setFormData({
         projectId: "",
         clientName: "",
         activityId: "",
         category: "",
+        projectActivityType: "",
         startTime: "",
         endTime: "",
         workHours: "",
@@ -215,46 +218,112 @@ useEffect(() => {
         status: "Pending",
         remarks: ""
       });
-      setSubmitDisabled(true);
+      setSubmitDisabled(true);   // Disable Submit
       setStartDisabled(false);
-    })
-    .catch((err) => {
-      console.error("❌ Error submitting work:", err);
-      alert("Submission failed!");
-    });
+//   axios
+//     .post("http://localhost:8080/api/userform", payload)
+//     .then(() => {
+//       alert("Work submitted successfully!");
+//       setFormData({
+//         projectId: "",
+//         clientName: "",
+//         activityId: "",
+//         category: "",
+//         startTime: "",
+//         endTime: "",
+//         workHours: "",
+//         projectActivity: "",
+//         assignedWork: "",
+//         status: "Pending",
+//         remarks: ""
+//       });
+//       setSubmitDisabled(true);
+//       setStartDisabled(false);
+//     })
+//     .catch((err) => {
+//       console.error("❌ Error submitting work:", err);
+//       alert("Submission failed!");
+//     });
 };
+const isFormValid = (checkStatus = false) => {
+  const {
+    projectId,
+    projectActivityType,
+    activityId,
+    category,
+    projectActivity,
+    assignedWork,
+    status
+  } = formData;
+
+  const baseFieldsFilled = (
+    projectId &&
+    projectActivityType &&
+    activityId &&
+    category &&
+    projectActivity &&
+    assignedWork
+  );
+
+  // If checkStatus is true, also validate `status`
+  return checkStatus ? baseFieldsFilled && status : baseFieldsFilled;
+};
+
 
 
   if (loading) return <p>Loading employee details...</p>;
 
-  return (
-    <div>
-      <div className={styles.container}>
-        <form className={styles.form} onSubmit={handleSubmit}>
-          {/* Employee details */}
-          <div className={styles.topRow}>
-            <input type="text" value={employee.emp_id} readOnly placeholder="Employee ID" required/>
-            <input type="text" value={employee.name} readOnly placeholder="Employee Name" required/>
-            <input type="text" value={employee.designation} readOnly placeholder="Designation" required/>
+ return (
+  <div>
+    <div className={styles.container}>
+      <form className={styles.form} onSubmit={handleSubmit}>
+        {/* Employee details */}
+        <div className={styles.topRow}>
+          <div className={styles.field}>
+            <label>Employee ID</label>
+            <input type="text" value={employee.emp_id} readOnly placeholder="Employee ID" required />
           </div>
 
-          {/* Project row */}
-          <div className={styles.row}>
-            <select name="projectId" value={formData.projectId} onChange={handleProjectChange}>
-  <option value="">Project Name</option>
-  {projects.map((proj) => (
-    <option key={proj.id} value={proj.id}>
-      {proj.projectName}
-    </option>
-  ))}
-</select>
+          <div className={styles.field}>
+            <label>Employee Name</label>
+            <input type="text" value={employee.name} readOnly placeholder="Employee Name" required />
+          </div>
 
+          <div className={styles.field}>
+            <label>Designation</label>
+            <input type="text" value={employee.designation} readOnly placeholder="Designation" required />
+          </div>
+        </div>
+
+        {/* Project row */}
+        <div className={styles.row}>
+          <div className={styles.field}>
+            <label>Project Name</label>
+            <select name="projectId" value={formData.projectId} onChange={handleProjectChange}>
+              <option value="">Project Name</option>
+              {projects.map((proj) => (
+                <option key={proj.id} value={proj.id}>
+                  {proj.projectName}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.field}>
+            <label>Client Name</label>
             <input type="text" value={formData.clientName} readOnly placeholder="Client Name" />
+          </div>
+
+          <div className={styles.field}>
+            <label>Date</label>
             <input type="text" value={new Date().toISOString().split("T")[0]} readOnly placeholder="Date" />
           </div>
+        </div>
 
-          {/* Activity row */}
-          <div className={styles.row}>
+        {/* Activity row */}
+        <div className={styles.row}>
+          <div className={styles.field}>
+            <label>Activity Type</label>
             <select name="projectActivityType" value={formData.projectActivityType} onChange={handleChange}>
               <option value="">Activity Type</option>
               <option value="Modelling">Modelling</option>
@@ -262,28 +331,48 @@ useEffect(() => {
               <option value="Detailing">Detailing</option>
               <option value="Common">Common</option>
             </select>
-            <select name="activityId" value={formData.activityId} onChange={handleActivityChange}>
-  <option value="">Activity</option>
-  {filteredActivities.map((act) => (
-    <option key={act.id} value={act.id}>
-      {act.activityName}
-    </option>
-  ))}
-</select>
-
-            <input type="text" value={formData.category} readOnly placeholder="Category" />
-            
           </div>
 
-          {/* Time row */}
-          <div className={styles.row}>
+          <div className={styles.field}>
+            <label>Activity</label>
+            <select name="activityId" value={formData.activityId} onChange={handleActivityChange}>
+              <option value="">Activity</option>
+              {filteredActivities.map((act) => (
+                <option key={act.id} value={act.id}>
+                  {act.activityName}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.field}>
+            <label>Category</label>
+            <input type="text" value={formData.category} readOnly placeholder="Category" />
+          </div>
+        </div>
+
+        {/* Time row */}
+        <div className={styles.row}>
+          <div className={styles.field}>
+            <label>Start Time</label>
             <input type="text" value={formData.startTime} readOnly placeholder="Start Time" />
+          </div>
+
+          <div className={styles.field}>
+            <label>End Time</label>
             <input type="text" value={formData.endTime} readOnly placeholder="End Time" />
+          </div>
+
+          <div className={styles.field}>
+            <label>Work Hours</label>
             <input type="text" value={formData.workHours} readOnly placeholder="Work Hours" />
           </div>
+        </div>
 
-          {/* Work details */}
-          <div className={styles.row}>
+        {/* Work details */}
+        <div className={styles.row}>
+          <div className={styles.field}>
+            <label>Project Activity</label>
             <select name="projectActivity" value={formData.projectActivity} onChange={handleChange}>
               <option value="">Project Activity</option>
               <option value="Development">Development</option>
@@ -291,6 +380,10 @@ useEffect(() => {
               <option value="Bug Fixing">Bug Fixing</option>
               <option value="Documentation">Documentation</option>
             </select>
+          </div>
+
+          <div className={styles.field}>
+            <label>Assigned Work</label>
             <input
               type="text"
               name="assignedWork"
@@ -299,12 +392,19 @@ useEffect(() => {
               placeholder="Assigned Work"
             />
           </div>
+        </div>
 
-          <div className={styles.row}>
+        <div className={styles.row}>
+          <div className={styles.field}>
+            <label>Status</label>
             <select name="status" value={formData.status} onChange={handleChange}>
               <option value="Pending">Pending</option>
               <option value="Completed">Completed</option>
             </select>
+          </div>
+
+          <div className={styles.field}>
+            <label>Remarks</label>
             <textarea
               name="remarks"
               value={formData.remarks}
@@ -312,42 +412,43 @@ useEffect(() => {
               placeholder="Remarks"
             />
           </div>
+        </div>
 
-          {/* START / STOP / SUBMIT Buttons */}
-<div className={styles.row}>
-  {!isRunning ? (
-    <button
-      type="button"
-      onClick={handleStartStop}
-      className={styles.startBtn}
-      disabled={startDisabled}
-    >
-      Start
-    </button>
-  ) : (
-    <button
-      type="button"
-      onClick={handleStartStop}
-      className={styles.stopBtn}
-      disabled={stopDisabled}
-    >
-      {stopDisabled ? "Stop (Wait 5 mins)" : "Stop"}
-    </button>
-  )}
+        {/* Buttons */}
+        <div className={styles.row}>
+          {!isRunning ? (
+            <button
+              type="button"
+              onClick={handleStartStop}
+              className={`${styles.startBtn} ${startDisabled ? styles.buttonDisabled : ""}`}
+              disabled={startDisabled}
+            >
+              Start
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleStartStop}
+              className={`${styles.stopBtn} ${stopDisabled ? styles.buttonDisabled : ""}`}
+              disabled={stopDisabled}
+            >
+              {stopDisabled ? "Stop (Wait 2 mins)" : "Stop"}
+            </button>
+          )}
 
-  <button
-    type="submit"
-    className={styles.submitBtn}
-    disabled={submitDisabled}
-  >
-    Submit Work
-  </button>
-</div>
-
-        </form>
-      </div>
+          <button
+            type="submit"
+            className={`${styles.submitBtn} ${submitDisabled ? styles.buttonDisabled : ""}`}
+            disabled={submitDisabled}
+          >
+            Submit Work
+          </button>
+        </div>
+      </form>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default EmployeeWorkForm;
