@@ -281,7 +281,7 @@ const isFormValid = (checkStatus = false) => {
         <div className={styles.topRow}>
           <div className={styles.field}>
             <label>Employee ID</label>
-            <input type="text" value={employee.emp_id} readOnly placeholder="Employee ID" required />
+            <input type="text" value={employee.empId} readOnly placeholder="Employee ID" required />
           </div>
 
           <div className={styles.field}>

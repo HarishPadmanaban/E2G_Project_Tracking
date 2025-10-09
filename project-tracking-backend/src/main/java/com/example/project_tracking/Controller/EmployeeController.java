@@ -21,7 +21,7 @@ public class EmployeeController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request)
     {
-        System.out.println(request.getUsername()+" "+request.getPassword());
+        //System.out.println(request.getUsername()+" "+request.getPassword());
         DataTransfer emp = employeeService.userLogin(request.getUsername(),request.getPassword());
         if(emp==null){
             return new ResponseEntity<String>(HttpStatus.UNAUTHORIZED);

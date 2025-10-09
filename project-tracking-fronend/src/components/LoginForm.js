@@ -30,6 +30,7 @@ const LoginForm = () => {
       );
 
       const employeeData = response.data;
+      
 
       if (!employeeData) {
         setError("Invalid username or password");
@@ -37,6 +38,7 @@ const LoginForm = () => {
       }
 
       login(employeeData);
+      console.log(employeeData);
 
       // Redirect based on role
       if (employeeData.isManager) {
@@ -100,11 +102,11 @@ const LoginForm = () => {
       value={password}
       onChange={(e) => setPassword(e.target.value)}
     />
-    <FontAwesomeIcon
-      icon={showPassword ? faEyeSlash : faEye}
-      className={styles.eyeIcon}
-      onClick={() => setShowPassword((prev) => !prev)}
-    />
+    {/* <FontAwesomeIcon
+      //icon={showPassword ? faEyeSlash : faEye}
+      //className={styles.eyeIcon}
+      //onClick={() => setShowPassword((prev) => !prev)}
+    /> */}
   </div>
 </div>
 

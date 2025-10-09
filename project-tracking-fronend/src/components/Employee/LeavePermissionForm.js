@@ -1,10 +1,13 @@
 import React, { useState,useEffect } from "react";
 import styles from "../../styles/Employee/LeavePermissionForm.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
+import axios from "axios";
 
 const LeavePermissionForm = () => {
   const {employee,loading} = useEmployee();
   const [formData, setFormData] = useState({
+    employeeId: employee?.id || "",      // from logged-in user
+    managerId: employee?.reportingToId || "",
     type: "", // Leave / Permission
     leaveDuration: "", // One Day / Multiple Days
     fromDate: "",
@@ -62,33 +65,60 @@ const LeavePermissionForm = () => {
 };
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
   e.preventDefault();
-
+    console.log(formData);
   const validation = validateForm();
   if (!validation.valid) {
     alert(validation.msg);
     return;
   }
 
-  // ✅ All fields are filled, submit data
-  console.log("Submitted data:", formData);
-  alert("Leave/Permission submitted successfully!");
+  try {
+    const payload = {
+  employee: { id: employee.id },       // 👈 nested object
+  manager: { id: employee.reportingToId }, // 👈 nested object
+  type: formData.type,
+  leaveDuration: formData.leaveDuration,
+  fromDate: formData.fromDate || null,
+  toDate: formData.toDate || null,
+  leaveDays: formData.leaveDays || 0,
+  leaveType: formData.leaveType || null,
+  reason: formData.reason,
+  permissionInTime: formData.permissionInTime || null,
+  permissionOutTime: formData.permissionOutTime || null,
+  permissionHours: formData.permissionHours || null,
+  permissionMinutes: formData.permissionMinutes || null,
+  appliedDate: new Date().toISOString().split("T")[0],
+};
 
-  // Reset form
-  setFormData({
-    type: "",
-    leaveDuration: "",
-    fromDate: "",
-    toDate: "",
-    leaveDays: "",
-    leaveType: "",
-    reason: "",
-    permissionInTime: "",
-    permissionOutTime: "",
-    permissionHours: "",
-    permissionMinutes: "",
-  });
+const response = await axios.post("http://localhost:8080/leave/apply", payload);
+    console.log(response);
+    if (response.status === 200 || response.status === 201) {
+      alert("✅ Leave/Permission submitted successfully!");
+      
+      // Reset form after success
+      setFormData({
+        type: "",
+        leaveDuration: "",
+        fromDate: "",
+        toDate: "",
+        leaveDays: "",
+        leaveType: "",
+        reason: "",
+        permissionInTime: "",
+        permissionOutTime: "",
+        permissionHours: "",
+        permissionMinutes: "",
+      });
+    } else {
+      alert("⚠️ Failed to submit Leave/Permission!");
+    }
+
+  } catch (error) {
+    console.error("❌ Error submitting Leave/Permission:", error);
+    alert("❌ Failed to save Leave/Permission!");
+  }
 };
 
   const validateForm = () => {
@@ -131,7 +161,7 @@ const LeavePermissionForm = () => {
         {/* Employee Info */}
         <div className={styles.field}>
           <label>Employee ID</label>
-          <input type="text" value={employee.emp_id || ""} readOnly />
+          <input type="text" value={employee.empId || ""} readOnly />
         </div>
 
         <div className={styles.field}>
