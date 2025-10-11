@@ -33,16 +33,16 @@ public class Project {
     private BigDecimal detailingHours;
 
     // Time tracking for split-ups
-    private LocalTime modellingTime;
-    private LocalTime checkingTime;
-    private LocalTime detailingTime;
+    private BigDecimal modellingTime;
+    private BigDecimal checkingTime;
+    private BigDecimal detailingTime;
 
     // Idle project flag
 
     public Project() {
     }
 
-    public Project(Long id, String projectName, String clientName, Long managerId, BigDecimal assignedHours, BigDecimal workingHours, LocalDate assignedDate, Boolean projectStatus, Boolean softDelete, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, LocalTime modellingTime, LocalTime checkingTime, LocalTime detailingTime) {
+    public Project(Long id, String projectName, String clientName, Long managerId, BigDecimal assignedHours, BigDecimal workingHours, LocalDate assignedDate, Boolean projectStatus, Boolean softDelete, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal modellingTime, BigDecimal checkingTime, BigDecimal detailingTime) {
         this.id = id;
         this.projectName = projectName;
         this.clientName = clientName;
@@ -168,27 +168,27 @@ public class Project {
         this.detailingHours = detailingHours;
     }
 
-    public LocalTime getModellingTime() {
+    public BigDecimal getModellingTime() {
         return modellingTime;
     }
 
-    public void setModellingTime(LocalTime modellingTime) {
+    public void setModellingTime(BigDecimal modellingTime) {
         this.modellingTime = modellingTime;
     }
 
-    public LocalTime getCheckingTime() {
+    public BigDecimal getCheckingTime() {
         return checkingTime;
     }
 
-    public void setCheckingTime(LocalTime checkingTime) {
+    public void setCheckingTime(BigDecimal checkingTime) {
         this.checkingTime = checkingTime;
     }
 
-    public LocalTime getDetailingTime() {
+    public BigDecimal getDetailingTime() {
         return detailingTime;
     }
 
-    public void setDetailingTime(LocalTime detailingTime) {
+    public void setDetailingTime(BigDecimal detailingTime) {
         this.detailingTime = detailingTime;
     }
 }

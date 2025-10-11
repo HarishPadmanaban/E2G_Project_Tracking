@@ -25,3 +25,4 @@ id,project_name,client_name,manager_id,assigned_hours,working_hours,assigned_dat
 24,Omega Residency,Prime Constructions,42,380,100.0,2025-03-02,True,False,152.0,133.0,95.0,40.0,35.0,25.0
 25,Alpha Plaza,Sunrise Estates,55,500,125.0,2025-03-07,True,False,200.0,175.0,125.0,50.0,43.8,31.3
 26,Beta Heights,BlueSky Developers,68,420,110.0,2025-03-12,True,False,168.0,147.0,105.0,44.0,38.5,27.5
+

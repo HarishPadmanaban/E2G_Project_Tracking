@@ -188,18 +188,18 @@ useEffect(() => {
     return;
   }
   const payload = {
-    employee_id: employee.id,
-    manager_id: employee.reportingToId,
-    project_id: formData.projectId,
-    activity_id: formData.activityId,
+    employeeId: employee.id,  // camelCase
+    managerId: employee.reportingToId,  // camelCase
+    projectId: formData.projectId,  // camelCase
+    activityId: formData.activityId,  // camelCase
     date: new Date().toISOString().split("T")[0],
-    work_hours: formData.workHours,
-    start_time: formData.startTime,
-    end_time: formData.endTime,
-    project_activity: formData.projectActivity,
-    assigned_work: formData.assignedWork,
+    workHours: parseFloat(formData.workHours),  // camelCase + convert to number
+    startTime: formData.startTime + ":00",  // camelCase + add seconds for LocalTime
+    endTime: formData.endTime + ":00",  // camelCase + add seconds for LocalTime
+    projectActivity: formData.projectActivity,  // camelCase
+    assignedWork: formData.assignedWork,  // camelCase
     status: formData.status,
-    remarks: formData.remarks
+    remarks: formData.rema
   };
 
   // 🟢 Print the entire data clearly before sending
@@ -220,30 +220,30 @@ setFormData({
       });
       setSubmitDisabled(true);   // Disable Submit
       setStartDisabled(false);
-//   axios
-//     .post("http://localhost:8080/api/userform", payload)
-//     .then(() => {
-//       alert("Work submitted successfully!");
-//       setFormData({
-//         projectId: "",
-//         clientName: "",
-//         activityId: "",
-//         category: "",
-//         startTime: "",
-//         endTime: "",
-//         workHours: "",
-//         projectActivity: "",
-//         assignedWork: "",
-//         status: "Pending",
-//         remarks: ""
-//       });
-//       setSubmitDisabled(true);
-//       setStartDisabled(false);
-//     })
-//     .catch((err) => {
-//       console.error("❌ Error submitting work:", err);
-//       alert("Submission failed!");
-//     });
+  axios
+    .post("http://localhost:8080/workdetails/save", payload)
+    .then(() => {
+      alert("Work submitted successfully!");
+      setFormData({
+        projectId: "",
+        clientName: "",
+        activityId: "",
+        category: "",
+        startTime: "",
+        endTime: "",
+        workHours: "",
+        projectActivity: "",
+        assignedWork: "",
+        status: "Pending",
+        remarks: ""
+      });
+      setSubmitDisabled(true);
+      setStartDisabled(false);
+    })
+    .catch((err) => {
+      console.error("❌ Error submitting work:", err);
+      alert("Submission failed!");
+    });
 };
 const isFormValid = (checkStatus = false) => {
   const {
@@ -375,10 +375,9 @@ const isFormValid = (checkStatus = false) => {
             <label>Project Activity</label>
             <select name="projectActivity" value={formData.projectActivity} onChange={handleChange}>
               <option value="">Project Activity</option>
-              <option value="Development">Development</option>
-              <option value="Testing">Testing</option>
-              <option value="Bug Fixing">Bug Fixing</option>
-              <option value="Documentation">Documentation</option>
+              <option value="IFRA">IFRA</option>
+              <option value="Client Rework">Client Rework</option>
+              <option value="Internal Rework">Internal Rework</option>
             </select>
           </div>
 

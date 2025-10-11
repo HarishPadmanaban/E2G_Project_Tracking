@@ -1,0 +1,684 @@
+employee_id,manager_id,project_id,activity_id,date,workHours,start_time,end_time,projectActivity,assignedWork,status,remarks
+6,3,1,1,2025-10-01,5.0,09:00,14:00,IFRA,E1,E2,Completed,Initial modelling
+7,3,1,2,2025-10-01,4.5,09:30,14:00,Client Rework,E1,E2,Completed,Modelling discussion
+8,3,1,4,2025-10-02,3.0,10:00,13:00,Internal Rework,E1,E2,Completed,Member placement
+9,3,1,6,2025-10-02,5.2,09:00,14:15,IFRA,E1,E2,Completed,Steel modelling
+10,3,1,7,2025-10-03,5.5,11:00,16:30,Client Rework,E1,E2,Completed,Misc steel
+6,3,1,14,2025-10-03,5.0,09:00,14:00,Internal Rework,E1,E2,Completed,Submission modelling
+7,3,1,15,2025-10-04,5.5,10:00,15:30,IFRA,E1,E2,Completed,Field work
+8,3,1,19,2025-10-04,4.5,09:00,13:30,Client Rework,E1,E2,Completed,Coordination work
+9,3,1,20,2025-10-05,4.0,09:30,13:30,Internal Rework,E1,E2,Completed,Team coordination
+10,3,1,10,2025-10-05,6.0,09:00,15:00,IFRA,E1,E2,Completed,Checking work
+6,3,1,11,2025-10-06,5.5,09:30,15:00,Client Rework,E1,E2,Completed,Checking sheets
+7,3,1,12,2025-10-06,5.0,10:00,15:00,Internal Rework,E1,E2,Completed,Shop drawings
+8,3,1,13,2025-10-07,6.0,09:00,15:00,IFRA,E1,E2,Completed,RFI work
+9,3,1,16,2025-10-07,5.7,09:30,15:00,Client Rework,E1,E2,Completed,COR evaluation
+10,3,1,8,2025-10-08,3.0,09:00,12:00,Internal Rework,E1,E2,Completed,Detailing work
+6,3,1,9,2025-10-08,2.5,12:30,15:00,IFRA,E1,E2,Completed,Detailing work
+7,3,1,34,2025-10-09,4.6,09:00,13:30,Client Rework,E1,E2,Completed,Detailing work
+8,3,1,41,2025-10-09,5.0,10:00,15:00,Internal Rework,E1,E2,Completed,Detailing work
+4,3,2,1,2025-10-01,5.0,09:00,14:00,IFRA,E1,E2,Completed,Initial modelling
+5,3,2,2,2025-10-01,5.5,09:15,14:45,Client Rework,E1,E2,Completed,Modelling discussion
+6,3,2,4,2025-10-02,4.0,10:00,14:00,Internal Rework,E1,E2,Completed,Member placement
+7,3,2,6,2025-10-02,6.0,09:30,15:30,IFRA,E1,E2,Completed,Main steel modelling
+8,3,2,5,2025-10-03,4.5,10:30,15:00,Client Rework,E1,E2,Completed,Macro creation
+9,3,2,15,2025-10-03,5.0,11:00,16:00,Internal Rework,E1,E2,Completed,Field work
+6,3,2,10,2025-10-07,6.0,09:00,15:00,IFRA,E1,E2,Completed,Model checking
+7,3,2,11,2025-10-07,5.5,09:30,15:00,Client Rework,E1,E2,Completed,E-sheet checking
+8,3,2,12,2025-10-08,4.8,10:00,14:48,Internal Rework,E1,E2,Completed,Shop drawing checking
+9,3,2,13,2025-10-08,5.0,10:30,15:30,IFRA,E1,E2,Completed,RFI creation
+10,3,2,16,2025-10-09,5.0,11:00,16:00,Client Rework,E1,E2,Completed,COR evaluation
+6,3,2,8,2025-10-12,3.0,09:00,12:00,Internal Rework,E1,E2,Completed,E-sheet editing
+7,3,2,9,2025-10-12,4.5,10:00,14:30,Client Rework,E1,E2,Completed,Shop drawing editing
+8,3,2,34,2025-10-13,5.3,09:30,14:48,IFRA,E1,E2,Completed,Back draft
+9,3,2,8,2025-10-13,6.0,10:00,16:00,Internal Rework,E1,E2,Completed,Detailing batch
+4,3,17,1,2025-10-01,6.0,09:00,15:00,IFRA,Task-1,Completed,Modelling - layout
+5,3,17,2,2025-10-01,6.0,09:30,15:30,Client Rework,Task-2,Completed,Modelling - base
+6,3,17,3,2025-10-02,6.0,09:00,15:00,Internal Rework,Task-3,Completed,Modelling - grid
+7,3,17,4,2025-10-02,6.0,09:30,15:30,IFRA,Task-4,Completed,Modelling - columns
+8,3,17,5,2025-10-03,6.0,09:00,15:00,Client Rework,Task-5,Completed,Modelling - beams
+9,3,17,6,2025-10-03,6.0,09:30,15:30,Internal Rework,Task-6,Completed,Modelling - slabs
+10,3,17,7,2025-10-04,6.0,09:00,15:00,IFRA,Task-7,Completed,Modelling - framing
+4,3,17,14,2025-10-04,2.0,10:00,12:00,Client Rework,Task-8,Completed,Modelling - finish (remaining)
+5,3,17,10,2025-10-05,6.0,09:00,15:00,IFRA,Task-9,Completed,Checking - model checking
+6,3,17,11,2025-10-05,6.0,09:30,15:30,Client Rework,Task-10,Completed,Checking - e-sheet
+7,3,17,12,2025-10-06,6.0,09:00,15:00,Internal Rework,Task-11,Completed,Checking - shop drawing check
+8,3,17,13,2025-10-06,6.0,09:30,15:30,IFRA,Task-12,Completed,Checking - RFI validation
+9,3,17,16,2025-10-07,6.0,09:00,15:00,Client Rework,Task-13,Completed,Checking - COR evaluation
+10,3,17,17,2025-10-07,2.5,10:00,12:30,Internal Rework,Task-14,Completed,Checking - small update
+4,3,17,8,2025-10-08,6.0,09:00,15:00,IFRA,Task-15,Completed,Detailing - E sheet editing
+5,3,17,9,2025-10-08,6.0,09:30,15:30,Client Rework,Task-16,Completed,Detailing - shop drawing edit
+6,3,17,34,2025-10-09,6.0,09:00,15:00,Internal Rework,Task-17,Completed,Detailing - back draft
+7,3,17,41,2025-10-09,3.5,10:00,13:30,IFRA,Task-18,Completed,Detailing - back checking
+8,3,17,19,2025-10-10,5.5,09:00,14:30,Client Rework,Task-19,Completed,Checking - coordination
+9,3,17,20,2025-10-10,5.0,10:00,15:00,Internal Rework,Task-20,Completed,Modelling - followup
+4,3,18,1,2025-10-01,6.0,09:00,15:00,IFRA,E1,Completed,Modelling - Design Drawing Study
+5,3,18,2,2025-10-01,6.0,09:30,15:30,Client Rework,E2,Completed,Modelling - Project Meeting
+6,3,18,4,2025-10-02,6.0,09:00,15:00,Internal Rework,E3,Completed,Modelling - Model Member Placement
+7,3,18,5,2025-10-02,6.0,09:30,15:30,IFRA,E4,Completed,Modelling - Macro Creation
+8,3,18,6,2025-10-03,6.0,09:00,15:00,Client Rework,E5,Completed,Modelling - Main Steel Modelling
+9,3,18,7,2025-10-03,6.0,09:30,15:30,Internal Rework,E6,Completed,Modelling - Misc Steel Modelling
+4,3,18,10,2025-10-04,6.0,09:00,15:00,IFRA,E7,Completed,Checking - Model Checking
+5,3,18,11,2025-10-04,5.5,09:30,15:00,Client Rework,E8,Completed,Checking - E Sheet Checking
+6,3,18,12,2025-10-05,5.5,09:00,14:30,Internal Rework,E9,Completed,Checking - Shop Drawing Checking
+7,3,18,13,2025-10-05,5.5,09:30,15:00,IFRA,E10,Completed,Checking - RFI Creation
+8,3,18,16,2025-10-06,4.5,10:00,14:30,Client Rework,E11,Completed,Checking - COR Evaluation
+9,3,18,17,2025-10-06,4.5,10:30,15:00,Internal Rework,E12,Completed,Checking - COR Updation
+4,3,18,8,2025-10-07,6.0,09:00,15:00,IFRA,E13,Completed,Detailing - E Sheet Editing
+5,3,18,9,2025-10-07,6.0,09:30,15:30,Client Rework,E14,Completed,Detailing - Shop Drawing Editing
+6,3,18,34,2025-10-08,5.5,09:00,14:30,Internal Rework,E15,Completed,Detailing - Back Draft
+7,3,18,41,2025-10-08,5.0,10:00,15:00,IFRA,E16,Completed,Detailing - Back Checking
+16,16,3,1,2025-01-21,6.0,09:00,15:00,IFRA,Task-1,Completed,Modelling - Design Drawing Study
+17,16,3,2,2025-01-21,6.0,09:30,15:30,Client Rework,Task-2,Completed,Modelling - Project Meeting
+18,16,3,4,2025-01-22,6.0,09:00,15:00,Internal Rework,Task-3,Completed,Modelling - Model Member Placement
+19,16,3,5,2025-01-22,6.0,09:30,15:30,IFRA,Task-4,Completed,Modelling - Macro Creation
+20,16,3,6,2025-01-23,6.0,09:00,15:00,Client Rework,Task-5,Completed,Modelling - Main Steel Modelling
+21,16,3,7,2025-01-23,6.0,09:30,15:30,Internal Rework,Task-6,Completed,Modelling - Misc Steel Modelling
+22,16,3,10,2025-01-24,6.0,09:00,15:00,IFRA,Task-7,Completed,Checking - Model Checking
+23,16,3,11,2025-01-24,6.0,09:30,15:30,Client Rework,Task-8,Completed,Checking - E Sheet Checking
+24,16,3,12,2025-01-25,6.0,09:00,15:00,Internal Rework,Task-9,Completed,Checking - Shop Drawing Checking
+25,16,3,13,2025-01-25,6.0,09:30,15:30,IFRA,Task-10,Completed,Checking - RFI Creation
+26,16,3,16,2025-01-26,6.0,09:00,15:00,Client Rework,Task-11,Completed,Checking - COR Evaluation
+27,16,3,17,2025-01-26,1.5,10:00,11:30,Internal Rework,Task-12,Completed,Checking - Small update
+28,16,3,8,2025-01-27,6.0,09:00,15:00,IFRA,Task-13,Completed,Detailing - E Sheet Editing
+16,16,3,9,2025-01-27,6.0,09:30,15:30,Client Rework,Task-14,Completed,Detailing - Shop Drawing Editing
+17,16,3,34,2025-01-28,6.0,09:00,15:00,Internal Rework,Task-15,Completed,Detailing - Back Draft
+18,16,3,41,2025-01-28,4.5,10:00,14:30,IFRA,Task-16,Completed,Detailing - Back Checking
+16,16,4,1,2025-03-06,5.0,09:00,14:00,IFRA,Task-1,Completed,Initial modelling
+17,16,4,2,2025-03-06,3.8,09:30,13:15,Client Rework,Task-2,Completed,Model discussion
+18,16,4,4,2025-03-07,3.6,10:00,13:35,Internal Rework,Task-3,Completed,Member placement
+19,16,4,6,2025-03-07,4.1,09:00,13:10,IFRA,Task-4,Completed,Main steel modelling
+20,16,4,7,2025-03-08,4.0,09:30,13:30,Client Rework,Task-5,Completed,Misc steel modelling
+21,16,4,14,2025-03-08,3.7,09:00,13:00,Internal Rework,Task-6,Completed,Submission process
+22,16,4,10,2025-03-09,5.0,09:00,14:00,IFRA,Task-7,Completed,Checking model
+23,16,4,11,2025-03-09,4.8,09:30,14:00,Client Rework,Task-8,Completed,E-sheet checking
+24,16,4,12,2025-03-10,3.7,10:00,13:45,Internal Rework,Task-9,Completed,Shop drawing check
+25,16,4,13,2025-03-10,4.0,09:00,13:00,IFRA,Task-10,Completed,RFI creation
+26,16,4,16,2025-03-11,3.7,10:00,13:45,Client Rework,Task-11,Completed,COR evaluation
+27,16,4,8,2025-03-12,4.2,09:00,13:15,Internal Rework,Task-12,Completed,E-sheet detailing
+28,16,4,9,2025-03-12,3.9,09:30,13:25,IFRA,Task-13,Completed,Shop drawing detailing
+16,16,4,34,2025-03-13,3.5,10:00,13:30,Client Rework,Task-14,Completed,Back draft
+17,16,4,41,2025-03-13,3.5,09:30,13:00,Internal Rework,Task-15,Completed,Back checking
+17,16,19,6,2025-02-22,4.0,09:00,13:00,Main Steel Modelling,Tau Heights,Completed,Structural framework
+17,16,19,1,2025-02-22,2.0,14:00,16:00,Design Drawing Study,Tau Heights,Completed,Design analysis
+18,16,19,7,2025-02-23,3.5,09:30,13:00,Misc Steel Modelling,Tau Heights,Completed,Secondary elements
+18,16,19,5,2025-02-23,2.5,14:00,16:30,Macro Creation,Tau Heights,Completed,Automation setup
+19,16,19,32,2025-02-24,3.0,10:00,13:00,Model Correction,Tau Heights,Completed,Error resolution
+19,16,19,30,2025-02-24,2.0,14:00,16:00,Clash Check,Tau Heights,Completed,Interference check
+20,16,19,6,2025-02-25,3.0,09:00,12:00,Main Steel Modelling,Tau Heights,Completed,Beam placement
+20,16,19,4,2025-02-25,2.0,13:00,15:00,Model Member Placement,Tau Heights,Completed,Column setup
+21,16,19,7,2025-02-26,3.0,10:00,13:00,Misc Steel Modelling,Tau Heights,Completed,Connection details
+22,16,19,5,2025-02-26,2.0,14:00,16:00,Macro Creation,Tau Heights,Completed,Template work
+23,16,19,6,2025-02-27,3.0,09:00,12:00,Main Steel Modelling,Tau Heights,Completed,Foundation steel
+24,16,19,7,2025-02-27,2.0,13:00,15:00,Misc Steel Modelling,Tau Heights,Completed,Bracing elements
+25,16,19,4,2025-02-28,3.0,10:00,13:00,Model Member Placement,Tau Heights,Completed,Grid system
+17,16,19,10,2025-03-01,3.0,09:00,12:00,Model Checking,Tau Heights,Completed,Quality review
+18,16,19,11,2025-03-01,2.5,14:00,16:30,E Sheet Checking,Tau Heights,Completed,Drawings check
+19,16,19,12,2025-03-02,3.0,10:00,13:00,Shop Drawing Checking,Tau Heights,Completed,Fabrication drawings
+20,16,19,35,2025-03-02,2.0,14:00,16:00,Design Drawing Study(Checking),Tau Heights,Completed,Design compliance
+21,16,19,10,2025-03-03,2.8,09:00,11:48,Model Checking,Tau Heights,Completed,Model validation
+22,16,19,38,2025-03-03,2.0,13:00,15:00,Clash Check(Checking),Tau Heights,Completed,Interference review
+23,16,19,39,2025-03-04,2.0,10:00,12:00,1 to 1 Changes Review(Checking),Tau Heights,Completed,Change verification
+24,16,19,16,2025-03-04,2.5,14:00,16:30,COR Evaluation,Tau Heights,Completed,Change orders
+25,16,19,13,2025-03-05,3.0,09:00,12:00,RFI Creation,Tau Heights,Completed,Information requests
+26,16,19,17,2025-03-05,2.0,13:00,15:00,COR Updation,Tau Heights,Completed,Document updates
+27,16,19,41,2025-03-06,2.0,10:00,12:00,Back Checking(Checking),Tau Heights,Completed,Secondary review
+28,16,19,9,2025-03-06,2.3,14:00,16:18,Shop Drawing Editing,Tau Heights,Completed,Drawing modifications
+26,16,19,34,2025-03-07,2.0,09:00,11:00,Back Draft,Tau Heights,Completed,Revision work
+27,16,19,14,2025-03-07,2.0,13:00,15:00,Submission Process,Tau Heights,Completed,Client submission
+28,16,19,15,2025-03-08,2.0,10:00,12:00,Field Work,Tau Heights,Completed,Site coordination
+21,16,19,8,2025-03-08,2.0,14:00,16:00,E Sheet Editing,Tau Heights,Completed,Engineering edits
+22,16,19,21,2025-03-09,2.0,09:00,11:00,Shop Requirement Reports,Tau Heights,Completed,Material lists
+23,16,19,19,2025-03-09,1.5,13:00,14:30,Other Discipline Coord,Tau Heights,Completed,MEP coordination
+30,29,5,6,2025-02-01,5.0,09:00,14:00,Main Steel Modelling,Epsilon Mall,Completed,Structural modelling
+30,29,5,1,2025-02-01,3.0,14:30,17:30,Design Drawing Study,Epsilon Mall,Completed,Design analysis
+30,29,5,2,2025-02-02,2.0,10:00,12:00,Project Meeting,Epsilon Mall,Completed,Weekly coordination
+31,29,5,7,2025-02-01,4.0,09:00,13:00,Misc Steel Modelling,Epsilon Mall,Completed,Secondary steel
+31,29,5,5,2025-02-02,3.0,14:00,17:00,Macro Creation,Epsilon Mall,Completed,Template setup
+31,29,5,3,2025-02-03,2.0,11:00,13:00,Kick Off Meeting,Epsilon Mall,Completed,Project initiation
+32,29,5,32,2025-02-02,3.0,09:30,12:30,Model Correction,Epsilon Mall,Completed,Error fixing
+32,29,5,30,2025-02-03,3.0,14:00,17:00,Clash Check,Epsilon Mall,Completed,Interference check
+33,29,5,6,2025-02-01,4.0,10:00,14:00,Main Steel Modelling,Epsilon Mall,Completed,Beam placement
+33,29,5,4,2025-02-04,3.0,09:00,12:00,Model Member Placement,Epsilon Mall,Completed,Column setup
+34,29,5,7,2025-02-02,3.0,13:00,16:00,Misc Steel Modelling,Epsilon Mall,Completed,Bracing elements
+34,29,5,8,2025-02-03,3.0,10:00,13:00,E Sheet Editing,Epsilon Mall,Completed,Drawing edits
+35,29,5,5,2025-02-02,3.0,14:00,17:00,Macro Creation,Epsilon Mall,Completed,Automation scripts
+35,29,5,1,2025-02-04,2.0,09:00,11:00,Design Drawing Study,Epsilon Mall,Completed,Plan review
+36,29,5,6,2025-02-03,4.0,08:00,12:00,Main Steel Modelling,Epsilon Mall,Completed,Foundation steel
+37,29,5,7,2025-02-04,4.0,13:00,17:00,Misc Steel Modelling,Epsilon Mall,Completed,Connection details
+38,29,5,4,2025-02-05,4.0,09:00,13:00,Model Member Placement,Epsilon Mall,Completed,Grid setup
+30,29,5,10,2025-02-03,4.0,14:00,18:00,Model Checking,Epsilon Mall,Completed,Quality review
+30,29,5,12,2025-02-04,4.0,09:00,13:00,Shop Drawing Checking,Epsilon Mall,Completed,Drawing verification
+31,29,5,11,2025-02-04,4.0,14:00,18:00,E Sheet Checking,Epsilon Mall,Completed,Engineering drawings
+31,29,5,35,2025-02-05,3.5,10:00,13:30,Design Drawing Study(Checking),Epsilon Mall,Completed,Design compliance
+32,29,5,10,2025-02-04,4.0,09:00,13:00,Model Checking,Epsilon Mall,Completed,Model validation
+32,29,5,38,2025-02-05,3.0,14:00,17:00,Clash Check(Checking),Epsilon Mall,Completed,Interference review
+32,29,5,39,2025-02-06,3.0,10:00,13:00,1 to 1 Changes Review(Checking),Epsilon Mall,Completed,Change
+verification
+39,29,5,12,2025-02-03,3.0,13:00,16:00,Shop Drawing Checking,Epsilon Mall,Completed,Shop drawings
+39,29,5,11,2025-02-04,3.0,09:00,12:00,E Sheet Checking,Epsilon Mall,Completed,Fabrication drawings
+40,29,5,16,2025-02-05,4.0,10:00,14:00,COR Evaluation,Epsilon Mall,Completed,Change order review
+40,29,5,13,2025-02-06,3.0,14:00,17:00,RFI Creation,Epsilon Mall,Completed,Information requests
+41,29,5,17,2025-02-04,3.0,09:00,12:00,COR Updation,Epsilon Mall,Completed,Document updates
+41,29,5,41,2025-02-05,3.0,13:00,16:00,Back Checking(Checking),Epsilon Mall,Completed,Secondary review
+34,29,5,10,2025-02-06,4.0,08:00,12:00,Model Checking,Epsilon Mall,Completed,Final model check
+36,29,5,11,2025-02-05,4.0,14:00,18:00,E Sheet Checking,Epsilon Mall,Completed,Drawing package
+39,29,5,9,2025-02-06,3.0,10:00,13:00,Shop Drawing Editing,Epsilon Mall,Completed,Drawing modifications
+39,29,5,34,2025-02-07,2.0,14:00,16:00,Back Draft,Epsilon Mall,Completed,Revision work
+40,29,5,14,2025-02-07,3.0,09:00,12:00,Submission Process,Epsilon Mall,Completed,Client submission
+40,29,5,15,2025-02-08,3.0,13:00,16:00,Field Work,Epsilon Mall,Completed,Site coordination
+41,29,5,13,2025-02-07,3.0,10:00,13:00,RFI Creation,Epsilon Mall,Completed,Technical queries
+41,29,5,21,2025-02-08,2.5,14:00,16:30,Shop Requirement Reports,Epsilon Mall,Completed,Fabrication data
+38,29,5,8,2025-02-06,3.0,09:00,12:00,E Sheet Editing,Epsilon Mall,Completed,Engineering edits
+38,29,5,34,2025-02-07,2.0,13:00,15:00,Back Draft,Epsilon Mall,Completed,As-built updates
+37,29,5,9,2025-02-08,4.0,10:00,14:00,Shop Drawing Editing,Epsilon Mall,Completed,Detail drawings
+37,29,5,19,2025-02-09,2.0,14:00,16:00,Other Discipline Coord,Epsilon Mall,Completed,MEP coordination
+35,29,5,14,2025-02-07,3.0,09:00,12:00,Submission Process,Epsilon Mall,Completed,Approval process
+35,29,5,21,2025-02-08,2.0,13:00,15:00,Shop Requirement Reports,Epsilon Mall,Completed,Material lists
+33,29,5,15,2025-02-09,3.0,10:00,13:00,Field Work,Epsilon Mall,Completed,Site verification
+33,29,5,20,2025-02-10,2.0,14:00,16:00,Team Coord,Epsilon Mall,Completed,Team management
+30,29,6,6,2025-02-18,4.0,09:00,13:00,Main Steel Modelling,Zeta Complex,Completed,Structural framework
+30,29,6,1,2025-02-18,2.0,14:00,16:00,Design Drawing Study,Zeta Complex,Completed,Design analysis
+31,29,6,7,2025-02-19,3.5,09:30,13:00,Misc Steel Modelling,Zeta Complex,Completed,Secondary elements
+31,29,6,5,2025-02-19,2.5,14:00,16:30,Macro Creation,Zeta Complex,Completed,Automation setup
+32,29,6,32,2025-02-20,3.0,10:00,13:00,Model Correction,Zeta Complex,Completed,Error resolution
+32,29,6,30,2025-02-20,2.0,14:00,16:00,Clash Check,Zeta Complex,Completed,Interference check
+33,29,6,6,2025-02-21,3.0,09:00,12:00,Main Steel Modelling,Zeta Complex,Completed,Beam placement
+33,29,6,4,2025-02-21,2.0,13:00,15:00,Model Member Placement,Zeta Complex,Completed,Column setup
+34,29,6,7,2025-02-22,3.0,10:00,13:00,Misc Steel Modelling,Zeta Complex,Completed,Connection details
+35,29,6,5,2025-02-22,2.0,14:00,16:00,Macro Creation,Zeta Complex,Completed,Template work
+36,29,6,6,2025-02-23,3.0,09:00,12:00,Main Steel Modelling,Zeta Complex,Completed,Foundation steel
+37,29,6,7,2025-02-23,2.0,13:00,15:00,Misc Steel Modelling,Zeta Complex,Completed,Bracing elements
+38,29,6,4,2025-02-24,3.0,10:00,13:00,Model Member Placement,Zeta Complex,Completed,Grid system
+30,29,6,10,2025-02-25,3.0,09:00,12:00,Model Checking,Zeta Complex,Completed,Quality review
+31,29,6,11,2025-02-25,2.5,14:00,16:30,E Sheet Checking,Zeta Complex,Completed,Drawings check
+32,29,6,12,2025-02-26,3.0,10:00,13:00,Shop Drawing Checking,Zeta Complex,Completed,Fabrication drawings
+33,29,6,35,2025-02-26,2.0,14:00,16:00,Design Drawing Study(Checking),Zeta Complex,Completed,Design compliance
+34,29,6,10,2025-02-27,3.0,09:00,12:00,Model Checking,Zeta Complex,Completed,Model validation
+35,29,6,38,2025-02-27,2.0,13:00,15:00,Clash Check(Checking),Zeta Complex,Completed,Interference review
+36,29,6,39,2025-02-28,2.0,10:00,12:00,1 to 1 Changes Review(Checking),Zeta Complex,Completed,Change verification
+37,29,6,16,2025-02-28,2.5,14:00,16:30,COR Evaluation,Zeta Complex,Completed,Change orders
+38,29,6,13,2025-03-01,3.0,09:00,12:00,RFI Creation,Zeta Complex,Completed,Information requests
+39,29,6,17,2025-03-01,2.0,13:00,15:00,COR Updation,Zeta Complex,Completed,Document updates
+40,29,6,41,2025-03-02,2.5,10:00,12:30,Back Checking(Checking),Zeta Complex,Completed,Secondary review
+41,29,6,9,2025-03-02,2.0,14:00,16:00,Shop Drawing Editing,Zeta Complex,Completed,Drawing modifications
+39,29,6,34,2025-03-03,2.0,09:00,11:00,Back Draft,Zeta Complex,Completed,Revision work
+40,29,6,14,2025-03-03,2.5,13:00,15:30,Submission Process,Zeta Complex,Completed,Client submission
+41,29,6,15,2025-03-04,2.0,10:00,12:00,Field Work,Zeta Complex,Completed,Site coordination
+34,29,6,8,2025-03-04,2.0,14:00,16:00,E Sheet Editing,Zeta Complex,Completed,Engineering edits
+35,29,6,21,2025-03-05,2.0,09:00,11:00,Shop Requirement Reports,Zeta Complex,Completed,Material lists
+36,29,6,19,2025-03-05,1.5,13:00,14:30,Other Discipline Coord,Zeta Complex,Completed,MEP coordination
+30,29,21,6,2025-03-05,4.5,09:00,13:30,Main Steel Modelling,Phi Mall,Completed,Structural framework
+31,29,21,7,2025-03-05,3.5,14:00,17:30,Misc Steel Modelling,Phi Mall,Completed,Secondary steel
+32,29,21,1,2025-03-06,3.0,10:00,13:00,Design Drawing Study,Phi Mall,Completed,Design analysis
+33,29,21,5,2025-03-06,2.5,14:00,16:30,Macro Creation,Phi Mall,Completed,Automation setup
+34,29,21,4,2025-03-07,3.0,09:00,12:00,Model Member Placement,Phi Mall,Completed,Column placement
+35,29,21,32,2025-03-07,2.5,13:00,15:30,Model Correction,Phi Mall,Completed,Error fixing
+36,29,21,30,2025-03-08,3.0,10:00,13:00,Clash Check,Phi Mall,Completed,Interference check
+37,29,21,6,2025-03-08,3.0,14:00,17:00,Main Steel Modelling,Phi Mall,Completed,Beam work
+38,29,21,7,2025-03-09,3.0,09:00,12:00,Misc Steel Modelling,Phi Mall,Completed,Connections
+39,29,21,33,2025-03-09,2.0,13:00,15:00,Project discussion,Phi Mall,Completed,Team coordination
+40,29,21,4,2025-03-10,3.0,10:00,13:00,Model Member Placement,Phi Mall,Completed,Grid setup
+41,29,21,6,2025-03-10,2.5,14:00,16:30,Main Steel Modelling,Phi Mall,Completed,Foundation
+30,29,21,10,2025-03-11,3.5,09:00,12:30,Model Checking,Phi Mall,Completed,Quality review
+31,29,21,11,2025-03-11,3.0,13:30,16:30,E Sheet Checking,Phi Mall,Completed,Engineering drawings
+32,29,21,12,2025-03-12,3.0,10:00,13:00,Shop Drawing Checking,Phi Mall,Completed,Fabrication drawings
+33,29,21,35,2025-03-12,2.5,14:00,16:30,Design Drawing Study(Checking),Phi Mall,Completed,Design compliance
+34,29,21,38,2025-03-13,2.5,09:00,11:30,Clash Check(Checking),Phi Mall,Completed,Interference review
+35,29,21,39,2025-03-13,2.0,13:00,15:00,1 to 1 Changes Review(Checking),Phi Mall,Completed,Change verification
+36,29,21,16,2025-03-14,3.0,10:00,13:00,COR Evaluation,Phi Mall,Completed,Change orders
+37,29,21,13,2025-03-14,2.5,14:00,16:30,RFI Creation,Phi Mall,Completed,Information requests
+38,29,21,17,2025-03-15,2.5,09:00,11:30,COR Updation,Phi Mall,Completed,Document updates
+39,29,21,41,2025-03-15,2.0,13:00,15:00,Back Checking(Checking),Phi Mall,Completed,Secondary review
+40,29,21,10,2025-03-16,3.0,10:00,13:00,Model Checking,Phi Mall,Completed,Final check
+41,29,21,9,2025-03-16,2.5,14:00,16:30,Shop Drawing Editing,Phi Mall,Completed,Drawing edits
+30,29,21,34,2025-03-17,2.0,09:00,11:00,Back Draft,Phi Mall,Completed,Revision work
+31,29,21,14,2025-03-17,2.5,13:00,15:30,Submission Process,Phi Mall,Completed,Client submission
+32,29,21,15,2025-03-18,2.5,10:00,12:30,Field Work,Phi Mall,Completed,Site coordination
+33,29,21,8,2025-03-18,2.0,14:00,16:00,E Sheet Editing,Phi Mall,Completed,Engineering edits
+34,29,21,21,2025-03-19,2.0,09:00,11:00,Shop Requirement Reports,Phi Mall,Completed,Material lists
+35,29,21,19,2025-03-19,1.5,13:00,14:30,Other Discipline Coord,Phi Mall,Completed,MEP coordination
+36,29,21,20,2025-03-20,2.0,10:00,12:00,Team Coord,Phi Mall,Completed,Team management
+30,29,22,6,2025-03-10,4.0,09:00,13:00,Main Steel Modelling,Chi Complex,Completed,Structural work
+31,29,22,7,2025-03-10,3.5,14:00,17:30,Misc Steel Modelling,Chi Complex,Completed,Secondary elements
+32,29,22,1,2025-03-11,3.0,10:00,13:00,Design Drawing Study,Chi Complex,Completed,Design analysis
+33,29,22,5,2025-03-11,2.5,14:00,16:30,Macro Creation,Chi Complex,Completed,Automation setup
+34,29,22,4,2025-03-12,3.0,09:00,12:00,Model Member Placement,Chi Complex,Completed,Column setup
+35,29,22,32,2025-03-12,2.5,13:00,15:30,Model Correction,Chi Complex,Completed,Error resolution
+36,29,22,30,2025-03-13,3.0,10:00,13:00,Clash Check,Chi Complex,Completed,Interference check
+37,29,22,6,2025-03-13,3.0,14:00,17:00,Main Steel Modelling,Chi Complex,Completed,Beam placement
+38,29,22,7,2025-03-14,3.0,09:00,12:00,Misc Steel Modelling,Chi Complex,Completed,Connections
+39,29,22,33,2025-03-14,2.0,13:00,15:00,Project discussion,Chi Complex,Completed,Coordination
+40,29,22,4,2025-03-15,3.0,10:00,13:00,Model Member Placement,Chi Complex,Completed,Grid system
+41,29,22,6,2025-03-15,2.5,14:00,16:30,Main Steel Modelling,Chi Complex,Completed,Foundation
+30,29,22,10,2025-03-16,3.3,09:00,12:18,Model Checking,Chi Complex,Completed,Quality review
+31,29,22,11,2025-03-16,3.0,13:30,16:30,E Sheet Checking,Chi Complex,Completed,Engineering drawings
+32,29,22,12,2025-03-17,3.0,10:00,13:00,Shop Drawing Checking,Chi Complex,Completed,Fabrication drawings
+33,29,22,35,2025-03-17,2.5,14:00,16:30,Design Drawing Study(Checking),Chi Complex,Completed,Design compliance
+34,29,22,38,2025-03-18,2.3,09:00,11:18,Clash Check(Checking),Chi Complex,Completed,Interference review
+35,29,22,39,2025-03-18,2.0,13:00,15:00,1 to 1 Changes Review(Checking),Chi Complex,Completed,Change verification
+36,29,22,16,2025-03-19,3.0,10:00,13:00,COR Evaluation,Chi Complex,Completed,Change orders
+37,29,22,13,2025-03-19,2.5,14:00,16:30,RFI Creation,Chi Complex,Completed,Information requests
+38,29,22,17,2025-03-20,2.5,09:00,11:30,COR Updation,Chi Complex,Completed,Document updates
+39,29,22,41,2025-03-20,2.0,13:00,15:00,Back Checking(Checking),Chi Complex,Completed,Secondary review
+40,29,22,10,2025-03-21,2.7,10:00,12:42,Model Checking,Chi Complex,Completed,Final check
+41,29,22,9,2025-03-21,2.5,14:00,16:30,Shop Drawing Editing,Chi Complex,Completed,Drawing edits
+30,29,22,34,2025-03-22,2.0,09:00,11:00,Back Draft,Chi Complex,Completed,Revision work
+31,29,22,14,2025-03-22,2.3,13:00,15:18,Submission Process,Chi Complex,Completed,Client submission
+32,29,22,15,2025-03-23,2.5,10:00,12:30,Field Work,Chi Complex,Completed,Site coordination
+33,29,22,8,2025-03-23,2.0,14:00,16:00,E Sheet Editing,Chi Complex,Completed,Engineering edits
+34,29,22,21,2025-03-24,2.0,09:00,11:00,Shop Requirement Reports,Chi Complex,Completed,Material lists
+35,29,22,19,2025-03-24,1.5,13:00,14:30,Other Discipline Coord,Chi Complex,Completed,MEP coordination
+43,42,7,6,2025-03-01,4.5,09:00,13:30,Main Steel Modelling,Eta Gardens,Completed,Structural framework
+43,42,7,1,2025-03-01,2.5,14:00,16:30,Design Drawing Study,Eta Gardens,Completed,Design analysis
+44,42,7,7,2025-03-02,4.0,09:30,13:30,Misc Steel Modelling,Eta Gardens,Completed,Secondary elements
+44,42,7,5,2025-03-02,3.0,14:00,17:00,Macro Creation,Eta Gardens,Completed,Automation setup
+45,42,7,32,2025-03-03,3.5,10:00,13:30,Model Correction,Eta Gardens,Completed,Error resolution
+45,42,7,30,2025-03-03,2.5,14:00,16:30,Clash Check,Eta Gardens,Completed,Interference check
+46,42,7,6,2025-03-04,3.5,09:00,12:30,Main Steel Modelling,Eta Gardens,Completed,Beam placement
+46,42,7,4,2025-03-04,2.5,13:00,15:30,Model Member Placement,Eta Gardens,Completed,Column setup
+47,42,7,7,2025-03-05,3.5,10:00,13:30,Misc Steel Modelling,Eta Gardens,Completed,Connection details
+48,42,7,5,2025-03-05,2.5,14:00,16:30,Macro Creation,Eta Gardens,Completed,Template work
+49,42,7,6,2025-03-06,3.5,09:00,12:30,Main Steel Modelling,Eta Gardens,Completed,Foundation steel
+50,42,7,7,2025-03-06,2.5,13:00,15:30,Misc Steel Modelling,Eta Gardens,Completed,Bracing elements
+51,42,7,4,2025-03-07,3.5,10:00,13:30,Model Member Placement,Eta Gardens,Completed,Grid system
+52,42,7,33,2025-03-07,2.0,14:00,16:00,Project discussion,Eta Gardens,Completed,Team coordination
+43,42,7,10,2025-03-08,3.5,09:00,12:30,Model Checking,Eta Gardens,Completed,Quality review
+44,42,7,11,2025-03-08,3.0,13:30,16:30,E Sheet Checking,Eta Gardens,Completed,Drawings check
+45,42,7,12,2025-03-09,3.5,10:00,13:30,Shop Drawing Checking,Eta Gardens,Completed,Fabrication drawings
+46,42,7,35,2025-03-09,2.5,14:00,16:30,Design Drawing Study(Checking),Eta Gardens,Completed,Design compliance
+47,42,7,38,2025-03-10,2.5,09:00,11:30,Clash Check(Checking),Eta Gardens,Completed,Interference review
+48,42,7,39,2025-03-10,2.0,13:00,15:00,1 to 1 Changes Review(Checking),Eta Gardens,Completed,Change verification
+49,42,7,16,2025-03-11,3.0,10:00,13:00,COR Evaluation,Eta Gardens,Completed,Change orders
+50,42,7,13,2025-03-11,2.5,14:00,16:30,RFI Creation,Eta Gardens,Completed,Information requests
+51,42,7,17,2025-03-12,2.5,09:00,11:30,COR Updation,Eta Gardens,Completed,Document updates
+52,42,7,41,2025-03-12,2.0,13:00,15:00,Back Checking(Checking),Eta Gardens,Completed,Secondary review
+53,42,7,9,2025-03-13,2.5,10:00,12:30,Shop Drawing Editing,Eta Gardens,Completed,Drawing modifications
+54,42,7,34,2025-03-13,2.0,14:00,16:00,Back Draft,Eta Gardens,Completed,Revision work
+53,42,7,14,2025-03-14,2.5,09:00,11:30,Submission Process,Eta Gardens,Completed,Client submission
+54,42,7,15,2025-03-14,2.5,13:00,15:30,Field Work,Eta Gardens,Completed,Site coordination
+47,42,7,8,2025-03-15,2.5,10:00,12:30,E Sheet Editing,Eta Gardens,Completed,Engineering edits
+48,42,7,21,2025-03-15,2.0,14:00,16:00,Shop Requirement Reports,Eta Gardens,Completed,Material lists
+49,42,7,19,2025-03-16,2.0,09:00,11:00,Other Discipline Coord,Eta Gardens,Completed,MEP coordination
+50,42,7,20,2025-03-16,2.0,13:00,15:00,Team Coord,Eta Gardens,Completed,Team management
+43,42,8,6,2025-03-10,3.5,09:00,12:30,Main Steel Modelling,Theta Residency,Completed,Structural work
+43,42,8,1,2025-03-10,2.0,14:00,16:00,Design Drawing Study,Theta Residency,Completed,Design analysis
+44,42,8,7,2025-03-11,3.0,09:30,12:30,Misc Steel Modelling,Theta Residency,Completed,Secondary steel
+44,42,8,5,2025-03-11,2.0,14:00,16:00,Macro Creation,Theta Residency,Completed,Automation setup
+45,42,8,32,2025-03-12,2.5,10:00,12:30,Model Correction,Theta Residency,Completed,Error fixing
+45,42,8,30,2025-03-12,2.0,14:00,16:00,Clash Check,Theta Residency,Completed,Interference check
+46,42,8,6,2025-03-13,3.0,09:00,12:00,Main Steel Modelling,Theta Residency,Completed,Beam work
+46,42,8,4,2025-03-13,2.0,13:00,15:00,Model Member Placement,Theta Residency,Completed,Column setup
+47,42,8,7,2025-03-14,2.5,10:00,12:30,Misc Steel Modelling,Theta Residency,Completed,Connections
+48,42,8,5,2025-03-14,2.0,14:00,16:00,Macro Creation,Theta Residency,Completed,Template creation
+49,42,8,6,2025-03-15,2.5,09:00,11:30,Main Steel Modelling,Theta Residency,Completed,Foundation
+50,42,8,7,2025-03-15,2.0,13:00,15:00,Misc Steel Modelling,Theta Residency,Completed,Bracing
+51,42,8,4,2025-03-16,2.5,10:00,12:30,Model Member Placement,Theta Residency,Completed,Grid setup
+52,42,8,33,2025-03-16,1.5,14:00,15:30,Project discussion,Theta Residency,Completed,Team coordination
+43,42,8,10,2025-03-17,2.8,09:00,11:48,Model Checking,Theta Residency,Completed,Quality review
+44,42,8,11,2025-03-17,2.5,14:00,16:30,E Sheet Checking,Theta Residency,Completed,Engineering drawings
+45,42,8,12,2025-03-18,2.5,10:00,12:30,Shop Drawing Checking,Theta Residency,Completed,Fabrication drawings
+46,42,8,35,2025-03-18,2.0,14:00,16:00,Design Drawing Study(Checking),Theta Residency,Completed,Design compliance
+47,42,8,38,2025-03-19,2.0,09:00,11:00,Clash Check(Checking),Theta Residency,Completed,Interference review
+48,42,8,39,2025-03-19,1.8,13:00,14:48,1 to 1 Changes Review(Checking),Theta Residency,Completed,Change verification
+49,42,8,16,2025-03-20,2.5,10:00,12:30,COR Evaluation,Theta Residency,Completed,Change orders
+50,42,8,13,2025-03-20,2.2,14:00,16:12,RFI Creation,Theta Residency,Completed,Information requests
+51,42,8,17,2025-03-21,2.0,09:00,11:00,COR Updation,Theta Residency,Completed,Document updates
+52,42,8,41,2025-03-21,1.8,13:00,14:48,Back Checking(Checking),Theta Residency,Completed,Secondary review
+53,42,8,9,2025-03-22,2.0,10:00,12:00,Shop Drawing Editing,Theta Residency,Completed,Drawing edits
+54,42,8,34,2025-03-22,1.8,14:00,15:48,Back Draft,Theta Residency,Completed,Revision work
+53,42,8,14,2025-03-23,2.0,09:00,11:00,Submission Process,Theta Residency,Completed,Client submission
+54,42,8,15,2025-03-23,1.8,13:00,14:48,Field Work,Theta Residency,Completed,Site coordination
+47,42,8,8,2025-03-24,2.0,10:00,12:00,E Sheet Editing,Theta Residency,Completed,Engineering edits
+48,42,8,21,2025-03-24,1.5,14:00,15:30,Shop Requirement Reports,Theta Residency,Completed,Material lists
+43,42,23,6,2025-02-25,4.0,09:00,13:00,Main Steel Modelling,Psi Gardens,Completed,Structural framework
+43,42,23,1,2025-02-25,2.5,14:00,16:30,Design Drawing Study,Psi Gardens,Completed,Design analysis
+44,42,23,7,2025-02-26,3.5,09:30,13:00,Misc Steel Modelling,Psi Gardens,Completed,Secondary elements
+44,42,23,5,2025-02-26,3.0,14:00,17:00,Macro Creation,Psi Gardens,Completed,Automation setup
+45,42,23,32,2025-02-27,3.5,10:00,13:30,Model Correction,Psi Gardens,Completed,Error resolution
+45,42,23,30,2025-02-27,2.5,14:00,16:30,Clash Check,Psi Gardens,Completed,Interference check
+46,42,23,6,2025-02-28,3.5,09:00,12:30,Main Steel Modelling,Psi Gardens,Completed,Beam placement
+46,42,23,4,2025-02-28,2.5,13:00,15:30,Model Member Placement,Psi Gardens,Completed,Column setup
+47,42,23,7,2025-03-01,3.5,10:00,13:30,Misc Steel Modelling,Psi Gardens,Completed,Connection details
+48,42,23,5,2025-03-01,2.5,14:00,16:30,Macro Creation,Psi Gardens,Completed,Template work
+49,42,23,6,2025-03-02,3.0,09:00,12:00,Main Steel Modelling,Psi Gardens,Completed,Foundation steel
+50,42,23,7,2025-03-02,2.5,13:00,15:30,Misc Steel Modelling,Psi Gardens,Completed,Bracing elements
+51,42,23,4,2025-03-03,3.0,10:00,13:00,Model Member Placement,Psi Gardens,Completed,Grid system
+52,42,23,33,2025-03-03,2.0,14:00,16:00,Project discussion,Psi Gardens,Completed,Team coordination
+43,42,23,10,2025-03-04,3.5,09:00,12:30,Model Checking,Psi Gardens,Completed,Quality review
+44,42,23,11,2025-03-04,3.0,13:30,16:30,E Sheet Checking,Psi Gardens,Completed,Drawings check
+45,42,23,12,2025-03-05,3.5,10:00,13:30,Shop Drawing Checking,Psi Gardens,Completed,Fabrication drawings
+46,42,23,35,2025-03-05,2.5,14:00,16:30,Design Drawing Study(Checking),Psi Gardens,Completed,Design compliance
+47,42,23,38,2025-03-06,2.5,09:00,11:30,Clash Check(Checking),Psi Gardens,Completed,Interference review
+48,42,23,39,2025-03-06,2.0,13:00,15:00,1 to 1 Changes Review(Checking),Psi Gardens,Completed,Change verification
+49,42,23,16,2025-03-07,3.0,10:00,13:00,COR Evaluation,Psi Gardens,Completed,Change orders
+50,42,23,13,2025-03-07,2.5,14:00,16:30,RFI Creation,Psi Gardens,Completed,Information requests
+51,42,23,17,2025-03-08,2.5,09:00,11:30,COR Updation,Psi Gardens,Completed,Document updates
+52,42,23,41,2025-03-08,2.0,13:00,15:00,Back Checking(Checking),Psi Gardens,Completed,Secondary review
+53,42,23,9,2025-03-09,2.5,10:00,12:30,Shop Drawing Editing,Psi Gardens,Completed,Drawing modifications
+54,42,23,34,2025-03-09,2.0,14:00,16:00,Back Draft,Psi Gardens,Completed,Revision work
+53,42,23,14,2025-03-10,2.5,09:00,11:30,Submission Process,Psi Gardens,Completed,Client submission
+54,42,23,15,2025-03-10,2.5,13:00,15:30,Field Work,Psi Gardens,Completed,Site coordination
+47,42,23,8,2025-03-11,2.5,10:00,12:30,E Sheet Editing,Psi Gardens,Completed,Engineering edits
+48,42,23,21,2025-03-11,2.0,14:00,16:00,Shop Requirement Reports,Psi Gardens,Completed,Material lists
+43,42,24,6,2025-03-02,4.0,09:00,13:00,Main Steel Modelling,Omega Residency,Completed,Structural framework
+43,42,24,1,2025-03-02,2.0,14:00,16:00,Design Drawing Study,Omega Residency,Completed,Design analysis
+44,42,24,7,2025-03-03,3.5,09:30,13:00,Misc Steel Modelling,Omega Residency,Completed,Secondary elements
+44,42,24,5,2025-03-03,2.5,14:00,16:30,Macro Creation,Omega Residency,Completed,Automation setup
+45,42,24,32,2025-03-04,3.0,10:00,13:00,Model Correction,Omega Residency,Completed,Error resolution
+45,42,24,30,2025-03-04,2.0,14:00,16:00,Clash Check,Omega Residency,Completed,Interference check
+46,42,24,6,2025-03-05,3.0,09:00,12:00,Main Steel Modelling,Omega Residency,Completed,Beam placement
+46,42,24,4,2025-03-05,2.0,13:00,15:00,Model Member Placement,Omega Residency,Completed,Column setup
+47,42,24,7,2025-03-06,3.0,10:00,13:00,Misc Steel Modelling,Omega Residency,Completed,Connection details
+48,42,24,5,2025-03-06,2.0,14:00,16:00,Macro Creation,Omega Residency,Completed,Template work
+49,42,24,6,2025-03-07,2.5,09:00,11:30,Main Steel Modelling,Omega Residency,Completed,Foundation steel
+50,42,24,7,2025-03-07,2.0,13:00,15:00,Misc Steel Modelling,Omega Residency,Completed,Bracing elements
+51,42,24,4,2025-03-08,2.5,10:00,12:30,Model Member Placement,Omega Residency,Completed,Grid system
+52,42,24,33,2025-03-08,1.5,14:00,15:30,Project discussion,Omega Residency,Completed,Team coordination
+43,42,24,10,2025-03-09,3.0,09:00,12:00,Model Checking,Omega Residency,Completed,Quality review
+44,42,24,11,2025-03-09,2.5,14:00,16:30,E Sheet Checking,Omega Residency,Completed,Drawings check
+45,42,24,12,2025-03-10,3.0,10:00,13:00,Shop Drawing Checking,Omega Residency,Completed,Fabrication drawings
+46,42,24,35,2025-03-10,2.5,14:00,16:30,Design Drawing Study(Checking),Omega Residency,Completed,Design compliance
+47,42,24,38,2025-03-11,2.5,09:00,11:30,Clash Check(Checking),Omega Residency,Completed,Interference review
+48,42,24,39,2025-03-11,2.0,13:00,15:00,1 to 1 Changes Review(Checking),Omega Residency,Completed,Change verification
+49,42,24,16,2025-03-12,2.5,10:00,12:30,COR Evaluation,Omega Residency,Completed,Change orders
+50,42,24,13,2025-03-12,2.5,14:00,16:30,RFI Creation,Omega Residency,Completed,Information requests
+51,42,24,17,2025-03-13,2.5,09:00,11:30,COR Updation,Omega Residency,Completed,Document updates
+52,42,24,41,2025-03-13,2.0,13:00,15:00,Back Checking(Checking),Omega Residency,Completed,Secondary review
+53,42,24,9,2025-03-14,2.5,10:00,12:30,Shop Drawing Editing,Omega Residency,Completed,Drawing modifications
+54,42,24,34,2025-03-14,2.0,14:00,16:00,Back Draft,Omega Residency,Completed,Revision work
+53,42,24,14,2025-03-15,2.5,09:00,11:30,Submission Process,Omega Residency,Completed,Client submission
+54,42,24,15,2025-03-15,2.5,13:00,15:30,Field Work,Omega Residency,Completed,Site coordination
+47,42,24,8,2025-03-16,2.5,10:00,12:30,E Sheet Editing,Omega Residency,Completed,Engineering edits
+48,42,24,21,2025-03-16,2.0,14:00,16:00,Shop Requirement Reports,Omega Residency,Completed,Material lists
+56,55,9,6,2025-01-25,4.5,09:00,13:30,Main Steel Modelling,Iota Towers,Completed,Structural framework
+56,55,9,1,2025-01-25,2.5,14:00,16:30,Design Drawing Study,Iota Towers,Completed,Design analysis
+57,55,9,7,2025-01-26,4.0,09:30,13:30,Misc Steel Modelling,Iota Towers,Completed,Secondary elements
+57,55,9,5,2025-01-26,3.0,14:00,17:00,Macro Creation,Iota Towers,Completed,Automation setup
+58,55,9,32,2025-01-27,3.5,10:00,13:30,Model Correction,Iota Towers,Completed,Error resolution
+58,55,9,30,2025-01-27,2.5,14:00,16:30,Clash Check,Iota Towers,Completed,Interference check
+59,55,9,6,2025-01-28,3.5,09:00,12:30,Main Steel Modelling,Iota Towers,Completed,Beam placement
+59,55,9,4,2025-01-28,2.5,13:00,15:30,Model Member Placement,Iota Towers,Completed,Column setup
+60,55,9,7,2025-01-29,3.5,10:00,13:30,Misc Steel Modelling,Iota Towers,Completed,Connection details
+61,55,9,5,2025-01-29,2.5,14:00,16:30,Macro Creation,Iota Towers,Completed,Template work
+62,55,9,6,2025-01-30,3.5,09:00,12:30,Main Steel Modelling,Iota Towers,Completed,Foundation steel
+63,55,9,7,2025-01-30,2.5,13:00,15:30,Misc Steel Modelling,Iota Towers,Completed,Bracing elements
+64,55,9,4,2025-01-31,3.5,10:00,13:30,Model Member Placement,Iota Towers,Completed,Grid system
+65,55,9,33,2025-01-31,2.0,14:00,16:00,Project discussion,Iota Towers,Completed,Team coordination
+56,55,9,10,2025-02-01,3.5,09:00,12:30,Model Checking,Iota Towers,Completed,Quality review
+57,55,9,11,2025-02-01,3.0,13:30,16:30,E Sheet Checking,Iota Towers,Completed,Drawings check
+58,55,9,12,2025-02-02,3.5,10:00,13:30,Shop Drawing Checking,Iota Towers,Completed,Fabrication drawings
+59,55,9,35,2025-02-02,2.5,14:00,16:30,Design Drawing Study(Checking),Iota Towers,Completed,Design compliance
+60,55,9,38,2025-02-03,2.5,09:00,11:30,Clash Check(Checking),Iota Towers,Completed,Interference review
+61,55,9,39,2025-02-03,2.0,13:00,15:00,1 to 1 Changes Review(Checking),Iota Towers,Completed,Change verification
+62,55,9,16,2025-02-04,3.0,10:00,13:00,COR Evaluation,Iota Towers,Completed,Change orders
+63,55,9,13,2025-02-04,2.5,14:00,16:30,RFI Creation,Iota Towers,Completed,Information requests
+64,55,9,17,2025-02-05,2.5,09:00,11:30,COR Updation,Iota Towers,Completed,Document updates
+65,55,9,41,2025-02-05,2.0,13:00,15:00,Back Checking(Checking),Iota Towers,Completed,Secondary review
+66,55,9,9,2025-02-06,2.5,10:00,12:30,Shop Drawing Editing,Iota Towers,Completed,Drawing modifications
+67,55,9,34,2025-02-06,2.0,14:00,16:00,Back Draft,Iota Towers,Completed,Revision work
+66,55,9,14,2025-02-07,2.5,09:00,11:30,Submission Process,Iota Towers,Completed,Client submission
+67,55,9,15,2025-02-07,2.5,13:00,15:30,Field Work,Iota Towers,Completed,Site coordination
+60,55,9,8,2025-02-08,2.5,10:00,12:30,E Sheet Editing,Iota Towers,Completed,Engineering edits
+61,55,9,21,2025-02-08,2.0,14:00,16:00,Shop Requirement Reports,Iota Towers,Completed,Material lists
+62,55,9,19,2025-02-09,2.0,09:00,11:00,Other Discipline Coord,Iota Towers,Completed,MEP coordination
+63,55,9,20,2025-02-09,1.8,13:00,14:48,Team Coord,Iota Towers,Completed,Team management
+56,55,10,6,2025-02-12,3.5,09:00,12:30,Main Steel Modelling,Kappa Plaza,Completed,Structural work
+56,55,10,1,2025-02-12,2.0,14:00,16:00,Design Drawing Study,Kappa Plaza,Completed,Design analysis
+57,55,10,7,2025-02-13,3.0,09:30,12:30,Misc Steel Modelling,Kappa Plaza,Completed,Secondary steel
+57,55,10,5,2025-02-13,2.0,14:00,16:00,Macro Creation,Kappa Plaza,Completed,Automation setup
+58,55,10,32,2025-02-14,2.5,10:00,12:30,Model Correction,Kappa Plaza,Completed,Error fixing
+58,55,10,30,2025-02-14,2.0,14:00,16:00,Clash Check,Kappa Plaza,Completed,Interference check
+59,55,10,6,2025-02-15,3.0,09:00,12:00,Main Steel Modelling,Kappa Plaza,Completed,Beam work
+59,55,10,4,2025-02-15,2.0,13:00,15:00,Model Member Placement,Kappa Plaza,Completed,Column setup
+60,55,10,7,2025-02-16,2.5,10:00,12:30,Misc Steel Modelling,Kappa Plaza,Completed,Connections
+61,55,10,5,2025-02-16,2.0,14:00,16:00,Macro Creation,Kappa Plaza,Completed,Template creation
+62,55,10,6,2025-02-17,2.5,09:00,11:30,Main Steel Modelling,Kappa Plaza,Completed,Foundation
+63,55,10,7,2025-02-17,2.0,13:00,15:00,Misc Steel Modelling,Kappa Plaza,Completed,Bracing
+56,55,10,10,2025-02-18,3.0,09:00,12:00,Model Checking,Kappa Plaza,Completed,Quality review
+57,55,10,11,2025-02-18,2.5,14:00,16:30,E Sheet Checking,Kappa Plaza,Completed,Engineering drawings
+58,55,10,12,2025-02-19,2.5,10:00,12:30,Shop Drawing Checking,Kappa Plaza,Completed,Fabrication drawings
+59,55,10,35,2025-02-19,2.0,14:00,16:00,Design Drawing Study(Checking),Kappa Plaza,Completed,Design compliance
+60,55,10,38,2025-02-20,2.0,09:00,11:00,Clash Check(Checking),Kappa Plaza,Completed,Interference review
+61,55,10,39,2025-02-20,2.0,13:00,15:00,1 to 1 Changes Review(Checking),Kappa Plaza,Completed,Change verification
+62,55,10,16,2025-02-21,2.5,10:00,12:30,COR Evaluation,Kappa Plaza,Completed,Change orders
+63,55,10,13,2025-02-21,2.5,14:00,16:30,RFI Creation,Kappa Plaza,Completed,Information requests
+64,55,10,17,2025-02-22,2.0,09:00,11:00,COR Updation,Kappa Plaza,Completed,Document updates
+65,55,10,41,2025-02-22,2.0,13:00,15:00,Back Checking(Checking),Kappa Plaza,Completed,Secondary review
+66,55,10,9,2025-02-23,2.0,10:00,12:00,Shop Drawing Editing,Kappa Plaza,Completed,Drawing edits
+67,55,10,34,2025-02-23,2.0,14:00,16:00,Back Draft,Kappa Plaza,Completed,Revision work
+66,55,10,14,2025-02-24,2.0,09:00,11:00,Submission Process,Kappa Plaza,Completed,Client submission
+67,55,10,15,2025-02-24,2.0,13:00,15:00,Field Work,Kappa Plaza,Completed,Site coordination
+69,68,11,6,2025-01-15,4.5,09:00,13:30,Main Steel Modelling,Lambda Heights,Completed,Structural framework
+69,68,11,1,2025-01-15,3.0,14:00,17:00,Design Drawing Study,Lambda Heights,Completed,Design analysis
+70,68,11,7,2025-01-16,4.0,09:30,13:30,Misc Steel Modelling,Lambda Heights,Completed,Secondary elements
+70,68,11,5,2025-01-16,3.0,14:00,17:00,Macro Creation,Lambda Heights,Completed,Automation setup
+71,68,11,32,2025-01-17,3.5,10:00,13:30,Model Correction,Lambda Heights,Completed,Error resolution
+71,68,11,30,2025-01-17,2.5,14:00,16:30,Clash Check,Lambda Heights,Completed,Interference check
+72,68,11,6,2025-01-18,3.5,09:00,12:30,Main Steel Modelling,Lambda Heights,Completed,Beam placement
+72,68,11,4,2025-01-18,2.5,13:00,15:30,Model Member Placement,Lambda Heights,Completed,Column setup
+73,68,11,7,2025-01-19,3.5,10:00,13:30,Misc Steel Modelling,Lambda Heights,Completed,Connection details
+74,68,11,5,2025-01-19,2.5,14:00,16:30,Macro Creation,Lambda Heights,Completed,Template work
+75,68,11,6,2025-01-20,3.5,09:00,12:30,Main Steel Modelling,Lambda Heights,Completed,Foundation steel
+76,68,11,7,2025-01-20,2.5,13:00,15:30,Misc Steel Modelling,Lambda Heights,Completed,Bracing elements
+77,68,11,4,2025-01-21,3.5,10:00,13:30,Model Member Placement,Lambda Heights,Completed,Grid system
+78,68,11,33,2025-01-21,2.0,14:00,16:00,Project discussion,Lambda Heights,Completed,Team coordination
+79,68,11,6,2025-01-22,3.0,09:00,12:00,Main Steel Modelling,Lambda Heights,Completed,Additional steel work
+80,68,11,7,2025-01-22,2.0,13:00,15:00,Misc Steel Modelling,Lambda Heights,Completed,Final connections
+69,68,11,10,2025-01-23,3.5,09:00,12:30,Model Checking,Lambda Heights,Completed,Quality review
+70,68,11,11,2025-01-23,3.0,13:30,16:30,E Sheet Checking,Lambda Heights,Completed,Drawings check
+71,68,11,12,2025-01-24,3.5,10:00,13:30,Shop Drawing Checking,Lambda Heights,Completed,Fabrication drawings
+72,68,11,35,2025-01-24,2.5,14:00,16:30,Design Drawing Study(Checking),Lambda Heights,Completed,Design compliance
+73,68,11,38,2025-01-25,2.5,09:00,11:30,Clash Check(Checking),Lambda Heights,Completed,Interference review
+74,68,11,39,2025-01-25,2.0,13:00,15:00,1 to 1 Changes Review(Checking),Lambda Heights,Completed,Change verification
+75,68,11,16,2025-01-26,3.0,10:00,13:00,COR Evaluation,Lambda Heights,Completed,Change orders
+76,68,11,13,2025-01-26,2.5,14:00,16:30,RFI Creation,Lambda Heights,Completed,Information requests
+77,68,11,17,2025-01-27,2.5,09:00,11:30,COR Updation,Lambda Heights,Completed,Document updates
+78,68,11,41,2025-01-27,2.0,13:00,15:00,Back Checking(Checking),Lambda Heights,Completed,Secondary review
+79,68,11,10,2025-01-28,3.0,10:00,13:00,Model Checking,Lambda Heights,Completed,Final model check
+80,68,11,11,2025-01-28,2.5,14:00,16:30,E Sheet Checking,Lambda Heights,Completed,Engineering drawings
+69,68,11,9,2025-01-29,2.5,09:00,11:30,Shop Drawing Editing,Lambda Heights,Completed,Drawing modifications
+70,68,11,34,2025-01-29,2.0,13:00,15:00,Back Draft,Lambda Heights,Completed,Revision work
+71,68,11,14,2025-01-30,2.5,10:00,12:30,Submission Process,Lambda Heights,Completed,Client submission
+72,68,11,15,2025-01-30,2.5,13:00,15:30,Field Work,Lambda Heights,Completed,Site coordination
+73,68,11,8,2025-01-31,2.5,09:00,11:30,E Sheet Editing,Lambda Heights,Completed,Engineering edits
+74,68,11,21,2025-01-31,2.0,13:00,15:00,Shop Requirement Reports,Lambda Heights,Completed,Material lists
+75,68,11,19,2025-02-01,2.0,10:00,12:00,Other Discipline Coord,Lambda Heights,Completed,MEP coordination
+76,68,11,20,2025-02-01,2.0,13:00,15:00,Team Coord,Lambda Heights,Completed,Team management
+69,68,12,6,2025-02-05,4.0,09:00,13:00,Main Steel Modelling,Mu Residency,Completed,Structural framework
+69,68,12,1,2025-02-05,2.0,14:00,16:00,Design Drawing Study,Mu Residency,Completed,Design analysis
+70,68,12,7,2025-02-06,3.5,09:30,13:00,Misc Steel Modelling,Mu Residency,Completed,Secondary elements
+70,68,12,5,2025-02-06,2.5,14:00,16:30,Macro Creation,Mu Residency,Completed,Automation setup
+71,68,12,32,2025-02-07,3.0,10:00,13:00,Model Correction,Mu Residency,Completed,Error resolution
+71,68,12,30,2025-02-07,2.0,14:00,16:00,Clash Check,Mu Residency,Completed,Interference check
+72,68,12,6,2025-02-08,3.0,09:00,12:00,Main Steel Modelling,Mu Residency,Completed,Beam placement
+72,68,12,4,2025-02-08,2.0,13:00,15:00,Model Member Placement,Mu Residency,Completed,Column setup
+73,68,12,7,2025-02-09,3.0,10:00,13:00,Misc Steel Modelling,Mu Residency,Completed,Connection details
+74,68,12,5,2025-02-09,2.0,14:00,16:00,Macro Creation,Mu Residency,Completed,Template work
+75,68,12,6,2025-02-10,2.5,09:00,11:30,Main Steel Modelling,Mu Residency,Completed,Foundation steel
+76,68,12,7,2025-02-10,2.0,13:00,15:00,Misc Steel Modelling,Mu Residency,Completed,Bracing elements
+77,68,12,4,2025-02-11,2.5,10:00,12:30,Model Member Placement,Mu Residency,Completed,Grid system
+78,68,12,33,2025-02-11,1.5,14:00,15:30,Project discussion,Mu Residency,Completed,Team coordination
+69,68,12,10,2025-02-12,3.0,09:00,12:00,Model Checking,Mu Residency,Completed,Quality review
+70,68,12,11,2025-02-12,2.5,14:00,16:30,E Sheet Checking,Mu Residency,Completed,Drawings check
+71,68,12,12,2025-02-13,3.0,10:00,13:00,Shop Drawing Checking,Mu Residency,Completed,Fabrication drawings
+72,68,12,35,2025-02-13,2.5,14:00,16:30,Design Drawing Study(Checking),Mu Residency,Completed,Design compliance
+73,68,12,38,2025-02-14,2.5,09:00,11:30,Clash Check(Checking),Mu Residency,Completed,Interference review
+74,68,12,39,2025-02-14,2.0,13:00,15:00,1 to 1 Changes Review(Checking),Mu Residency,Completed,Change verification
+75,68,12,16,2025-02-15,2.5,10:00,12:30,COR Evaluation,Mu Residency,Completed,Change orders
+76,68,12,13,2025-02-15,2.5,14:00,16:30,RFI Creation,Mu Residency,Completed,Information requests
+77,68,12,17,2025-02-16,2.5,09:00,11:30,COR Updation,Mu Residency,Completed,Document updates
+78,68,12,41,2025-02-16,2.0,13:00,15:00,Back Checking(Checking),Mu Residency,Completed,Secondary review
+79,68,12,9,2025-02-17,2.5,10:00,12:30,Shop Drawing Editing,Mu Residency,Completed,Drawing modifications
+80,68,12,34,2025-02-17,2.0,14:00,16:00,Back Draft,Mu Residency,Completed,Revision work
+79,68,12,14,2025-02-18,2.5,09:00,11:30,Submission Process,Mu Residency,Completed,Client submission
+80,68,12,15,2025-02-18,2.5,13:00,15:30,Field Work,Mu Residency,Completed,Site coordination
+73,68,12,8,2025-02-19,2.5,10:00,12:30,E Sheet Editing,Mu Residency,Completed,Engineering edits
+74,68,12,21,2025-02-19,2.0,14:00,16:00,Shop Requirement Reports,Mu Residency,Completed,Material lists
+69,68,26,6,2025-03-12,4.0,09:00,13:00,Main Steel Modelling,Beta Heights,Completed,Structural framework
+69,68,26,1,2025-03-12,2.0,14:00,16:00,Design Drawing Study,Beta Heights,Completed,Design analysis
+70,68,26,7,2025-03-13,3.5,09:30,13:00,Misc Steel Modelling,Beta Heights,Completed,Secondary elements
+70,68,26,5,2025-03-13,2.5,14:00,16:30,Macro Creation,Beta Heights,Completed,Automation setup
+71,68,26,32,2025-03-14,3.0,10:00,13:00,Model Correction,Beta Heights,Completed,Error resolution
+71,68,26,30,2025-03-14,2.0,14:00,16:00,Clash Check,Beta Heights,Completed,Interference check
+72,68,26,6,2025-03-15,3.0,09:00,12:00,Main Steel Modelling,Beta Heights,Completed,Beam placement
+72,68,26,4,2025-03-15,2.0,13:00,15:00,Model Member Placement,Beta Heights,Completed,Column setup
+73,68,26,7,2025-03-16,3.0,10:00,13:00,Misc Steel Modelling,Beta Heights,Completed,Connection details
+74,68,26,5,2025-03-16,2.0,14:00,16:00,Macro Creation,Beta Heights,Completed,Template work
+75,68,26,6,2025-03-17,2.5,09:00,11:30,Main Steel Modelling,Beta Heights,Completed,Foundation steel
+76,68,26,7,2025-03-17,2.0,13:00,15:00,Misc Steel Modelling,Beta Heights,Completed,Bracing elements
+77,68,26,4,2025-03-18,2.5,10:00,12:30,Model Member Placement,Beta Heights,Completed,Grid system
+78,68,26,33,2025-03-18,1.5,14:00,15:30,Project discussion,Beta Heights,Completed,Team coordination
+79,68,26,6,2025-03-19,2.5,09:00,11:30,Main Steel Modelling,Beta Heights,Completed,Additional steel
+80,68,26,7,2025-03-19,2.0,13:00,15:00,Misc Steel Modelling,Beta Heights,Completed,Final connections
+69,68,26,10,2025-03-20,3.0,09:00,12:00,Model Checking,Beta Heights,Completed,Quality review
+70,68,26,11,2025-03-20,2.5,14:00,16:30,E Sheet Checking,Beta Heights,Completed,Drawings check
+71,68,26,12,2025-03-21,3.0,10:00,13:00,Shop Drawing Checking,Beta Heights,Completed,Fabrication drawings
+72,68,26,35,2025-03-21,2.5,14:00,16:30,Design Drawing Study(Checking),Beta Heights,Completed,Design compliance
+73,68,26,38,2025-03-22,2.5,09:00,11:30,Clash Check(Checking),Beta Heights,Completed,Interference review
+74,68,26,39,2025-03-22,2.0,13:00,15:00,1 to 1 Changes Review(Checking),Beta Heights,Completed,Change verification
+75,68,26,16,2025-03-23,2.5,10:00,12:30,COR Evaluation,Beta Heights,Completed,Change orders
+76,68,26,13,2025-03-23,2.5,14:00,16:30,RFI Creation,Beta Heights,Completed,Information requests
+77,68,26,17,2025-03-24,2.5,09:00,11:30,COR Updation,Beta Heights,Completed,Document updates
+78,68,26,41,2025-03-24,2.0,13:00,15:00,Back Checking(Checking),Beta Heights,Completed,Secondary review
+79,68,26,10,2025-03-25,2.5,10:00,12:30,Model Checking,Beta Heights,Completed,Final model check
+80,68,26,11,2025-03-25,2.0,14:00,16:00,E Sheet Checking,Beta Heights,Completed,Engineering drawings
+69,68,26,9,2025-03-26,2.5,09:00,11:30,Shop Drawing Editing,Beta Heights,Completed,Drawing modifications
+70,68,26,34,2025-03-26,2.0,13:00,15:00,Back Draft,Beta Heights,Completed,Revision work
+71,68,26,14,2025-03-27,2.5,10:00,12:30,Submission Process,Beta Heights,Completed,Client submission
+72,68,26,15,2025-03-27,2.5,13:00,15:30,Field Work,Beta Heights,Completed,Site coordination
+73,68,26,8,2025-03-28,2.5,09:00,11:30,E Sheet Editing,Beta Heights,Completed,Engineering edits
+74,68,26,21,2025-03-28,2.0,13:00,15:00,Shop Requirement Reports,Beta Heights,Completed,Material lists
+75,68,26,19,2025-03-29,1.5,10:00,11:30,Other Discipline Coord,Beta Heights,Completed,MEP coordination
+76,68,26,20,2025-03-29,1.5,13:00,14:30,Team Coord,Beta Heights,Completed,Team management
+82,81,13,6,2025-03-01,4.0,09:00,13:00,Main Steel Modelling,Nu Mall,Completed,Structural framework
+82,81,13,1,2025-03-01,2.0,14:00,16:00,Design Drawing Study,Nu Mall,Completed,Design analysis
+83,81,13,7,2025-03-02,3.5,09:30,13:00,Misc Steel Modelling,Nu Mall,Completed,Secondary elements
+83,81,13,5,2025-03-02,2.5,14:00,16:30,Macro Creation,Nu Mall,Completed,Automation setup
+84,81,13,32,2025-03-03,3.0,10:00,13:00,Model Correction,Nu Mall,Completed,Error resolution
+84,81,13,30,2025-03-03,2.0,14:00,16:00,Clash Check,Nu Mall,Completed,Interference check
+85,81,13,6,2025-03-04,3.0,09:00,12:00,Main Steel Modelling,Nu Mall,Completed,Beam placement
+85,81,13,4,2025-03-04,2.0,13:00,15:00,Model Member Placement,Nu Mall,Completed,Column setup
+86,81,13,7,2025-03-05,3.0,10:00,13:00,Misc Steel Modelling,Nu Mall,Completed,Connection details
+87,81,13,5,2025-03-05,2.0,14:00,16:00,Macro Creation,Nu Mall,Completed,Template work
+88,81,13,6,2025-03-06,2.5,09:00,11:30,Main Steel Modelling,Nu Mall,Completed,Foundation steel
+89,81,13,7,2025-03-06,2.0,13:00,15:00,Misc Steel Modelling,Nu Mall,Completed,Bracing elements
+90,81,13,4,2025-03-07,2.5,10:00,12:30,Model Member Placement,Nu Mall,Completed,Grid system
+91,81,13,33,2025-03-07,1.5,14:00,15:30,Project discussion,Nu Mall,Completed,Team coordination
+92,81,13,6,2025-03-08,2.5,09:00,11:30,Main Steel Modelling,Nu Mall,Completed,Additional steel
+93,81,13,7,2025-03-08,2.0,13:00,15:00,Misc Steel Modelling,Nu Mall,Completed,Final connections
+82,81,13,10,2025-03-09,3.0,09:00,12:00,Model Checking,Nu Mall,Completed,Quality review
+83,81,13,11,2025-03-09,2.5,14:00,16:30,E Sheet Checking,Nu Mall,Completed,Drawings check
+84,81,13,12,2025-03-10,3.0,10:00,13:00,Shop Drawing Checking,Nu Mall,Completed,Fabrication drawings
+85,81,13,35,2025-03-10,2.5,14:00,16:30,Design Drawing Study(Checking),Nu Mall,Completed,Design compliance
+86,81,13,38,2025-03-11,2.5,09:00,11:30,Clash Check(Checking),Nu Mall,Completed,Interference review
+87,81,13,39,2025-03-11,2.0,13:00,15:00,1 to 1 Changes Review(Checking),Nu Mall,Completed,Change verification
+88,81,13,16,2025-03-12,2.5,10:00,12:30,COR Evaluation,Nu Mall,Completed,Change orders
+89,81,13,13,2025-03-12,2.5,14:00,16:30,RFI Creation,Nu Mall,Completed,Information requests
+90,81,13,17,2025-03-13,2.5,09:00,11:30,COR Updation,Nu Mall,Completed,Document updates
+91,81,13,41,2025-03-13,2.0,13:00,15:00,Back Checking(Checking),Nu Mall,Completed,Secondary review
+92,81,13,10,2025-03-14,2.5,10:00,12:30,Model Checking,Nu Mall,Completed,Final model check
+93,81,13,11,2025-03-14,2.0,14:00,16:00,E Sheet Checking,Nu Mall,Completed,Engineering drawings
+82,81,13,9,2025-03-15,2.5,09:00,11:30,Shop Drawing Editing,Nu Mall,Completed,Drawing modifications
+83,81,13,34,2025-03-15,2.0,13:00,15:00,Back Draft,Nu Mall,Completed,Revision work
+84,81,13,14,2025-03-16,2.5,10:00,12:30,Submission Process,Nu Mall,Completed,Client submission
+85,81,13,15,2025-03-16,2.5,13:00,15:30,Field Work,Nu Mall,Completed,Site coordination
+86,81,13,8,2025-03-17,2.5,09:00,11:30,E Sheet Editing,Nu Mall,Completed,Engineering edits
+87,81,13,21,2025-03-17,2.0,13:00,15:00,Shop Requirement Reports,Nu Mall,Completed,Material lists
+88,81,13,19,2025-03-18,1.5,10:00,11:30,Other Discipline Coord,Nu Mall,Completed,MEP coordination
+89,81,13,20,2025-03-18,1.5,13:00,14:30,Team Coord,Nu Mall,Completed,Team management
+82,81,14,6,2025-03-08,3.5,09:00,12:30,Main Steel Modelling,Xi Complex,Completed,Structural work
+82,81,14,1,2025-03-08,2.0,14:00,16:00,Design Drawing Study,Xi Complex,Completed,Design analysis
+83,81,14,7,2025-03-09,3.0,09:30,12:30,Misc Steel Modelling,Xi Complex,Completed,Secondary steel
+83,81,14,5,2025-03-09,2.0,14:00,16:00,Macro Creation,Xi Complex,Completed,Automation setup
+84,81,14,32,2025-03-10,2.5,10:00,12:30,Model Correction,Xi Complex,Completed,Error fixing
+84,81,14,30,2025-03-10,2.0,14:00,16:00,Clash Check,Xi Complex,Completed,Interference check
+85,81,14,6,2025-03-11,3.0,09:00,12:00,Main Steel Modelling,Xi Complex,Completed,Beam work
+85,81,14,4,2025-03-11,2.0,13:00,15:00,Model Member Placement,Xi Complex,Completed,Column setup
+86,81,14,7,2025-03-12,2.5,10:00,12:30,Misc Steel Modelling,Xi Complex,Completed,Connections
+87,81,14,5,2025-03-12,2.0,14:00,16:00,Macro Creation,Xi Complex,Completed,Template creation
+88,81,14,6,2025-03-13,2.5,09:00,11:30,Main Steel Modelling,Xi Complex,Completed,Foundation
+89,81,14,7,2025-03-13,2.0,13:00,15:00,Misc Steel Modelling,Xi Complex,Completed,Bracing
+90,81,14,4,2025-03-14,2.0,10:00,12:00,Model Member Placement,Xi Complex,Completed,Grid setup
+91,81,14,33,2025-03-14,1.5,13:00,14:30,Project discussion,Xi Complex,Completed,Team coordination
+82,81,14,10,2025-03-15,2.8,09:00,11:48,Model Checking,Xi Complex,Completed,Quality review
+83,81,14,11,2025-03-15,2.5,14:00,16:30,E Sheet Checking,Xi Complex,Completed,Engineering drawings
+84,81,14,12,2025-03-16,2.5,10:00,12:30,Shop Drawing Checking,Xi Complex,Completed,Fabrication drawings
+85,81,14,35,2025-03-16,2.0,14:00,16:00,Design Drawing Study(Checking),Xi Complex,Completed,Design compliance
+86,81,14,38,2025-03-17,2.0,09:00,11:00,Clash Check(Checking),Xi Complex,Completed,Interference review
+87,81,14,39,2025-03-17,1.8,13:00,14:48,1 to 1 Changes Review(Checking),Xi Complex,Completed,Change verification
+88,81,14,16,2025-03-18,2.0,10:00,12:00,COR Evaluation,Xi Complex,Completed,Change orders
+89,81,14,13,2025-03-18,1.8,13:00,14:48,RFI Creation,Xi Complex,Completed,Information requests
+90,81,14,17,2025-03-19,1.8,09:00,10:48,COR Updation,Xi Complex,Completed,Document updates
+91,81,14,41,2025-03-19,1.5,11:00,12:30,Back Checking(Checking),Xi Complex,Completed,Secondary review
+92,81,14,9,2025-03-20,2.0,10:00,12:00,Shop Drawing Editing,Xi Complex,Completed,Drawing edits
+93,81,14,34,2025-03-20,1.8,13:00,14:48,Back Draft,Xi Complex,Completed,Revision work
+92,81,14,14,2025-03-21,1.8,09:00,10:48,Submission Process,Xi Complex,Completed,Client submission
+93,81,14,15,2025-03-21,1.5,11:00,12:30,Field Work,Xi Complex,Completed,Site coordination
+86,81,14,8,2025-03-22,1.8,10:00,11:48,E Sheet Editing,Xi Complex,Completed,Engineering edits
+87,81,14,21,2025-03-22,1.5,13:00,14:30,Shop Requirement Reports,Xi Complex,Completed,Material lists
+88,81,14,19,2025-03-23,1.5,09:00,10:30,Other Discipline Coord,Xi Complex,Completed,MEP coordination
+95,94,15,6,2025-01-28,3.5,09:00,12:30,Main Steel Modelling,Omicron Gardens,Completed,Structural framework
+95,94,15,1,2025-01-28,2.0,14:00,16:00,Design Drawing Study,Omicron Gardens,Completed,Design analysis
+96,94,15,7,2025-01-29,3.0,09:30,12:30,Misc Steel Modelling,Omicron Gardens,Completed,Secondary elements
+96,94,15,5,2025-01-29,2.0,14:00,16:00,Macro Creation,Omicron Gardens,Completed,Automation setup
+97,94,15,32,2025-01-30,2.5,10:00,12:30,Model Correction,Omicron Gardens,Completed,Error resolution
+97,94,15,30,2025-01-30,2.0,14:00,16:00,Clash Check,Omicron Gardens,Completed,Interference check
+98,94,15,6,2025-01-31,3.0,09:00,12:00,Main Steel Modelling,Omicron Gardens,Completed,Beam placement
+98,94,15,4,2025-01-31,2.0,13:00,15:00,Model Member Placement,Omicron Gardens,Completed,Column setup
+99,94,15,7,2025-02-01,2.5,10:00,12:30,Misc Steel Modelling,Omicron Gardens,Completed,Connection details
+100,94,15,5,2025-02-01,2.0,14:00,16:00,Macro Creation,Omicron Gardens,Completed,Template work
+101,94,15,6,2025-02-02,2.5,09:00,11:30,Main Steel Modelling,Omicron Gardens,Completed,Foundation steel
+102,94,15,7,2025-02-02,2.0,13:00,15:00,Misc Steel Modelling,Omicron Gardens,Completed,Bracing elements
+103,94,15,4,2025-02-03,2.0,10:00,12:00,Model Member Placement,Omicron Gardens,Completed,Grid system
+104,94,15,33,2025-02-03,1.5,13:00,14:30,Project discussion,Omicron Gardens,Completed,Team coordination
+95,94,15,10,2025-02-04,2.5,09:00,11:30,Model Checking,Omicron Gardens,Completed,Quality review
+96,94,15,11,2025-02-04,2.0,14:00,16:00,E Sheet Checking,Omicron Gardens,Completed,Drawings check
+97,94,15,12,2025-02-05,2.5,10:00,12:30,Shop Drawing Checking,Omicron Gardens,Completed,Fabrication drawings
+98,94,15,35,2025-02-05,2.0,14:00,16:00,Design Drawing Study(Checking),Omicron Gardens,Completed,Design compliance
+99,94,15,38,2025-02-06,2.0,09:00,11:00,Clash Check(Checking),Omicron Gardens,Completed,Interference review
+100,94,15,39,2025-02-06,1.8,13:00,14:48,1 to 1 Changes Review(Checking),Omicron Gardens,Completed,Change verification
+101,94,15,16,2025-02-07,2.0,10:00,12:00,COR Evaluation,Omicron Gardens,Completed,Change orders
+102,94,15,13,2025-02-07,1.8,13:00,14:48,RFI Creation,Omicron Gardens,Completed,Information requests
+103,94,15,17,2025-02-08,1.8,09:00,10:48,COR Updation,Omicron Gardens,Completed,Document updates
+104,94,15,41,2025-02-08,1.5,11:00,12:30,Back Checking(Checking),Omicron Gardens,Completed,Secondary review
+105,94,15,9,2025-02-09,2.0,10:00,12:00,Shop Drawing Editing,Omicron Gardens,Completed,Drawing modifications
+106,94,15,34,2025-02-09,1.8,13:00,14:48,Back Draft,Omicron Gardens,Completed,Revision work
+105,94,15,14,2025-02-10,1.8,09:00,10:48,Submission Process,Omicron Gardens,Completed,Client submission
+106,94,15,15,2025-02-10,1.5,11:00,12:30,Field Work,Omicron Gardens,Completed,Site coordination
+99,94,15,8,2025-02-11,1.8,10:00,11:48,E Sheet Editing,Omicron Gardens,Completed,Engineering edits
+100,94,15,21,2025-02-11,1.5,13:00,14:30,Shop Requirement Reports,Omicron Gardens,Completed,Material lists
+101,94,15,19,2025-02-12,1.5,09:00,10:30,Other Discipline Coord,Omicron Gardens,Completed,MEP coordination
+102,94,15,20,2025-02-12,1.5,11:00,12:30,Team Coord,Omicron Gardens,Completed,Team management
+95,94,16,6,2025-02-18,3.0,09:00,12:00,Main Steel Modelling,Pi Residency,Completed,Structural work
+95,94,16,1,2025-02-18,1.5,14:00,15:30,Design Drawing Study,Pi Residency,Completed,Design analysis
+96,94,16,7,2025-02-19,2.5,09:30,12:00,Misc Steel Modelling,Pi Residency,Completed,Secondary steel
+96,94,16,5,2025-02-19,1.5,14:00,15:30,Macro Creation,Pi Residency,Completed,Automation setup
+97,94,16,32,2025-02-20,2.0,10:00,12:00,Model Correction,Pi Residency,Completed,Error fixing
+97,94,16,30,2025-02-20,1.5,14:00,15:30,Clash Check,Pi Residency,Completed,Interference check
+98,94,16,6,2025-02-21,2.5,09:00,11:30,Main Steel Modelling,Pi Residency,Completed,Beam work
+98,94,16,4,2025-02-21,1.5,13:00,14:30,Model Member Placement,Pi Residency,Completed,Column setup
+99,94,16,7,2025-02-22,2.0,10:00,12:00,Misc Steel Modelling,Pi Residency,Completed,Connections
+100,94,16,5,2025-02-22,1.5,14:00,15:30,Macro Creation,Pi Residency,Completed,Template creation
+101,94,16,6,2025-02-23,2.0,09:00,11:00,Main Steel Modelling,Pi Residency,Completed,Foundation
+102,94,16,7,2025-02-23,1.5,13:00,14:30,Misc Steel Modelling,Pi Residency,Completed,Bracing
+103,94,16,4,2025-02-24,1.5,10:00,11:30,Model Member Placement,Pi Residency,Completed,Grid setup
+104,94,16,33,2025-02-24,1.0,13:00,14:00,Project discussion,Pi Residency,Completed,Team coordination
+95,94,16,10,2025-02-25,2.3,09:00,11:18,Model Checking,Pi Residency,Completed,Quality review
+96,94,16,11,2025-02-25,2.0,14:00,16:00,E Sheet Checking,Pi Residency,Completed,Engineering drawings
+97,94,16,12,2025-02-26,2.0,10:00,12:00,Shop Drawing Checking,Pi Residency,Completed,Fabrication drawings
+98,94,16,35,2025-02-26,1.8,14:00,15:48,Design Drawing Study(Checking),Pi Residency,Completed,Design compliance
+99,94,16,38,2025-02-27,1.8,09:00,10:48,Clash Check(Checking),Pi Residency,Completed,Interference review
+100,94,16,39,2025-02-27,1.5,13:00,14:30,1 to 1 Changes Review(Checking),Pi Residency,Completed,Change verification
+101,94,16,16,2025-02-28,1.8,10:00,11:48,COR Evaluation,Pi Residency,Completed,Change orders
+102,94,16,13,2025-02-28,1.5,13:00,14:30,RFI Creation,Pi Residency,Completed,Information requests
+103,94,16,17,2025-03-01,1.5,09:00,10:30,COR Updation,Pi Residency,Completed,Document updates
+104,94,16,41,2025-03-01,1.3,11:00,12:18,Back Checking(Checking),Pi Residency,Completed,Secondary review
+105,94,16,9,2025-03-02,1.8,10:00,11:48,Shop Drawing Editing,Pi Residency,Completed,Drawing edits
+106,94,16,34,2025-03-02,1.5,13:00,14:30,Back Draft,Pi Residency,Completed,Revision work
+105,94,16,14,2025-03-03,1.5,09:00,10:30,Submission Process,Pi Residency,Completed,Client submission
+106,94,16,15,2025-03-03,1.3,11:00,12:18,Field Work,Pi Residency,Completed,Site coordination
+99,94,16,8,2025-03-04,1.5,10:00,11:30,E Sheet Editing,Pi Residency,Completed,Engineering edits
+100,94,16,21,2025-03-04,1.3,13:00,14:18,Shop Requirement Reports,Pi Residency,Completed,Material lists
+101,94,16,19,2025-03-05,1.0,09:00,10:00,Other Discipline Coord,Pi Residency,Completed,MEP coordination
+102,94,16,20,2025-03-05,1.0,11:00,12:00,Team Coord,Pi Residency,Completed,Team management

@@ -1,0 +1,20 @@
+CREATE TABLE work_details (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    employee_id BIGINT NOT NULL,
+    manager_id BIGINT NOT NULL,
+    project_id BIGINT NOT NULL,
+    activity_id BIGINT NOT NULL,
+    date DATE,
+    work_hours DOUBLE,
+    start_time TIME,
+    end_time TIME,
+    project_activity VARCHAR(255),
+    assigned_work VARCHAR(255),
+    status VARCHAR(50),
+    remarks VARCHAR(255),
+    is_deleted BOOLEAN DEFAULT FALSE,
+    CONSTRAINT fk_work_details_employee FOREIGN KEY (employee_id) REFERENCES employee(id),
+    CONSTRAINT fk_work_details_manager FOREIGN KEY (manager_id) REFERENCES employee(id),
+    CONSTRAINT fk_work_details_project FOREIGN KEY (project_id) REFERENCES project(id),
+    CONSTRAINT fk_work_details_activity FOREIGN KEY (activity_id) REFERENCES activity(id)
+);
