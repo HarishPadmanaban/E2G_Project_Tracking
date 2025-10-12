@@ -7,6 +7,7 @@ import LeavePermissionForm from './components/Employee/LeavePermissionForm.js';
 import ProtectedRoute from './pages/ProtectedRoute.js';
 import EmployeeNavbar from './components/Employee/EmployeeNavbar.js';
 import { useEmployee } from './context/EmployeeContext.js';
+import ManagerDashboard from './components/Manager/ManagerDashboard.js';
 
 function App() {
 
@@ -70,6 +71,11 @@ function App() {
               <EmployeeWorkForm />
             </ProtectedRoute>} />
           <Route path="/employee/leave" element={<ProtectedRoute><LeavePermissionForm /></ProtectedRoute>} />
+          <Route path="/manager/work" element={
+          <ProtectedRoute>
+            <ManagerDashboard />
+          </ProtectedRoute>
+        } />
         </Routes>
     </div>
   );
