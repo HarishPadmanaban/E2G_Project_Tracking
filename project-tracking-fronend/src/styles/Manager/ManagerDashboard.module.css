@@ -1,0 +1,157 @@
+.dashboardContainer {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.dashboardTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.filterButtons {
+  display: flex;
+  margin-bottom: 15px;
+  justify-content: center;
+}
+
+
+.filterBtn:first-child {
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+  margin-left: 0; /* first button no negative margin */
+}
+
+.filterBtn:last-child {
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+}
+
+.filterBtn:hover {
+  background-color: #007bff;
+  color: white;
+}
+.menuLink {
+  color: white;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+}
+
+
+
+.menuLink li {
+  padding: 15px 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.statusInProgress {
+  color: orange;
+  font-weight: 600;
+}
+
+.statusCompleted {
+  color: green;
+  font-weight: 600;
+}
+
+
+.menuLink:hover li {
+  background-color: #333;
+}
+
+.activeLink li {
+  background-color: #222;
+  color: #00b4ff;
+  font-weight: 600;
+}
+
+.filterBtn {
+  box-sizing: border-box; /* include border in width */
+  border: 1px solid gray; /* same width for all buttons */
+  padding: 6px 14px; /* adjust to maintain size with 2px border */
+  transition: all 0.2s ease;
+  font-size: 16px;
+}
+.active {
+  border-color: #007bff;
+  background-color: #007bff;
+  color: #fff;
+}
+
+.projectsTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  table-layout: fixed;
+}
+
+.projectsTable th,
+.projectsTable td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  overflow: hidden; 
+}
+
+.projectsTable tbody tr {
+  transition: all 0.2s ease;
+  height: 50px; 
+}
+
+.projectsTable thead th {
+  background-color: rgb(54, 52, 52); 
+  color:white;
+}
+
+.projectsTable th,
+.projectsTable td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.projectsTable thead {
+  background-color: #f0f0f0;
+}
+
+.projectsTable th:nth-child(1),
+.projectsTable td:nth-child(1) { width: 80px; }   /* Project ID */
+.projectsTable th:nth-child(2),
+.projectsTable td:nth-child(2) { width: 200px; }  /* Project Name */
+.projectsTable th:nth-child(3),
+.projectsTable td:nth-child(3) { width: 200px; }  /* Client Name */
+.projectsTable th:nth-child(4),
+.projectsTable td:nth-child(4) { width: 120px; }  /* Assigned Hours */
+.projectsTable th:nth-child(5),
+.projectsTable td:nth-child(5) { width: 120px; }  /* Working Hours */
+.projectsTable th:nth-child(6),
+.projectsTable td:nth-child(6) { width: 120px; }
+
+.projectsTable tbody {
+  display: block;
+  max-height: 400px; /* adjust as needed */
+  overflow-y: auto;
+}
+
+.projectsTable thead,
+.projectsTable tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+
+.noData {
+  text-align: center;
+  padding: 15px;
+  color: #888;
+}
