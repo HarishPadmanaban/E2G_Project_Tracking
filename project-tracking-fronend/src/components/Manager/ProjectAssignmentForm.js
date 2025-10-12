@@ -93,13 +93,8 @@ const ProjectAssignmentForm = () => {
     return false;
   }
 
-  if (!formData.tl1 || !formData.tl2) {
+  if (!formData.tl1) {
     alert("⚠️ Please select both Team Leads.");
-    return false;
-  }
-
-  if (formData.tl1 === formData.tl2) {
-    alert("⚠️ TL1 and TL2 cannot be the same person.");
     return false;
   }
 
@@ -191,21 +186,6 @@ const ProjectAssignmentForm = () => {
             </select>
           </div>
 
-          <div className={styles.fld}>
-            <label>Choose TL2</label>
-            <select
-              name="tl2"
-              value={formData.tl2}
-              onChange={handleChange}
-            >
-              <option value="">Select Team Lead 2</option>
-              {teamLeads.map((tl) => (
-                <option key={tl.id} value={tl.id}>
-                  {tl.name}
-                </option>
-              ))}
-            </select>
-          </div>
 
           {/* Assigned Hours Inputs */}
           <div className={styles.fld}>
