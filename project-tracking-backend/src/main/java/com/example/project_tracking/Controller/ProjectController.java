@@ -21,4 +21,17 @@ public class ProjectController {
         System.out.println(id);
         return ResponseEntity.ok(projectService.getProjectsByManager(id));
     }
+
+    @GetMapping("/")
+    public ResponseEntity<?> getAllProjects()
+    {
+        return ResponseEntity.ok(projectService.getAll());
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<?> createProject(@RequestBody Project p)
+    {
+        projectService.createProject(p);
+        return ResponseEntity.ok("Saved Successfully");
+    }
 }

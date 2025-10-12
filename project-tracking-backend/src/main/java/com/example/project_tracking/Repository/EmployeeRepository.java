@@ -14,4 +14,6 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
 
     // You can also fetch manager or TL specific employees
     List<Employee> findByReportingTo(Employee e);
+    List<Employee> findByIsTLTrueAndReportingToId(Long managerId);
+    List<Employee> findByIsManagerTrue();
 }
