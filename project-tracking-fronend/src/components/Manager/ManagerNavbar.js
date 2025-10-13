@@ -84,7 +84,7 @@ const ManagerNavbar = () => {
                   <li>Activity Analysis</li>
                 </Link>
               
-                <Link to="/manager/requests" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
+                <Link to="/manager/view-requests" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
                   <li>View Requests</li>
                 </Link>
               
