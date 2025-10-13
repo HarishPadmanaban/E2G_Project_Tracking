@@ -12,9 +12,9 @@ const ProjectAssignmentForm = () => {
     if (!managerIdToUse) return;
 
     const proj = axios
-      .get(`http://localhost:8080/project/${managerIdToUse}`) // Dummy backend endpoint
+      .get(`http://localhost:8080/project/manager/${managerIdToUse}/active  `) // Dummy backend endpoint
       .then((proj) => {
-        const inProgress = proj.data.filter((p) => p.projectStatus === true && p.workingHours === 0);
+        const inProgress = proj.data.filter((p) => p.workingHours === 0 && p.modellingHours === 0 && p.checkingHours === 0 && p.detailingHours === 0);
         console.log(proj.data);
         setProjects(inProgress);
       })
@@ -105,16 +105,38 @@ const ProjectAssignmentForm = () => {
     }
 
     const payload = {
-      tl1: formData.tl1,
+      tlId: Number(formData.tl1),
       modellingHours: Number(formData.modellingHours),
       checkingHours: Number(formData.checkingHours),
       detailingHours: Number(formData.detailingHours),
     };
 
     try {
-      const res = axios.put(`http://localhost:8080/project/${formData.projectId}`, payload);
+      const res = axios.put(
+        `http://localhost:8080/project/${formData.projectId}/add-hours`,
+        null, // No request body
+        {
+          params: {
+            tlId: formData.tl1,
+            modellingHours: formData.modellingHours,
+            checkingHours: formData.checkingHours,
+            detailingHours: formData.detailingHours,
+          }
+        }
+      );
       alert("✅ Project updated successfully!");
+      setFormData({
+        projectId: "",
+        tl1: "",
+        modellingHours: "",
+        checkingHours: "",
+        detailingHours: "",
+      });
+      setSelectedProject(null);
       console.log(payload);
+      const updatedProjects = axios.get(`http://localhost:8080/project/manager/${managerIdToUse}/active`);
+      const inProgress = updatedProjects.data.filter((p) => p.workingHours === 0 && p.modellingHours === 0 && p.checkingHours === 0 && p.detailingHours === 0);
+      setProjects(inProgress);
     } catch (error) {
       console.error("Error updating project:", error);
       alert("❌ Failed to update project");
@@ -152,7 +174,7 @@ const ProjectAssignmentForm = () => {
       {selectedProject && (
         <>
           <div className={styles.fld}>
-            <label style={{ "marginBottom": "8px"}}>Assigned Hours (Total)</label>
+            <label style={{ "marginBottom": "8px" }}>Assigned Hours (Total)</label>
             <input
               type="text"
               value={selectedProject.assignedHours}
@@ -169,7 +191,7 @@ const ProjectAssignmentForm = () => {
             >
               <option value="">Select Team Lead 1</option>
               {teamLeads.map((tl) => (
-                <option key={tl.id} value={tl.empId}>
+                <option key={tl.id} value={tl.id}>
                   {tl.name}
                 </option>
               ))}
