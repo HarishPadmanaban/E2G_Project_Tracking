@@ -5,8 +5,8 @@ import com.example.project_tracking.Repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProjectService {
@@ -24,7 +24,8 @@ public class ProjectService {
     public List<Project> getAll(){
         return projectRepository.findAll();
     }
-    public Project createProject(Project project) {
+
+    public void createProject(Project project) {
         if(project.getModellingHours()==null){
             project.setModellingHours(BigDecimal.ZERO);
         }
@@ -36,12 +37,45 @@ public class ProjectService {
         if(project.getDetailingHours()==null){
             project.setDetailingHours(BigDecimal.ZERO);
         }
-
         project.setModellingTime(BigDecimal.ZERO);
         project.setCheckingTime(BigDecimal.ZERO);
         project.setDetailingTime(BigDecimal.ZERO);
         project.setWorkingHours(BigDecimal.ZERO);
-        return projectRepository.save(project);
+        projectRepository.save(project);
     }
+    public List<Project> getActiveProjectsByManager(Long managerId) {
+        return projectRepository.findByManagerIdAndProjectStatusTrue(managerId);
+    }
+
+    public Project updateProjectHours(Long projectId, BigDecimal addModellingHours, BigDecimal addCheckingHours, BigDecimal addDetailingHours) {
+        Optional<Project> optionalProject = projectRepository.findById(projectId);
+
+        if (optionalProject.isPresent()) {
+            Project project = optionalProject.get();
+
+            // Safely add (handling nulls)
+            project.setModellingHours(
+                    project.getModellingHours() == null ? addModellingHours :
+                            project.getModellingHours().add(addModellingHours)
+            );
+
+            project.setCheckingHours(
+                    project.getCheckingHours() == null ? addCheckingHours :
+                            project.getCheckingHours().add(addCheckingHours)
+            );
+
+            project.setDetailingHours(
+                    project.getDetailingHours() == null ? addDetailingHours :
+                            project.getDetailingHours().add(addDetailingHours)
+            );
+
+            // Save back to repo
+            return projectRepository.save(project);
+        } else {
+            throw new RuntimeException("Project not found with ID: " + projectId);
+        }
+    }
+
+
 }
 
