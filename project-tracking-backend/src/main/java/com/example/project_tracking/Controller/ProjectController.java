@@ -5,6 +5,9 @@ import com.example.project_tracking.Service.ProjectService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @RestController
 @RequestMapping("/project")
 @CrossOrigin(origins="*")
@@ -33,5 +36,21 @@ public class ProjectController {
     {
         projectService.createProject(p);
         return ResponseEntity.ok("Saved Successfully");
+    }
+
+    @GetMapping("/manager/{managerId}/active")
+    public ResponseEntity<List<Project>> getActiveProjectsByManager(@PathVariable Long managerId) {
+        return ResponseEntity.ok(projectService.getActiveProjectsByManager(managerId));
+    }
+
+    @PutMapping("/{projectId}/add-hours")
+    public Project addProjectHours(
+            @PathVariable Long projectId,
+            @RequestParam Long tlId,
+            @RequestParam BigDecimal modellingHours,
+            @RequestParam BigDecimal checkingHours,
+            @RequestParam BigDecimal detailingHours
+    ) {
+        return projectService.updateProjectHours(tlId,projectId, modellingHours, checkingHours, detailingHours);
     }
 }
