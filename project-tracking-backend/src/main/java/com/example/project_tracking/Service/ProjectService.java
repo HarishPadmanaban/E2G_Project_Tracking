@@ -47,7 +47,7 @@ public class ProjectService {
         return projectRepository.findByManagerIdAndProjectStatusTrue(managerId);
     }
 
-    public Project updateProjectHours(Long projectId, BigDecimal addModellingHours, BigDecimal addCheckingHours, BigDecimal addDetailingHours) {
+    public Project updateProjectHours(Long tlId,Long projectId, BigDecimal addModellingHours, BigDecimal addCheckingHours, BigDecimal addDetailingHours) {
         Optional<Project> optionalProject = projectRepository.findById(projectId);
 
         if (optionalProject.isPresent()) {
@@ -68,6 +68,8 @@ public class ProjectService {
                     project.getDetailingHours() == null ? addDetailingHours :
                             project.getDetailingHours().add(addDetailingHours)
             );
+
+            project.setTlId(tlId);
 
             // Save back to repo
             return projectRepository.save(project);

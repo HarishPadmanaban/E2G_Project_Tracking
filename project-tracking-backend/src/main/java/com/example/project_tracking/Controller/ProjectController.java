@@ -46,10 +46,11 @@ public class ProjectController {
     @PutMapping("/{projectId}/add-hours")
     public Project addProjectHours(
             @PathVariable Long projectId,
+            @RequestParam Long tlId,
             @RequestParam BigDecimal modellingHours,
             @RequestParam BigDecimal checkingHours,
             @RequestParam BigDecimal detailingHours
     ) {
-        return projectService.updateProjectHours(projectId, modellingHours, checkingHours, detailingHours);
+        return projectService.updateProjectHours(tlId,projectId, modellingHours, checkingHours, detailingHours);
     }
 }

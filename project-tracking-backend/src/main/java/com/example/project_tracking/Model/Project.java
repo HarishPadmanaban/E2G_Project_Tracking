@@ -20,6 +20,8 @@ public class Project {
     @Column(nullable = false)
     private Long managerId;
 
+    private Long tlId;
+
     private BigDecimal assignedHours;
     private BigDecimal workingHours;
     private LocalDate assignedDate;
@@ -70,6 +72,14 @@ public class Project {
         this.assignedDate = assignedDate;
         this.projectStatus = projectStatus;
         this.softDelete = softDelete;
+    }
+
+    public Long getTlId() {
+        return tlId;
+    }
+
+    public void setTlId(Long tlId) {
+        this.tlId = tlId;
     }
 
     public Long getId() {
