@@ -1,4 +1,5 @@
 package com.example.project_tracking.Controller;
+import com.example.project_tracking.DTO.LeavePermissionResponse;
 import com.example.project_tracking.Model.LeavePermission;
 import com.example.project_tracking.Service.LeavePermissionService;
 import org.springframework.http.ResponseEntity;
@@ -33,14 +34,14 @@ public class LeavePermissionController {
     }
 
     @GetMapping("/{id}")
-    public LeavePermission getById(@PathVariable Long id) {
-        return leavePermissionService.getRequestById(id)
-                .orElseThrow(() -> new RuntimeException("Leave/Permission not found"));
+    public ResponseEntity<LeavePermissionResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(leavePermissionService.getRequestById(id)
+                .orElseThrow(() -> new RuntimeException("Leave/Permission not found")));
     }
 
     @PutMapping("/status/{id}")
-    public LeavePermission updateStatus(@PathVariable Long id, @RequestParam String status) {
-        return leavePermissionService.updateStatus(id, status);
+    public ResponseEntity<LeavePermissionResponse> updateStatus(@PathVariable Long id, @RequestParam String status) {
+        return ResponseEntity.ok(leavePermissionService.updateStatus(id, status));
     }
 
     @DeleteMapping("/{id}")

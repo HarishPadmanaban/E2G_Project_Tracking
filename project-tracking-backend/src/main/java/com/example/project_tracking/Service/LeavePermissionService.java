@@ -1,10 +1,13 @@
 package com.example.project_tracking.Service;
+
+import com.example.project_tracking.DTO.LeavePermissionResponse;
 import com.example.project_tracking.Model.LeavePermission;
 import com.example.project_tracking.Repository.LeavePermissionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LeavePermissionService {
@@ -15,39 +18,78 @@ public class LeavePermissionService {
         this.leavePermissionRepository = leavePermissionRepository;
     }
 
-    public LeavePermission saveLeavePermission(LeavePermission leavePermission) {
-        return leavePermissionRepository.save(leavePermission);
+    // Save leave/permission request (still uses entity)
+    public void saveLeavePermission(LeavePermission leavePermission) {
+        leavePermissionRepository.save(leavePermission);
     }
 
-    public List<LeavePermission> getAllRequests() {
-        return leavePermissionRepository.findAll();
+    // Get all requests as DTOs
+    public List<LeavePermissionResponse> getAllRequests() {
+        return leavePermissionRepository.findAll()
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    public Optional<LeavePermission> getRequestById(Long id) {
-        return leavePermissionRepository.findById(id);
+    // Get request by ID as DTO
+    public Optional<LeavePermissionResponse> getRequestById(Long id) {
+        return leavePermissionRepository.findById(id)
+                .map(this::mapToDTO);
     }
 
-    public List<LeavePermission> getRequestsByEmployeeId(Long empId) {
-        return leavePermissionRepository.findByEmployeeId(empId);
+    // Get requests by Employee ID as DTOs
+    public List<LeavePermissionResponse> getRequestsByEmployeeId(Long empId) {
+        return leavePermissionRepository.findByEmployeeId(empId)
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    public List<LeavePermission> getRequestsByManagerId(Long managerId) {
-        return leavePermissionRepository.findByManagerId(managerId);
+    // Get requests by Manager ID as DTOs
+    public List<LeavePermissionResponse> getRequestsByManagerId(Long managerId) {
+        return leavePermissionRepository.findByManagerId(managerId)
+                .stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
+    // Soft delete request
     public void deleteRequest(Long id) {
-        //leavePermissionRepository.deleteById(id);
         LeavePermission leave = leavePermissionRepository.findById(id).orElse(null);
-        if(leave!=null){
+        if (leave != null) {
             leave.setActive(false);
+            leavePermissionRepository.save(leave); // persist soft delete
         }
     }
 
-    public LeavePermission updateStatus(Long id, String status) {
+    // Update status and return DTO
+    public LeavePermissionResponse updateStatus(Long id, String status) {
         LeavePermission req = leavePermissionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Leave/Permission not found"));
         req.setStatus(status);
-        return leavePermissionRepository.save(req);
+        LeavePermission updated = leavePermissionRepository.save(req);
+        return mapToDTO(updated);
+    }
+
+    // -----------------------
+    // Helper method to convert entity → DTO
+    private LeavePermissionResponse mapToDTO(LeavePermission lp) {
+        return new LeavePermissionResponse(
+                lp.getId(),
+                lp.getEmployee().getName(),
+                lp.getManager().getName(),
+                lp.getType(),
+                lp.getLeaveDuration(),
+                lp.getFromDate(),
+                lp.getToDate(),
+                lp.getLeaveDays(),
+                lp.getLeaveType(),
+                lp.getReason(),
+                lp.getPermissionInTime(),
+                lp.getPermissionOutTime(),
+                lp.getPermissionHours(),
+                lp.getStatus(),
+                lp.isActive()
+        );
     }
 }
-
