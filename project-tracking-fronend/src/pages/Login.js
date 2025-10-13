@@ -8,11 +8,19 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // If already logged in, redirect to employee work page
-    if (employee) {
-      navigate("/employee/work", { replace: true });
-    }
-  }, [employee, navigate]);
+  if (!employee) return;
+
+  if (employee.manager) {
+    navigate("/manager/work", { replace: true });
+  } else if (
+    employee.designation === "Admin" ||
+    employee.designation === "Assistant General Manager"
+  ) {
+    navigate("/admin", { replace: true });
+  } else {
+    navigate("/employee/work", { replace: true });
+  }
+}, [employee, navigate]);
 
   return <LoginForm />;
 };

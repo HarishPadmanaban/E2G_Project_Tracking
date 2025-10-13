@@ -39,4 +39,14 @@ public class EmployeeController {
         }
         return ResponseEntity.ok(emp);
     }
+
+    @GetMapping("/getallmanagers")
+    public ResponseEntity<?> getAllManagers(){
+        return ResponseEntity.ok(employeeService.getAllManagers());
+    }
+
+    @GetMapping("/gettls")
+    public ResponseEntity<?> getTlsUnderManager(@RequestParam Long mgrid){
+        return ResponseEntity.ok(employeeService.getTLsUnderManager(mgrid));
+    }
 }

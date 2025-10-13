@@ -5,6 +5,8 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+
+
 .header {
   text-align: center;
   margin-bottom: 30px;
@@ -22,6 +24,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
 
 
 .container {
@@ -52,6 +55,27 @@ h2 {
   flex-direction: column;
   gap: 6px;
   margin: 11px;
+}
+
+.fld {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 30px;
+}
+
+.fld label {
+  position: absolute;
+  top: -21px;
+  left: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #666; /* softer text color */
+  padding: 0 4px;
+  border-radius: 4px;
+  pointer-events: none;
+  transition: color 0.2s ease;
 }
 
 /* Label blends smoothly with input box */

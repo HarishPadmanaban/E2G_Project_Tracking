@@ -5,6 +5,8 @@ import com.example.project_tracking.Model.Employee;
 import com.example.project_tracking.Repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EmployeeService {
     private  final EmployeeRepository employeeRepository;
@@ -52,4 +54,11 @@ public class EmployeeService {
         }
     }
 
+    public List<Employee> getTLsUnderManager(Long managerId) {
+        return employeeRepository.findByIsTLTrueAndReportingToId(managerId);
+    }
+
+    public List<Employee> getAllManagers() {
+        return employeeRepository.findByIsManagerTrue();
+    }
 }

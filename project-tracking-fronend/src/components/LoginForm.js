@@ -39,18 +39,6 @@ const LoginForm = () => {
 
       login(employeeData);
       console.log(employeeData);
-
-      // Redirect based on role
-      if (employeeData.isManager) {
-        navigate("/manager", { replace: true });
-      } else if (
-        employeeData.designation === "Admin" ||
-        employeeData.designation === "Assistant General Manager"
-      ) {
-        navigate("/admin", { replace: true });
-      } else {
-        navigate("/employee/work", { replace: true });
-      }
     } catch (err) {
       if (err.response && err.response.status === 401) {
         setError("Invalid username or password");

@@ -4,6 +4,85 @@
   background: linear-gradient(135deg, #1a202c 0%, #000000 100%);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   height:50px;
+  /* position: sticky;
+  top: 0px;
+  width: 1381px;
+  z-index: 999;
+  overflow-y: hidden; */
+}
+/* ===== Sandwich Icon ===== */
+.sandwichMenu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+  cursor: pointer;
+  z-index: 200;
+}
+
+.menuIcon {
+  width: 28px;
+  height: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.menuIcon span {
+  display: block;
+  height: 3px;
+  background-color: white;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* ===== Sidebar Menu (expanding container) ===== */
+.sidebarMenu {
+  position: fixed;
+  top: 0;
+  left: -260px; /* hidden initially */
+  height: 100%;
+  width: 250px;
+  background: linear-gradient(135deg, #1a202c 0%, #000000 100%);
+  color: white;
+  transition: left 0.3s ease;
+  padding-top: 60px;
+  z-index: 150;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.4);
+}
+
+.sidebarMenu.open {
+  left: 0; /* slides in from left */
+}
+
+.sidebarMenu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebarMenu li {
+  padding: 15px 25px;
+  margin-top: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.sidebarMenu li:hover {
+  background-color: #333;
+}
+
+/* ===== Links inside sidebar ===== */
+.menuLink {
+  color: white;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+}
+
+.menuLink:hover {
+  color: #00b4ff;
 }
 
 /* Navbar */
@@ -18,7 +97,6 @@
 /* Left side: Back button */
 .navLeft {
   display: flex;
-
   align-items: center;
 }
 
