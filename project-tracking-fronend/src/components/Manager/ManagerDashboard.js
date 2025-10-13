@@ -18,7 +18,7 @@ const ManagerDashboard = () => {
       .get(`http://localhost:8080/project/${managerIdToUse}`) // Dummy backend endpoint
       .then((res) => {
         setProjects(res.data);
-        const inProgress = res.data.filter((p) => p.projectStatus === true);
+        const inProgress = res.data.filter((p) => p.projectStatus === true );
         setFilteredProjects(inProgress);
         setFilter("In Progress");
       })

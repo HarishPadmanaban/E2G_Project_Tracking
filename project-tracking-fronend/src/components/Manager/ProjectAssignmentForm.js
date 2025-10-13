@@ -1,66 +1,43 @@
 import React, { useState, useEffect } from "react";
 import styles from "../../styles/Employee/LeavePermissionForm.module.css"; // reuse same CSS
 import { useEmployee } from "../../context/EmployeeContext";
+import axios from "axios";
 
 const ProjectAssignmentForm = () => {
   const { employee, loading } = useEmployee();
+  const managerIdToUse = employee.manager ? employee.id : employee.reportingToId;
+  const [projects, setProjects] = useState([]);
+  const [teamLeads, setTeamLeads] = useState([]);
+  useEffect(() => {
+    if (!managerIdToUse) return;
 
-  // 🧩 Dummy Project Data
-  const [projects] = useState([
-    {
-      id: 1,
-      projectName: "Alpha Tower",
-      clientName: "ABC Constructions",
-      assignedHours: 500,
-      workingHours: 120.5,
-      managerId: 3,
-      projectStatus: true,
-      assignedDate: "2025-01-10",
-    },
-    {
-      id: 2,
-      projectName: "Skyline Plaza",
-      clientName: "XYZ Developers",
-      assignedHours: 400,
-      workingHours: 220,
-      managerId: 3,
-      projectStatus: false,
-      assignedDate: "2025-02-01",
-    },
-    {
-      id: 3,
-      projectName: "Green Valley",
-      clientName: "Eco Builders",
-      assignedHours: 350,
-      workingHours: 140,
-      managerId: 3,
-      projectStatus: false,
-      assignedDate: "2025-03-12",
-    },
-    {
-      id: 4,
-      projectName: "Sunrise Heights",
-      clientName: "Urban Infra",
-      assignedHours: 600,
-      workingHours: 200,
-      managerId: 3,
-      projectStatus: true,
-      assignedDate: "2025-04-20",
-    },
-  ]);
+    const proj = axios
+      .get(`http://localhost:8080/project/${managerIdToUse}`) // Dummy backend endpoint
+      .then((proj) => {
+        const inProgress = proj.data.filter((p) => p.projectStatus === true && p.workingHours === 0);
+        console.log(proj.data);
+        setProjects(inProgress);
+      })
+      .catch((err) => console.error(err));
+  }, [managerIdToUse]);
 
-  // 🧠 Dummy TL Dropdowns
-  const [teamLeads] = useState([
-    { id: 101, name: "TL1 - John" },
-    { id: 102, name: "TL2 - Maria" },
-    { id: 103, name: "TL3 - Kiran" },
-    { id: 104, name: "TL4 - Priya" },
-  ]);
+
+  useEffect(() => {
+    if (!managerIdToUse) return;
+
+    console.log(managerIdToUse);
+    const res = axios
+      .get(`http://localhost:8080/employee/gettls?mgrid=${managerIdToUse}`) // Dummy backend endpoint
+      .then((res) => {
+        console.log(res.data);
+        setTeamLeads(res.data);
+      })
+      .catch((err) => console.error(err));
+  }, [managerIdToUse]);
 
   const [formData, setFormData] = useState({
     projectId: "",
     tl1: "",
-    tl2: "",
     modellingHours: "",
     checkingHours: "",
     detailingHours: "",
@@ -76,7 +53,6 @@ const ProjectAssignmentForm = () => {
     setFormData({
       projectId: selected?.id || "",
       tl1: "",
-      tl2: "",
       modellingHours: "",
       checkingHours: "",
       detailingHours: "",
@@ -88,48 +64,62 @@ const ProjectAssignmentForm = () => {
   };
 
   const validateForm = () => {
-  if (!formData.projectId) {
-    alert("⚠️ Please select a project.");
-    return false;
-  }
+    if (!formData.projectId) {
+      alert("⚠️ Please select a project.");
+      return false;
+    }
 
-  if (!formData.tl1) {
-    alert("⚠️ Please select both Team Leads.");
-    return false;
-  }
+    if (!formData.tl1) {
+      alert("⚠️ Please select Team Lead.");
+      return false;
+    }
 
-  if (
-    !formData.modellingHours ||
-    !formData.checkingHours ||
-    !formData.detailingHours
-  ) {
-    alert("⚠️ Please fill all hour fields (Modelling, Checking, Detailing).");
-    return false;
-  }
+    if (
+      !formData.modellingHours ||
+      !formData.checkingHours ||
+      !formData.detailingHours
+    ) {
+      alert("⚠️ Please fill all hour fields (Modelling, Checking, Detailing).");
+      return false;
+    }
 
-  if (
-    Number(formData.modellingHours) <= 0 ||
-    Number(formData.checkingHours) <= 0 ||
-    Number(formData.detailingHours) <= 0
-  ) {
-    alert("⚠️ Hours must be greater than 0.");
-    return false;
-  }
+    if (
+      Number(formData.modellingHours) <= 0 ||
+      Number(formData.checkingHours) <= 0 ||
+      Number(formData.detailingHours) <= 0
+    ) {
+      alert("⚠️ Hours must be greater than 0.");
+      return false;
+    }
 
-  const total =
-    Number(formData.modellingHours) +
-    Number(formData.checkingHours) +
-    Number(formData.detailingHours);
+    const total =
+      Number(formData.modellingHours) +
+      Number(formData.checkingHours) +
+      Number(formData.detailingHours);
 
-  if (selectedProject && total !== selectedProject.assignedHours) {
-    alert(
-      `❌ Total assigned hours (${total}) must match project total (${selectedProject.assignedHours}).`
-    );
-    return false;
-  }
+    if (selectedProject && total !== selectedProject.assignedHours) {
+      alert(
+        `❌ Total assigned hours (${total}) must match project total (${selectedProject.assignedHours}).`
+      );
+      return false;
+    }
 
-  alert("✅ Details Submitted!!!"); // ✅ all good
-};
+    const payload = {
+      tl1: formData.tl1,
+      modellingHours: Number(formData.modellingHours),
+      checkingHours: Number(formData.checkingHours),
+      detailingHours: Number(formData.detailingHours),
+    };
+
+    try {
+      const res = axios.put(`http://localhost:8080/project/${formData.projectId}`, payload);
+      alert("✅ Project updated successfully!");
+      console.log(payload);
+    } catch (error) {
+      console.error("Error updating project:", error);
+      alert("❌ Failed to update project");
+    }
+  };
 
 
   if (loading) return <div>Loading...</div>;
@@ -162,7 +152,7 @@ const ProjectAssignmentForm = () => {
       {selectedProject && (
         <>
           <div className={styles.fld}>
-            <label style={{marginTop:"8px;"}}>Assigned Hours (Total)</label>
+            <label style={{ "marginBottom": "8px"}}>Assigned Hours (Total)</label>
             <input
               type="text"
               value={selectedProject.assignedHours}
@@ -179,7 +169,7 @@ const ProjectAssignmentForm = () => {
             >
               <option value="">Select Team Lead 1</option>
               {teamLeads.map((tl) => (
-                <option key={tl.id} value={tl.id}>
+                <option key={tl.id} value={tl.empId}>
                   {tl.name}
                 </option>
               ))}

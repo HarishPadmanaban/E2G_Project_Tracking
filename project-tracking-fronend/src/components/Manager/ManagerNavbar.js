@@ -60,31 +60,31 @@ const ManagerNavbar = () => {
           <div className={`${styles.sidebarMenu} ${menuOpen ? styles.open : ""}`}>
             <ul>
 
-                <Link to="/manager/work" className={styles.menuLink}>
+                <Link to="/manager/work" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
                   <li>Home</li>
                 </Link>
 
               
-                <Link to="/manager/assign-tl" className={styles.menuLink}>
+                <Link to="/manager/assign-tl" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
                   <li>Project Distribution</li>
                 </Link>
               
               
-                <Link to="/manager/analysis" className={styles.menuLink}>
+                <Link to="/manager/analysis" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
                   <li>Analysis</li>
                 </Link>
               
               
-                <Link to="/manager/project-analysis" className={styles.menuLink}>
+                <Link to="/manager/project-analysis" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
                   <li>Project Analysis</li>
                 </Link>
               
               
-                <Link to="/manager/activity-analysis" className={styles.menuLink}>
+                <Link to="/manager/activity-analysis" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
                   <li>Activity Analysis</li>
                 </Link>
               
-                <Link to="/manager/requests" className={styles.menuLink}>
+                <Link to="/manager/requests" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
                   <li>View Requests</li>
                 </Link>
               
