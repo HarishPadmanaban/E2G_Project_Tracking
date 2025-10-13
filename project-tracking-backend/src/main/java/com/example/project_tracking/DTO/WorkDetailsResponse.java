@@ -1,0 +1,140 @@
+package com.example.project_tracking.DTO;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+public class WorkDetailsResponse {
+        private Long id;
+        private String employeeName;
+        private String managerName;
+        private String projectName;
+        private String activityName;
+        private LocalDate date;
+        private Double workHours;
+        private LocalTime startTime;
+        private LocalTime endTime;
+        private String projectActivity;
+        private String assignedWork;
+        private String status;
+        private String remarks;
+
+    public WorkDetailsResponse(Long id, String employeeName, String managerName, String projectName, String activityName, LocalDate date, Double workHours, LocalTime startTime, LocalTime endTime, String projectActivity, String assignedWork, String status, String remarks) {
+        this.id = id;
+        this.employeeName = employeeName;
+        this.managerName = managerName;
+        this.projectName = projectName;
+        this.activityName = activityName;
+        this.date = date;
+        this.workHours = workHours;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.projectActivity = projectActivity;
+        this.assignedWork = assignedWork;
+        this.status = status;
+        this.remarks = remarks;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
+    }
+
+    public String getManagerName() {
+        return managerName;
+    }
+
+    public void setManagerName(String managerName) {
+        this.managerName = managerName;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public String getActivityName() {
+        return activityName;
+    }
+
+    public void setActivityName(String activityName) {
+        this.activityName = activityName;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public Double getWorkHours() {
+        return workHours;
+    }
+
+    public void setWorkHours(Double workHours) {
+        this.workHours = workHours;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getProjectActivity() {
+        return projectActivity;
+    }
+
+    public void setProjectActivity(String projectActivity) {
+        this.projectActivity = projectActivity;
+    }
+
+    public String getAssignedWork() {
+        return assignedWork;
+    }
+
+    public void setAssignedWork(String assignedWork) {
+        this.assignedWork = assignedWork;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+}

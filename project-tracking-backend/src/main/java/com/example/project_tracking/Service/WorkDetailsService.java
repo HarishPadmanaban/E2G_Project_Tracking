@@ -1,5 +1,6 @@
 package com.example.project_tracking.Service;
 import com.example.project_tracking.DTO.WorkDetailsRequest;
+import com.example.project_tracking.DTO.WorkDetailsResponse;
 import com.example.project_tracking.Model.Activity;
 import com.example.project_tracking.Model.Employee;
 import com.example.project_tracking.Model.Project;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class WorkDetailsService {
@@ -29,6 +31,13 @@ public class WorkDetailsService {
         this.employeeRepository = employeeRepository;
         this.projectRepository = projectRepository;
         this.activityRepository = activityRepository;
+    }
+
+    public List<WorkDetailsResponse> getAll() {
+        return workDetailsRepository.findAll()
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
     public WorkDetails saveWorkDetails(WorkDetailsRequest request) {
@@ -99,32 +108,78 @@ public class WorkDetailsService {
         projectRepository.save(project);
     }
 
-    public List<WorkDetails> getByEmployee(Long employeeId) {
-        return workDetailsRepository.findByEmployeeId(employeeId);
+    public List<WorkDetailsResponse> getByEmployee(Long employeeId) {
+        return workDetailsRepository.findByEmployeeId(employeeId)
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
-    public List<WorkDetails> getByManager(Long managerId) {
-        return workDetailsRepository.findByManagerId(managerId);
+    // ✅ 4. Get all logs by manager ID
+    public List<WorkDetailsResponse> getByManager(Long managerId) {
+        return workDetailsRepository.findByManagerId(managerId)
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
-    public List<WorkDetails> getByProject(Long projectId) {
-        return workDetailsRepository.findByProjectId(projectId);
+    // ✅ 5. Get all logs by project ID
+    public List<WorkDetailsResponse> getByProject(Long projectId) {
+        return workDetailsRepository.findByProjectId(projectId)
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
-    public List<WorkDetails> getByActivity(Long activityId) {
-        return workDetailsRepository.findByActivityId(activityId);
+    // ✅ 6. Get all logs by activity ID
+    public List<WorkDetailsResponse> getByActivity(Long activityId) {
+        return workDetailsRepository.findByActivityId(activityId)
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
-    public List<WorkDetails> getByEmployeeAndProject(Long employeeId, Long projectId) {
-        return workDetailsRepository.findByEmployeeAndProject(employeeId, projectId);
+    // ✅ 7. Get logs by employee & project
+    public List<WorkDetailsResponse> getByEmployeeAndProject(Long empId, Long projId) {
+        return workDetailsRepository.findByEmployeeAndProject(empId, projId)
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
-    public List<WorkDetails> getByManagerAndProject(Long managerId, Long projectId) {
-        return workDetailsRepository.findByManagerAndProject(managerId, projectId);
+    // ✅ 8. Get logs by manager & project
+    public List<WorkDetailsResponse> getByManagerAndProject(Long mgrId, Long projId) {
+        return workDetailsRepository.findByManagerAndProject(mgrId, projId)
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
-    public List<WorkDetails> getByProjectAndActivity(Long projectId, Long activityId) {
-        return workDetailsRepository.findByProjectAndActivity(projectId, activityId);
+    // ✅ 9. Get logs by project & activity
+    public List<WorkDetailsResponse> getByProjectAndActivity(Long projId, Long actId) {
+        return workDetailsRepository.findByProjectAndActivity(projId, actId)
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    // ✅ Helper method to map entity → DTO
+    private WorkDetailsResponse convertToResponse(WorkDetails work) {
+        return new WorkDetailsResponse(
+                work.getId(),
+                work.getEmployee() != null ? work.getEmployee().getName() : null,
+                work.getManager() != null ? work.getManager().getName() : null,
+                work.getProject() != null ? work.getProject().getProjectName() : null,
+                work.getActivity() != null ? work.getActivity().getActivityName() : null,
+                work.getDate(),
+                work.getWorkHours(),
+                work.getStartTime(),
+                work.getEndTime(),
+                work.getProjectActivity(),
+                work.getAssignedWork(),
+                work.getStatus(),
+                work.getRemarks()
+        );
     }
 }
 
