@@ -10,6 +10,7 @@ import { useEmployee } from './context/EmployeeContext.js';
 import ManagerDashboard from './components/Manager/ManagerDashboard.js';
 import ManagerNavbar from './components/Manager/ManagerNavbar.js';
 import ProjectAssignmentForm from './components/Manager/ProjectAssignmentForm.js';
+import WorkPivotTable from './components/Manager/WorkPivotTable.js';
 
 function App() {
 
@@ -70,6 +71,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />        
         <Route path="/manager/assign-tl" element={<ProjectAssignmentForm />} />
+        <Route path="/manager/analysis" element={<WorkPivotTable />} />
         <Route path="/employee/work" element={
           <ProtectedRoute>
             <EmployeeWorkForm />

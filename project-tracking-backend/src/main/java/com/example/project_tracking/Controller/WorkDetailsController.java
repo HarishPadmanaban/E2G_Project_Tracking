@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/workdetails")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000")
 public class WorkDetailsController {
 
     private final WorkDetailsService workDetailsService;
@@ -58,6 +58,11 @@ public class WorkDetailsController {
     @GetMapping("/project/{projId}/activity/{actId}")
     public ResponseEntity<List<WorkDetails>> getByProjectAndActivity(@PathVariable Long projId, @PathVariable Long actId) {
         return ResponseEntity.ok(workDetailsService.getByProjectAndActivity(projId, actId));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<WorkDetails>> getAllWorkDetails() {
+        return ResponseEntity.ok(workDetailsService.getAllWorkDetails());
     }
 }
 

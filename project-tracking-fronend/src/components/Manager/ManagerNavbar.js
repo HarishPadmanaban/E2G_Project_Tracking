@@ -70,8 +70,8 @@ const ManagerNavbar = () => {
                 </Link>
               
               
-                <Link to="/manager/employee-analysis" className={styles.menuLink}>
-                  <li>Employee Analysis</li>
+                <Link to="/manager/analysis" className={styles.menuLink}>
+                  <li>Analysis</li>
                 </Link>
               
               

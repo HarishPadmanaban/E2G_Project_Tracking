@@ -126,5 +126,9 @@ public class WorkDetailsService {
     public List<WorkDetails> getByProjectAndActivity(Long projectId, Long activityId) {
         return workDetailsRepository.findByProjectAndActivity(projectId, activityId);
     }
+
+    public List<WorkDetails> getAllWorkDetails() {
+        return workDetailsRepository.findAll();
+    }
 }
 
