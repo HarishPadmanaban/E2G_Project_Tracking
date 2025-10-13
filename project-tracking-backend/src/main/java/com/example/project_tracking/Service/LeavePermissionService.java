@@ -49,6 +49,7 @@ public class LeavePermissionService {
     public List<LeavePermissionResponse> getRequestsByManagerId(Long managerId) {
         return leavePermissionRepository.findByManagerId(managerId)
                 .stream()
+                .filter(r -> "Pending".equalsIgnoreCase(r.getStatus()) && Boolean.TRUE.equals(r.isActive()))
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
@@ -85,6 +86,7 @@ public class LeavePermissionService {
                 lp.getLeaveDays(),
                 lp.getLeaveType(),
                 lp.getReason(),
+                lp.getAppliedDate(),
                 lp.getPermissionInTime(),
                 lp.getPermissionOutTime(),
                 lp.getPermissionHours(),

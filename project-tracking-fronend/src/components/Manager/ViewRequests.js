@@ -12,18 +12,27 @@ const ViewRequests = () => {
 
     axios
       .get(`http://localhost:8080/leave/manager/${employee.id}`)
-      .then((res) => setRequests(res.data))
+      .then((res) => {console.log(res.data);setRequests(res.data)})
       .catch((err) => console.error(err));
   }, [employee]);
 
   const handleApprove = (id) => {
     console.log("Approved:", id);
-    // axios.post(`/api/approve/${id}`);
+    axios.put(`http://localhost:8080/leave/status/${id}`,
+        null,
+        {
+            params:{
+                status : "Approved"
+            }
+        }
+    );
+    alert("Request Approved✅");
   };
 
   const handleReject = (id) => {
     console.log("Rejected:", id);
-    // axios.post(`/api/reject/${id}`);
+    axios.delete(`http://localhost:8080/leave/${id}`);
+    alert("Request Rejected❌");
   };
 
   if (loading) return <div className={styles.noData}>Loading...</div>;
@@ -36,7 +45,6 @@ const ViewRequests = () => {
         <table className={styles.requestTable}>
           <thead>
             <tr>
-              <th>Emp ID</th>
               <th>Name</th>
               <th>Applied</th>
               <th>Type</th>
@@ -61,8 +69,7 @@ const ViewRequests = () => {
             ) : (
               requests.map((r) => (
                 <tr key={r.id}>
-                  <td>{r.employee?.id || "-"}</td>
-                  <td>{r.employee?.name || "-"}</td>
+                  <td>{r.employeeName || "-"}</td>
                   <td>{r.appliedDate || "-"}</td>
                   <td>{r.type}</td>
                   <td>{r.fromDate || "-"}</td>
