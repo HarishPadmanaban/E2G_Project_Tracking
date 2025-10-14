@@ -32,6 +32,12 @@ public class WorkDetailsController {
         return ResponseEntity.ok(saved);
     }
 
+    @GetMapping("/active/{employeeId}")
+    public ResponseEntity<WorkDetailsResponse> getActiveWork(@PathVariable Long employeeId) {
+        WorkDetailsResponse activeWork = workDetailsService.getActiveWorkByEmployee(employeeId);
+        return ResponseEntity.ok(activeWork);
+    }
+
     @GetMapping("/employee/{id}")
     public ResponseEntity<List<WorkDetailsResponse>> getByEmployee(@PathVariable Long id) {
         return ResponseEntity.ok(workDetailsService.getByEmployee(id));
@@ -65,6 +71,20 @@ public class WorkDetailsController {
     @GetMapping("/project/{projId}/activity/{actId}")
     public ResponseEntity<List<WorkDetailsResponse>> getByProjectAndActivity(@PathVariable Long projId, @PathVariable Long actId) {
         return ResponseEntity.ok(workDetailsService.getByProjectAndActivity(projId, actId));
+    }
+    @PutMapping("/stop/{employeeId}")
+    public ResponseEntity<WorkDetails> stopWork(
+            @PathVariable Long employeeId,
+            @RequestParam String endTime,
+            @RequestParam String workHours) {
+
+        WorkDetails updated = workDetailsService.stopWork(employeeId, endTime, workHours);
+        return ResponseEntity.ok(updated);
+    }
+    @PutMapping("/savefinal")
+    public ResponseEntity<WorkDetails> saveFinal(@RequestBody WorkDetailsRequest request , @RequestParam Long activeWorkId) {
+        WorkDetails saved = workDetailsService.saveFinalWork(request,activeWorkId);
+        return ResponseEntity.ok(saved);
     }
 }
 

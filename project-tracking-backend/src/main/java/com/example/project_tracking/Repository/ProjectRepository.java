@@ -8,4 +8,5 @@ import java.util.List;
 public interface ProjectRepository extends JpaRepository<Project,Long> {
     List<Project> findByManagerId(Long managerId);
     List<Project> findByManagerIdAndProjectStatusTrue(Long managerId);
+
 }

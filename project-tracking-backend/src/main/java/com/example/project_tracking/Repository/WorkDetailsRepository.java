@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface WorkDetailsRepository extends JpaRepository<WorkDetails,Long> {
     List<WorkDetails> findByEmployeeId(Long employeeId);
@@ -15,6 +16,8 @@ public interface WorkDetailsRepository extends JpaRepository<WorkDetails,Long> {
     List<WorkDetails> findByProjectId(Long projectId);
 
     List<WorkDetails> findByActivityId(Long activityId);
+
+    Optional<WorkDetails> findTopByEmployeeIdAndEndTimeIsNullOrderByIdDesc(Long employeeId);
 
     @Query("SELECT w FROM WorkDetails w WHERE w.employee.id = :employeeId AND w.project.id = :projectId")
     List<WorkDetails> findByEmployeeAndProject(@Param("employeeId") Long employeeId,

@@ -11,6 +11,7 @@ const EmployeeWorkForm = () => {
   const [startDisabled, setStartDisabled] = useState(false);
   const [stopDisabled, setStopDisabled] = useState(true);
   const [submitDisabled, setSubmitDisabled] = useState(true);
+  const [activeWorkId, setActiveWorkId] = useState(null);
 
   const [formData, setFormData] = useState({
     projectId: "",
@@ -102,6 +103,68 @@ useEffect(() => {
   }
 };
 
+useEffect(() => {
+  if (!employee || !employee.id) return;
+
+  axios
+    .get(`http://localhost:8080/workdetails/active/${employee.id}`)
+    .then((res) => {
+      const active = res.data;
+      if (active && !active.endTime) {
+        // Find project and activity from IDs
+        const selectedProject = projects.find(
+          (proj) => proj.id.toString() === active.projectId?.toString()
+        );
+        const selectedActivity = activities.find(
+          (act) => act.id.toString() === active.activityId?.toString()
+        );
+
+        setActiveWorkId(active.id);
+
+        // Restore running session
+        setFormData({
+          projectId: active.projectId?.toString() || "",
+          clientName: selectedProject ? selectedProject.clientName : "",
+          projectActivityType: selectedActivity ? selectedActivity.mainType : "",
+          activityId: active.activityId?.toString() || "",
+          category: selectedActivity ? selectedActivity.category : "",
+          startTime: active.startTime ? active.startTime.substring(0, 5) : "",
+          endTime: "",
+          workHours: "",
+          projectActivity: active.projectActivity || "",
+          assignedWork: active.assignedWork || "",
+          status: active.status || "Pending",
+          remarks: active.remarks || "",
+        });
+
+        setIsRunning(true);
+        setStartDisabled(true);
+        const now = new Date();
+const [startH, startM] = active.startTime.split(":").map(Number);
+const startDate = new Date();
+startDate.setHours(startH, startM, 0);
+
+const diffMs = now - startDate; // milliseconds elapsed
+if (diffMs >= 2 * 60 * 1000) {
+  setStopDisabled(false); // enable stop if 2 mins passed
+} else {
+  setStopDisabled(true);
+  // enable after remaining time
+  setTimeout(() => setStopDisabled(false), 2 * 60 * 1000 - diffMs);
+}
+        setSubmitDisabled(true);
+      } else {
+        // No active work
+        setIsRunning(false);
+        setStartDisabled(false);
+        setStopDisabled(true);
+        setSubmitDisabled(true);
+      }
+    })
+    .catch((err) => console.error("Error fetching active work:", err));
+}, [employee, projects, activities]);
+
+
 
 
 
@@ -132,50 +195,71 @@ useEffect(() => {
 
   const handleStartStop = () => {
   if (!isRunning) {
-    // START clicked
-     if (!isFormValid(false)) {
-      alert("Please fill in all required fields before starting.");
-      return;
-    }
-    const now = new Date();
-    const start = now.getHours().toString().padStart(2, "0") + ":" + now.getMinutes().toString().padStart(2, "0");
+  if (!isFormValid(false)) {
+    alert("Please fill in all required fields before starting.");
+    return;
+  }
 
-    setFormData((prev) => ({ ...prev, startTime: start }));
-    setIsRunning(true);
-    setStopDisabled(true);  // disable stop initially
-    setSubmitDisabled(true);
+  const now = new Date();
+  const start = now.getHours().toString().padStart(2, "0") + ":" + now.getMinutes().toString().padStart(2, "0");
 
-    // Enable STOP after 2 minutes
-    setTimeout(() => {
-      setStopDisabled(false);
-    }, 2 * 60 * 1000); // 2 minutes
-  } else {
-    // STOP clicked
-    const now = new Date();
-    const end = now.getHours().toString().padStart(2, "0") + ":" + now.getMinutes().toString().padStart(2, "0");
+  const payload = {
+    employeeId: employee.id,
+    managerId: employee.reportingToId,
+    projectId: formData.projectId,
+    activityId: formData.activityId,
+    date: new Date().toISOString().split("T")[0],
+    startTime: start + ":00",
+    projectActivity: formData.projectActivity,
+    assignedWork: formData.assignedWork,
+    status: formData.status,
+    remarks: formData.remarks
+  };
 
-    const [startH, startM] = formData.startTime.split(":").map(Number);
-    const [endH, endM] = end.split(":").map(Number);
+  axios.post("http://localhost:8080/workdetails/save", payload)
+    .then(() => {
+      setFormData((prev) => ({ ...prev, startTime: start }));
+      setIsRunning(true);
+      setStopDisabled(true);
+      setSubmitDisabled(true);
 
-    const startTotalMin = startH * 60 + startM;
-    const endTotalMin = endH * 60 + endM;
-    let diffMinutes = endTotalMin - startTotalMin;
-    if (diffMinutes < 0) diffMinutes += 24 * 60;
+      // Enable STOP after 2 minutes
+      setTimeout(() => setStopDisabled(false), 2 * 60 * 1000);
+    })
+    .catch((err) => {
+      console.error("Error starting work:", err);
+      alert("Could not start activity.");
+    });
+}
+ else {
+  const now = new Date();
+  const end = now.getHours().toString().padStart(2, "0") + ":" + now.getMinutes().toString().padStart(2, "0");
 
-    const diffHours = (diffMinutes / 60).toFixed(2);
+  const [startH, startM] = formData.startTime.split(":").map(Number);
+  const [endH, endM] = end.split(":").map(Number);
+  let diffMinutes = (endH * 60 + endM) - (startH * 60 + startM);
+  if (diffMinutes < 0) diffMinutes += 24 * 60;
+  const diffHours = (diffMinutes / 60).toFixed(2);
 
+  axios.put(`http://localhost:8080/workdetails/stop/${employee.id}`, null, {
+  params: {
+    endTime: end + ":00",
+    workHours: diffHours
+  }
+})
+  .then(() => {
     setFormData((prev) => ({
       ...prev,
       endTime: end,
       workHours: diffHours
     }));
-
-    // Update states
     setIsRunning(false);
     setStopDisabled(true);
-    setStartDisabled(true);      // 👈 Start disabled after stop
-    setSubmitDisabled(false);// enable submit after stop
-  }
+    setStartDisabled(true);
+    setSubmitDisabled(false);
+  })
+  .catch((err) => console.error("Error stopping work:", err));
+}
 };
 
 
@@ -183,7 +267,9 @@ useEffect(() => {
   const handleSubmit = (e) => {
   e.preventDefault();
   if (!employee) return;
+  console.log(formData);
   if (!isFormValid(true)) {
+    console.log(formData);
     alert("Please fill in all required fields before submitting.");
     return;
   }
@@ -199,29 +285,15 @@ useEffect(() => {
     projectActivity: formData.projectActivity,  // camelCase
     assignedWork: formData.assignedWork,  // camelCase
     status: formData.status,
-    remarks: formData.rema
+    remarks: formData.remarks
   };
 
   // 🟢 Print the entire data clearly before sending
   console.log("📦 Submitting Work Form Data:", payload);
-setFormData({
-        projectId: "",
-        clientName: "",
-        activityId: "",
-        category: "",
-        projectActivityType: "",
-        startTime: "",
-        endTime: "",
-        workHours: "",
-        projectActivity: "",
-        assignedWork: "",
-        status: "Pending",
-        remarks: ""
-      });
-      setSubmitDisabled(true);   // Disable Submit
-      setStartDisabled(false);
   axios
-    .post("http://localhost:8080/workdetails/save", payload)
+    .put(`http://localhost:8080/workdetails/savefinal`, payload, {
+      params: { activeWorkId: activeWorkId } // ✅ send activeWorkId as query param
+    })
     .then(() => {
       alert("Work submitted successfully!");
       setFormData({
