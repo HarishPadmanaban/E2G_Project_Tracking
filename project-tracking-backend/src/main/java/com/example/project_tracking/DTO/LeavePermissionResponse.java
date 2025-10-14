@@ -15,6 +15,7 @@ public class LeavePermissionResponse {
     private Integer leaveDays;
     private String leaveType;
     private String reason;
+    private LocalDate appliedDate;
     private LocalTime permissionInTime;
     private LocalTime permissionOutTime;
     private Double permissionHours;
@@ -25,7 +26,7 @@ public class LeavePermissionResponse {
     public LeavePermissionResponse(Long id, String employeeName, String managerName,
                                    String type, String leaveDuration, LocalDate fromDate,
                                    LocalDate toDate, Integer leaveDays, String leaveType,
-                                   String reason, LocalTime permissionInTime, LocalTime permissionOutTime,
+                                   String reason,LocalDate appliedDate, LocalTime permissionInTime, LocalTime permissionOutTime,
                                    Double permissionHours, String status, boolean isActive) {
         this.id = id;
         this.employeeName = employeeName;
@@ -37,6 +38,7 @@ public class LeavePermissionResponse {
         this.leaveDays = leaveDays;
         this.leaveType = leaveType;
         this.reason = reason;
+        this.appliedDate = appliedDate;
         this.permissionInTime = permissionInTime;
         this.permissionOutTime = permissionOutTime;
         this.permissionHours = permissionHours;
@@ -60,5 +62,13 @@ public class LeavePermissionResponse {
     public Double getPermissionHours() { return permissionHours; }
     public String getStatus() { return status; }
     public boolean isActive() { return isActive; }
+
+    public LocalDate getAppliedDate() {
+        return appliedDate;
+    }
+
+    public void setAppliedDate(LocalDate appliedDate) {
+        this.appliedDate = appliedDate;
+    }
 }
 
