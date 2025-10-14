@@ -181,9 +181,5 @@ public class WorkDetailsService {
                 work.getRemarks()
         );
     }
-
-    public List<WorkDetails> getAllWorkDetails() {
-        return workDetailsRepository.findAll();
-    }
 }
 

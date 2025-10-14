@@ -66,10 +66,5 @@ public class WorkDetailsController {
     public ResponseEntity<List<WorkDetailsResponse>> getByProjectAndActivity(@PathVariable Long projId, @PathVariable Long actId) {
         return ResponseEntity.ok(workDetailsService.getByProjectAndActivity(projId, actId));
     }
-
-    @GetMapping("/all")
-    public ResponseEntity<List<WorkDetails>> getAllWorkDetails() {
-        return ResponseEntity.ok(workDetailsService.getAllWorkDetails());
-    }
 }
 
