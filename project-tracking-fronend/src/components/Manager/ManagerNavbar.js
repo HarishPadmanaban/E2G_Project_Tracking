@@ -75,12 +75,12 @@ const ManagerNavbar = () => {
                 </Link>
               
               
-                <Link to="/manager/project-analysis" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
+                <Link to="/manager/analysis" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
                   <li>Project Analysis</li>
                 </Link>
               
               
-                <Link to="/manager/activity-analysis" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
+                <Link to="/manager/analysis" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
                   <li>Activity Analysis</li>
                 </Link>
               
