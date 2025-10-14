@@ -12,7 +12,9 @@ import com.example.project_tracking.Repository.WorkDetailsRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,7 +70,9 @@ public class WorkDetailsService {
         workDetails.setStatus(request.getStatus());
         workDetails.setRemarks(request.getRemarks());
 
-        updateProjectWorkingHours(project, activity, request.getWorkHours());
+        if (request.getWorkHours() != null && request.getWorkHours() > 0) {
+            updateProjectWorkingHours(project, activity, request.getWorkHours());
+        }
         
         return workDetailsRepository.save(workDetails);
     }
@@ -182,8 +186,66 @@ public class WorkDetailsService {
         );
     }
 
-    public List<WorkDetails> getAllWorkDetails() {
-        return workDetailsRepository.findAll();
+    public WorkDetails stopWork(Long employeeId, String endTime, String workHoursStr) {
+        WorkDetails work = workDetailsRepository.findTopByEmployeeIdAndEndTimeIsNullOrderByIdDesc(employeeId)
+                .orElseThrow(() -> new RuntimeException("No active work found for employee"));
+
+        work.setEndTime(LocalTime.parse(endTime));
+        try {
+            Double hours = Double.parseDouble(workHoursStr);
+            work.setWorkHours(hours);
+        } catch (NumberFormatException e) {
+            work.setWorkHours(0.0);
+        }
+
+        return workDetailsRepository.save(work);
+    }
+
+    public WorkDetails saveFinalWork(WorkDetailsRequest request, Long activeWorkId) {
+        WorkDetails work = workDetailsRepository.findById(activeWorkId).orElse(null);
+        if(work==null) return null;
+        work.setStartTime(request.getStartTime());
+        work.setEndTime(request.getEndTime());
+        work.setWorkHours(request.getWorkHours());
+        work.setProjectActivity(request.getProjectActivity());
+        work.setAssignedWork(request.getAssignedWork());
+        work.setStatus(request.getStatus());
+        work.setRemarks(request.getRemarks());
+
+        return workDetailsRepository.save(work);
+    }
+
+
+    public WorkDetailsResponse getActiveWorkByEmployee(Long employeeId) {
+        Optional<WorkDetails> workOpt = workDetailsRepository
+                .findTopByEmployeeIdAndEndTimeIsNullOrderByIdDesc(employeeId);
+
+        if (workOpt.isEmpty()) return null;
+
+        WorkDetails work = workOpt.get();
+
+        String employeeName = work.getEmployee().getName();
+        String managerName = work.getManager().getName();
+        String projectName = work.getProject() != null ? work.getProject().getProjectName() : "";
+        String activityName = work.getActivity() != null ? work.getActivity().getActivityName() : "";
+
+        return new WorkDetailsResponse(
+                work.getId(),
+                employeeName,
+                managerName,
+                projectName,
+                activityName,
+                work.getDate(),
+                work.getWorkHours(),
+                work.getStartTime(),
+                work.getEndTime(),
+                work.getProjectActivity(),
+                work.getAssignedWork(),
+                work.getStatus(),
+                work.getRemarks(),
+                work.getProject().getId(),
+                work.getActivity().getId()
+        );
     }
 }
 
