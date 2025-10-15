@@ -45,11 +45,19 @@ public class LeavePermissionService {
                 .collect(Collectors.toList());
     }
 
-    // Get requests by Manager ID as DTOs
+    // Get requests by Manager ID as DTOs.It return Pending requests only
     public List<LeavePermissionResponse> getRequestsByManagerId(Long managerId) {
         return leavePermissionRepository.findByManagerId(managerId)
                 .stream()
                 .filter(r -> Boolean.TRUE.equals(r.isActive()))
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<LeavePermissionResponse> getRequestsByManagerIdApproved(Long managerId) {
+        return leavePermissionRepository.findByManagerId(managerId)
+                .stream()
+                .filter(r -> "Approved".equalsIgnoreCase(r.getStatus()) && Boolean.TRUE.equals(!r.isActive()))
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }

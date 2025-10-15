@@ -1,12 +1,15 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "../../styles/Employee/EmployeeNavbar.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
+import axios from "axios";
 
 const ManagerNavbar = () => {
   const navigate = useNavigate();
   const { employee, logout } = useEmployee();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
+
 
   const handleBack = () => {
     if (window.location.pathname === "/manager/work") return;
@@ -19,23 +22,36 @@ const ManagerNavbar = () => {
   };
 
   useEffect(() => {
-  const handleOutsideClick = (e) => {
-    if (
-      !e.target.closest(`.${styles.sidebarMenu}`) &&
-      !e.target.closest(`.${styles.sandwichMenu}`)
-    ) {
-      setMenuOpen(false);
+    if (!employee?.id) return;
+
+    axios
+      .get(`http://localhost:8080/leave/manager/${employee.id}`)
+      .then((res) => {
+        const pending = res.data.filter((r) => r.status === "Pending");
+        setPendingCount(pending.length);
+      })
+      .catch((err) => console.error(err));
+  }, [employee]);
+
+
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (
+        !e.target.closest(`.${styles.sidebarMenu}`) &&
+        !e.target.closest(`.${styles.sandwichMenu}`)
+      ) {
+        setMenuOpen(false);
+      }
+    };
+
+    if (menuOpen) {
+      document.addEventListener("click", handleOutsideClick);
+    } else {
+      document.removeEventListener("click", handleOutsideClick);
     }
-  };
 
-  if (menuOpen) {
-    document.addEventListener("click", handleOutsideClick);
-  } else {
-    document.removeEventListener("click", handleOutsideClick);
-  }
-
-  return () => document.removeEventListener("click", handleOutsideClick);
-}, [menuOpen]);
+    return () => document.removeEventListener("click", handleOutsideClick);
+  }, [menuOpen]);
 
 
   if (!employee) return null;
@@ -60,33 +76,37 @@ const ManagerNavbar = () => {
           <div className={`${styles.sidebarMenu} ${menuOpen ? styles.open : ""}`}>
             <ul>
 
-                <Link to="/manager/work" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
-                  <li>Home</li>
-                </Link>
+              <Link to="/manager/work" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
+                <li>Home</li>
+              </Link>
 
-              
-                <Link to="/manager/assign-tl" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
-                  <li>Project Distribution</li>
-                </Link>
-              
-              
-                <Link to="/manager/analysis" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
-                  <li>Analysis</li>
-                </Link>
-              
-                <Link to="/manager/view-requests" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
-                  <li>View Requests</li>
-                </Link>
-              
+
+              <Link to="/manager/assign-tl" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
+                <li>Project Distribution</li>
+              </Link>
+
+
+              <Link to="/manager/analysis" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
+                <li>Analysis</li>
+              </Link>
+
+              <Link to="/manager/view-requests" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
+                <li>
+                  View Requests
+                  {pendingCount > 0 && <span className={styles.badge}>{pendingCount}</span>}
+                </li>
+              </Link>
+
+
             </ul>
           </div>
-            {menuOpen && <div className={styles.overlay}></div>}
+          {menuOpen && <div className={styles.overlay}></div>}
           <button className={styles.backBtn} onClick={handleBack}>
             Back
           </button>
         </div>
 
-        <div className={styles.navCenter} style={{marginLeft:"6%"}}>
+        <div className={styles.navCenter} style={{ marginLeft: "6%" }}>
           <h1>E2G ENGINEERING SERVICES PRIVATE LIMITED</h1>
         </div>
 

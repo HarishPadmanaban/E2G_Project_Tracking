@@ -32,6 +32,11 @@ public class WorkDetailsController {
         return ResponseEntity.ok(saved);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getDetails(@PathVariable Long id)
+    {
+        return ResponseEntity.ok(workDetailsService.getByDetailsId(id));
+    }
     @GetMapping("/active/{employeeId}")
     public ResponseEntity<WorkDetailsResponse> getActiveWork(@PathVariable Long employeeId) {
         WorkDetailsResponse activeWork = workDetailsService.getActiveWorkByEmployee(employeeId);

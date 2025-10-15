@@ -247,5 +247,32 @@ public class WorkDetailsService {
                 work.getActivity().getId()
         );
     }
+
+    public WorkDetailsResponse getByDetailsId(Long id) {
+        WorkDetails work =  workDetailsRepository.findById(id).orElse(null);
+        if(work==null) return null;
+
+        String employeeName = work.getEmployee().getName();
+        String managerName = work.getManager().getName();
+        String projectName = work.getProject() != null ? work.getProject().getProjectName() : "";
+        String activityName = work.getActivity() != null ? work.getActivity().getActivityName() : "";
+        return new WorkDetailsResponse(
+                work.getId(),
+                employeeName,
+                managerName,
+                projectName,
+                activityName,
+                work.getDate(),
+                work.getWorkHours(),
+                work.getStartTime(),
+                work.getEndTime(),
+                work.getProjectActivity(),
+                work.getAssignedWork(),
+                work.getStatus(),
+                work.getRemarks(),
+                work.getProject().getId(),
+                work.getActivity().getId()
+        );
+    }
 }
 

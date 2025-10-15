@@ -11,7 +11,9 @@ const EmployeeWorkForm = () => {
   const [startDisabled, setStartDisabled] = useState(false);
   const [stopDisabled, setStopDisabled] = useState(true);
   const [submitDisabled, setSubmitDisabled] = useState(true);
-  const [activeWorkId, setActiveWorkId] = useState(null);
+const [activeWorkId, setActiveWorkId] = useState(() => {
+  return localStorage.getItem("activeWorkId") || null;
+});
 
   const [formData, setFormData] = useState({
     projectId: "",
@@ -29,6 +31,15 @@ const EmployeeWorkForm = () => {
   });
 
   const [isRunning, setIsRunning] = useState(false);
+
+  useEffect(() => {
+  if (activeWorkId) {
+    localStorage.setItem("activeWorkId", activeWorkId);
+  } else {
+    localStorage.removeItem("activeWorkId");
+  }
+}, [activeWorkId]);
+
 
   // Fetch projects and activities when employee context is available
   useEffect(() => {
@@ -102,67 +113,133 @@ useEffect(() => {
     }));
   }
 };
-
 useEffect(() => {
   if (!employee || !employee.id) return;
 
-  axios
-    .get(`http://localhost:8080/workdetails/active/${employee.id}`)
-    .then((res) => {
-      const active = res.data;
-      if (active && !active.endTime) {
-        // Find project and activity from IDs
+  // 🟢 CASE 1: Use activeWorkId if available (Stopped but not submitted)
+  console.log(activeWorkId);
+  if (activeWorkId) {
+    axios
+      .get(`http://localhost:8080/workdetails/${activeWorkId}`)
+      .then((res) => {
+        const work = res.data;
+        console.log(activeWorkId);
+        console.log(work);
+        if (!work) return;
+
         const selectedProject = projects.find(
-          (proj) => proj.id.toString() === active.projectId?.toString()
+          (proj) => proj.id.toString() === work.projectId?.toString()
         );
         const selectedActivity = activities.find(
-          (act) => act.id.toString() === active.activityId?.toString()
+          (act) => act.id.toString() === work.activityId?.toString()
         );
 
-        setActiveWorkId(active.id);
-
-        // Restore running session
+        // ✅ Autofill form for stopped work
         setFormData({
-          projectId: active.projectId?.toString() || "",
+          projectId: work.projectId?.toString() || "",
           clientName: selectedProject ? selectedProject.clientName : "",
           projectActivityType: selectedActivity ? selectedActivity.mainType : "",
-          activityId: active.activityId?.toString() || "",
+          activityId: work.activityId?.toString() || "",
           category: selectedActivity ? selectedActivity.category : "",
-          startTime: active.startTime ? active.startTime.substring(0, 5) : "",
-          endTime: "",
-          workHours: "",
-          projectActivity: active.projectActivity || "",
-          assignedWork: active.assignedWork || "",
-          status: active.status || "Pending",
-          remarks: active.remarks || "",
+          startTime: work.startTime ? work.startTime.substring(0, 5) : "",
+          endTime: work.endTime ? work.endTime.substring(0, 5) : "",
+          workHours: work.workHours || "",
+          projectActivity: work.projectActivity || "",
+          assignedWork: work.assignedWork || "",
+          status: work.status || "Pending",
+          remarks: work.remarks || "",
         });
 
-        setIsRunning(true);
-        setStartDisabled(true);
-        const now = new Date();
-const [startH, startM] = active.startTime.split(":").map(Number);
-const startDate = new Date();
-startDate.setHours(startH, startM, 0);
+        // ⚙️ Preserve existing button state logic — don't force any change
+        if (!work.endTime) {
+           setIsRunning(true);
+          setStartDisabled(true);
+          setSubmitDisabled(true);
+          // Calculate if stop should be enabled based on elapsed time
+          const now = new Date();
+          const [startH, startM] = work.startTime.split(":").map(Number);
+          const startDate = new Date();
+          startDate.setHours(startH, startM, 0);
+          const diffMs = now - startDate;
+          
+          if (diffMs >= 2 * 60 * 1000) {
+            setStopDisabled(false);
+          } else {
+            setStopDisabled(true);
+            setTimeout(() => setStopDisabled(false), 2 * 60 * 1000 - diffMs);
+          }
+        } else {
+          // stopped work — ready to submit
+          setIsRunning(false);
+          setStartDisabled(true);
+          setStopDisabled(true);
+          setSubmitDisabled(false);
+        }
+      })
+      .catch((err) => console.error("Error fetching work by ID:", err));
+  } else {
+    // 🟢 CASE 2: Check for currently active running work
+    axios
+      .get(`http://localhost:8080/workdetails/active/${employee.id}`)
+      .then((res) => {
+        const active = res.data;
 
-const diffMs = now - startDate; // milliseconds elapsed
-if (diffMs >= 2 * 60 * 1000) {
-  setStopDisabled(false); // enable stop if 2 mins passed
-} else {
-  setStopDisabled(true);
-  // enable after remaining time
-  setTimeout(() => setStopDisabled(false), 2 * 60 * 1000 - diffMs);
-}
-        setSubmitDisabled(true);
-      } else {
-        // No active work
-        setIsRunning(false);
-        setStartDisabled(false);
-        setStopDisabled(true);
-        setSubmitDisabled(true);
-      }
-    })
-    .catch((err) => console.error("Error fetching active work:", err));
-}, [employee, projects, activities]);
+        if (active && !active.endTime) {
+          const selectedProject = projects.find(
+            (proj) => proj.id.toString() === active.projectId?.toString()
+          );
+          const selectedActivity = activities.find(
+            (act) => act.id.toString() === active.activityId?.toString()
+          );
+
+          // Store running work ID
+          setActiveWorkId(active.id);
+
+          // ✅ Autofill for running session
+          setFormData({
+            projectId: active.projectId?.toString() || "",
+            clientName: selectedProject ? selectedProject.clientName : "",
+            projectActivityType: selectedActivity ? selectedActivity.mainType : "",
+            activityId: active.activityId?.toString() || "",
+            category: selectedActivity ? selectedActivity.category : "",
+            startTime: active.startTime ? active.startTime.substring(0, 5) : "",
+            endTime: "",
+            workHours: "",
+            projectActivity: active.projectActivity || "",
+            assignedWork: active.assignedWork || "",
+            status: active.status || "Pending",
+            remarks: active.remarks || "",
+          });
+
+          // ⚙️ Maintain button states as before
+          setIsRunning(true);
+          setStartDisabled(true);
+          setSubmitDisabled(true);
+
+          const now = new Date();
+          const [startH, startM] = active.startTime.split(":").map(Number);
+          const startDate = new Date();
+          startDate.setHours(startH, startM, 0);
+
+          const diffMs = now - startDate;
+          if (diffMs >= 2 * 60 * 1000) {
+            setStopDisabled(false);
+          } else {
+            setStopDisabled(true);
+            setTimeout(() => setStopDisabled(false), 2 * 60 * 1000 - diffMs);
+          }
+        } else {
+          // No active work found — stay idle
+          setIsRunning(false);
+          setStartDisabled(false);
+          setStopDisabled(true);
+          setSubmitDisabled(true);
+        }
+      })
+      .catch((err) => console.error("Error fetching active work:", err));
+  }
+}, [employee, projects, activities, activeWorkId]);
+
 
 
 
@@ -217,7 +294,9 @@ if (diffMs >= 2 * 60 * 1000) {
   };
 
   axios.post("http://localhost:8080/workdetails/save", payload)
-    .then(() => {
+    .then((res) => {
+      const workId = res.data.id; // <-- get the ID
+    setActiveWorkId(workId);  
       setFormData((prev) => ({ ...prev, startTime: start }));
       setIsRunning(true);
       setStopDisabled(true);
@@ -311,6 +390,7 @@ if (diffMs >= 2 * 60 * 1000) {
       });
       setSubmitDisabled(true);
       setStartDisabled(false);
+      setActiveWorkId(null);
     })
     .catch((err) => {
       console.error("❌ Error submitting work:", err);
