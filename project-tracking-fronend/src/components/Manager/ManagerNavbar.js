@@ -74,16 +74,6 @@ const ManagerNavbar = () => {
                   <li>Analysis</li>
                 </Link>
               
-              
-                <Link to="/manager/analysis" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
-                  <li>Project Analysis</li>
-                </Link>
-              
-              
-                <Link to="/manager/analysis" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
-                  <li>Activity Analysis</li>
-                </Link>
-              
                 <Link to="/manager/view-requests" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
                   <li>View Requests</li>
                 </Link>

@@ -17,7 +17,7 @@
   align-items: center;
   margin-right: 15px;
   cursor: pointer;
-  z-index: 200;
+  z-index: 999999999999999;
 }
 
 .menuIcon {
@@ -47,7 +47,7 @@
   color: white;
   transition: left 0.3s ease;
   padding-top: 60px;
-  z-index: 150;
+  z-index: 99999;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.4);
 }
 

@@ -7,12 +7,60 @@
   overflow-x: auto;
 }
 
+.filterButtons {
+  display: flex;
+  margin-bottom: 15px;
+  justify-content: center;
+}
+
+
+.filterBtn:first-child {
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+  margin-left: 0; /* first button no negative margin */
+}
+
+.filterBtn:last-child {
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+}
+
+.filterBtn:hover {
+  background-color: #93beed;
+  color: white;
+}
+
+.statusApproved {
+  color: #22c55e; /* Tailwind green-500 */
+  font-weight: 600;
+}
+
+.statusPending {
+  color: #ef4444; /* Tailwind red-500 */
+  font-weight: 600;
+}
+
+
 .title {
   font-size: 24px;
   font-weight: 600;
   color: #333;
   margin-bottom: 20px;
   text-align: center;
+}
+
+.active {
+  border-color: #007bff;
+  background-color: #007bff;
+  color: #fff;
+}
+
+.filterBtn {
+  box-sizing: border-box; /* include border in width */
+  border: 1px solid gray; /* same width for all buttons */
+  padding: 6px 14px; /* adjust to maintain size with 2px border */
+  transition: all 0.2s ease;
+  font-size: 16px;
 }
 
 .tableWrapper {

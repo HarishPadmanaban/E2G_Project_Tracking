@@ -7,6 +7,10 @@
   gap: 10px;
 }
 
+.pvtButton
+{
+}
+
 /* Make renderer area scrollable and full width */
 .pvtRendererArea {
   width: 100vw;                  /* full viewport width */
