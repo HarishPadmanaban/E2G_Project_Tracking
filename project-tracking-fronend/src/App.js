@@ -71,9 +71,33 @@ function App() {
       {employee && employee.manager && <ManagerNavbar/>}
       <Routes>
         <Route path="/" element={<Login />} />        
-        <Route path="/manager/assign-tl" element={<ProjectAssignmentForm />} />
-        <Route path="/manager/analysis" element={<WorkPivotTable />} />
-        <Route path="/manager/view-requests" element={<ViewRequests />} />
+        <Route
+  path="/manager/assign-tl"
+  element={
+    <ProtectedRoute>
+      <ProjectAssignmentForm />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/manager/analysis"
+  element={
+    <ProtectedRoute>
+      <WorkPivotTable />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/manager/view-requests"
+  element={
+    <ProtectedRoute>
+      <ViewRequests />
+    </ProtectedRoute>
+  }
+/>
+
         <Route path="/employee/work" element={
           <ProtectedRoute>
             <EmployeeWorkForm />

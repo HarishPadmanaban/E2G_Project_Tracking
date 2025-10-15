@@ -2,10 +2,18 @@ import React, { useState, useEffect } from "react";
 import styles from "../../styles/Employee/LeavePermissionForm.module.css"; // reuse same CSS
 import { useEmployee } from "../../context/EmployeeContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ProjectAssignmentForm = () => {
   const { employee, loading } = useEmployee();
-  const managerIdToUse = employee.manager ? employee.id : employee.reportingToId;
+  const navigate = useNavigate(); // 👈 added
+
+  useEffect(() => {
+    if (!loading && !employee) {
+      navigate("/"); // 👈 redirect to login page
+    }
+  }, [employee, loading, navigate]);
+  const managerIdToUse = employee?.manager ? employee.id : employee?.reportingToId;
   const [projects, setProjects] = useState([]);
   const [teamLeads, setTeamLeads] = useState([]);
   useEffect(() => {

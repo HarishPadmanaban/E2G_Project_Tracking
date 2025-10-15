@@ -149,7 +149,19 @@ const WorkPivotTable = () => {
       .catch((err) => console.error(err));
   }, [employee]);
 
-  // ✅ Export only the pivot table shown to Excel (Excel 2016 compatible)
+  useEffect(() => {
+  if (data.length > 1) {
+    // Reset pivotState to prevent "select all / none" crash
+    setPivotState({
+      rows: ["Employee"],
+      cols: ["Activity"],
+      aggregatorName: "Sum",
+      vals: ["Work Hours"],
+      rendererName: "Table",
+    });
+  }
+}, [data]);
+
    const exportPivotToExcel = () => {
     const table = document.querySelector(".pvtTable");
     if (!table) {

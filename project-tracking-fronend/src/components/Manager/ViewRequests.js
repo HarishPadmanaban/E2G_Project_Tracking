@@ -11,7 +11,7 @@ const ViewRequests = () => {
     if (!employee?.id) return;
 
     axios
-      .get(`http://localhost:8080/leave/manager/${employee.id}`)
+      .get(`http://localhost:8080/leave/manager-pending/${employee.id}`)
       .then((res) => {console.log(res.data);setRequests(res.data)})
       .catch((err) => console.error(err));
   }, [employee]);
