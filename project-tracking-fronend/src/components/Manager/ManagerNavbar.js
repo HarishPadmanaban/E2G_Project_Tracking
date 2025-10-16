@@ -22,16 +22,31 @@ const ManagerNavbar = () => {
   };
 
   useEffect(() => {
-    if (!employee?.id) return;
+  if (!employee?.id) return;
 
+  const fetchPending = () => {
     axios
-      .get(`http://localhost:8080/leave/manager/${employee.id}`)
+      .get(`http://localhost:8080/leave/manager-pending/${employee.id}`)
       .then((res) => {
         const pending = res.data.filter((r) => r.status === "Pending");
         setPendingCount(pending.length);
       })
       .catch((err) => console.error(err));
-  }, [employee]);
+  };
+
+  // Fetch initially
+  fetchPending();
+
+  // Listen for custom refresh event dispatched from ViewRequests
+  const handleRefresh = () => fetchPending();
+  window.addEventListener("refreshPendingCount", handleRefresh);
+
+  // Cleanup
+  return () => {
+    window.removeEventListener("refreshPendingCount", handleRefresh);
+  };
+}, [employee]);
+
 
 
   useEffect(() => {

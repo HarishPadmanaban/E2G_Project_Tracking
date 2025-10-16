@@ -106,10 +106,17 @@
   height: 50px; 
 }
 
+/* Modern gradient header for projectsTable */
 .projectsTable thead th {
-  background-color: rgb(54, 52, 52); 
-  color:white;
+  background: linear-gradient(135deg, #1e293b, #334155); /* gradient dark blue/gray */
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 12px 15px;
+  text-align: center; /* optional: center headers */
 }
+
 
 .projectsTable th,
 .projectsTable td {
@@ -152,6 +159,9 @@
 
 .noData {
   text-align: center;
-  padding: 15px;
-  color: #888;
+  padding: 30px;
+  color: #666;
+  font-size: 15px;
+  font-style: italic;
+  background-color: #fafafa;
 }

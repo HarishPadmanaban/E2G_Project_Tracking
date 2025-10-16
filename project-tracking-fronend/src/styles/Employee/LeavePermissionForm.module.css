@@ -27,10 +27,6 @@ body {
   background: #d1d5db;
 }
 
-.active {
-  background: #2563eb;
-  color: white;
-}
 
 .requestTable {
   width: 100%;
@@ -43,10 +39,7 @@ body {
   margin-top: 10px;
 }
 
-.requestTable {
-  width: 100%;
-  border-collapse: collapse;
-}
+
 .filterButtons {
   display: flex;
   margin-bottom: 45px;
@@ -81,31 +74,72 @@ body {
   background-color: #93beed;
   color: white;
 }
-.requestTable th,
-.requestTable td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-}
-
-.requestTable th {
-  background-color: #f3f4f6;
-  font-weight: bold;
-}
-
 .statusApproved {
-  color: green;
+  color: #16a34a;
   font-weight: 600;
 }
 
 .statusPending {
-  color: orange;
+  color: #f59e0b;
   font-weight: 600;
 }
 
 .statusRejected {
-  color: red;
+  color: #dc2626;
   font-weight: 600;
+}
+
+
+/* ===================== IMPROVED TABLE STYLES ===================== */
+.requestTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+}
+
+.requestTable th,
+.requestTable td {
+  padding: 12px 16px;
+  text-align: center;
+  font-size: 15px;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.2s ease;
+}
+
+.requestTable th {
+  background: linear-gradient(135deg, #1a2d54, #102255);
+  color: white;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.requestTable tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.requestTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.requestTable td {
+  color: #374151;
+}
+
+/* Status text colors */
+
+
+/* Responsive for mobile */
+@media (max-width: 768px) {
+  .requestTable th,
+  .requestTable td {
+    padding: 10px;
+    font-size: 13px;
+  }
 }
 
 .noData {
@@ -143,12 +177,22 @@ body {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
 
+/* Wider container for view tab (tables) */
 .viewContainer {
-  max-width: 900px;      /* make it almost full screen width */
+  max-width: 1200px;   /* expand width */
+  width: 95%;          /* responsive width */
   margin: 20px auto;
   padding: 30px;
+  background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;    /* allow horizontal scroll if table too wide */
+}
+
+/* Optional: make table take full container width */
+.viewContainer .requestTable {
+  width: 100%;
+  min-width: 900px; /* ensures table doesn’t shrink too much */
 }
 
 
