@@ -12,8 +12,8 @@ import ManagerNavbar from './components/Manager/ManagerNavbar.js';
 import ProjectAssignmentForm from './components/Manager/ProjectAssignmentForm.js';
 import WorkPivotTable from './components/Manager/WorkPivotTable.js';
 import ViewRequests from './components/Manager/ViewRequests.js';
-import ProjectAllocation from './components/AGM/ProjectAllocaton.js';
 import ViewApprovedRequests from './components/AGM/ViewApprovedRequests.js';
+import AssignProjectForm from './components/AGM/AssignProjectForm';
 
 function App() {
 
@@ -87,7 +87,7 @@ function App() {
   path="/manager/assign-project"
   element={
     <ProtectedRoute>
-      <ProjectAllocation />
+      <AssignProjectForm />
     </ProtectedRoute>
   }
 />

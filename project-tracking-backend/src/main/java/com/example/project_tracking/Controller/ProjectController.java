@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/project")
-@CrossOrigin(origins="*")
+@CrossOrigin(origins="http://localhost:3000")
 public class ProjectController {
     private final ProjectService projectService;
 
@@ -32,9 +32,9 @@ public class ProjectController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> createProject(@RequestBody Project p)
+    public ResponseEntity<?> createProject(@RequestParam String projectName,String clientName,Long pmId,BigDecimal totalHours)
     {
-        projectService.createProject(p);
+        projectService.createProject(projectName,clientName,pmId,totalHours);
         return ResponseEntity.ok("Saved Successfully");
     }
 

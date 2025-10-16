@@ -5,6 +5,7 @@ import com.example.project_tracking.Repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,15 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
-    public void createProject(Project project) {
+    public void createProject(String projectName,String clientName,Long pmId,BigDecimal totalHours) {
+        Project project=new Project();
+
+        project.setProjectName(projectName);
+        project.setClientName(clientName);
+        project.setManagerId(pmId);
+        project.setAssignedHours(totalHours);
+        project.setAssignedDate(LocalDate.now());
+
         if(project.getModellingHours()==null){
             project.setModellingHours(BigDecimal.ZERO);
         }

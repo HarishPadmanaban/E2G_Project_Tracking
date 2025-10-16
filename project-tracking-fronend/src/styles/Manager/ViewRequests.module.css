@@ -7,6 +7,8 @@
   overflow-x: auto;
 }
 
+
+
 .filterButtons {
   display: flex;
   margin-bottom: 15px;
@@ -30,12 +32,123 @@
   color: white;
 }
 
+/* ✅ Approve/Reject buttons redesigned */
+.approveBtn,
+.rejectBtn {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.filterBarWrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* Overlay box positioned BELOW the filter bar */
+.dateRangeBox {
+  position: absolute;
+  top: 37%;
+  left: 20%; /* just below the bar */
+  z-index: 1000;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 12px;
+  width: fit-content;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Inner layout */
+.dateInputs {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.dateInputs input[type="date"] {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* ✅ Compact Clear Filters Button */
+.clearBtn {
+  background-color: #007bff;
+  color: #fff;
+  display: inline;
+  border: none;
+  border-radius: 6px;
+  padding:12px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.3s;
+  margin-left: 10px;
+  height: fit-content;
+}
+
+.clearBtn:hover {
+  background-color: #0056b3;
+}
+
+
+
+.filterBar{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.filterSelect{
+  display: inline;
+  max-width: 180px;
+  margin: 20px;
+}
+
+/* Approve */
+.approveBtn {
+  color: white;
+  background-color: #22c55e; /* green */
+}
+
+.approveBtn:hover {
+  background-color: #16a34a;
+  color: white;
+}
+
+/* Reject */
+.rejectBtn {
+  color: white;
+  background-color: #ef4444; /* red */
+}
+
+.rejectBtn:hover {
+  background-color: #dc2626;
+  color: white;
+}
+
+
 .statusApproved {
   color: #22c55e; /* Tailwind green-500 */
   font-weight: 600;
 }
 
 .statusPending {
+  color: orange; /* Tailwind red-500 */
+  font-weight: 600;
+}
+
+.statusRejected {
   color: #ef4444; /* Tailwind red-500 */
   font-weight: 600;
 }
@@ -73,9 +186,9 @@
   border-collapse: collapse;
   table-layout: auto;
   background-color: #fff;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.08);
   font-size: 14px;
 }
 
@@ -90,15 +203,26 @@
 }
 
 .requestTable thead th {
-  background-color: #2e2e2e;
-  color: white;
-  font-weight: 500;
+  background: linear-gradient(135deg, #1e293b, #334155);
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
+
+.requestTable tbody {
+  transition: all 0.3s ease-in-out;
+}
+
+
 
 .noData {
   text-align: center;
-  padding: 15px;
-  color: #888;
+  padding: 30px;
+  color: #666;
+  font-size: 15px;
+  font-style: italic;
+  background-color: #fafafa;
 }
 
 .approveBtn,

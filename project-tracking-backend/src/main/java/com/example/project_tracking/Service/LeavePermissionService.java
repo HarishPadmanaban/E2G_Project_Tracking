@@ -45,11 +45,11 @@ public class LeavePermissionService {
                 .collect(Collectors.toList());
     }
 
-    // Get requests by Manager ID as DTOs.It return Pending requests only
+    // Get requests by Manager ID as DTOs.It shows Pending requests only
     public List<LeavePermissionResponse> getRequestsByManagerId(Long managerId) {
         return leavePermissionRepository.findByManagerId(managerId)
                 .stream()
-                .filter(r -> Boolean.TRUE.equals(r.isActive()))
+                .filter(r -> "Pending".equalsIgnoreCase(r.getStatus()) && Boolean.TRUE.equals(r.isActive()))
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
@@ -67,6 +67,7 @@ public class LeavePermissionService {
         LeavePermission leave = leavePermissionRepository.findById(id).orElse(null);
         if (leave != null) {
             leave.setActive(false);
+            leave.setStatus("Rejected");
             leavePermissionRepository.save(leave); // persist soft delete
         }
     }

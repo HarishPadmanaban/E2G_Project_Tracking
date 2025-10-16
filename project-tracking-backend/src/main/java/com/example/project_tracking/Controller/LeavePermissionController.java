@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/leave")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class LeavePermissionController {
 
     private final LeavePermissionService leavePermissionService;
@@ -26,6 +26,11 @@ public class LeavePermissionController {
     @GetMapping("/employee/{empId}")
     public ResponseEntity<?> getByEmployee(@PathVariable Long empId) {
         return ResponseEntity.ok(leavePermissionService.getRequestsByEmployeeId(empId));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllRequests() {
+        return ResponseEntity.ok(leavePermissionService.getAllRequests());
     }
 
     @GetMapping("/manager/{managerId}")

@@ -114,6 +114,28 @@
 .projectsTable td {
   padding: 12px 15px;
   border-bottom: 1px solid #eee;
+  overflow: hidden; 
+}
+
+.projectsTable tbody tr {
+  transition: all 0.2s ease;
+  height: 50px; 
+}
+
+/* Modern gradient header for projectsTable */
+.projectsTable thead th {
+  background: linear-gradient(135deg, #1e293b, #334155); /* gradient dark blue/gray */
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 12px 15px;
+  text-align: center; /* optional: center headers */
+}
+
+
+.projectsTable th,
+.projectsTable td {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -145,7 +167,9 @@
 
 .noData {
   text-align: center;
-  padding: 15px;
-  color: #888;
+  padding: 30px;
+  color: #666;
+  font-size: 15px;
+  font-style: italic;
+  background-color: #fafafa;
 }
-  

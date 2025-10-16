@@ -12,17 +12,20 @@ const ViewRequests = () => {
   useEffect(() => {
     if (!employee?.id) return;
 
-    axios
-      .get(`http://localhost:8080/leave/manager/${employee.id}`)
-      .then((res) => {
-        console.log(res.data);
-        setRequests(res.data);
-        // default filter: Pending requests
-        const pending = res.data.filter((r) => r.status === "Pending");
+    // Fetch all requests (pending + approved) together
+    Promise.all([
+      axios.get(`http://localhost:8080/leave/manager/${employee.id}`),
+      axios.get(`http://localhost:8080/leave/manager-approved/${employee.id}`),
+    ])
+      .then(([pendingRes, approvedRes]) => {
+        const allRequests = [...pendingRes.data, ...approvedRes.data];
+        setRequests(allRequests);
+
+        const pending = allRequests.filter((r) => r.status === "Pending");
         setFilteredRequests(pending);
         setFilter("Pending");
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error("Error fetching leave data:", err));
   }, [employee]);
 
   // Filter change handler
@@ -32,29 +35,36 @@ const ViewRequests = () => {
     setFilteredRequests(filtered);
   };
 
-  const handleApprove = (id) => {
-    console.log("Approved:", id);
-    axios.put(`http://localhost:8080/leave/status/${id}`, null, {
-      params: { status: "Approved" },
-    });
-    alert("Request Approved✅");
+  const handleApprove = async (id) => {
+    try {
+      await axios.put(`http://localhost:8080/leave/status/${id}`, null, {
+        params: { status: "Approved" },
+      });
+      alert("Request Approved ✅");
 
-    // update UI instantly
-    setRequests((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status: "Approved" } : r))
-    );
-    setFilteredRequests((prev) =>
-      prev.filter((r) => r.id !== id) // remove from Pending view
-    );
+      setRequests((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, status: "Approved" } : r))
+      );
+      setFilteredRequests((prev) => prev.filter((r) => r.id !== id));
+      window.dispatchEvent(new Event("refreshPendingCount"));
+    } catch (err) {
+      console.error("Approval failed:", err);
+      alert("Failed to approve request!");
+    }
   };
 
-  const handleReject = (id) => {
-    console.log("Rejected:", id);
-    axios.delete(`http://localhost:8080/leave/${id}`);
-    alert("Request Rejected❌");
+  const handleReject = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8080/leave/${id}`);
+      alert("Request Rejected ❌");
 
-    setRequests((prev) => prev.filter((r) => r.id !== id));
-    setFilteredRequests((prev) => prev.filter((r) => r.id !== id));
+      setRequests((prev) => prev.filter((r) => r.id !== id));
+      setFilteredRequests((prev) => prev.filter((r) => r.id !== id));
+      window.dispatchEvent(new Event("refreshPendingCount"));
+    } catch (err) {
+      console.error("Rejection failed:", err);
+      alert("Failed to reject request!");
+    }
   };
 
   if (loading) return <div className={styles.noData}>Loading...</div>;
@@ -69,8 +79,9 @@ const ViewRequests = () => {
           <button
             key={category}
             onClick={() => handleFilter(category)}
-            className={`${styles.filterBtn} ${filter === category ? styles.active : ""
-              }`}
+            className={`${styles.filterBtn} ${
+              filter === category ? styles.active : ""
+            }`}
           >
             {category}
           </button>
@@ -126,21 +137,22 @@ const ViewRequests = () => {
                   >
                     {r.status}
                   </td>
-                  {filter !== "Approved" && (
+                  {filter !== "Approved" && r.status === "Pending" && (
                     <td>
-                      {r.status === "Pending" && (
-                        <>
-                          <button className={styles.approveBtn} onClick={() => handleApprove(r.id)}>
-                            ✓
-                          </button>
-                          <button className={styles.rejectBtn} onClick={() => handleReject(r.id)}>
-                            ✕
-                          </button>
-                        </>
-                      )}
+                      <button
+                        className={styles.approveBtn}
+                        onClick={() => handleApprove(r.id)}
+                      >
+                        ✓
+                      </button>
+                      <button
+                        className={styles.rejectBtn}
+                        onClick={() => handleReject(r.id)}
+                      >
+                        ✕
+                      </button>
                     </td>
                   )}
-
                 </tr>
               ))
             )}

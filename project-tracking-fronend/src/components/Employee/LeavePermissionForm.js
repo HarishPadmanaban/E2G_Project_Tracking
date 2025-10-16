@@ -37,6 +37,7 @@ const LeavePermissionForm = () => {
             (a, b) => new Date(b.appliedDate) - new Date(a.appliedDate)
           );
           setRequests(sorted);
+          console.log(sorted);
         })
         .catch((err) =>
           console.error("Error fetching employee requests:", err)
@@ -435,16 +436,16 @@ const LeavePermissionForm = () => {
                   <td>{r.type === "Permission" ? r.permissionHours || "-" : "-"}</td>
                   <td>{r.reason || "-"}</td>
                   <td
-                    className={
-                      r.status === "Approved"
-                        ? styles.statusApproved
-                        : r.status === "Rejected"
-                          ? styles.statusRejected
-                          : styles.statusPending
-                    }
-                  >
-                    {r.status}
-                  </td>
+  style={{
+    color: 
+      r.status?.trim().toLowerCase() === "approved" ? "#16a34a" :
+      r.status?.trim().toLowerCase() === "rejected" ? "#dc2626" : "#f59e0b",
+    fontWeight: "600"
+  }}
+>
+  {r.status}
+</td>
+
 
                 </tr>
               ))
