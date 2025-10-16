@@ -28,7 +28,7 @@ public class LeavePermissionController {
         return ResponseEntity.ok(leavePermissionService.getRequestsByEmployeeId(empId));
     }
 
-    @GetMapping("/manager-pending/{managerId}")
+    @GetMapping("/manager/{managerId}")
     public ResponseEntity<?> getByManagerPending(@PathVariable Long managerId) {
         return ResponseEntity.ok(leavePermissionService.getRequestsByManagerId(managerId));
     }

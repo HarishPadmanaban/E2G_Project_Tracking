@@ -219,8 +219,15 @@ const WorkPivotTable = () => {
   useEffect(() => {
     if (!employee) return;
 
+    const isAGM = employee.designation === "Assistant General Manager";
+
+    const endpoint = isAGM
+      ? `http://localhost:8080/workdetails` // 👈 new AGM endpoint
+      : `http://localhost:8080/workdetails/manager/${employee.id}`; // 👈 existing endpoint
+
+
     axios
-      .get(`http://localhost:8080/workdetails/manager/${employee.id}`)
+      .get(endpoint)
       .then((res) => {
         const pivotData = res.data.map((item, index) => ({
           id: index,

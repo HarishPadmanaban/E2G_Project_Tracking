@@ -10,6 +10,9 @@ const ManagerNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
 
+  console.log(employee);
+
+  const isAGM = employee?.designation === "Assistant General Manager";
 
   const handleBack = () => {
     if (window.location.pathname === "/manager/work") return;
@@ -33,7 +36,6 @@ const ManagerNavbar = () => {
       .catch((err) => console.error(err));
   }, [employee]);
 
-
   useEffect(() => {
     const handleOutsideClick = (e) => {
       if (
@@ -52,7 +54,6 @@ const ManagerNavbar = () => {
 
     return () => document.removeEventListener("click", handleOutsideClick);
   }, [menuOpen]);
-
 
   if (!employee) return null;
 
@@ -73,31 +74,67 @@ const ManagerNavbar = () => {
           </div>
 
           {/* 🔻 Expanding Sidebar */}
-          <div className={`${styles.sidebarMenu} ${menuOpen ? styles.open : ""}`}>
+          <div
+            className={`${styles.sidebarMenu} ${menuOpen ? styles.open : ""}`}
+          >
             <ul>
-
-              <Link to="/manager/work" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
+              <Link
+                to="/manager/work"
+                className={styles.menuLink}
+                onClick={() => setMenuOpen(false)}
+              >
                 <li>Home</li>
               </Link>
-
-
-              <Link to="/manager/assign-tl" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
-                <li>Project Distribution</li>
-              </Link>
-
-
-              <Link to="/manager/analysis" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
+              <Link
+                to="/manager/analysis"
+                className={styles.menuLink}
+                onClick={() => setMenuOpen(false)}
+              >
                 <li>Analysis</li>
               </Link>
 
-              <Link to="/manager/view-requests" className={styles.menuLink} onClick={() => setMenuOpen(false)}>
+              {!isAGM && (
+                <Link
+                  to="/manager/assign-tl"
+                  className={styles.menuLink}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <li>Project Distribution</li>
+                </Link>
+              )}
+
+              {isAGM && (
+                <Link
+                  to="/manager/assign-project"
+                  className={styles.menuLink}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <li>Project Assignment</li>
+                </Link>
+              )}
+
+              <Link
+                to="/manager/view-requests"
+                className={styles.menuLink}
+                onClick={() => setMenuOpen(false)}
+              >
                 <li>
                   View Requests
-                  {pendingCount > 0 && <span className={styles.badge}>{pendingCount}</span>}
+                  {pendingCount > 0 && (
+                    <span className={styles.badge}>{pendingCount}</span>
+                  )}
                 </li>
               </Link>
 
-
+               {isAGM && (
+                <Link
+                  to="/manager/view-approved-request"
+                  className={styles.menuLink}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <li>View Approved Requests</li>
+                </Link>
+              )}
             </ul>
           </div>
           {menuOpen && <div className={styles.overlay}></div>}
@@ -111,9 +148,11 @@ const ManagerNavbar = () => {
         </div>
 
         <div className={styles.navRight}>
-          <Link to="/employee/leave" className={styles.navLink}>
-            Leave
-          </Link>
+          {!isAGM && (
+            <Link to="/employee/leave" className={styles.navLink}>
+              Leave
+            </Link>
+          )}
           <button className={styles.logoutBtn} onClick={handleLogout}>
             Logout
           </button>

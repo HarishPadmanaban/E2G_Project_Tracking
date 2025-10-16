@@ -16,7 +16,7 @@ const Login = () => {
     employee.designation === "Admin" ||
     employee.designation === "Assistant General Manager"
   ) {
-    navigate("/admin", { replace: true });
+    navigate("/manager/work", { replace: true });
   } else {
     navigate("/employee/work", { replace: true });
   }

@@ -71,7 +71,7 @@
 .requestTable {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
+  table-layout: auto;
   background-color: #fff;
   border-radius: 8px;
   overflow: hidden;

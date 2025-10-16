@@ -12,6 +12,8 @@ import ManagerNavbar from './components/Manager/ManagerNavbar.js';
 import ProjectAssignmentForm from './components/Manager/ProjectAssignmentForm.js';
 import WorkPivotTable from './components/Manager/WorkPivotTable.js';
 import ViewRequests from './components/Manager/ViewRequests.js';
+import ProjectAllocation from './components/AGM/ProjectAllocaton.js';
+import ViewApprovedRequests from './components/AGM/ViewApprovedRequests.js';
 
 function App() {
 
@@ -67,8 +69,9 @@ function App() {
 
   return (
     <div className="App">
-      {employee && !employee.manager && <EmployeeNavbar />}
+      {employee && !employee.manager && !employee.designation==="Assistant General Manager"&& <EmployeeNavbar />}
       {employee && employee.manager && <ManagerNavbar/>}
+      {employee && employee.designation==="Assistant General Manager" && <ManagerNavbar/>}
       <Routes>
         <Route path="/" element={<Login />} />        
         <Route
@@ -76,6 +79,24 @@ function App() {
   element={
     <ProtectedRoute>
       <ProjectAssignmentForm />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/manager/assign-project"
+  element={
+    <ProtectedRoute>
+      <ProjectAllocation />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/manager/view-approved-request"
+  element={
+    <ProtectedRoute>
+      <ViewApprovedRequests />
     </ProtectedRoute>
   }
 />
