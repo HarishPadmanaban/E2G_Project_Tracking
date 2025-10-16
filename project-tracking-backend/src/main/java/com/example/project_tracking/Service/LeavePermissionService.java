@@ -57,7 +57,7 @@ public class LeavePermissionService {
     public List<LeavePermissionResponse> getRequestsByManagerIdApproved(Long managerId) {
         return leavePermissionRepository.findByManagerId(managerId)
                 .stream()
-                .filter(r -> "Approved".equalsIgnoreCase(r.getStatus()) && Boolean.TRUE.equals(!r.isActive()))
+                .filter(r -> "Approved".equalsIgnoreCase(r.getStatus()) && Boolean.TRUE.equals(r.isActive()))
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }

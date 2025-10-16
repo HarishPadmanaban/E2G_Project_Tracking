@@ -8,6 +8,7 @@
     const [projects, setProjects] = useState([]);
     const [filteredProjects, setFilteredProjects] = useState([]);
     const [filter, setFilter] = useState("In Progress");
+    const [managers, setManagers] = useState({});
 
   useEffect(() => {
     if (!employee?.id) return;
@@ -30,6 +31,18 @@
         const inProgress = res.data.filter((p) => p.projectStatus === true);
         setFilteredProjects(inProgress);
         setFilter("In Progress");
+        if (isAGM) {
+    axios.get("http://localhost:8080/employee/getallmanagers")
+      .then((res) => {
+        const mgrMap = {};
+        res.data.forEach(m => {
+          mgrMap[m.id] = m.name;
+        });
+        setManagers(mgrMap);
+        console.log(mgrMap);
+      })
+      .catch(err => console.error("Error fetching managers:", err));
+  }
       })
       .catch((err) => console.error(err));
   }, [employee]);
@@ -77,6 +90,7 @@
               <th>Project ID</th>
               <th>Project Name</th>
               <th>Client Name</th>
+              {employee.designation === "Assistant General Manager" && <th>Manager Name</th>}
               <th>Assigned Hours</th>
               <th>Working Hours</th>
               <th>Project Status</th>
@@ -95,6 +109,9 @@
                   <td>{p.id}</td>
                   <td>{p.projectName}</td>
                   <td>{p.clientName}</td>
+                  {employee.designation === "Assistant General Manager" && (
+          <td>{managers[p.managerId] || "Unknown"}</td>
+        )}
                   <td>{p.assignedHours}</td>
                   <td>{p.workingHours}</td>
                   <td className={p.projectStatus ? styles.statusInProgress : styles.statusCompleted}>

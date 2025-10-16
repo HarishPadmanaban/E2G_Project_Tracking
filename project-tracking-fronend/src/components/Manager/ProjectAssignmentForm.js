@@ -20,9 +20,9 @@ const ProjectAssignmentForm = () => {
     if (!managerIdToUse) return;
 
     const proj = axios
-      .get(`http://localhost:8080/project/manager/${managerIdToUse}/active  `) // Dummy backend endpoint
+      .get(`http://localhost:8080/project/manager/${managerIdToUse}/not-assigned`) // Dummy backend endpoint
       .then((proj) => {
-        const inProgress = proj.data.filter((p) => p.workingHours === 0 && p.modellingHours === 0 && p.checkingHours === 0 && p.detailingHours === 0);
+        const inProgress = proj.data.filter((p) => p.workingHours === 0);
         console.log(proj.data);
         setProjects(inProgress);
       })

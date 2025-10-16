@@ -3,7 +3,6 @@
   padding: 10px 20px;
   background: linear-gradient(135deg, #1a202c 0%, #000000 100%);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-  height:50px;
   /* position: sticky;
   top: 0px;
   width: 1381px;
@@ -102,7 +101,7 @@
   justify-content: space-between;
   align-items: center;
   color: white;
-  height:50px;
+  flex-wrap: wrap;
 }
 
 /* Left side: Back button */
@@ -189,47 +188,50 @@
 /* Responsive Navbar */
 @media (max-width: 768px) {
   .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+    flex-direction: row;        /* keep items in a row */
+    flex-wrap: wrap;            /* allow wrapping if needed */
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
   }
 
   .navLeft,
   .navRight,
   .navCenter {
-    width: 100%;
+    width: auto;
     text-align: center;
+    flex: 1 1 auto;            /* flexible width */
   }
 
   .navRight {
-    justify-content: center;
+    justify-content: flex-end;  /* right align buttons/links */
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 5px;
   }
 
   .navLink,
   .backBtn,
   .logoutBtn,
   .userName {
-    padding: 5px 10px;
+    padding: 5px 8px;
     font-size: 14px;
   }
 
   .navCenter h1 {
-    font-size: 18px;
+    font-size: 16px;
   }
 }
 
 @media (max-width: 480px) {
   .navCenter h1 {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .navLink,
   .backBtn,
   .logoutBtn,
   .userName {
-    padding: 4px 8px;
+    padding: 4px 6px;
     font-size: 12px;
   }
 }

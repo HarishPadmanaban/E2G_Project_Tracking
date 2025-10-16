@@ -69,10 +69,6 @@ public class WorkDetailsService {
         workDetails.setAssignedWork(request.getAssignedWork());
         workDetails.setStatus(request.getStatus());
         workDetails.setRemarks(request.getRemarks());
-
-        if (request.getWorkHours() != null && request.getWorkHours() > 0) {
-            updateProjectWorkingHours(project, activity, request.getWorkHours());
-        }
         
         return workDetailsRepository.save(workDetails);
     }
@@ -211,6 +207,17 @@ public class WorkDetailsService {
         work.setAssignedWork(request.getAssignedWork());
         work.setStatus(request.getStatus());
         work.setRemarks(request.getRemarks());
+
+        Project project = projectRepository.findById(request.getProjectId())
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        work.setProject(project);
+
+        Activity activity = activityRepository.findById(request.getActivityId())
+                .orElseThrow(() -> new RuntimeException("Activity not found"));
+
+        if (request.getWorkHours() != null) {
+            updateProjectWorkingHours(project, activity, request.getWorkHours());
+        }
 
         return workDetailsRepository.save(work);
     }

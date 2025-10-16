@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "../../styles/Employee/EmployeeWorkForm.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const EmployeeWorkForm = () => {
   const { employee,loading } = useEmployee();
@@ -11,6 +12,8 @@ const EmployeeWorkForm = () => {
   const [startDisabled, setStartDisabled] = useState(false);
   const [stopDisabled, setStopDisabled] = useState(true);
   const [submitDisabled, setSubmitDisabled] = useState(true);
+  const navigate = useNavigate();
+const location = useLocation(); 
 const [activeWorkId, setActiveWorkId] = useState(() => {
   return localStorage.getItem("activeWorkId") || null;
 });
@@ -31,6 +34,7 @@ const [activeWorkId, setActiveWorkId] = useState(() => {
   });
 
   const [isRunning, setIsRunning] = useState(false);
+
 
   useEffect(() => {
   if (activeWorkId) {
@@ -66,23 +70,22 @@ const [activeWorkId, setActiveWorkId] = useState(() => {
     .catch((err) => console.error("Error fetching activities:", err));
 }, [employee]);
 
-
-  useEffect(() => {
-  // Prevent going back to login when on employee pages
-  const handlePopState = () => {
-    if (window.location.pathname.startsWith("/employee")) {
-      window.history.pushState(null, "", window.location.pathname);
+useEffect(() => {
+  const handlePopState = (event) => {
+    // Prevent back navigation only on employee pages
+    if (location.pathname.startsWith("/employee")) {
+      event.preventDefault();
+      navigate(location.pathname, { replace: true });
     }
   };
 
-  // Push a dummy entry to block going back
-  window.history.pushState(null, "", window.location.pathname);
   window.addEventListener("popstate", handlePopState);
 
   return () => {
     window.removeEventListener("popstate", handlePopState);
   };
-}, []);
+}, [navigate, location]);
+
 
 useEffect(() => {
   setFilteredActivities(activities);

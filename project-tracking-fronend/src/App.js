@@ -69,9 +69,10 @@ function App() {
 
   return (
     <div className="App">
-      {employee && !employee.manager && !employee.designation==="Assistant General Manager"&& <EmployeeNavbar />}
-      {employee && employee.manager && <ManagerNavbar/>}
-      {employee && employee.designation==="Assistant General Manager" && <ManagerNavbar/>}
+      {employee && !employee.manager && employee.designation !== "Assistant General Manager" && <EmployeeNavbar />}
+{employee && employee.manager && employee.designation !== "Assistant General Manager" && <ManagerNavbar />}
+{employee && employee.designation === "Assistant General Manager" && <ManagerNavbar />}
+
       <Routes>
         <Route path="/" element={<Login />} />        
         <Route

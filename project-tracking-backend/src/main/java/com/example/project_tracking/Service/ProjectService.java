@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -19,7 +20,13 @@ public class ProjectService {
     }
 
     public List<Project> getProjectsByManager(Long managerId) {
-        return projectRepository.findByManagerId(managerId);
+
+        List<Project> projects = projectRepository.findByManagerId(managerId);
+
+        // Filter based on modellingHour being not null
+        return projects.stream()
+                .filter(p -> p.getModellingHours() != null)
+                .collect(Collectors.toList());
     }
 
     public List<Project> getAll(){
@@ -87,6 +94,15 @@ public class ProjectService {
         }
     }
 
+    public List<Project> getProjectsByManagerNotAssigned(Long managerId) {
+
+        List<Project> projects = projectRepository.findByManagerId(managerId);
+
+        // Filter based on modellingHour being not null
+        return projects.stream()
+                .filter(p -> p.getModellingHours() == null)
+                .collect(Collectors.toList());
+    }
 
 }
 

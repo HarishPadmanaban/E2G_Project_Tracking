@@ -33,7 +33,7 @@ const AssignProjectForm = () => {
 
     try {
       await axios.post(
-        `http://localhost:8080/project/sae`,
+        `http://localhost:8080/project/save`,
         null,
         {
           params: {

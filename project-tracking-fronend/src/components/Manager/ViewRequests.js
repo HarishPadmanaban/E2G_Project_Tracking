@@ -9,24 +9,35 @@ const ViewRequests = () => {
   const [filter, setFilter] = useState("Pending");
   const { employee, loading } = useEmployee();
 
-  useEffect(() => {
-    if (!employee?.id) return;
+  const fetchRequests = async () => {
+  if (!employee?.id) return;
 
-    // Fetch all requests (pending + approved) together
-    Promise.all([
+  try {
+    const [pendingRes, approvedRes] = await Promise.all([
       axios.get(`http://localhost:8080/leave/manager/${employee.id}`),
       axios.get(`http://localhost:8080/leave/manager-approved/${employee.id}`),
-    ])
-      .then(([pendingRes, approvedRes]) => {
-        const allRequests = [...pendingRes.data, ...approvedRes.data];
-        setRequests(allRequests);
+    ]);
 
-        const pending = allRequests.filter((r) => r.status === "Pending");
-        setFilteredRequests(pending);
-        setFilter("Pending");
-      })
-      .catch((err) => console.error("Error fetching leave data:", err));
-  }, [employee]);
+    const allRequests = [...pendingRes.data, ...approvedRes.data];
+    setRequests(allRequests);
+
+    console.log(allRequests)
+
+    // Maintain current filter after refresh
+    const filtered = allRequests.filter((r) =>
+      filter === "All" ? true : r.status === filter
+    );
+    setFilteredRequests(filtered);
+  } catch (err) {
+    console.error("Error fetching leave data:", err);
+  }
+};
+
+
+  useEffect(() => {
+  fetchRequests();
+}, [employee]);
+
 
   // Filter change handler
   const handleFilter = (category) => {
@@ -36,36 +47,31 @@ const ViewRequests = () => {
   };
 
   const handleApprove = async (id) => {
-    try {
-      await axios.put(`http://localhost:8080/leave/status/${id}`, null, {
-        params: { status: "Approved" },
-      });
-      alert("Request Approved ✅");
+  try {
+    await axios.put(`http://localhost:8080/leave/status/${id}`, null, {
+      params: { status: "Approved" },
+    });
+    alert("Request Approved ✅");
+    await fetchRequests(); // 🔁 refetch after approval
+    window.dispatchEvent(new Event("refreshPendingCount"));
+  } catch (err) {
+    console.error("Approval failed:", err);
+    alert("Failed to approve request!");
+  }
+};
 
-      setRequests((prev) =>
-        prev.map((r) => (r.id === id ? { ...r, status: "Approved" } : r))
-      );
-      setFilteredRequests((prev) => prev.filter((r) => r.id !== id));
-      window.dispatchEvent(new Event("refreshPendingCount"));
-    } catch (err) {
-      console.error("Approval failed:", err);
-      alert("Failed to approve request!");
-    }
-  };
+const handleReject = async (id) => {
+  try {
+    await axios.delete(`http://localhost:8080/leave/${id}`);
+    alert("Request Rejected ❌");
+    await fetchRequests(); // 🔁 refetch after rejection
+    window.dispatchEvent(new Event("refreshPendingCount"));
+  } catch (err) {
+    console.error("Rejection failed:", err);
+    alert("Failed to reject request!");
+  }
+};
 
-  const handleReject = async (id) => {
-    try {
-      await axios.delete(`http://localhost:8080/leave/${id}`);
-      alert("Request Rejected ❌");
-
-      setRequests((prev) => prev.filter((r) => r.id !== id));
-      setFilteredRequests((prev) => prev.filter((r) => r.id !== id));
-      window.dispatchEvent(new Event("refreshPendingCount"));
-    } catch (err) {
-      console.error("Rejection failed:", err);
-      alert("Failed to reject request!");
-    }
-  };
 
   if (loading) return <div className={styles.noData}>Loading...</div>;
 

@@ -43,6 +43,11 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.getActiveProjectsByManager(managerId));
     }
 
+    @GetMapping("/manager/{managerId}/not-assigned")
+    public ResponseEntity<List<Project>> getActiveProjectsByManagerNotAssigned(@PathVariable Long managerId) {
+        return ResponseEntity.ok(projectService.getProjectsByManagerNotAssigned(managerId));
+    }
+
     @PutMapping("/{projectId}/add-hours")
     public Project addProjectHours(
             @PathVariable Long projectId,

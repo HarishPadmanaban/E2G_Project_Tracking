@@ -10,6 +10,8 @@
     const [statusFilter, setStatusFilter] = useState("All");
     const [dateFilter, setDateFilter] = useState("All");
     const [customRange, setCustomRange] = useState({ from: "", to: "" });
+    const [showCustomBox, setShowCustomBox] = useState(false);
+
 
     useEffect(() => {
         axios
@@ -91,17 +93,23 @@
         <div className={styles.filterBar}>
             {/* Date Filter */}
             <select
-            value={dateFilter}
-            onChange={(e) => setDateFilter(e.target.value)}
-            className={styles.filterSelect}
-            >
-            <option value="All">All Dates</option>
-            <option value="Today">Today</option>
-            <option value="Yesterday">Yesterday</option>
-            <option value="Last 7 Days">Last 7 Days</option>
-            <option value="Last 30 Days">Last 30 Days</option>
-            <option value="Custom">Custom Range</option>
-            </select>
+  value={dateFilter}
+  onChange={(e) => {
+    const value = e.target.value;
+    setDateFilter(value);
+    // show box only when "Custom" is chosen
+    setShowCustomBox(value === "Custom");
+  }}
+  className={styles.filterSelect}
+>
+  <option value="All">All Dates</option>
+  <option value="Today">Today</option>
+  <option value="Yesterday">Yesterday</option>
+  <option value="Last 7 Days">Last 7 Days</option>
+  <option value="Last 30 Days">Last 30 Days</option>
+  <option value="Custom">Custom Range</option>
+</select>
+
 
             {/* Manager Filter */}
             <select
@@ -136,32 +144,43 @@
         </div>
 
         {/* Custom Date Picker - shows below menu */}
-        {dateFilter === "Custom" && (
-            <div className={styles.dateRangeBox}>
-            <div className={styles.dateInputs}>
-                <label>
-                From:
-                <input
-                    type="date"
-                    value={customRange.from}
-                    onChange={(e) =>
-                    setCustomRange({ ...customRange, from: e.target.value })
-                    }
-                />
-                </label>
-                <label>
-                To:
-                <input
-                    type="date"
-                    value={customRange.to}
-                    onChange={(e) =>
-                    setCustomRange({ ...customRange, to: e.target.value })
-                    }
-                />
-                </label>
-            </div>
-            </div>
-        )}
+        {showCustomBox && (
+  <div className={styles.dateRangeBox}>
+    <div className={styles.dateInputs}>
+      <label>
+        From:
+        <input
+          type="date"
+          value={customRange.from}
+          onChange={(e) => {
+            const updated = { ...customRange, from: e.target.value };
+            setCustomRange(updated);
+            // ✅ Close when both dates selected
+            if (updated.from && updated.to) {
+              setShowCustomBox(false);
+            }
+          }}
+        />
+      </label>
+      <label>
+        To:
+        <input
+          type="date"
+          value={customRange.to}
+          onChange={(e) => {
+            const updated = { ...customRange, to: e.target.value };
+            setCustomRange(updated);
+            // ✅ Close when both dates selected
+            if (updated.from && updated.to) {
+              setShowCustomBox(false);
+            }
+          }}
+        />
+      </label>
+    </div>
+  </div>
+)}
+
 
         {/* Table */}
         <div className={styles.tableWrapper}>
