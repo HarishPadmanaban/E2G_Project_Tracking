@@ -27,7 +27,7 @@
       .get(endpoint)
       .then((res) => {
         setProjects(res.data);
-
+       //console.log(res.data);
         const inProgress = res.data.filter((p) => p.projectStatus === true);
         setFilteredProjects(inProgress);
         setFilter("In Progress");
@@ -39,7 +39,7 @@
           mgrMap[m.id] = m.name;
         });
         setManagers(mgrMap);
-        console.log(mgrMap);
+        //console.log(mgrMap);
       })
       .catch(err => console.error("Error fetching managers:", err));
   }
@@ -47,7 +47,7 @@
       .catch((err) => console.error(err));
   }, [employee]);
 
-    console.log("Projects:", projects);
+    //console.log("Projects:", projects);
 
 
     const handleFilter = (category) => {
@@ -105,7 +105,9 @@
               </tr>
             ) : (
               filteredProjects.map((p) => (
-                <tr key={p.id}>
+                <tr key={p.id}
+                className={p.modellingHours === null ? styles.highlightRow : ""}
+                >
                   <td>{p.id}</td>
                   <td>{p.projectName}</td>
                   <td>{p.clientName}</td>

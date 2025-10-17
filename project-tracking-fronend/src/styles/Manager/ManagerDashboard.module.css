@@ -125,6 +125,10 @@
   height: 50px; 
 }
 
+.highlightRow {
+  background-color: #eddd97; /* light red tone */
+}
+
 /* Modern gradient header for projectsTable */
 .projectsTable thead th {
   background: linear-gradient(135deg, #1e293b, #334155); /* gradient dark blue/gray */

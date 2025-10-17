@@ -10,7 +10,7 @@ const ManagerNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
 
-  console.log(employee);
+  //console.log(employee);
 
   const isAGM = employee?.designation === "Assistant General Manager";
 

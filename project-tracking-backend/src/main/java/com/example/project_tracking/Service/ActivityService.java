@@ -18,4 +18,35 @@ public class ActivityService {
     {
         return activityRepository.findAll();
     }
+
+    public List<Activity> findActiveActivities()
+    {
+        return activityRepository.findBySoftDeleteFalse();
+    }
+
+    public void saveNewActivity(Activity a)
+    {
+        activityRepository.save(a);
+    }
+
+    public void editActivity(Activity a,Long id)
+    {
+        Activity activity = activityRepository.findById(id).orElse(null);
+        if(activity!=null)
+        {
+            activity.setActivityName(a.getActivityName());
+            activity.setCategory(a.getCategory());
+            activity.setMainType(a.getMainType());
+            activityRepository.save(activity);
+        }
+    }
+
+    public void deleteActivity(Long id)
+    {
+        Activity activity = activityRepository.findById(id).orElse(null);
+        if(activity!=null)
+        {
+            activity.setSoftDelete(true);
+        }
+    }
 }
