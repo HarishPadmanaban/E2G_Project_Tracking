@@ -61,4 +61,9 @@ public class EmployeeService {
     public List<Employee> getAllManagers() {
         return employeeRepository.findByIsManagerTrue();
     }
+
+    public void addEmployee(Employee employee)
+    {
+        employeeRepository.save(employee);
+    }
 }

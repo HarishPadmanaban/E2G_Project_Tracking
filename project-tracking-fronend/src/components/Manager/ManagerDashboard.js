@@ -106,7 +106,7 @@
             ) : (
               filteredProjects.map((p) => (
                 <tr key={p.id}
-                className={p.modellingHours === null ? styles.highlightRow : ""}
+                className={p.modellingHours === 0 ? styles.highlightRow : ""}
                 >
                   <td>{p.id}</td>
                   <td>{p.projectName}</td>

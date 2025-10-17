@@ -9,11 +9,10 @@ import EmployeeNavbar from './components/Employee/EmployeeNavbar.js';
 import { useEmployee } from './context/EmployeeContext.js';
 import ManagerDashboard from './components/Manager/ManagerDashboard.js';
 import ManagerNavbar from './components/Manager/ManagerNavbar.js';
-import ProjectAssignmentForm from './components/Manager/ProjectAssignmentForm.js';
 import WorkPivotTable from './components/Manager/WorkPivotTable.js';
 import ViewRequests from './components/Manager/ViewRequests.js';
 import ViewApprovedRequests from './components/AGM/ViewApprovedRequests.js';
-import AssignProjectForm from './components/AGM/AssignProjectForm';
+import EmployeeManagementPage from './components/AGM/EmployeeManagementPage.js';
 
 function App() {
 
@@ -76,19 +75,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />        
         <Route
-  path="/manager/assign-tl"
-  element={
-    <ProtectedRoute>
-      <ProjectAssignmentForm />
-    </ProtectedRoute>
-  }
-/>
-
-<Route
   path="/manager/assign-project"
   element={
     <ProtectedRoute>
-      <AssignProjectForm />
+      <EmployeeManagementPage />
     </ProtectedRoute>
   }
 />

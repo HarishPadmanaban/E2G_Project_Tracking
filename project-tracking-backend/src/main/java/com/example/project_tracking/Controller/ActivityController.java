@@ -25,6 +25,7 @@ public class ActivityController {
         return ResponseEntity.ok(all);
     }
 
+
     @GetMapping("/all")
     public ResponseEntity<?> getAll()
     {
@@ -35,6 +36,7 @@ public class ActivityController {
     @PostMapping("/save")
     public ResponseEntity<?> saveActivity(@RequestBody Activity activity){
         activityService.saveNewActivity(activity);
+        System.out.println(activity.toString());
         return ResponseEntity.ok("Activity saved");
     }
 

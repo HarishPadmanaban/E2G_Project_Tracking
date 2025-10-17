@@ -128,7 +128,7 @@ const ManagerNavbar = () => {
                 </Link>
               )}
 
-              <Link
+              {!isAGM && (<Link
                 to="/manager/view-requests"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
@@ -139,7 +139,7 @@ const ManagerNavbar = () => {
                     <span className={styles.badge}>{pendingCount}</span>
                   )}
                 </li>
-              </Link>
+              </Link>)}
 
                {isAGM && (
                 <Link
@@ -168,6 +168,19 @@ const ManagerNavbar = () => {
               Leave
             </Link>
           )}
+
+          {isAGM && <Link
+                to="/manager/view-requests"
+                className={styles.menuLink}
+                onClick={() => setMenuOpen(false)}
+              >
+                <div>
+                  View Requests
+                  {pendingCount > 0 && (
+                    <span className={styles.badge}>{pendingCount}</span>
+                  )}
+                </div>
+              </Link>}
           <button className={styles.logoutBtn} onClick={handleLogout}>
             Logout
           </button>

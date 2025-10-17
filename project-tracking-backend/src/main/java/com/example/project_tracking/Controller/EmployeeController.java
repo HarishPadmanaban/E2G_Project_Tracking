@@ -3,6 +3,7 @@ package com.example.project_tracking.Controller;
 
 import com.example.project_tracking.DTO.DataTransfer;
 import com.example.project_tracking.DTO.LoginRequest;
+import com.example.project_tracking.Model.Employee;
 import com.example.project_tracking.Service.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,14 @@ public class EmployeeController {
         }
         System.out.println(emp.toString());
         return ResponseEntity.ok(emp);
+    }
+
+    @PostMapping("/addemployee")
+    public ResponseEntity<?> addEmployee(@RequestBody Employee employee)
+    {
+        System.out.println(employee.toString());
+        employeeService.addEmployee(employee);
+        return ResponseEntity.ok("Employee Added");
     }
 
     @GetMapping("/get")
