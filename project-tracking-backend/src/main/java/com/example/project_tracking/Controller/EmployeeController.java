@@ -58,4 +58,10 @@ public class EmployeeController {
     public ResponseEntity<?> getTlsUnderManager(@RequestParam Long mgrid){
         return ResponseEntity.ok(employeeService.getTLsUnderManager(mgrid));
     }
+
+    @GetMapping("/getbymgr")
+    public ResponseEntity<?> getAllByManagerId(@RequestParam Long mgrid)
+    {
+        return ResponseEntity.ok(employeeService.getEmployeesByManagerId(mgrid));
+    }
 }

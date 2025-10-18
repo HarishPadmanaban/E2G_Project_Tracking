@@ -26,7 +26,7 @@ const AddActivityForm = () => {
     if (!formData.mainType) return alert("⚠️ Select Main Type");
 
     try {
-      await axios.post("http://localhost:8080/activity/save", formData); // backend endpoint
+      await axios.post("http://localhost:8080/activity/save", formData); 
       alert("✅ Activity added successfully!");
       console.log(formData);
       setFormData({ activityName: "", category: "", mainType: "" });

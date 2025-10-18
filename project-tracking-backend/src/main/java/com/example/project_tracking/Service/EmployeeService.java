@@ -1,11 +1,14 @@
 package com.example.project_tracking.Service;
 
 import com.example.project_tracking.DTO.DataTransfer;
+import com.example.project_tracking.DTO.WorkDetailsResponse;
 import com.example.project_tracking.Model.Employee;
+import com.example.project_tracking.Model.WorkDetails;
 import com.example.project_tracking.Repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
@@ -26,8 +29,8 @@ public class EmployeeService {
                     employee.getEmpId(),
                     employee.getName(),
                     employee.getDesignation(),
-                    employee.getManager(),  // isManager
-                    employee.getTL(),       // isTL
+                    employee.getIsManager(),  // isManager
+                    employee.getIsTL(),       // isTL
                     employee.getReportingTo() // reporting manager, DTO constructor handles null
             );
         } else {
@@ -45,8 +48,8 @@ public class EmployeeService {
                     employee.getEmpId(),
                     employee.getName(),
                     employee.getDesignation(),
-                    employee.getManager(),  // isManager
-                    employee.getTL(),       // isTL
+                    employee.getIsManager(),  // isManager
+                    employee.getIsTL(),       // isTL
                     employee.getReportingTo() // reporting manager, DTO constructor handles null
             );
         } else {
@@ -64,6 +67,30 @@ public class EmployeeService {
 
     public void addEmployee(Employee employee)
     {
+        if(employee.getReportingTo()!=null)
+        {
+            Long id = employee.getReportingTo().getId();
+            Employee manager = employeeRepository.findById(id).orElse(null);
+            employee.setReportingTo(manager);
+        }
         employeeRepository.save(employee);
+    }
+
+    public List<DataTransfer> getEmployeesByManagerId(Long mgrid) {
+        Employee emp = employeeRepository.findById(mgrid).orElse(null);
+        if(emp==null) return null;
+        return employeeRepository.findByReportingTo(emp).stream().map(this::convertToResponse).collect(Collectors.toList());
+    }
+
+    private DataTransfer convertToResponse(Employee employee) {
+        return new DataTransfer(
+                employee.getId(),
+                employee.getEmpId(),
+                employee.getName(),
+                employee.getDesignation(),
+                employee.getIsManager(),  // isManager
+                employee.getIsTL(),       // isTL
+                employee.getReportingTo() // reporting manager, DTO constructor handles null
+        );
     }
 }
