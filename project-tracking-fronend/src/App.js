@@ -13,6 +13,14 @@ import WorkPivotTable from './components/Manager/WorkPivotTable.js';
 import ViewRequests from './components/Manager/ViewRequests.js';
 import ViewApprovedRequests from './components/AGM/ViewApprovedRequests.js';
 import EmployeeManagementPage from './components/AGM/EmployeeManagementPage.js';
+import ProjectAssignmentForm from './components/Manager/ProjectAssignmentForm.js';
+
+  const Unauthorized = () => (
+  <div style={{ textAlign: "center", marginTop: "50px" }}>
+    <h1>Access Denied 🚫</h1>
+    <p>You do not have permission to view this page.</p>
+  </div>
+);
 
 function App() {
 
@@ -77,7 +85,7 @@ function App() {
         <Route
   path="/manager/assign-project"
   element={
-    <ProtectedRoute>
+    <ProtectedRoute allowedRoles={["Assistant General Manager", "Admin"]}>
       <EmployeeManagementPage />
     </ProtectedRoute>
   }
@@ -86,7 +94,7 @@ function App() {
 <Route
   path="/manager/view-approved-request"
   element={
-    <ProtectedRoute>
+    <ProtectedRoute allowedRoles={["Assistant General Manager","Project Manager", "Admin"]}>
       <ViewApprovedRequests />
     </ProtectedRoute>
   }
@@ -95,31 +103,44 @@ function App() {
 <Route
   path="/manager/analysis"
   element={
-    <ProtectedRoute>
+    <ProtectedRoute allowedRoles={["Project Manager", "Admin", "Assistant General Manager"]}>
       <WorkPivotTable />
     </ProtectedRoute>
   }
 />
 
 <Route
+    path="/manager/assign-tl"
+    element={
+      <ProtectedRoute allowedRoles={["Project Manager"]}>
+        <ProjectAssignmentForm />
+      </ProtectedRoute>
+    }
+  />
+
+<Route
   path="/manager/view-requests"
   element={
-    <ProtectedRoute>
+    <ProtectedRoute allowedRoles={["Project Manager", "Assistant General Manager"]}>
       <ViewRequests />
     </ProtectedRoute>
   }
 />
 
         <Route path="/employee/work" element={
-          <ProtectedRoute>
+      <ProtectedRoute excludedRoles={["Project Manager", "Admin", "Assistant General Manager"]}>
             <EmployeeWorkForm />
           </ProtectedRoute>} />
-        <Route path="/employee/leave" element={<ProtectedRoute><LeavePermissionForm /></ProtectedRoute>} />
+        <Route path="/employee/leave" element={      <ProtectedRoute excludedRoles={["Assistant General Manager"]}>
+<LeavePermissionForm /></ProtectedRoute>} />
         <Route path="/manager/work" element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["Assistant General Manager","Project Manager", "Admin"]}>
             <ManagerDashboard />
           </ProtectedRoute>
         } />
+
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="*" element={<Unauthorized />} />
       </Routes>
     </div>
   );
