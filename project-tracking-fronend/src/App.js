@@ -1,5 +1,4 @@
 
-import React from 'react';
 import Login from './pages/Login.js'
 import { Routes, Route } from 'react-router-dom';
 import EmployeeWorkForm from './components/Employee/EmployeeWorkForm.js'
@@ -14,6 +13,7 @@ import ViewRequests from './components/Manager/ViewRequests.js';
 import ViewApprovedRequests from './components/AGM/ViewApprovedRequests.js';
 import EmployeeManagementPage from './components/AGM/EmployeeManagementPage.js';
 import ProjectAssignmentForm from './components/Manager/ProjectAssignmentForm.js';
+import EditManagementPage from './components/AGM/EditManagementPage.js';
 
   const Unauthorized = () => (
   <div style={{ textAlign: "center", marginTop: "50px" }}>
@@ -123,6 +123,15 @@ function App() {
   element={
     <ProtectedRoute allowedRoles={["Project Manager", "Assistant General Manager"]}>
       <ViewRequests />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/manager/edit-all"
+  element={
+    <ProtectedRoute allowedRoles={["Project Manager", "Assistant General Manager"]}>
+      <EditManagementPage />
     </ProtectedRoute>
   }
 />

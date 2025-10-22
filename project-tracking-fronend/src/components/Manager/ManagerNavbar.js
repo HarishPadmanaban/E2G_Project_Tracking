@@ -150,6 +150,17 @@ const ManagerNavbar = () => {
                   <li>View Approved Requests</li>
                 </Link>
               )}
+
+              {(<Link
+                to="/manager/edit-all"
+                className={styles.menuLink}
+                onClick={() => setMenuOpen(false)}
+              >
+                <li>
+                  Edit Details
+                </li>
+              </Link>)}
+              
             </ul>
           </div>
           {menuOpen && <div className={styles.overlay}></div>}
