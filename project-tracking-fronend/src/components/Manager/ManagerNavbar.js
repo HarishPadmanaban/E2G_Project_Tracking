@@ -151,7 +151,7 @@ const ManagerNavbar = () => {
                 </Link>
               )}
 
-              {(<Link
+              {isAGM && (<Link
                 to="/manager/edit-all"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
