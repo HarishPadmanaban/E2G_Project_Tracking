@@ -152,9 +152,6 @@ const ProjectAssignmentForm = () => {
   };
 
 
-  if (loading) return <div>Loading...</div>;
-  if (!employee) return <div>Employee not logged in</div>;
-
   return (
     <div className={styles.container}>
       <h2>Project Distribution</h2>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styles from "../../styles/Employee/LeavePermissionForm.module.css"; // reuse CSS
+import styles from "../../styles/AGM/AddActivity.module.css"; // reuse CSS
 import axios from "axios";
 
 const AssignProjectForm = () => {

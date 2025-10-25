@@ -1,0 +1,367 @@
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.tabButtons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tabBtn {
+  background: #e5e7eb;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #374151;
+  transition: all 0.3s ease;
+}
+
+.tabBtn:hover {
+  background: #d1d5db;
+}
+
+
+.requestTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  margin-top: 10px;
+}
+
+
+.filterButtons {
+  display: flex;
+  margin-bottom: 45px;
+  justify-content: center;
+}
+
+.active {
+  border-color: #007bff;
+  background-color: #007bff;
+  color: #fff;
+}
+
+.filterBtn {
+  box-sizing: border-box; /* include border in width */
+  border: 1px solid gray; /* same width for all buttons */
+  padding: 6px 14px; /* adjust to maintain size with 2px border */
+  transition: all 0.2s ease;
+  font-size: 16px;
+}
+.filterBtn:first-child {
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+  margin-left: 0; /* first button no negative margin */
+}
+
+.filterBtn:last-child {
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+}
+
+.filterBtn:hover {
+  background-color: #93beed;
+  color: white;
+}
+.statusApproved {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.statusPending {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.statusRejected {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+
+/* ===================== IMPROVED TABLE STYLES ===================== */
+.requestTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+}
+
+.requestTable th,
+.requestTable td {
+  padding: 12px 16px;
+  text-align: center;
+  font-size: 15px;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.2s ease;
+}
+
+.requestTable th {
+  background: linear-gradient(135deg, #1a2d54, #102255);
+  color: white;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.requestTable tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.requestTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.requestTable td {
+  color: #374151;
+}
+
+/* Status text colors */
+
+
+/* Responsive for mobile */
+@media (max-width: 768px) {
+  .requestTable th,
+  .requestTable td {
+    padding: 10px;
+    font-size: 13px;
+  }
+}
+
+.noData {
+  text-align: center;
+  padding: 20px;
+  color: #6b7280;
+}
+
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: linear-gradient(135deg, #1a202c 0%, #000000 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+
+.container {
+  max-width: 550px;
+  margin: 30px auto;
+  background: #fff;
+  border-radius: 12px;
+}
+
+/* Wider container for view tab (tables) */
+.viewContainer {
+  max-width: 1200px;   /* expand width */
+  width: 95%;          /* responsive width */
+  margin: 20px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;    /* allow horizontal scroll if table too wide */
+}
+
+/* Optional: make table take full container width */
+.viewContainer .requestTable {
+  width: 100%;
+  min-width: 900px; /* ensures table doesn’t shrink too much */
+}
+
+
+h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #1a202c;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap:20px;
+  margin: 11px;
+}
+
+.fld {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  margin: 55px;
+}
+
+.fld label {
+  position: absolute;
+  top: -21px;
+  left: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #666; /* softer text color */
+  padding: 0 4px;
+  border-radius: 4px;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+/* Label blends smoothly with input box */
+.field label {
+  position: absolute;
+  top: -21px;
+  left: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #666; /* softer text color */
+  padding: 0 4px;
+  border-radius: 4px;
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+input,
+select,
+textarea {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 30px;
+  font-size: 14px;
+  outline: none;
+  background-color: #f9f9fb;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input:read-only {
+  background: #eee;
+}
+
+textarea {
+  resize: none;
+  border-radius: 20px;
+  height: 80px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+/* Button */
+.submitBtn {
+  background: green;
+  color: white;
+  font-weight: bold;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  width: 180px;
+  margin: 20px auto 0;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.submitBtn:hover {
+  background: #0b8f3f;
+}
+
+/* Dropdown and Input Focus Effects */
+select:focus,
+input:focus,
+textarea:focus {
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Placeholder Styling */
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+  color: #a0aec0;
+  font-size: 14px;
+}
+
+.timePickerPopup {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 5px 0;
+}
+.timePickerPopup input[type="time"] {
+  padding: 5px;
+  font-size: 16px;
+}
+.timePickerPopup button {
+  padding: 5px 10px;
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.timePickerPopup button:hover {
+  background-color: #0b5ed7;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  h2 {
+    font-size: 20px;
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .submitBtn {
+    width: 100%;
+    padding: 14px;
+  }
+}

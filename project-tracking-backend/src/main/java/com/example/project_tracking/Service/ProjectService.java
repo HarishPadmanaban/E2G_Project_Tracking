@@ -1,6 +1,10 @@
 package com.example.project_tracking.Service;
 
+import com.example.project_tracking.DTO.ProjectRequest;
+import com.example.project_tracking.DTO.ProjectResponse;
+import com.example.project_tracking.Model.Employee;
 import com.example.project_tracking.Model.Project;
+import com.example.project_tracking.Repository.EmployeeRepository;
 import com.example.project_tracking.Repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +18,11 @@ import java.util.stream.Collectors;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final EmployeeRepository employeeRepository;
 
-    public ProjectService(ProjectRepository projectRepository) {
+    public ProjectService(ProjectRepository projectRepository,EmployeeRepository employeeRepository) {
         this.projectRepository = projectRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     public List<Project> getProjectsByManager(Long managerId) {
@@ -29,8 +35,33 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
-    public List<Project> getAll(){
-        return projectRepository.findAll();
+    public List<ProjectResponse> getAll(){
+
+        List<Project> projectList = projectRepository.findAll();
+        return projectList.stream().map(this::convertToResponse).toList();
+    }
+
+    public ProjectResponse convertToResponse(Project project){
+        Employee e = employeeRepository.findById(project.getManagerId()).orElse(null);
+        ProjectResponse response = new ProjectResponse(
+                project.getId(),
+                project.getProjectName(),
+                project.getClientName(),
+                project.getManagerId(),
+                e.getName(), // fetch manager name from DB
+                project.getAssignedHours(),
+                project.getWorkingHours(),
+                project.getAssignedDate(),
+                project.getProjectStatus(),
+                project.getSoftDelete(),
+                project.getModellingHours(),
+                project.getCheckingHours(),
+                project.getDetailingHours(),
+                project.getModellingTime(),
+                project.getCheckingTime(),
+                project.getDetailingTime()
+        );
+        return response;
     }
 
     public void createProject(String projectName,String clientName,Long pmId,BigDecimal totalHours) {
@@ -102,6 +133,21 @@ public class ProjectService {
         return projects.stream()
                 .filter(p -> p.getModellingHours() == null)
                 .collect(Collectors.toList());
+    }
+
+    public Project editProject(ProjectRequest projectRequest)
+    {
+        Project old = projectRepository.findById(projectRequest.getId()).orElse(null);
+        old.setAssignedHours(projectRequest.getAssignedHours());
+        old.setModellingHours(projectRequest.getModellingHours());
+        old.setCheckingHours(projectRequest.getCheckingHours());
+        old.setDetailingHours(projectRequest.getDetailingHours());
+        old.setManagerId(projectRequest.getManagerId());
+        old.setProjectName(projectRequest.getProjectName());
+        old.setClientName(projectRequest.getClientName());
+        old.setProjectStatus(projectRequest.isProjectStatus());
+        projectRepository.save(old);
+        return old;
     }
 
 }

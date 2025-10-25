@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import styles from "../../styles/Employee/LeavePermissionForm.module.css"; // reuse same CSS
+import styles from "../../styles/AGM/AddActivity.module.css"; // reuse same CSS
 
 const AddActivityForm = () => {
   const [formData, setFormData] = useState({
@@ -26,7 +26,7 @@ const AddActivityForm = () => {
     if (!formData.mainType) return alert("⚠️ Select Main Type");
 
     try {
-      await axios.post("http://localhost:8080/activity/save", formData); // backend endpoint
+      await axios.post("http://localhost:8080/activity/save", formData); 
       alert("✅ Activity added successfully!");
       console.log(formData);
       setFormData({ activityName: "", category: "", mainType: "" });
@@ -38,7 +38,7 @@ const AddActivityForm = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} >
       <h2>Add New Activity</h2>
 
       <div className={styles.fld}>

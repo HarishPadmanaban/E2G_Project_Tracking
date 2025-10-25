@@ -1,5 +1,6 @@
 package com.example.project_tracking.Controller;
 
+import com.example.project_tracking.DTO.ProjectRequest;
 import com.example.project_tracking.Model.Project;
 import com.example.project_tracking.Service.ProjectService;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ public class ProjectController {
     @GetMapping("/")
     public ResponseEntity<?> getAllProjects()
     {
+
         return ResponseEntity.ok(projectService.getAll());
     }
 
@@ -57,5 +59,11 @@ public class ProjectController {
             @RequestParam BigDecimal detailingHours
     ) {
         return projectService.updateProjectHours(tlId,projectId, modellingHours, checkingHours, detailingHours);
+    }
+
+    @PutMapping("/editproject")
+    public ResponseEntity<?> editProject(@RequestBody ProjectRequest project)
+    {
+        return ResponseEntity.ok(projectService.editProject(project));
     }
 }

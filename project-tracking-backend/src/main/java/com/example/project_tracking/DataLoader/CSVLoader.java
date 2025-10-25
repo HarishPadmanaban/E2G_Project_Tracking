@@ -50,8 +50,8 @@ public class CSVLoader implements CommandLineRunner {
             emp.setEmpId(row[1]);
             emp.setName(row[2]);
             emp.setDesignation(row[3]);
-            emp.setManager(Boolean.parseBoolean(row[4]));
-            emp.setTL(Boolean.parseBoolean(row[5]));
+            emp.setIsManager(Boolean.parseBoolean(row[4]));
+            emp.setIsTL(Boolean.parseBoolean(row[5]));
             emp.setUsername(row[7]);
             emp.setPassword(row[8]);
 

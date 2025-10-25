@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import styles from "../../styles/Employee/LeavePermissionForm.module.css"; // reuse same CSS
+import styles from "../../styles/AGM/AddActivity.module.css"; // reuse same CSS
 
 const AddEmployeeForm = () => {
   const [formData, setFormData] = useState({
@@ -8,6 +8,8 @@ const AddEmployeeForm = () => {
     name: "",
     designation: "",
     reportingTo: "",
+    username:"",
+    password:"",
   });
 
 
@@ -39,8 +41,13 @@ const AddEmployeeForm = () => {
     if (!formData.empId.trim()) return alert("⚠️ Enter Employee ID");
     if (!formData.name.trim()) return alert("⚠️ Enter Employee Name");
     if (!formData.designation) return alert("⚠️ Select Designation");
-    if (!formData.reportingId) return alert("⚠️ Select Reporting Manager");
-    if (formData.designation === "Project Manager") formData.isManager = true;
+    if (!formData.reportingTo && !["Assistant General Manager"].includes(formData.designation)) {
+      return alert("⚠️ Select Reporting Manager");
+    }    
+    if (!formData.username.trim()) return alert("⚠️ Enter Username");
+    if (!formData.password.trim()) return alert("⚠️ Enter Password");
+    //if (formData.password.length <=6 ) return alert("⚠️ Password Must greater than 6");
+    if (formData.designation === "Project Manager" || formData.designation === "Assistant General Manager") formData.isManager = true;
     if (formData.designation === "Project Coordinator") formData.isTL = true;
     try {
       console.log(formData);
@@ -48,32 +55,27 @@ const AddEmployeeForm = () => {
         empId: formData.empId,
         name: formData.name,
         designation: formData.designation,
-        isManager: formData.designation === "Project Manager",
+        isManager: ["Project Manager", "Assistant General Manager"].includes(formData.designation),
         isTL: formData.designation === "Project Coordinator",
-        username: formData.empId,       // generate username
-        password: formData.empId + "123", // generate password
-        reportingTo: { id: formData.reportingTo } // send nested object
+        username: formData.username,       
+        password: formData.password, 
+        reportingTo: { id: formData.reportingTo }
       };
 
       console.log(payload); // check
       await axios.post("http://localhost:8080/employee/addemployee", payload);
-      await axios.post("http://localhost:8080/employee/addemployee", formData); // dummy endpoint
       alert("✅ Employee added successfully!");
       setFormData({
         empId: "",
         name: "",
         designation: "",
-        reportingId: "",
+        reportingTo: "",
+        username:"",
+        password:"",
       });
     } catch (error) {
       console.error(error);
       alert("❌ Failed to add employee");
-      setFormData({
-        empId: "",
-        name: "",
-        designation: "",
-        reportingId: "",
-      });
     }
   };
 
@@ -120,8 +122,8 @@ const AddEmployeeForm = () => {
       <div className={styles.fld}>
         <label>Reporting Manager</label>
         <select
-          name="reportingId"
-          value={formData.reportingId}
+          name="reportingTo"
+          value={formData.reportingTo}
           onChange={handleChange}
         >
           <option value="">Select Manager</option>
@@ -131,6 +133,26 @@ const AddEmployeeForm = () => {
             </option>
           ))}
         </select>
+      </div>
+
+      <div className={styles.fld}>
+        <label>Username</label>
+        <input
+          type="text"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className={styles.fld}>
+        <label>Password</label>
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+        />
       </div>
 
       <button className={styles.submitBtn} onClick={handleSubmit}>

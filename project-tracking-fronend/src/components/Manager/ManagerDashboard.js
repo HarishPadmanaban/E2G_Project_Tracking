@@ -27,7 +27,7 @@
       .get(endpoint)
       .then((res) => {
         setProjects(res.data);
-       //console.log(res.data);
+        console.log(res.data);
         const inProgress = res.data.filter((p) => p.projectStatus === true);
         setFilteredProjects(inProgress);
         setFilter("In Progress");
@@ -61,6 +61,7 @@
           if (category === "In Progress") return p.projectStatus === true;
           return false;
         });
+        console.log(filteredProjects);
         setFilteredProjects(filtered);
       }
     };

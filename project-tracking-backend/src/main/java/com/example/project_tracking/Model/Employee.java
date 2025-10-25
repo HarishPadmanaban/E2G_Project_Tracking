@@ -70,19 +70,19 @@ public class Employee {
         this.designation = designation;
     }
 
-    public Boolean getManager() {
+    public Boolean getIsManager() {
         return isManager;
     }
 
-    public void setManager(Boolean manager) {
+    public void setIsManager(Boolean manager) {
         isManager = manager;
     }
 
-    public Boolean getTL() {
+    public Boolean getIsTL() {
         return isTL;
     }
 
-    public void setTL(Boolean TL) {
+    public void setIsTL(Boolean TL) {
         isTL = TL;
     }
 

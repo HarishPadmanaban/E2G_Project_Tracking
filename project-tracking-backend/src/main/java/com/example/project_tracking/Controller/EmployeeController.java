@@ -54,8 +54,26 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.getAllManagers());
     }
 
+    @GetMapping("/getallemployees")
+    public ResponseEntity<?> getAllEmployees(){
+        return ResponseEntity.ok(employeeService.getAllEmployees());
+    }
+
     @GetMapping("/gettls")
     public ResponseEntity<?> getTlsUnderManager(@RequestParam Long mgrid){
         return ResponseEntity.ok(employeeService.getTLsUnderManager(mgrid));
     }
+
+    @GetMapping("/getbymgr")
+    public ResponseEntity<?> getAllByManagerId(@RequestParam Long mgrid)
+    {
+        return ResponseEntity.ok(employeeService.getEmployeesByManagerId(mgrid));
+    }
+
+    @PutMapping("/editemployee")
+    public ResponseEntity<?> editEmployee(@RequestBody Employee employee)
+    {
+        return ResponseEntity.ok(employeeService.editEmployee(employee));
+    }
+
 }

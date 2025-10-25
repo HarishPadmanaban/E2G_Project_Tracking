@@ -118,7 +118,7 @@ const ManagerNavbar = () => {
                 </Link>
               )}
 
-              {isAGM && (
+              {/* {isAGM && (
                 <Link
                   to="/manager/assign-project"
                   className={styles.menuLink}
@@ -126,7 +126,7 @@ const ManagerNavbar = () => {
                 >
                   <li>Project Assignment</li>
                 </Link>
-              )}
+              )} */}
 
               {!isAGM && (<Link
                 to="/manager/view-requests"
@@ -150,6 +150,17 @@ const ManagerNavbar = () => {
                   <li>View Approved Requests</li>
                 </Link>
               )}
+
+              {(<Link
+                to="/manager/edit-all"
+                className={styles.menuLink}
+                onClick={() => setMenuOpen(false)}
+              >
+                <li>
+                  Overall Management
+                </li>
+              </Link>)}
+              
             </ul>
           </div>
           {menuOpen && <div className={styles.overlay}></div>}
