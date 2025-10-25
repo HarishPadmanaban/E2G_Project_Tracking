@@ -13,6 +13,7 @@ import WorkPivotTable from './components/Manager/WorkPivotTable.js';
 import ViewRequests from './components/Manager/ViewRequests.js';
 import ViewApprovedRequests from './components/AGM/ViewApprovedRequests.js';
 import EmployeeManagementPage from './components/AGM/EmployeeManagementPage.js';
+import ProjectAssignmentForm from './components/Manager/ProjectAssignmentForm.js'
 
 function App() {
 
@@ -79,6 +80,15 @@ function App() {
   element={
     <ProtectedRoute>
       <EmployeeManagementPage />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/manager/assign-tl"
+  element={
+    <ProtectedRoute>
+      <ProjectAssignmentForm />
     </ProtectedRoute>
   }
 />
