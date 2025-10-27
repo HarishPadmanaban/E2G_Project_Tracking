@@ -373,3 +373,90 @@
     overflow-x: auto;
   }
 }
+
+
+
+
+
+
+
+/* --- Date Range Section --- */
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.dateRange label {
+  color: #1a2d54;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.ellipsis {
+  padding: 8px 6px;
+  color: #777;
+  font-size: 15px;
+}
+
+
+.dateRange input[type="date"] {
+  padding: 11px 12px;
+  border: 1px solid #c7d2e8;
+  border-radius: 6px;
+  outline: none;
+  font-size: 14px;
+  background-color: #ffffff;
+  color: #1a2d54;
+  transition: all 0.2s ease;
+}
+
+.dateRange input[type="date"]:focus {
+  border-color: #3a6cf4;
+  box-shadow: 0 0 0 2px rgba(58, 108, 244, 0.2);
+}
+
+
+.paginationContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.pageBtn {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.pageBtn:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.pageBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.activePage {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+.pageInfo {
+  margin-left: 10px;
+  font-size: 14px;
+  color: #555;
+}
+

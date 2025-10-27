@@ -20,7 +20,13 @@ public class WorkDetailsController {
         this.workDetailsService = workDetailsService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllLogsByprojectStatus()
+    {
+        return ResponseEntity.ok(workDetailsService.getAllLogsByProjectStatus());
+    }
+
+    @GetMapping("/")
     public ResponseEntity<?> getAllLogs()
     {
         return ResponseEntity.ok(workDetailsService.getAll());

@@ -160,6 +160,16 @@ const ManagerNavbar = () => {
                   Overall Management
                 </li>
               </Link>)}
+
+              {isAGM && (
+                <Link
+                  to="/manager/edit-workdetails"
+                  className={styles.menuLink}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <li>Edit Work Details</li>
+                </Link>
+              )}
               
             </ul>
           </div>

@@ -17,6 +17,7 @@ import EditManagementPage from './components/AGM/EditManagementPage.js';
 import AddEmployeeForm from './components/AGM/AddEmployeeForm.js';
 import AddActivityForm from './components/AGM/AddActivityForm.js';
 import AssignProjectForm from './components/AGM/AssignProjectForm.js';
+import EditWorkDetails from './components/AGM/EditWorkDetails.js';
 
   const Unauthorized = () => (
   <div style={{ textAlign: "center", marginTop: "50px" }}>
@@ -102,6 +103,16 @@ function App() {
     </ProtectedRoute>
   }
 />
+
+<Route
+  path="/manager/edit-workdetails"
+  element={
+    <ProtectedRoute>
+      <EditWorkDetails/>
+    </ProtectedRoute>
+  }
+/>
+
 
 <Route
   path="/manager/view-approved-request"

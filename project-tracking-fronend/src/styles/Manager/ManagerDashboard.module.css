@@ -204,3 +204,79 @@
   font-style: italic;
   background-color: #fafafa;
 }
+
+/* Workdetails edit */
+/* Transition animation */
+.fadeIn {
+  opacity: 1;
+  transition: opacity 0.3s ease-in;
+}
+
+.fadeOut {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+/* Filters + Table */
+.filterSection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.filterInput {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  font-size: 14px;
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.dataTable th {
+  background-color: #007bff;
+  color: white;
+  text-align: left;
+  padding: 10px;
+  font-weight: 600;
+}
+
+.dataTable td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.dataTable tr:hover {
+  background-color: #f9f9f9;
+}
+
+.viewBtn {
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.viewBtn:hover {
+  background-color: #0056b3;
+}
+
+.noData {
+  text-align: center;
+  padding: 15px;
+  color: #777;
+}

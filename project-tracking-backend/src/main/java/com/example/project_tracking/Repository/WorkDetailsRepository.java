@@ -30,4 +30,7 @@ public interface WorkDetailsRepository extends JpaRepository<WorkDetails,Long> {
     @Query("SELECT w FROM WorkDetails w WHERE w.project.id = :projectId AND w.activity.id = :activityId")
     List<WorkDetails> findByProjectAndActivity(@Param("projectId") Long projectId,
                                                @Param("activityId") Long activityId);
+
+    @Query("SELECT w FROM WorkDetails w WHERE w.project.projectStatus = true")
+    List<WorkDetails> findAllByActiveProjectStatus();
 }

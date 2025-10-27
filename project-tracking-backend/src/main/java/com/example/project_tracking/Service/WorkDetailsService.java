@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,6 +41,10 @@ public class WorkDetailsService {
                 .stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
+    }
+
+    public List<WorkDetails> getAllLogsByProjectStatus() {
+        return new ArrayList<>(workDetailsRepository.findAllByActiveProjectStatus());
     }
 
     public WorkDetails saveWorkDetails(WorkDetailsRequest request) {
