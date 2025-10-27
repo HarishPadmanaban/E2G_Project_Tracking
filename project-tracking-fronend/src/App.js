@@ -14,6 +14,9 @@ import ViewApprovedRequests from './components/AGM/ViewApprovedRequests.js';
 import EmployeeManagementPage from './components/AGM/EmployeeManagementPage.js';
 import ProjectAssignmentForm from './components/Manager/ProjectAssignmentForm.js';
 import EditManagementPage from './components/AGM/EditManagementPage.js';
+import AddEmployeeForm from './components/AGM/AddEmployeeForm.js';
+import AddActivityForm from './components/AGM/AddActivityForm.js';
+import AssignProjectForm from './components/AGM/AssignProjectForm.js';
 
   const Unauthorized = () => (
   <div style={{ textAlign: "center", marginTop: "50px" }}>
@@ -132,6 +135,33 @@ function App() {
   element={
     <ProtectedRoute allowedRoles={["Project Manager", "Assistant General Manager"]}>
       <ViewRequests />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/manager/add-employee"
+  element={
+    <ProtectedRoute allowedRoles={["Assistant General Manager","Admin"]}>
+      <AddEmployeeForm />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/manager/add-project"
+  element={
+    <ProtectedRoute allowedRoles={["Assistant General Manager","Admin"]}>
+      <AssignProjectForm />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/manager/add-activity"
+  element={
+    <ProtectedRoute allowedRoles={["Assistant General Manager","Admin"]}>
+      <AddActivityForm />
     </ProtectedRoute>
   }
 />

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "../../styles/AGM/AddActivity.module.css"; // reuse same CSS
+import { useNavigate } from "react-router-dom";
 
 const AddEmployeeForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     empId: "",
     name: "",
@@ -81,6 +83,7 @@ const AddEmployeeForm = () => {
 
   return (
     <div className={styles.container}>
+
       <h2>Add New Employee</h2>
 
       <div className={styles.fld}>

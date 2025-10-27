@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 const EditProject = () => {
   const { employee, loading } = useEmployee();
   const navigate = useNavigate();
-  const [showAddForm, setShowAddForm] = useState(false);
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
@@ -156,21 +155,9 @@ const EditProject = () => {
 
   return (
     <div className={styles.tableContainer}>
-      {!showAddForm && <h2 className={styles.title}>Project Management</h2>}
-      {showAddForm && (
-        <div className={styles.formContainer}>
-          <button
-            className={styles.backbtn}
-            onClick={() => setShowAddForm(false)}
-          >
-            Back
-          </button>
-          <h3 className={styles.formTitle}></h3>
-          <AssignProjectForm
-            onAdded={() => setShowAddForm(false)} // optional: close after success
-          />
-        </div>)}
-      {!selectedProject && !showAddForm && (
+      { <h2 className={styles.title}>Project Management</h2>}
+      
+      {!selectedProject && (
         <>
           {/* Filters */}
           <div className={styles.filterBar}>
@@ -206,7 +193,7 @@ const EditProject = () => {
 
             <button
               className={styles.addBtn}
-              onClick={() => setShowAddForm(true)}
+              onClick={() => navigate("/manager/add-project")}
             >
               + Assign Project
             </button>

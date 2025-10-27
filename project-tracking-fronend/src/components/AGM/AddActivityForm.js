@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import styles from "../../styles/AGM/AddActivity.module.css"; // reuse same CSS
+import styles from '../../styles/AGM/AddActivity.module.css'
 
 const AddActivityForm = () => {
   const [formData, setFormData] = useState({

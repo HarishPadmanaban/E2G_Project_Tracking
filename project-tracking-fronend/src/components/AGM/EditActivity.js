@@ -8,8 +8,6 @@ import AddActivityForm from './AddActivityForm';
 const EditActivity = () => {
   const { employee, loading } = useEmployee();
   const navigate = useNavigate();
-  const [showAddForm, setShowAddForm] = useState(false);
-
   const [activities, setActivities] = useState([]);
   const [filteredActivities, setFilteredActivities] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState(null);
@@ -129,23 +127,9 @@ const EditActivity = () => {
 
   return (
      <div className={styles.tableContainer}>
-      {!showAddForm && <h2 className={styles.title}>Activity Management</h2>}
-{showAddForm && (
-  <div className={styles.formContainer}>
-    <button
-      className={styles.backbtn}
-      onClick={() => setShowAddForm(false)}
-    >
-      Back
-    </button>
-    <h3 className={styles.formTitle}></h3>
-    <AddActivityForm
-      onAdded={() => setShowAddForm(false)} // optional: close after success
-    />
-  </div>
-)}
+      { <h2 className={styles.title}>Activity Management</h2>}
 
-      {!selectedActivity && !showAddForm &&(
+      {!selectedActivity &&(
         <>
           {/* Filters */}
           <div className={styles.filterBar}>
@@ -190,17 +174,10 @@ const EditActivity = () => {
             </button>
             <button
               className={styles.addBtn}
-              onClick={() => setShowAddForm(true)}
+              onClick={() => navigate("/manager/add-activity")}
             >
               + Add Activity
             </button>
-
-
-            {showAddForm && (
-              <div className={styles.addFormSection}>
-                <AddActivityForm onAdded={() => setShowAddForm(false)} />
-              </div>
-            )}
           </div>
 
           {/* Activity Table */}

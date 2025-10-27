@@ -198,8 +198,7 @@ import AddEmployeeForm from './AddEmployeeForm';
 const EditEmployee = () => {
   const { employee, loading } = useEmployee();
   const navigate = useNavigate();
-const [showAddForm, setShowAddForm] = useState(false);
-  const [employees, setEmployees] = useState([]);
+    const [employees, setEmployees] = useState([]);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -335,21 +334,9 @@ const [showAddForm, setShowAddForm] = useState(false);
 
   return (
     <div className={styles.tableContainer}>
-      {!showAddForm && <h2 className={styles.title}>Employee Management</h2>}
-      {showAddForm && (
-  <div className={styles.formContainer}>
-    <button
-      className={styles.backbtn}
-      onClick={() => setShowAddForm(false)}
-    >
-      Back
-    </button>
-    <h3 className={styles.formTitle}></h3>
-    <AddEmployeeForm
-      onAdded={() => setShowAddForm(false)} // optional: close after success
-    />
-  </div>)}
-      {!selectedEmployee && !showAddForm && (
+      { <h2 className={styles.title}>Employee Management</h2>}
+      
+      {!selectedEmployee && (
         <>
           {/* Filters */}
           <div className={styles.filterBar}>
@@ -380,11 +367,11 @@ const [showAddForm, setShowAddForm] = useState(false);
               Clear Filters
             </button>
              <button
-              className={styles.addBtn}
-              onClick={() => setShowAddForm(true)}
-            >
-              + Add Employee
-            </button>
+  className={styles.addBtn}
+  onClick={() => navigate("/manager/add-employee")}
+>
+  + Add Employee
+</button>
           </div>
 
           {/* Employees Table */}

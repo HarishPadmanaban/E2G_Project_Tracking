@@ -125,6 +125,23 @@
   height: 50px; 
 }
 
+.tabContent {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.fadeIn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fadeOut {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+
+
+
 .highlightRow {
   background-color: #eddd97; /* light red tone */
 }
@@ -168,7 +185,7 @@
 .projectsTable td:nth-child(6) { width: 120px; }  /* Project Status */
 
 .projectsTable tbody tr {
-  transition: all 0.2s ease;
+  transition: all 0.1s ease;
   height: 50px;
 }
 
