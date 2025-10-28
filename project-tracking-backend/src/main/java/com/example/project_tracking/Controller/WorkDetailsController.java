@@ -91,5 +91,11 @@ public class WorkDetailsController {
         WorkDetails saved = workDetailsService.saveFinalWork(request,activeWorkId);
         return ResponseEntity.ok(saved);
     }
+
+    @PutMapping("/edit-log/{id}")
+    public ResponseEntity<?> editWorkLog(@PathVariable long id,@RequestBody WorkDetailsRequest workDetails)
+    {
+        return ResponseEntity.ok(workDetailsService.editWorkDetail(id,workDetails));
+    }
 }
 

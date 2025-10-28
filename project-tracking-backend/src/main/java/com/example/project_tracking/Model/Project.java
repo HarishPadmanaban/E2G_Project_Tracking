@@ -201,5 +201,27 @@ public class Project {
     public void setDetailingTime(BigDecimal detailingTime) {
         this.detailingTime = detailingTime;
     }
+
+    @Override
+    public String toString() {
+        return "Project{" +
+                "id=" + id +
+                ", projectName='" + projectName + '\'' +
+                ", clientName='" + clientName + '\'' +
+                ", managerId=" + managerId +
+                ", tlId=" + tlId +
+                ", assignedHours=" + assignedHours +
+                ", workingHours=" + workingHours +
+                ", assignedDate=" + assignedDate +
+                ", projectStatus=" + projectStatus +
+                ", softDelete=" + softDelete +
+                ", modellingHours=" + modellingHours +
+                ", checkingHours=" + checkingHours +
+                ", detailingHours=" + detailingHours +
+                ", modellingTime=" + modellingTime +
+                ", checkingTime=" + checkingTime +
+                ", detailingTime=" + detailingTime +
+                '}';
+    }
 }
 

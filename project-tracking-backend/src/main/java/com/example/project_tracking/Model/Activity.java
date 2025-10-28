@@ -72,5 +72,16 @@ public class Activity {
     public void setSoftDelete(Boolean softDelete) {
         this.softDelete = softDelete;
     }
+
+    @Override
+    public String toString() {
+        return "Activity{" +
+                "id=" + id +
+                ", activityName='" + activityName + '\'' +
+                ", category='" + category + '\'' +
+                ", mainType='" + mainType + '\'' +
+                ", softDelete=" + softDelete +
+                '}';
+    }
 }
 

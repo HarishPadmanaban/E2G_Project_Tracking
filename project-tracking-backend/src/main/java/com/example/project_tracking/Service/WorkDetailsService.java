@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -168,7 +169,9 @@ public class WorkDetailsService {
         return new WorkDetailsResponse(
                 work.getId(),
                 work.getEmployee() != null ? work.getEmployee().getName() : null,
+                work.getEmployee().getId(),
                 work.getManager() != null ? work.getManager().getName() : null,
+                work.getManager().getId(),
                 work.getProject() != null ? work.getProject().getProjectName() : null,
                 work.getActivity() != null ? work.getActivity().getActivityName() : null,
                 work.getDate(),
@@ -178,7 +181,9 @@ public class WorkDetailsService {
                 work.getProjectActivity(),
                 work.getAssignedWork(),
                 work.getStatus(),
-                work.getRemarks()
+                work.getRemarks(),
+                work.getProject().getId(),
+                work.getActivity().getId()
         );
     }
 
@@ -239,7 +244,9 @@ public class WorkDetailsService {
         return new WorkDetailsResponse(
                 work.getId(),
                 employeeName,
+                work.getEmployee().getId(),
                 managerName,
+                work.getManager().getId(),
                 projectName,
                 activityName,
                 work.getDate(),
@@ -266,7 +273,9 @@ public class WorkDetailsService {
         return new WorkDetailsResponse(
                 work.getId(),
                 employeeName,
+                work.getEmployee().getId(),
                 managerName,
+                work.getManager().getId(),
                 projectName,
                 activityName,
                 work.getDate(),
@@ -281,5 +290,94 @@ public class WorkDetailsService {
                 work.getActivity().getId()
         );
     }
+
+    public void makeChangeInActivity(Project project, Activity activity, boolean isAdd, double hours) {
+        String type = activity.getMainType().toLowerCase();
+        BigDecimal hrs = BigDecimal.valueOf(hours);
+
+        // Update specific time
+        switch (type) {
+            case "modelling":
+                project.setModellingTime(isAdd
+                        ? project.getModellingTime().add(hrs)
+                        : project.getModellingTime().subtract(hrs));
+                break;
+
+            case "checking":
+                project.setCheckingTime(isAdd
+                        ? project.getCheckingTime().add(hrs)
+                        : project.getCheckingTime().subtract(hrs));
+                break;
+
+            case "detailing":
+                project.setDetailingTime(isAdd
+                        ? project.getDetailingTime().add(hrs)
+                        : project.getDetailingTime().subtract(hrs));
+                break;
+        }
+
+        // Update total working hours
+        project.setWorkingHours(isAdd
+                ? project.getWorkingHours().add(hrs)
+                : project.getWorkingHours().subtract(hrs));
+
+        projectRepository.save(project);
+    }
+
+
+    public WorkDetailsResponse editWorkDetail(long id, WorkDetailsRequest request) {
+        WorkDetails oldWork = workDetailsRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Work detail not found for id: " + id));
+
+        // ✅ Fetch related entities
+        Employee manager = employeeRepository.findById(request.getManagerId())
+                .orElseThrow(() -> new RuntimeException("Manager not found"));
+        Project project = projectRepository.findById(request.getProjectId())
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        Activity activity = activityRepository.findById(request.getActivityId())
+                .orElseThrow(() -> new RuntimeException("Activity not found"));
+
+        Double oldHours = oldWork.getWorkHours() != null ? oldWork.getWorkHours() : 0.0;
+        Double newHours = request.getWorkHours() != null ? request.getWorkHours() : oldHours;
+
+        // ✅ Update working hour tracking correctly
+        if (!Objects.equals(oldWork.getProject().getId(), project.getId())) {
+            // Project changed
+            Project oldProject = oldWork.getProject();
+
+            // Subtract old hours from old project
+            makeChangeInActivity(oldProject, oldWork.getActivity(), false, oldHours);
+
+            // Add new hours to new project
+            makeChangeInActivity(project, activity, true, newHours);
+
+        } else if (!Objects.equals(oldWork.getActivity().getMainType(), activity.getMainType())) {
+            // Activity type changed
+            makeChangeInActivity(oldWork.getProject(), oldWork.getActivity(), false, oldHours);
+            makeChangeInActivity(oldWork.getProject(), activity, true, newHours);
+
+        } else if (!Objects.equals(oldHours, newHours)) {
+            // Only hours changed
+            makeChangeInActivity(oldWork.getProject(), oldWork.getActivity(), false, oldHours);
+            makeChangeInActivity(oldWork.getProject(), activity, true, newHours);
+        }
+
+        // ✅ Update other fields
+        oldWork.setManager(manager);
+        oldWork.setProject(project);
+        oldWork.setActivity(activity);
+        oldWork.setDate(request.getDate());
+        oldWork.setWorkHours(newHours);
+        oldWork.setStartTime(request.getStartTime());
+        oldWork.setEndTime(request.getEndTime());
+        oldWork.setProjectActivity(request.getProjectActivity());
+        oldWork.setAssignedWork(request.getAssignedWork());
+        oldWork.setStatus(request.getStatus());
+        oldWork.setRemarks(request.getRemarks());
+
+        return convertToResponse(workDetailsRepository.save(oldWork));
+    }
+
+
 }
 

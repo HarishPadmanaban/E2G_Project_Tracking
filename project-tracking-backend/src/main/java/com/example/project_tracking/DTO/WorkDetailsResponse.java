@@ -6,7 +6,9 @@ import java.time.LocalTime;
 public class WorkDetailsResponse {
         private Long id;
         private String employeeName;
+        private long employeeId;
         private String managerName;
+        private long managerId;
         private String projectName;
         private String activityName;
         private LocalDate date;
@@ -52,6 +54,42 @@ public class WorkDetailsResponse {
         this.remarks = remarks;
         this.projectId = projectId;
         this.activityId = activityId;
+    }
+
+    public WorkDetailsResponse(Long id, String employeeName, long employeeId, String managerName, long managerId, String projectName, String activityName, LocalDate date, Double workHours, LocalTime startTime, LocalTime endTime, String projectActivity, String assignedWork, String status, String remarks, Long projectId, Long activityId) {
+        this.id = id;
+        this.employeeName = employeeName;
+        this.employeeId = employeeId;
+        this.managerName = managerName;
+        this.managerId = managerId;
+        this.projectName = projectName;
+        this.activityName = activityName;
+        this.date = date;
+        this.workHours = workHours;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.projectActivity = projectActivity;
+        this.assignedWork = assignedWork;
+        this.status = status;
+        this.remarks = remarks;
+        this.projectId = projectId;
+        this.activityId = activityId;
+    }
+
+    public long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(long employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public long getManagerId() {
+        return managerId;
+    }
+
+    public void setManagerId(long managerId) {
+        this.managerId = managerId;
     }
 
     public Long getId() {
