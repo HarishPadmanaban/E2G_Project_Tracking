@@ -1,20 +1,28 @@
 package com.example.project_tracking.Service;
 
 import com.example.project_tracking.DTO.DataTransfer;
+import com.example.project_tracking.DTO.LoginRequest;
 import com.example.project_tracking.DTO.ProjectRequest;
 import com.example.project_tracking.DTO.WorkDetailsResponse;
 import com.example.project_tracking.Model.Employee;
 import com.example.project_tracking.Model.Project;
 import com.example.project_tracking.Model.WorkDetails;
 import com.example.project_tracking.Repository.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
     private  final EmployeeRepository employeeRepository;
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
@@ -111,4 +119,27 @@ public class EmployeeService {
                 employee.getReportingTo() // reporting manager, DTO constructor handles null
         );
     }
+
+//    public void sendMail(String to) {
+//        SimpleMailMessage mailMessage = new SimpleMailMessage();
+//        mailMessage.setFrom("harish07.vijay@gmail.com");
+//        mailMessage.setTo(to);
+//        mailMessage.setSubject(subject);
+//        mailMessage.setText(message);
+//
+//        mailSender.send(mailMessage);
+//        System.out.println("✅ Mail sent successfully!");
+//    }
+
+    // Pending
+    public boolean forgotPassword(LoginRequest request,String email) {
+        Optional<Employee> employee = employeeRepository.findByUsernameAndPassword(request.getUsername(),request.getPassword());
+        if(employee.isEmpty()){
+            return false;
+        }
+
+        return true;
+    }
+
+
 }
