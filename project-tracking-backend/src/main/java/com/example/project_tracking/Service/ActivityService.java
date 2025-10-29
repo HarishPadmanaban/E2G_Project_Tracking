@@ -49,4 +49,10 @@ public class ActivityService {
             activity.setSoftDelete(true);
         }
     }
+
+    public String getMainType(Long id)
+    {
+        Activity activity = activityRepository.findById(id).orElse(null);
+        return activity.getMainType();
+    }
 }

@@ -222,7 +222,7 @@ const WorkPivotTable = () => {
     const isAGM = employee.designation === "Assistant General Manager";
 
     const endpoint = isAGM
-      ? `http://localhost:8080/workdetails` // 👈 new AGM endpoint
+      ? `http://localhost:8080/workdetails/all` // 👈 new AGM endpoint
       : `http://localhost:8080/workdetails/manager/${employee.id}`; // 👈 existing endpoint
 
 
