@@ -31,6 +31,13 @@ public class EmployeeController {
         return ResponseEntity.ok(emp);
     }
 
+//    @PostMapping("/forgotpassword")
+//    public ResponseEntity<?> forgotPasswod(@RequestBody LoginRequest request,@RequestParam String email)
+//    {
+//        boolean isAuth = employeeService.forgotPassword(request,email);
+//        return isAuth ? ResponseEntity.ok("Password changed") : new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//    }
+
     @PostMapping("/addemployee")
     public ResponseEntity<?> addEmployee(@RequestBody Employee employee)
     {
@@ -75,5 +82,4 @@ public class EmployeeController {
     {
         return ResponseEntity.ok(employeeService.editEmployee(employee));
     }
-
 }

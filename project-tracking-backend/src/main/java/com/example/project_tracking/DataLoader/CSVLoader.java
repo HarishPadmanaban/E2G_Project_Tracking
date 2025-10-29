@@ -53,7 +53,9 @@ public class CSVLoader implements CommandLineRunner {
             emp.setIsManager(Boolean.parseBoolean(row[4]));
             emp.setIsTL(Boolean.parseBoolean(row[5]));
             emp.setUsername(row[7]);
-            emp.setPassword(row[8]);
+            //emp.setPassword(row[8]);
+            String pass = emp.getPassword().trim()+"@123";
+            emp.setPassword(pass);
 
             Employee saved = employeeRepository.save(emp);
             tempMap.put(Long.parseLong(row[0]), saved);
