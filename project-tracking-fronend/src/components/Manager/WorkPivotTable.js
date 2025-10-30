@@ -125,7 +125,7 @@ const WorkPivotTable = () => {
   useEffect(() => {
     if (!employee) return;
 
-    const isAGM = employee.designation === "Assistant General Manager";
+    const isAGM = employee.designation === "Assistant General Manager" || employee.designation === "Admin";
 
     const endpoint = isAGM
       ? `http://localhost:8080/workdetails/all` // 👈 new AGM endpoint

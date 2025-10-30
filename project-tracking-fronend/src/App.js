@@ -107,7 +107,7 @@ function App() {
 <Route
   path="/manager/edit-workdetails"
   element={
-    <ProtectedRoute>
+    <ProtectedRoute allowedRoles={["Assistant General Manager", "Admin"]}>
       <EditWorkDetails/>
     </ProtectedRoute>
   }
@@ -180,7 +180,7 @@ function App() {
 <Route
   path="/manager/edit-all"
   element={
-    <ProtectedRoute allowedRoles={["Project Manager", "Assistant General Manager"]}>
+    <ProtectedRoute allowedRoles={["Admin", "Assistant General Manager"]}>
       <EditManagementPage />
     </ProtectedRoute>
   }

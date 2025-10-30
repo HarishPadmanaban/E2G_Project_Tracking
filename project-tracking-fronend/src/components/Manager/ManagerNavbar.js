@@ -12,7 +12,11 @@ const ManagerNavbar = () => {
 
   //console.log(employee);
 
-  const isAGM = employee?.designation === "Assistant General Manager";
+  const isAGM =
+  employee?.designation === "Assistant General Manager" ||
+  employee?.designation === "Admin";
+
+  const isNotAgm = employee?.designation !== "Assistant General Manager"
 
   const handleBack = () => {
     if (window.location.pathname === "/manager/work") return;
@@ -184,13 +188,13 @@ const ManagerNavbar = () => {
         </div>
 
         <div className={styles.navRight}>
-          {!isAGM && (
+          {isNotAgm && (
             <Link to="/employee/leave" className={styles.navLink}>
               Leave
             </Link>
           )}
 
-          {isAGM && <Link
+          {!isNotAgm && <Link
                 to="/manager/view-requests"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}

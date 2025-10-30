@@ -149,5 +149,24 @@ public class WorkDetails {
     public void setRemarks(String remarks) {
         this.remarks = remarks;
     }
+
+    @Override
+    public String toString() {
+        return "WorkDetails{" +
+                "id=" + id +
+                ", employee=" + employee +
+                ", manager=" + manager +
+                ", project=" + project +
+                ", activity=" + activity +
+                ", date=" + date +
+                ", workHours=" + workHours +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", projectActivity='" + projectActivity + '\'' +
+                ", assignedWork='" + assignedWork + '\'' +
+                ", status='" + status + '\'' +
+                ", remarks='" + remarks + '\'' +
+                '}';
+    }
 }
 

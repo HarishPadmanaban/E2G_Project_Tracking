@@ -86,7 +86,7 @@ textarea {
   height: 80px;
 }
 
-.startBtn, .stopBtn, .submitBtn {
+.startBtn, .stopBtn, .submitBtn , .discardBtn{
   font-weight: 700;
   border: none;
   border-radius: 8px;
@@ -114,7 +114,12 @@ textarea {
   color: #ffffff;
 }
 
-.startBtn:hover, .stopBtn:hover, .submitBtn:hover {
+.discardBtn{
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  color: #ffffff;
+}
+
+.startBtn:hover, .stopBtn:hover, .submitBtn:hover, .discardBtn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(37, 99, 235, 0.3);
 }
@@ -204,3 +209,17 @@ select {
     font-size: 18px;
   }
 }
+
+.workDetailsHeader {
+  margin-top: 20px; /* pushes header below navbar */
+  text-align: center;
+  background-color: white;
+  padding: 2px;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 10px;
+}
+
+

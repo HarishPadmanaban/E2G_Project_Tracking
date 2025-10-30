@@ -12,6 +12,7 @@ import com.example.project_tracking.Repository.WorkDetailsRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,39 +83,51 @@ public class WorkDetailsService {
     }
 
     private void updateProjectWorkingHours(Project project, Activity activity, Double workHours) {
-
-        String mainType = activity.getMainType();
-
-        // Convert workHours to BigDecimal
+        String mainType = activity.getMainType().toLowerCase();
         BigDecimal newWorkHours = BigDecimal.valueOf(workHours);
+
+        BigDecimal targetHours;
+        BigDecimal currentTime;
+
+        switch (mainType) {
+            case "modelling":
+                targetHours = project.getModellingHours() != null ? project.getModellingHours() : BigDecimal.ZERO;
+                currentTime = project.getModellingTime() != null ? project.getModellingTime() : BigDecimal.ZERO;
+                if (currentTime.add(newWorkHours).compareTo(targetHours) > 0) {
+                    throw new RuntimeException("Modelling hours exceeded for project: " + project.getProjectName());
+                }
+                project.setModellingTime(currentTime.add(newWorkHours));
+                break;
+
+            case "checking":
+                targetHours = project.getCheckingHours() != null ? project.getCheckingHours() : BigDecimal.ZERO;
+                currentTime = project.getCheckingTime() != null ? project.getCheckingTime() : BigDecimal.ZERO;
+                if (currentTime.add(newWorkHours).compareTo(targetHours) > 0) {
+                    throw new RuntimeException("Checking hours exceeded for project: " + project.getProjectName());
+                }
+                project.setCheckingTime(currentTime.add(newWorkHours));
+                break;
+
+            case "detailing":
+                targetHours = project.getDetailingHours() != null ? project.getDetailingHours() : BigDecimal.ZERO;
+                currentTime = project.getDetailingTime() != null ? project.getDetailingTime() : BigDecimal.ZERO;
+                if (currentTime.add(newWorkHours).compareTo(targetHours) > 0) {
+                    throw new RuntimeException("Detailing hours exceeded for project: " + project.getProjectName());
+                }
+                project.setDetailingTime(currentTime.add(newWorkHours));
+                break;
+
+            default:
+                throw new RuntimeException("Unknown main_type: " + mainType);
+        }
 
         // Update total working hours
         BigDecimal currentWorkingHours = project.getWorkingHours() != null ? project.getWorkingHours() : BigDecimal.ZERO;
         project.setWorkingHours(currentWorkingHours.add(newWorkHours));
 
-        // Update specific type hours based on main_type
-        switch (mainType.toLowerCase()) {
-            case "modelling":
-                BigDecimal currentModelling = project.getModellingTime() != null ? project.getModellingTime() : BigDecimal.ZERO;
-                project.setModellingTime(currentModelling.add(newWorkHours));
-                break;
-
-            case "checking":
-                BigDecimal currentChecking = project.getCheckingTime() != null ? project.getCheckingTime() : BigDecimal.ZERO;
-                project.setCheckingTime(currentChecking.add(newWorkHours));
-                break;
-
-            case "detailing":
-                BigDecimal currentDetailing = project.getDetailingTime() != null ? project.getDetailingTime() : BigDecimal.ZERO;
-                project.setDetailingTime(currentDetailing.add(newWorkHours));
-                break;
-
-            default:
-                System.out.println("Unknown main_type: " + mainType);
-        }
-
         projectRepository.save(project);
     }
+
 
     public List<WorkDetailsResponse> getByEmployee(Long employeeId) {
         return workDetailsRepository.findByEmployeeId(employeeId)
@@ -195,19 +208,31 @@ public class WorkDetailsService {
     }
 
     public WorkDetails stopWork(Long employeeId, String endTime, String workHoursStr) {
-        WorkDetails work = workDetailsRepository.findTopByEmployeeIdAndEndTimeIsNullOrderByIdDesc(employeeId)
+        WorkDetails work = workDetailsRepository
+                .findTopByEmployeeIdAndEndTimeIsNullOrderByIdDesc(employeeId)
                 .orElseThrow(() -> new RuntimeException("No active work found for employee"));
 
-        work.setEndTime(LocalTime.parse(endTime));
-        try {
-            Double hours = Double.parseDouble(workHoursStr);
-            work.setWorkHours(hours);
-        } catch (NumberFormatException e) {
-            work.setWorkHours(0.0);
-        }
+        LocalTime startTime = work.getStartTime();
+        LocalTime newEndTime = LocalTime.parse(endTime);
+
+        // 2️⃣ Calculate work duration in hours BEFORE setting end time
+        Duration duration = Duration.between(startTime, newEndTime);
+        double calculatedHours = duration.toMinutes() / 60.0;
+
+        // 3️⃣ Fetch related Project and Activity
+        Project project = work.getProject();
+        Activity activity = work.getActivity();
+
+        // 4️⃣ Validate project-level target hours BEFORE saving
+        validateTargetHours(project, activity, calculatedHours, true);
+
+        // 5️⃣ If validation passes, set end time and work hours
+        work.setEndTime(newEndTime);
+        work.setWorkHours(calculatedHours);
 
         return workDetailsRepository.save(work);
     }
+
 
     public WorkDetails saveFinalWork(WorkDetailsRequest request, Long activeWorkId) {
         WorkDetails work = workDetailsRepository.findById(activeWorkId).orElse(null);
@@ -331,6 +356,41 @@ public class WorkDetailsService {
         projectRepository.save(project);
     }
 
+    private void validateTargetHours(Project project, Activity activity, double newHours, boolean isAdd) {
+        String type = activity.getMainType().toLowerCase();
+        BigDecimal hrs = BigDecimal.valueOf(newHours);
+
+        switch (type) {
+            case "modelling":
+                BigDecimal modTime = project.getModellingTime() != null ? project.getModellingTime() : BigDecimal.ZERO;
+                BigDecimal modTarget = project.getModellingHours() != null ? project.getModellingHours() : BigDecimal.ZERO;
+                if (isAdd && modTime.add(hrs).compareTo(modTarget) > 0) {
+                    throw new RuntimeException("Cannot add work: Modelling hours will exceed target limit for project " + project.getProjectName());
+                }
+                break;
+
+            case "checking":
+                BigDecimal checkTime = project.getCheckingTime() != null ? project.getCheckingTime() : BigDecimal.ZERO;
+                BigDecimal checkTarget = project.getCheckingHours() != null ? project.getCheckingHours() : BigDecimal.ZERO;
+                if (isAdd && checkTime.add(hrs).compareTo(checkTarget) > 0) {
+                    throw new RuntimeException("Cannot add work: Checking hours will exceed target limit for project " + project.getProjectName());
+                }
+                break;
+
+            case "detailing":
+                BigDecimal detTime = project.getDetailingTime() != null ? project.getDetailingTime() : BigDecimal.ZERO;
+                BigDecimal detTarget = project.getDetailingHours() != null ? project.getDetailingHours() : BigDecimal.ZERO;
+                if (isAdd && detTime.add(hrs).compareTo(detTarget) > 0) {
+                    throw new RuntimeException("Cannot add work: Detailing hours will exceed target limit for project " + project.getProjectName());
+                }
+                break;
+
+            default:
+                throw new RuntimeException("Unknown main type: " + type);
+        }
+    }
+
+
 
     public WorkDetailsResponse editWorkDetail(long id, WorkDetailsRequest request) {
         WorkDetails oldWork = workDetailsRepository.findById(id)
@@ -347,7 +407,6 @@ public class WorkDetailsService {
         Double oldHours = oldWork.getWorkHours() != null ? oldWork.getWorkHours() : 0.0;
         Double newHours = request.getWorkHours() != null ? request.getWorkHours() : oldHours;
 
-        // ✅ Update working hour tracking correctly
         if (!Objects.equals(oldWork.getProject().getId(), project.getId())) {
             // Project changed
             Project oldProject = oldWork.getProject();
@@ -355,18 +414,28 @@ public class WorkDetailsService {
             // Subtract old hours from old project
             makeChangeInActivity(oldProject, oldWork.getActivity(), false, oldHours);
 
-            // Add new hours to new project
+            // ✅ Validate before adding to new project
+            validateTargetHours(project, activity, newHours, true);
             makeChangeInActivity(project, activity, true, newHours);
 
         } else if (!Objects.equals(oldWork.getActivity().getMainType(), activity.getMainType())) {
             // Activity type changed
             makeChangeInActivity(oldWork.getProject(), oldWork.getActivity(), false, oldHours);
+
+            // ✅ Validate before adding new activity type
+            validateTargetHours(oldWork.getProject(), activity, newHours, true);
             makeChangeInActivity(oldWork.getProject(), activity, true, newHours);
 
         } else if (!Objects.equals(oldHours, newHours)) {
             // Only hours changed
-            makeChangeInActivity(oldWork.getProject(), oldWork.getActivity(), false, oldHours);
-            makeChangeInActivity(oldWork.getProject(), activity, true, newHours);
+            double diff = newHours - oldHours;
+            if (diff > 0) {
+                // ✅ Check if adding the difference will exceed limit
+                validateTargetHours(oldWork.getProject(), oldWork.getActivity(), diff, true);
+                makeChangeInActivity(oldWork.getProject(), oldWork.getActivity(), true, diff);
+            } else {
+                makeChangeInActivity(oldWork.getProject(), oldWork.getActivity(), false, Math.abs(diff));
+            }
         }
 
         // ✅ Update other fields
@@ -385,6 +454,12 @@ public class WorkDetailsService {
         return convertToResponse(workDetailsRepository.save(oldWork));
     }
 
+    public void discardWork(Long workId) {
+        WorkDetails work = workDetailsRepository.findById(workId)
+                .orElseThrow(() -> new RuntimeException("Work entry not found for ID: " + workId));
+        System.out.println(work.toString());
+        workDetailsRepository.delete(work);
+    }
 
 }
 

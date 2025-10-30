@@ -134,7 +134,11 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
       setIsEditing(false);
     } catch (err) {
       console.error("❌ Error updating work log:", err);
-      alert("Failed to update work log.");
+     const backendMsg =
+      err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
+
+    // Show the exact backend message to user
+    alert(backendMsg);
     }
   };
 
@@ -182,7 +186,7 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
 
   return (
     <div className={styles.wrapper}>
-      <header className={styles.header}>
+      <header className={styles.workDetailsHeader}>
         <h1>Work Details</h1>
       </header>
 
@@ -371,12 +375,22 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
           </div>
 
           {/* 🔹 Remarks */}
-          <div className={styles.row}>
-            <div className={styles.field} style={{ gridColumn: "span 3" }}>
-              <label>Remarks</label>
-              <textarea value={formData.remarks} readOnly />
-            </div>
-          </div>
+          {/* 🔹 Remarks */}
+<div className={styles.row}>
+  <div className={styles.field} style={{ gridColumn: "span 3" }}>
+    <label>Remarks</label>
+    {isEditing ? (
+      <textarea
+        name="remarks"
+        value={formData.remarks}
+        onChange={handleChange}
+      />
+    ) : (
+      <textarea value={formData.remarks} readOnly />
+    )}
+  </div>
+</div>
+
 
           {/* 🔹 Buttons */}
           <div className={styles.row} style={{ justifyContent: "center", gap: "10px" }}>

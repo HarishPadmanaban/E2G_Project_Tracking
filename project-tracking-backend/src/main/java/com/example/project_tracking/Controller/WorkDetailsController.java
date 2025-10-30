@@ -103,5 +103,13 @@ public class WorkDetailsController {
     {
         return ResponseEntity.ok(workDetailsService.editWorkDetail(id,workDetails));
     }
+
+    @DeleteMapping("/work/discard/{id}")
+    public ResponseEntity<String> discardWork(@PathVariable Long id) {
+        System.out.println(id);
+        workDetailsService.discardWork(id);
+        return ResponseEntity.ok("Work entry discarded successfully");
+    }
+
 }
 
