@@ -1,6 +1,7 @@
 package com.example.project_tracking.DataLoader;
 
 import com.example.project_tracking.DataLoader.Reset.EmployeeResetter;
+import com.example.project_tracking.Encryption.PasswordUtil;
 import com.example.project_tracking.Model.Employee;
 import com.example.project_tracking.Repository.EmployeeRepository;
 import com.opencsv.CSVReader;
@@ -55,7 +56,7 @@ public class CSVLoader implements CommandLineRunner {
             emp.setUsername(row[7]);
             //emp.setPassword(row[8]);
             String pass = emp.getPassword().trim()+"@123";
-            emp.setPassword(pass);
+            emp.setPassword(PasswordUtil.hashPassword(pass));
 
             Employee saved = employeeRepository.save(emp);
             tempMap.put(Long.parseLong(row[0]), saved);

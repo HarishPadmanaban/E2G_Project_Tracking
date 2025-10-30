@@ -1,97 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import PivotTableUI from "react-pivottable/PivotTableUI";
-// import "react-pivottable/pivottable.css";
-// import axios from "axios";
-// import { useEmployee } from "../../context/EmployeeContext";
-// import "../../styles/Manager/PivotTableCustom.css"; // custom global CSS
-
-// const WorkPivotTable = () => {
-//   const [data, setData] = useState([]);
-//    const [pivotState, setPivotState] = useState({
-//     rows: ["Employee"],       // default row
-//     cols: ["Activity"],       // default column
-//     aggregatorName: "Sum",
-//     vals: ["Work Hours"],
-//     rendererName: "Table",
-//   });
-//   const { employee } = useEmployee();
-
-//   useEffect(() => {
-//     if (!employee) return;
-
-//     axios
-//       .get(`http://localhost:8080/workdetails/manager/${employee.id}`)
-//       .then((res) => {
-//         // Header row first
-//         console.log(res.data);
-//         const tableData = [
-//           [
-//             "Employee",
-//             "Project",
-//             "Activity",
-//             "Status",
-//             "Work Hours",
-//             "Date",
-//             "Assigned Work",
-//           ],
-//         ];
-
-//         // Fill data rows
-//         res.data.forEach((item) => {
-//           tableData.push([
-//             item.employeeName || "",
-//             item.projectName || "",
-//             item.activityName || "",
-//             item.status || "",
-//             item.workHours || 0,
-//             item.date || "",
-//             item.assignedWork || "",
-//           ]);
-//         });
-
-//         setData(tableData);
-//       })
-//       .catch((err) => console.error(err));
-//   }, [employee]);
-
-//   return (
-//     <div
-//       style={{
-//         width: "100%",
-//         minHeight: "100vh",
-//         padding: "20px",
-//         boxSizing: "border-box",
-//         background: "#f8fafc",
-//       }}
-//     >
-//       <h2 style={{ fontWeight: 600, marginBottom: "20px" }}>
-//         Work Analysis Pivot Table
-//       </h2>
-
-//       <div
-//         style={{
-//           width: "100%",
-//           overflowX: "auto",
-//           background: "#fff",
-//           borderRadius: "10px",
-//           boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-//           padding: "10px",
-//         }}
-//       >
-//         {data.length > 1 && (
-//           <PivotTableUI
-//             data={data}
-//             onChange={(s) => setPivotState(s)}
-//             {...pivotState}
-//             unusedOrientationCutoff={Infinity} // show all fields in menu
-//           />
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default WorkPivotTable;
 import React, { useEffect, useState } from "react";
 import PivotTableUI from "react-pivottable/PivotTableUI";
 import "react-pivottable/pivottable.css";
@@ -106,7 +12,7 @@ const patchPivotFilterBox = () => {
   const originalFilterBox = Pivot.FilterBox || PivotTableUI.FilterBox;
 
   if (!originalFilterBox) {
-    console.warn("⚠️ PivotTableUI.FilterBox not found – skipping patch.");
+    console.warn("⚠ PivotTableUI.FilterBox not found – skipping patch.");
     return;
   }
 
@@ -222,7 +128,7 @@ const WorkPivotTable = () => {
     const isAGM = employee.designation === "Assistant General Manager";
 
     const endpoint = isAGM
-      ? `http://localhost:8080/workdetails` // 👈 new AGM endpoint
+      ? `http://localhost:8080/workdetails/all` // 👈 new AGM endpoint
       : `http://localhost:8080/workdetails/manager/${employee.id}`; // 👈 existing endpoint
 
 

@@ -1,6 +1,4 @@
 package com.example.project_tracking.Controller.OTP;
-
-
 import com.example.project_tracking.Service.OTP.EmailService;
 import com.example.project_tracking.Service.OTP.OtpService;
 import org.springframework.beans.factory.annotation.Autowired;

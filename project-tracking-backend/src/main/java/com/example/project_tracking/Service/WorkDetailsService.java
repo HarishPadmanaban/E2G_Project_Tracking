@@ -44,8 +44,10 @@ public class WorkDetailsService {
                 .collect(Collectors.toList());
     }
 
-    public List<WorkDetails> getAllLogsByProjectStatus() {
-        return new ArrayList<>(workDetailsRepository.findAllByActiveProjectStatus());
+    public List<WorkDetailsResponse> getAllLogsByProjectStatus() {
+        return new ArrayList<>(workDetailsRepository.findAllByActiveProjectStatus()).stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
     public WorkDetails saveWorkDetails(WorkDetailsRequest request) {

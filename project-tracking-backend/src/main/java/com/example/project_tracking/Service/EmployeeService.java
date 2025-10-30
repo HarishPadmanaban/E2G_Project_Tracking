@@ -4,6 +4,7 @@ import com.example.project_tracking.DTO.DataTransfer;
 import com.example.project_tracking.DTO.LoginRequest;
 import com.example.project_tracking.DTO.ProjectRequest;
 import com.example.project_tracking.DTO.WorkDetailsResponse;
+import com.example.project_tracking.Encryption.PasswordUtil;
 import com.example.project_tracking.Model.Employee;
 import com.example.project_tracking.Model.Project;
 import com.example.project_tracking.Model.WorkDetails;
@@ -29,6 +30,7 @@ public class EmployeeService {
     }
 
     public DataTransfer userLogin(String username, String password) {
+        //String hashed = PasswordUtil.hashPassword(password);
         Employee employee = employeeRepository.findByUsernameAndPassword(username, password)
                 .orElse(null);
 
@@ -120,17 +122,6 @@ public class EmployeeService {
         );
     }
 
-//    public void sendMail(String to) {
-//        SimpleMailMessage mailMessage = new SimpleMailMessage();
-//        mailMessage.setFrom("harish07.vijay@gmail.com");
-//        mailMessage.setTo(to);
-//        mailMessage.setSubject(subject);
-//        mailMessage.setText(message);
-//
-//        mailSender.send(mailMessage);
-//        System.out.println("✅ Mail sent successfully!");
-//    }
-
     // Pending
     public boolean forgotPassword(LoginRequest request,String email) {
         Optional<Employee> employee = employeeRepository.findByUsernameAndPassword(request.getUsername(),request.getPassword());
@@ -140,6 +131,4 @@ public class EmployeeService {
 
         return true;
     }
-
-
 }

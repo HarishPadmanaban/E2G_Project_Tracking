@@ -190,9 +190,14 @@
 }
 
 .projectsTable th {
-  white-space: normal; /* allows text to wrap */
-  word-break: break-word; /* breaks long words if needed */
-  text-align: center; /* center content */
+  white-space: normal;
+  word-break: break-word;
+  overflow: visible;
+  height: auto;
+  text-align: center;
+  vertical-align: middle;
+  padding: 12px 15px;
+  transition: all 0.2s ease;
 }
 
 
@@ -279,4 +284,36 @@
   text-align: center;
   padding: 15px;
   color: #777;
+}
+
+@media (max-width: 900px) {
+  .projectsTable th {
+    font-size: 13px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .projectsTable th {
+    font-size: 11px;
+  }
+}
+
+/* 🟥 On smaller screens: prevent wrapping & keep height fixed */
+@media (max-width: 1200px) {
+  .projectsTable th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 50px;
+    line-height: 50px;
+    padding: 8px 10px;
+  }
+}
+
+/* 🟦 On very small screens: make text smaller */
+@media (max-width: 600px) {
+  .projectsTable th {
+    font-size: 13px;
+  }
 }
