@@ -52,4 +52,11 @@ public class ActivityController {
         activityService.deleteActivity(id);
         return ResponseEntity.ok("Deleted Successfully");
     }
+
+    @GetMapping("/get-type/{id}")
+    public String getMainType(@PathVariable Long id)
+    {
+        String mainType=activityService.getMainType(id);
+        return mainType;
+    }
 }
