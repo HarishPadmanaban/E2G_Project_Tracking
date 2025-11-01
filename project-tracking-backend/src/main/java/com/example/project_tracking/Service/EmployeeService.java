@@ -108,7 +108,7 @@ public class EmployeeService {
         return old;
     }
 
-    private DataTransfer convertToResponse(Employee employee) {
+    public DataTransfer convertToResponse(Employee employee) {
         return new DataTransfer(
                 employee.getEmpId(),
                 employee.getName(),

@@ -1,6 +1,6 @@
 id,emp_id,name,designation,is_manager,is_tl,reporting_to,username,password,category
 1,1001,Amelia Johnson,Assistant General Manager,FALSE,FALSE,,1001,agm123,Assistant General Manager
-2,1002,Oliver Smith,Admin,FALSE,FALSE,,1002,admin123,Admin
+2,1002,Oliver Smith,Admin,FALSE,FALSE,1,1002,admin123,Admin
 3,1003,John Williams,Project Manager,TRUE,FALSE,1,1003,pmjohn123,Project Manager
 4,1004,Liam Davis,Project Coordinator,FALSE,TRUE,3,1004,tl123,Project Coordinator
 5,1005,Charlotte Miller,Project Coordinator,FALSE,TRUE,3,1005,tl123,Project Coordinator
