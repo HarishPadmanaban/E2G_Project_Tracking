@@ -9,11 +9,12 @@ import java.util.Optional;
 public interface EmployeeRepository extends JpaRepository<Employee,Long> {
     Optional<Employee> findByUsername(String username);
 
+
     // Fetch by username and password (for login verification)
     Optional<Employee> findByUsernameAndPassword(String username, String password);
 
     // You can also fetch manager or TL specific employees
     List<Employee> findByReportingTo(Employee e);
-    List<Employee> findByIsTLTrueAndReportingToId(Long managerId);
+    List<Employee> findByIsTLTrueAndReportingTo_EmpId(Long managerEmpId);
     List<Employee> findByIsManagerTrue();
 }

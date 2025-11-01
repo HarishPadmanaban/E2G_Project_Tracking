@@ -165,9 +165,18 @@ const ManagerDashboard = () => {
     employee?.designation === "Admin";
 
   useEffect(() => {
-    if (!employee?.id) return;
+    if (!employee.empId) return;
 
-    const managerIdToUse = employee.manager ? employee.id : employee.reportingToId;
+    //const managerIdToUse = employee.manager ? employee.id : employee.reportingToId;
+    // ✅ Admin should have same access as AGM
+    const isAGM =
+      employee.designation === "Assistant General Manager" ||
+      employee.designation === "Admin";
+
+    // Use appropriate ID depending on role
+    const managerIdToUse = employee.manager ? employee.empId : employee.reportingToId;
+    console.log(isAGM)
+    console.log(managerIdToUse)
 
     const endpoint = isAGM
       ? `http://localhost:8080/project/`
@@ -187,7 +196,7 @@ const ManagerDashboard = () => {
             .then((res) => {
               const mgrMap = {};
               res.data.forEach((m) => {
-                mgrMap[m.id] = m.name;
+                mgrMap[m.empId] = m.name;
               });
               setManagers(mgrMap);
             })
@@ -196,6 +205,9 @@ const ManagerDashboard = () => {
       })
       .catch((err) => console.error(err));
   }, [employee]);
+
+  console.log(filteredProjects);
+  console.table(managers);
 
   const applyFilter = (projList, category, searchText, managerId) => {
     let result = projList;

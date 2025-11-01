@@ -33,7 +33,7 @@ const ManagerNavbar = () => {
 
   const fetchPending = () => {
     axios
-      .get(`http://localhost:8080/leave/manager/${employee.id}`)
+      .get(`http://localhost:8080/leave/manager/${employee.empId}`)
       .then((res) => {
         const pending = res.data.filter((r) => r.status === "Pending");
         setPendingCount(pending.length);
@@ -131,6 +131,16 @@ const ManagerNavbar = () => {
                   <li>Project Assignment</li>
                 </Link>
               )} */}
+
+              {!isAGM && (<Link
+                to="/manager/view-employee"
+                className={styles.menuLink}
+                onClick={() => setMenuOpen(false)}
+              >
+                <li>
+                  View Employees              
+                </li>
+              </Link>)}
 
               {!isAGM && (<Link
                 to="/manager/view-requests"

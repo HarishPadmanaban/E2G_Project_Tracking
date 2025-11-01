@@ -39,7 +39,7 @@ public class LeavePermissionService {
 
     // Get requests by Employee ID as DTOs
     public List<LeavePermissionResponse> getRequestsByEmployeeId(Long empId) {
-        return leavePermissionRepository.findByEmployeeId(empId)
+        return leavePermissionRepository.findByEmployee_EmpId(empId)
                 .stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
@@ -47,7 +47,7 @@ public class LeavePermissionService {
 
     // Get requests by Manager ID as DTOs.It shows Pending requests only
     public List<LeavePermissionResponse> getRequestsByManagerId(Long managerId) {
-        return leavePermissionRepository.findByManagerId(managerId)
+        return leavePermissionRepository.findByManager_EmpId(managerId)
                 .stream()
                 .filter(r -> "Pending".equalsIgnoreCase(r.getStatus()) && Boolean.TRUE.equals(r.isActive()))
                 .map(this::mapToDTO)
@@ -55,7 +55,7 @@ public class LeavePermissionService {
     }
 
     public List<LeavePermissionResponse> getRequestsByManagerIdApproved(Long managerId) {
-        return leavePermissionRepository.findByManagerId(managerId)
+        return leavePermissionRepository.findByManager_EmpId(managerId)
                 .stream()
                 .filter(r -> "Approved".equalsIgnoreCase(r.getStatus()) && Boolean.TRUE.equals(r.isActive()))
                 .map(this::mapToDTO)

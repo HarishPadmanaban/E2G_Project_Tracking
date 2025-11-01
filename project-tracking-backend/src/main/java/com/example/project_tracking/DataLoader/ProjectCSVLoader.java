@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
@@ -37,7 +38,7 @@ public class ProjectCSVLoader implements CommandLineRunner {
             return;
         }
 
-            //employeeResetter.resetProjectTable();
+        //employeeResetter.resetProjectTable();
 
         List<String[]> rows;
         try (Reader reader = new InputStreamReader(
@@ -70,7 +71,8 @@ public class ProjectCSVLoader implements CommandLineRunner {
                 project.setManagerId(Long.parseLong(row[3].trim()));
                 project.setAssignedHours(parseBigDecimal(row[4]));
                 project.setWorkingHours(parseBigDecimal(row[5]));
-                project.setAssignedDate(LocalDate.parse(row[6].trim()));
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                project.setAssignedDate(LocalDate.parse(row[6].trim(),formatter));
                 project.setProjectStatus(Boolean.parseBoolean(row[7].trim()));
                 project.setSoftDelete(Boolean.parseBoolean(row[8].trim()));
 

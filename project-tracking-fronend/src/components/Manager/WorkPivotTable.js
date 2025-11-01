@@ -129,7 +129,7 @@ const WorkPivotTable = () => {
 
     const endpoint = isAGM
       ? `http://localhost:8080/workdetails/all` // 👈 new AGM endpoint
-      : `http://localhost:8080/workdetails/manager/${employee.id}`; // 👈 existing endpoint
+      : `http://localhost:8080/workdetails/manager/${employee.empId}`; // 👈 existing endpoint
 
 
     axios

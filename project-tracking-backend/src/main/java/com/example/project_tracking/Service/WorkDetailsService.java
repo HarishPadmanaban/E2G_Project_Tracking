@@ -130,7 +130,7 @@ public class WorkDetailsService {
 
 
     public List<WorkDetailsResponse> getByEmployee(Long employeeId) {
-        return workDetailsRepository.findByEmployeeId(employeeId)
+        return workDetailsRepository.findByEmployee_EmpId(employeeId)
                 .stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
@@ -138,7 +138,7 @@ public class WorkDetailsService {
 
     // ✅ 4. Get all logs by manager ID
     public List<WorkDetailsResponse> getByManager(Long managerId) {
-        return workDetailsRepository.findByManagerId(managerId)
+        return workDetailsRepository.findByManager_EmpId(managerId)
                 .stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
@@ -189,9 +189,9 @@ public class WorkDetailsService {
         return new WorkDetailsResponse(
                 work.getId(),
                 work.getEmployee() != null ? work.getEmployee().getName() : null,
-                work.getEmployee().getId(),
+                work.getEmployee().getEmpId(),
                 work.getManager() != null ? work.getManager().getName() : null,
-                work.getManager().getId(),
+                work.getManager().getEmpId(),
                 work.getProject() != null ? work.getProject().getProjectName() : null,
                 work.getActivity() != null ? work.getActivity().getActivityName() : null,
                 work.getDate(),
@@ -209,7 +209,7 @@ public class WorkDetailsService {
 
     public WorkDetails stopWork(Long employeeId, String endTime, String workHoursStr) {
         WorkDetails work = workDetailsRepository
-                .findTopByEmployeeIdAndEndTimeIsNullOrderByIdDesc(employeeId)
+                .findTopByEmployee_EmpIdAndEndTimeIsNullOrderByIdDesc(employeeId)
                 .orElseThrow(() -> new RuntimeException("No active work found for employee"));
 
         LocalTime startTime = work.getStartTime();
@@ -262,7 +262,7 @@ public class WorkDetailsService {
 
     public WorkDetailsResponse getActiveWorkByEmployee(Long employeeId) {
         Optional<WorkDetails> workOpt = workDetailsRepository
-                .findTopByEmployeeIdAndEndTimeIsNullOrderByIdDesc(employeeId);
+                .findTopByEmployee_EmpIdAndEndTimeIsNullOrderByIdDesc(employeeId);
 
         if (workOpt.isEmpty()) return null;
 
@@ -276,9 +276,9 @@ public class WorkDetailsService {
         return new WorkDetailsResponse(
                 work.getId(),
                 employeeName,
-                work.getEmployee().getId(),
+                work.getEmployee().getEmpId(),
                 managerName,
-                work.getManager().getId(),
+                work.getManager().getEmpId(),
                 projectName,
                 activityName,
                 work.getDate(),
@@ -305,9 +305,9 @@ public class WorkDetailsService {
         return new WorkDetailsResponse(
                 work.getId(),
                 employeeName,
-                work.getEmployee().getId(),
+                work.getEmployee().getEmpId(),
                 managerName,
-                work.getManager().getId(),
+                work.getManager().getEmpId(),
                 projectName,
                 activityName,
                 work.getDate(),

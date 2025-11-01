@@ -15,6 +15,6 @@ CREATE TABLE leave_permission (
     permission_minutes INT,
     applied_date DATE NOT NULL,
     status VARCHAR(20) DEFAULT 'Pending',  -- Pending / Approved / Rejected
-    CONSTRAINT fk_employee FOREIGN KEY (employee_id) REFERENCES employee(id),
-    CONSTRAINT fk_manager FOREIGN KEY (manager_id) REFERENCES employee(id)
+    CONSTRAINT fk_employee FOREIGN KEY (employee_id) REFERENCES employee(emp_id),
+    CONSTRAINT fk_manager FOREIGN KEY (manager_id) REFERENCES employee(emp_id)
 );

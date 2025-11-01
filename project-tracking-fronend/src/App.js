@@ -13,6 +13,7 @@ import ViewRequests from './components/Manager/ViewRequests.js';
 import ViewApprovedRequests from './components/AGM/ViewApprovedRequests.js';
 import EmployeeManagementPage from './components/AGM/EmployeeManagementPage.js';
 import ProjectAssignmentForm from './components/Manager/ProjectAssignmentForm.js';
+import EmployeeManagement from './components/Manager/EmployeeManagement.js';
 import EditManagementPage from './components/AGM/EditManagementPage.js';
 import AddEmployeeForm from './components/AGM/AddEmployeeForm.js';
 import AddActivityForm from './components/AGM/AddActivityForm.js';
@@ -173,6 +174,15 @@ function App() {
   element={
     <ProtectedRoute allowedRoles={["Assistant General Manager","Admin"]}>
       <AddActivityForm />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/manager/view-employee"
+  element={
+    <ProtectedRoute>
+      <EmployeeManagement />
     </ProtectedRoute>
   }
 />
