@@ -39,6 +39,21 @@ public class Project {
     private BigDecimal checkingTime;
     private BigDecimal detailingTime;
 
+    // Project timeline
+    private LocalDate startDate;
+    private LocalDate completedDate;
+
+    // Study section
+    private BigDecimal studyHours;
+    private BigDecimal studyHoursTracking;
+
+    // Extra work section
+    private BigDecimal extraHours;
+    private BigDecimal extraHoursTracking;
+
+
+
+
     // Idle project flag
 
     public Project() {
@@ -202,6 +217,54 @@ public class Project {
         this.detailingTime = detailingTime;
     }
 
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getCompletedDate() {
+        return completedDate;
+    }
+
+    public void setCompletedDate(LocalDate completedDate) {
+        this.completedDate = completedDate;
+    }
+
+    public BigDecimal getStudyHours() {
+        return studyHours;
+    }
+
+    public void setStudyHours(BigDecimal studyHours) {
+        this.studyHours = studyHours;
+    }
+
+    public BigDecimal getStudyHoursTracking() {
+        return studyHoursTracking;
+    }
+
+    public void setStudyHoursTracking(BigDecimal studyHoursTracking) {
+        this.studyHoursTracking = studyHoursTracking;
+    }
+
+    public BigDecimal getExtraHours() {
+        return extraHours;
+    }
+
+    public void setExtraHours(BigDecimal extraHours) {
+        this.extraHours = extraHours;
+    }
+
+    public BigDecimal getExtraHoursTracking() {
+        return extraHoursTracking;
+    }
+
+    public void setExtraHoursTracking(BigDecimal extraHoursTracking) {
+        this.extraHoursTracking = extraHoursTracking;
+    }
+
     @Override
     public String toString() {
         return "Project{" +
@@ -221,6 +284,12 @@ public class Project {
                 ", modellingTime=" + modellingTime +
                 ", checkingTime=" + checkingTime +
                 ", detailingTime=" + detailingTime +
+                ", startDate=" + startDate +
+                ", completedDate=" + completedDate +
+                ", studyHours=" + studyHours +
+                ", studyHoursTracking=" + studyHoursTracking +
+                ", extraHours=" + extraHours +
+                ", extraHoursTracking=" + extraHoursTracking +
                 '}';
     }
 }

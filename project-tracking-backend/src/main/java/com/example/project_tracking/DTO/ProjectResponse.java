@@ -24,6 +24,16 @@ public class ProjectResponse {
     private BigDecimal checkingTime;
     private BigDecimal detailingTime;
 
+    private LocalDate startDate;
+    private LocalDate completedDate;
+
+    private BigDecimal studyHours;
+    private BigDecimal studyHoursTracking;
+
+    private BigDecimal extraHours;
+    private BigDecimal extraHoursTracking;
+
+
     public ProjectResponse() {
     }
 
@@ -48,6 +58,31 @@ public class ProjectResponse {
         this.modellingTime = modellingTime;
         this.checkingTime = checkingTime;
         this.detailingTime = detailingTime;
+    }
+
+    public ProjectResponse(Long id, String projectName, String clientName, Long managerId, String managerName, BigDecimal assignedHours, BigDecimal workingHours, LocalDate assignedDate, Boolean projectStatus, Boolean softDelete, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal modellingTime, BigDecimal checkingTime, BigDecimal detailingTime, LocalDate startDate, LocalDate completedDate, BigDecimal studyHours, BigDecimal studyHoursTracking, BigDecimal extraHours, BigDecimal extraHoursTracking) {
+        this.id = id;
+        this.projectName = projectName;
+        this.clientName = clientName;
+        this.managerId = managerId;
+        this.managerName = managerName;
+        this.assignedHours = assignedHours;
+        this.workingHours = workingHours;
+        this.assignedDate = assignedDate;
+        this.projectStatus = projectStatus;
+        this.softDelete = softDelete;
+        this.modellingHours = modellingHours;
+        this.checkingHours = checkingHours;
+        this.detailingHours = detailingHours;
+        this.modellingTime = modellingTime;
+        this.checkingTime = checkingTime;
+        this.detailingTime = detailingTime;
+        this.startDate = startDate;
+        this.completedDate = completedDate;
+        this.studyHours = studyHours;
+        this.studyHoursTracking = studyHoursTracking;
+        this.extraHours = extraHours;
+        this.extraHoursTracking = extraHoursTracking;
     }
 
     // ===== Getters and Setters =====
@@ -98,5 +133,53 @@ public class ProjectResponse {
 
     public BigDecimal getDetailingTime() { return detailingTime; }
     public void setDetailingTime(BigDecimal detailingTime) { this.detailingTime = detailingTime; }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getCompletedDate() {
+        return completedDate;
+    }
+
+    public void setCompletedDate(LocalDate completedDate) {
+        this.completedDate = completedDate;
+    }
+
+    public BigDecimal getStudyHours() {
+        return studyHours;
+    }
+
+    public void setStudyHours(BigDecimal studyHours) {
+        this.studyHours = studyHours;
+    }
+
+    public BigDecimal getStudyHoursTracking() {
+        return studyHoursTracking;
+    }
+
+    public void setStudyHoursTracking(BigDecimal studyHoursTracking) {
+        this.studyHoursTracking = studyHoursTracking;
+    }
+
+    public BigDecimal getExtraHours() {
+        return extraHours;
+    }
+
+    public void setExtraHours(BigDecimal extraHours) {
+        this.extraHours = extraHours;
+    }
+
+    public BigDecimal getExtraHoursTracking() {
+        return extraHoursTracking;
+    }
+
+    public void setExtraHoursTracking(BigDecimal extraHoursTracking) {
+        this.extraHoursTracking = extraHoursTracking;
+    }
 }
 

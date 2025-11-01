@@ -44,7 +44,7 @@ const ManagerDashboard = () => {
             .then((res) => {
               const mgrMap = {};
               res.data.forEach((m) => {
-                mgrMap[m.id] = m.name;
+                mgrMap[m.empId] = m.name;
               });
               setManagers(mgrMap);
             })

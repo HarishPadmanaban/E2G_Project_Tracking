@@ -20,7 +20,7 @@ id,project_name,client_name,manager_id,assigned_hours,working_hours,assigned_dat
 19,Tau Heights,Greenfield Estates,1016,480,105,22-02-2025,TRUE,FALSE,192,168,120,42,36.8,26.3
 20,Upsilon Residency,Metro Developers,1016,390,95,28-02-2025,TRUE,FALSE,156,136.5,97.5,38,33.3,23.8
 21,Phi Mall,Omega Builders,1029,520,130,05-03-2025,TRUE,FALSE,208,182,130,52,45.5,32.5
-22,Chi Complex,Urban Estates,1229,430,115,10-03-2025,TRUE,FALSE,172,150.5,107.5,46,40.3,28.8
+22,Chi Complex,Urban Estates,1029,430,115,10-03-2025,TRUE,FALSE,172,150.5,107.5,46,40.3,28.8
 23,Psi Gardens,Acme Developers,1042,460,120,25-02-2025,TRUE,FALSE,184,161,115,48,42,30
 24,Omega Residency,Prime Constructions,1042,380,100,02-03-2025,TRUE,FALSE,152,133,95,40,35,25
 25,Alpha Plaza,Sunrise Estates,1055,500,125,07-03-2025,TRUE,FALSE,200,175,125,50,43.8,31.3

@@ -1,6 +1,7 @@
 package com.example.project_tracking.Controller;
 
 import com.example.project_tracking.DTO.ProjectRequest;
+import com.example.project_tracking.DTO.ProjectResponse;
 import com.example.project_tracking.Model.Project;
 import com.example.project_tracking.Service.ProjectService;
 import org.springframework.http.ResponseEntity;
@@ -65,5 +66,15 @@ public class ProjectController {
     public ResponseEntity<?> editProject(@RequestBody ProjectRequest project)
     {
         return ResponseEntity.ok(projectService.editProject(project));
+    }
+
+    @PutMapping("/toggle-status/{id}")
+    public ResponseEntity<ProjectResponse> changeStatus(@PathVariable Long id){
+        return ResponseEntity.ok(projectService.toggleStatus(id));
+    }
+
+    @PutMapping("/set-extra-hours/{id}")
+    public ResponseEntity<ProjectResponse> setExtraHours(@PathVariable Long id,@RequestParam BigDecimal extraHours){
+        return ResponseEntity.ok(projectService.setExtra(id,extraHours));
     }
 }

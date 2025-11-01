@@ -6,6 +6,7 @@ import com.example.project_tracking.Model.Employee;
 import com.example.project_tracking.Model.Project;
 import com.example.project_tracking.Repository.EmployeeRepository;
 import com.example.project_tracking.Repository.ProjectRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -61,7 +62,13 @@ public class ProjectService {
                 project.getDetailingHours(),
                 project.getModellingTime(),
                 project.getCheckingTime(),
-                project.getDetailingTime()
+                project.getDetailingTime(),
+                project.getStartDate(),
+                project.getCompletedDate(),
+                project.getStudyHours(),
+                project.getStudyHoursTracking(),
+                project.getExtraHours(),
+                project.getExtraHoursTracking()
         );
         return response;
     }
@@ -157,5 +164,16 @@ public class ProjectService {
         return old;
     }
 
+    public ProjectResponse toggleStatus(Long id) {
+        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project found with id "+id));
+        project.setProjectStatus(false);
+        return convertToResponse(projectRepository.save(project));
+    }
+
+    public ProjectResponse setExtra(Long id,BigDecimal extraHours) {
+        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project found with id "+id));
+        project.setExtraHours(extraHours);
+        return convertToResponse(projectRepository.save(project));
+    }
 }
 
