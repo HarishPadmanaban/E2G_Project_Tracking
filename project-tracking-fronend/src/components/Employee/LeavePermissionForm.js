@@ -170,6 +170,7 @@ const LeavePermissionForm = () => {
     return { valid: true };
   };
 
+const today = new Date().toISOString().split("T")[0];
 
   return (
 
@@ -234,6 +235,17 @@ const LeavePermissionForm = () => {
           {/* Leave Form */}
           {formData.type === "Leave" && (
             <>
+
+            <div className={styles.field}>
+                <label>Leave Type</label>
+                <select name="leaveType" value={formData.leaveType} onChange={handleChange}>
+                  <option value="">Select Leave Type</option>
+                  <option value="CL">CL</option>
+                  <option value="SL">SL</option>
+                  <option value="LOP">LOP</option>
+                </select>
+              </div>
+
               <div className={styles.field}>
                 <label>Leave Duration</label>
                 <select
@@ -255,7 +267,7 @@ const LeavePermissionForm = () => {
                       type="date"
                       name="fromDate"
                       value={formData.fromDate}
-                      min={new Date().toISOString().split("T")[0]}
+                      min={formData.leaveType !== "SL" ? today : undefined}
                       onChange={(e) =>
                         setFormData({ ...formData, fromDate: e.target.value, leaveDays: 1 })
                       }
@@ -277,7 +289,7 @@ const LeavePermissionForm = () => {
                       type="date"
                       name="fromDate"
                       value={formData.fromDate}
-                      min={new Date().toISOString().split("T")[0]}
+                      min={formData.leaveType !== "SL" ? today : undefined}
                       onChange={(e) => {
                         setFormData((prev) => ({ ...prev, fromDate: e.target.value }));
                         calculateLeaveDays(e.target.value, formData.toDate);
@@ -291,7 +303,7 @@ const LeavePermissionForm = () => {
                       type="date"
                       name="toDate"
                       value={formData.toDate}
-                      min={new Date().toISOString().split("T")[0]}
+                      min={formData.leaveType !== "SL" ? today : undefined}
                       onChange={(e) => {
                         setFormData((prev) => ({ ...prev, toDate: e.target.value }));
                         calculateLeaveDays(formData.fromDate, e.target.value);
@@ -306,15 +318,7 @@ const LeavePermissionForm = () => {
                 </>
               )}
 
-              <div className={styles.field}>
-                <label>Leave Type</label>
-                <select name="leaveType" value={formData.leaveType} onChange={handleChange}>
-                  <option value="">Select Leave Type</option>
-                  <option value="CL">CL</option>
-                  <option value="SL">SL</option>
-                  <option value="LOP">LOP</option>
-                </select>
-              </div>
+              
 
               <div className={styles.field}>
                 <label>Reason</label>
