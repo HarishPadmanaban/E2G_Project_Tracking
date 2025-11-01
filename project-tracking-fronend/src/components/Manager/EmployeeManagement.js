@@ -66,7 +66,7 @@ const EmployeesUnderManager = () => {
 
     const handleEmployeeClick = (empId) => {
   axios
-    .get(`http://localhost:8080/project/getbyempid?empId=${empId}`)
+    .get(`http://localhost:8080/project-assignment/projects/${empId}`)
     .then((res) => {
       setSelectedProjects(res.data);
       setShowModal(true);

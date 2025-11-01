@@ -50,6 +50,7 @@ public class ProjectAssignmentController {
     @GetMapping("/projects/{employeeId}")
     public ResponseEntity<List<ProjectResponse>> getProjectsByEmployee(@PathVariable Long employeeId) {
         List<Project> projects = projectAssignmentService.getProjectsByEmployee(employeeId);
+        System.out.println(employeeId);
         List<ProjectResponse> projectDTOs = projects.stream()
                 .map(this::localConverting)
                 .collect(Collectors.toList());
