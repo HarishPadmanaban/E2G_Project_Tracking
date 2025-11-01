@@ -7,11 +7,8 @@ import jakarta.persistence.*;
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "emp_id", unique = true, nullable = false)
-    private String empId;
+    private Long empId;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -35,22 +32,18 @@ public class Employee {
     @Column(name = "password", nullable = false)
     private String password; // Ideally store hashed passwords
 
+    @Column(name = "category",nullable = false)
+    private String designationCategory;
+
+
     public Employee() {
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getEmpId() {
+    public Long getEmpId() {
         return empId;
     }
 
-    public void setEmpId(String empId) {
+    public void setEmpId(Long empId) {
         this.empId = empId;
     }
 
@@ -110,10 +103,34 @@ public class Employee {
         this.password = password;
     }
 
+
+    public Boolean getManager() {
+        return isManager;
+    }
+
+    public void setManager(Boolean manager) {
+        isManager = manager;
+    }
+
+    public Boolean getTL() {
+        return isTL;
+    }
+
+    public void setTL(Boolean TL) {
+        isTL = TL;
+    }
+
+    public String getDesignationCategory() {
+        return designationCategory;
+    }
+
+    public void setDesignationCategory(String designationCategory) {
+        this.designationCategory = designationCategory;
+    }
+
     @Override
     public String toString() {
         return "Employee{" +
-                "id=" + id +
                 ", empId='" + empId + '\'' +
                 ", name='" + name + '\'' +
                 ", designation='" + designation + '\'' +

@@ -1,107 +1,107 @@
-id,emp_id,name,designation,is_manager,is_tl,reporting_to,username,password
-1,E002,Amelia Johnson,Assistant General Manager,False,False,,amelia.johnson,agm123
-2,E001,Oliver Smith,Admin,False,False,,oliver.smith,admin123
-3,E101,John Williams,Project Manager,True,False,1,john.williams,pmjohn123
-4,E102,Liam Davis,Project Coordinator,False,True,3,liam.davis,tl123
-5,E103,Charlotte Miller,Project Coordinator,False,True,3,charlotte.miller,tl123
-6,E104,Michael Brown,checker,False,False,3,michael.brown,checker123
-7,E105,Mia Moore,checker,False,False,3,mia.moore,checker123
-8,E106,Elijah Taylor,checker,False,False,3,elijah.taylor,checker123
-9,E107,Abigail Anderson,checker,False,False,3,abigail.anderson,checker123
-10,E108,Alexander Thomas,checker,False,False,3,alexander.thomas,checker123
-11,E109,Evelyn Jackson,checker,False,False,3,evelyn.jackson,checker123
-12,E110,William White,checker,False,False,3,william.white,checker123
-13,E111,Sofia Harris,checker,False,False,3,sofia.harris,checker123
-14,E112,Benjamin Martin,checker,False,False,3,benjamin.martin,checker123
-15,E113,Amelia Thompson,checker,False,False,3,amelia.thompson,checker123
-16,E114,Emily Brown,Project Manager,True,False,1,emily.brown,pmemily123
-17,E115,Lucas Garcia,Project Coordinator,False,True,16,lucas.garcia,tl123
-18,E116,Harper Martinez,Project Coordinator,False,True,16,harper.martinez,tl123
-19,E117,Ethan Robinson,sr checker,False,False,16,ethan.robinson,checker123
-20,E118,Aria Clark,checker,False,False,16,aria.clark,checker123
-21,E119,Henry Rodriguez,checker,False,False,16,henry.rodriguez,checker123
-22,E120,Scarlett Lewis,checker,False,False,16,scarlett.lewis,checker123
-23,E121,Jack Lee,checker,False,False,16,jack.lee,checker123
-24,E122,Victoria Walker,checker,False,False,16,victoria.walker,checker123
-25,E123,Luke Hall,checker,False,False,16,luke.hall,checker123
-26,E124,Hannah Allen,checker,False,False,16,hannah.allen,checker123
-27,E125,Daniel Young,checker,False,False,16,daniel.young,checker123
-28,E126,Grace Hernandez,checker,False,False,16,grace.hernandez,checker123
-29,E127,Michael Jones,Project Manager,True,False,1,michael.jones,pmmichael123
-30,E128,Henry King,Project Coordinator,False,True,29,henry.king,tl123
-31,E129,Ella Wright,Project Coordinator,False,True,29,ella.wright,tl123
-32,E130,Matthew Scott,sr checker,False,False,29,matthew.scott,checker123
-33,E131,Avery Green,checker,False,False,29,avery.green,checker123
-34,E132,Jacob Adams,checker,False,False,29,jacob.adams,checker123
-35,E133,Lily Baker,checker,False,False,29,lily.baker,checker123
-36,E134,Samuel Nelson,checker,False,False,29,samuel.nelson,checker123
-37,E135,Natalie Carter,checker,False,False,29,natalie.carter,checker123
-38,E136,Christopher Mitchell,checker,False,False,29,christopher.mitchell,checker123
-39,E137,Zoe Perez,checker,False,False,29,zoe.perez,checker123
-40,E138,Anthony Roberts,checker,False,False,29,anthony.roberts,checker123
-41,E139,Samantha Turner,checker,False,False,29,samantha.turner,checker123
-42,E140,Sophia Garcia,Project Manager,True,False,1,sophia.garcia,pmsophia123
-43,E141,Jackson Phillips,Project Coordinator,False,True,42,jackson.phillips,tl123
-44,E142,Penelope Campbell,Project Coordinator,False,True,42,penelope.campbell,tl123
-45,E143,Isaac Parker,checker,False,False,42,isaac.parker,checker123
-46,E144,Eleanor Evans,checker,False,False,42,eleanor.evans,checker123
-47,E145,Landon Edwards,checker,False,False,42,landon.edwards,checker123
-48,E146,Addison Collins,checker,False,False,42,addison.collins,checker123
-49,E147,Caleb Stewart,checker,False,False,42,caleb.stewart,checker123
-50,E148,Lillian Sanchez,checker,False,False,42,lillian.sanchez,checker123
-51,E149,Jonathan Morris,checker,False,False,42,jonathan.morris,checker123
-52,E150,Nora Rogers,checker,False,False,42,nora.rogers,checker123
-53,E151,Christian Reed,checker,False,False,42,christian.reed,checker123
-54,E152,Stella Cook,checker,False,False,42,stella.cook,checker123
-55,E153,David Martinez,Project Manager,True,False,1,david.martinez,pmdavid123
-56,E154,Leo Morgan,Project Coordinator,False,True,55,leo.morgan,tl123
-57,E155,Layla Bell,Project Coordinator,False,True,55,layla.bell,tl123
-58,E156,Connor Murphy,checker,False,False,55,connor.murphy,checker123
-59,E157,Anna Bailey,checker,False,False,55,anna.bailey,checker123
-60,E158,Grayson Rivera,checker,False,False,55,grayson.rivera,checker123
-61,E159,Aurora Cooper,checker,False,False,55,aurora.cooper,checker123
-62,E160,Wyatt Richardson,checker,False,False,55,wyatt.richardson,checker123
-63,E161,Clara Cox,checker,False,False,55,clara.cox,checker123
-64,E162,Julian Howard,checker,False,False,55,julian.howard,checker123
-65,E163,Scarlett Ward,checker,False,False,55,scarlett.ward,checker123
-66,E164,Easton Torres,checker,False,False,55,easton.torres,checker123
-67,E165,Hazel Peterson,checker,False,False,55,hazel.peterson,checker123
-68,E166,Olivia Hernandez,Project Manager,True,False,1,olivia.hernandez,pmolivia123
-69,E167,Henry Gray,Project Coordinator,False,True,68,henry.gray,tl123
-70,E168,Victoria Ramirez,Project Coordinator,False,True,68,victoria.ramirez,tl123
-71,E169,Maxwell James,checker,False,False,68,maxwell.james,checker123
-72,E170,Penelope Watson,checker,False,False,68,penelope.watson,checker123
-73,E171,Owen Brooks,checker,False,False,68,owen.brooks,checker123
-74,E172,Clara Kelly,checker,False,False,68,clara.kelly,checker123
-75,E173,Harrison Sanders,checker,False,False,68,harrison.sanders,checker123
-76,E174,Ella Price,checker,False,False,68,ella.price,checker123
-77,E175,Levi Bennett,checker,False,False,68,levi.bennett,checker123
-78,E176,Lila Wood,checker,False,False,68,lila.wood,checker123
-79,E177,Grayson Barnes,checker,False,False,68,grayson.barnes,checker123
-80,E178,Zoey Ross,checker,False,False,68,zoey.ross,checker123
-81,E179,James Lopez,Project Manager,True,False,1,james.lopez,pmjames123
-82,E180,Jack Henderson,Project Coordinator,False,True,81,jack.henderson,tl123
-83,E181,Luna Coleman,Project Coordinator,False,True,81,luna.coleman,tl123
-84,E182,Isaiah Jenkins,checker,False,False,81,isaiah.jenkins,checker123
-85,E183,Ella Perry,checker,False,False,81,ella.perry,checker123
-86,E184,Lincoln Powell,checker,False,False,81,lincoln.powell,checker123
-87,E185,Sophia Long,checker,False,False,81,sophia.long,checker123
-88,E186,Cameron Patterson,checker,False,False,81,cameron.patterson,checker123
-89,E187,Layla Hughes,checker,False,False,81,layla.hughes,checker123
-90,E188,Elijah Flores,checker,False,False,81,elijah.flores,checker123
-91,E189,Aurora Washington,checker,False,False,81,aurora.washington,checker123
-92,E190,Wyatt Butler,checker,False,False,81,wyatt.butler,checker123
-93,E191,Hazel Simmons,checker,False,False,81,hazel.simmons,checker123
-94,E192,Isabella Gonzalez,Project Manager,True,False,1,isabella.gonzalez,pmisabella123
-95,E193,Logan Foster,Project Coordinator,False,True,94,logan.foster,tl123
-96,E194,Scarlett Gonzales,Project Coordinator,False,True,94,scarlett.gonzales,tl123
-97,E195,Liam Bryant,checker,False,False,94,liam.bryant,checker123
-98,E196,Harper Alexander,checker,False,False,94,harper.alexander,checker123
-99,E197,Ethan Russell,checker,False,False,94,ethan.russell,checker123
-100,E198,Amelia Griffin,checker,False,False,94,amelia.griffin,checker123
-101,E199,Noah Diaz,checker,False,False,94,noah.diaz,checker123
-102,E200,Madison Hayes,checker,False,False,94,madison.hayes,checker123
-103,E201,Oliver Myers,checker,False,False,94,oliver.myers,checker123
-104,E202,Chloe Ford,checker,False,False,94,chloe.ford,checker123
-105,E203,Lucas Hamilton,checker,False,False,94,lucas.hamilton,checker123
-106,E204,Ella Graham,checker,False,False,94,ella.graham,checker123
+id,emp_id,name,designation,is_manager,is_tl,reporting_to,username,password,category
+1,1001,Amelia Johnson,Assistant General Manager,FALSE,FALSE,,1001,agm123,Assistant General Manager
+2,1002,Oliver Smith,Admin,FALSE,FALSE,,1002,admin123,Admin
+3,1003,John Williams,Project Manager,TRUE,FALSE,1,1003,pmjohn123,Project Manager
+4,1004,Liam Davis,Project Coordinator,FALSE,TRUE,3,1004,tl123,Project Coordinator
+5,1005,Charlotte Miller,Project Coordinator,FALSE,TRUE,3,1005,tl123,Project Coordinator
+6,1006,Michael Brown,Senior Checker,FALSE,FALSE,3,1006,checker123,Checker
+7,1007,Mia Moore,Junior Checker,FALSE,FALSE,3,1007,checker123,Checker
+8,1008,Elijah Taylor,Senior Detailer,FALSE,FALSE,3,1008,checker123,Detailer
+9,1009,Abigail Anderson,Junior Detailer,FALSE,FALSE,3,1009,checker123,Detailer
+10,1010,Alexander Thomas,Senior Modeller,FALSE,FALSE,3,1010,checker123,Modeller
+11,1011,Evelyn Jackson,Junior Modeller,FALSE,FALSE,3,1011,checker123,Modeller
+12,1012,William White,Senior Checker,FALSE,FALSE,3,1012,checker123,Checker
+13,1013,Sofia Harris,Junior Checker,FALSE,FALSE,3,1013,checker123,Checker
+14,1014,Benjamin Martin,Senior Detailer,FALSE,FALSE,3,1014,checker123,Detailer
+15,1015,Amelia Thompson,Junior Detailer,FALSE,FALSE,3,1015,checker123,Detailer
+16,1016,Emily Brown,Project Manager,TRUE,FALSE,1,1016,pmemily123,Project Manager
+17,1017,Lucas Garcia,Project Coordinator,FALSE,TRUE,16,1017,tl123,Project Coordinator
+18,1018,Harper Martinez,Project Coordinator,FALSE,TRUE,16,1018,tl123,Project Coordinator
+19,1019,Ethan Robinson,Senior Checker,FALSE,FALSE,16,1019,checker123,Checker
+20,1020,Aria Clark,Junior Checker,FALSE,FALSE,16,1020,checker123,Checker
+21,1021,Henry Rodriguez,Senior Detailer,FALSE,FALSE,16,1021,checker123,Detailer
+22,1022,Scarlett Lewis,Junior Detailer,FALSE,FALSE,16,1022,checker123,Detailer
+23,1023,Jack Lee,Senior Modeller,FALSE,FALSE,16,1023,checker123,Modeller
+24,1024,Victoria Walker,Junior Modeller,FALSE,FALSE,16,1024,checker123,Modeller
+25,1025,Luke Hall,Senior Checker,FALSE,FALSE,16,1025,checker123,Checker
+26,1026,Hannah Allen,Junior Checker,FALSE,FALSE,16,1026,checker123,Checker
+27,1027,Daniel Young,Senior Detailer,FALSE,FALSE,16,1027,checker123,Detailer
+28,1028,Grace Hernandez,Junior Detailer,FALSE,FALSE,16,1028,checker123,Detailer
+29,1029,Michael Jones,Project Manager,TRUE,FALSE,1,1029,pmmichael123,Project Manager
+30,1030,Henry King,Project Coordinator,FALSE,TRUE,29,1030,tl123,Project Coordinator
+31,1031,Ella Wright,Project Coordinator,FALSE,TRUE,29,1031,tl123,Project Coordinator
+32,1032,Matthew Scott,Senior Checker,FALSE,FALSE,29,1032,checker123,Checker
+33,1033,Avery Green,Junior Checker,FALSE,FALSE,29,1033,checker123,Checker
+34,1034,Jacob Adams,Senior Detailer,FALSE,FALSE,29,1034,checker123,Detailer
+35,1035,Lily Baker,Junior Detailer,FALSE,FALSE,29,1035,checker123,Detailer
+36,1036,Samuel Nelson,Senior Modeller,FALSE,FALSE,29,1036,checker123,Modeller
+37,1037,Natalie Carter,Junior Modeller,FALSE,FALSE,29,1037,checker123,Modeller
+38,1038,Christopher Mitchell,Senior Checker,FALSE,FALSE,29,1038,checker123,Checker
+39,1039,Zoe Perez,Junior Checker,FALSE,FALSE,29,1039,checker123,Checker
+40,1040,Anthony Roberts,Senior Detailer,FALSE,FALSE,29,1040,checker123,Detailer
+41,1041,Samantha Turner,Junior Detailer,FALSE,FALSE,29,1041,checker123,Detailer
+42,1042,Sophia Garcia,Project Manager,TRUE,FALSE,1,1042,pmsophia123,Project Manager
+43,1043,Jackson Phillips,Project Coordinator,FALSE,TRUE,42,1043,tl123,Project Coordinator
+44,1044,Penelope Campbell,Project Coordinator,FALSE,TRUE,42,1044,tl123,Project Coordinator
+45,1045,Isaac Parker,Senior Checker,FALSE,FALSE,42,1045,checker123,Checker
+46,1046,Eleanor Evans,Junior Checker,FALSE,FALSE,42,1046,checker123,Checker
+47,1047,Landon Edwards,Senior Detailer,FALSE,FALSE,42,1047,checker123,Detailer
+48,1048,Addison Collins,Junior Detailer,FALSE,FALSE,42,1048,checker123,Detailer
+49,1049,Caleb Stewart,Senior Modeller,FALSE,FALSE,42,1049,checker123,Modeller
+50,1050,Lillian Sanchez,Junior Modeller,FALSE,FALSE,42,1050,checker123,Modeller
+51,1051,Jonathan Morris,Senior Checker,FALSE,FALSE,42,1051,checker123,Checker
+52,1052,Nora Rogers,Junior Checker,FALSE,FALSE,42,1052,checker123,Checker
+53,1053,Christian Reed,Senior Detailer,FALSE,FALSE,42,1053,checker123,Detailer
+54,1054,Stella Cook,Project Manager,FALSE,FALSE,42,1054,checker123,Project Manager
+55,1055,David Martinez,Project Coordinator,TRUE,FALSE,1,1055,pmdavid123,Project Coordinator
+56,1056,Leo Morgan,Project Coordinator,FALSE,TRUE,55,1056,tl123,Project Coordinator
+57,1057,Layla Bell,Senior Checker,FALSE,TRUE,55,1057,tl123,Checker
+58,1058,Connor Murphy,Junior Checker,FALSE,FALSE,55,1058,checker123,Checker
+59,1059,Anna Bailey,Senior Detailer,FALSE,FALSE,55,1059,checker123,Detailer
+60,1060,Grayson Rivera,Junior Detailer,FALSE,FALSE,55,1060,checker123,Detailer
+61,1061,Aurora Cooper,Senior Modeller,FALSE,FALSE,55,1061,checker123,Modeller
+62,1062,Wyatt Richardson,Junior Modeller,FALSE,FALSE,55,1062,checker123,Modeller
+63,1063,Clara Cox,Senior Checker,FALSE,FALSE,55,1063,checker123,Checker
+64,1064,Julian Howard,Junior Checker,FALSE,FALSE,55,1064,checker123,Checker
+65,1065,Scarlett Ward,Senior Detailer,FALSE,FALSE,55,1065,checker123,Detailer
+66,1066,Easton Torres,Project Manager,FALSE,FALSE,55,1066,checker123,Project Manager
+67,1067,Hazel Peterson,Project Coordinator,FALSE,FALSE,55,1067,checker123,Project Coordinator
+68,1068,Olivia Hernandez,Project Coordinator,TRUE,FALSE,1,1068,pmolivia123,Project Coordinator
+69,1069,Henry Gray,Senior Checker,FALSE,TRUE,68,1069,tl123,Checker
+70,1070,Victoria Ramirez,Junior Checker,FALSE,TRUE,68,1070,tl123,Checker
+71,1071,Maxwell James,Senior Detailer,FALSE,FALSE,68,1071,checker123,Detailer
+72,1072,Penelope Watson,Junior Detailer,FALSE,FALSE,68,1072,checker123,Detailer
+73,1073,Owen Brooks,Senior Modeller,FALSE,FALSE,68,1073,checker123,Modeller
+74,1074,Clara Kelly,Junior Modeller,FALSE,FALSE,68,1074,checker123,Modeller
+75,1075,Harrison Sanders,Senior Checker,FALSE,FALSE,68,1075,checker123,Checker
+76,1076,Ella Price,Junior Checker,FALSE,FALSE,68,1076,checker123,Checker
+77,1077,Levi Bennett,Senior Detailer,FALSE,FALSE,68,1077,checker123,Detailer
+78,1078,Lila Wood,Project Manager,FALSE,FALSE,68,1078,checker123,Project Manager
+79,1079,Grayson Barnes,Project Coordinator,FALSE,FALSE,68,1079,checker123,Project Coordinator
+80,1080,Zoey Ross,Project Coordinator,FALSE,FALSE,68,1080,checker123,Project Coordinator
+81,1081,James Lopez,Senior Checker,TRUE,FALSE,1,1081,pmjames123,Checker
+82,1082,Jack Henderson,Junior Checker,FALSE,TRUE,81,1082,tl123,Checker
+83,1083,Luna Coleman,Senior Detailer,FALSE,TRUE,81,1083,tl123,Detailer
+84,1084,Isaiah Jenkins,Junior Detailer,FALSE,FALSE,81,1084,checker123,Detailer
+85,1085,Ella Perry,Senior Modeller,FALSE,FALSE,81,1085,checker123,Modeller
+86,1086,Lincoln Powell,Junior Modeller,FALSE,FALSE,81,1086,checker123,Modeller
+87,1087,Sophia Long,Senior Checker,FALSE,FALSE,81,1087,checker123,Checker
+88,1088,Cameron Patterson,Junior Checker,FALSE,FALSE,81,1088,checker123,Checker
+89,1089,Layla Hughes,Senior Detailer,FALSE,FALSE,81,1089,checker123,Detailer
+90,1090,Elijah Flores,Project Manager,FALSE,FALSE,81,1090,checker123,Project Manager
+91,1091,Aurora Washington,Project Coordinator,FALSE,FALSE,81,1091,checker123,Project Coordinator
+92,1092,Wyatt Butler,Project Coordinator,FALSE,FALSE,81,1092,checker123,Project Coordinator
+93,1093,Hazel Simmons,Senior Checker,FALSE,FALSE,81,1093,checker123,Checker
+94,1094,Isabella Gonzalez,Junior Checker,TRUE,FALSE,1,1094,pmisabella123,Checker
+95,1095,Logan Foster,Senior Detailer,FALSE,TRUE,94,1095,tl123,Detailer
+96,1096,Scarlett Gonzales,Junior Detailer,FALSE,TRUE,94,1096,tl123,Detailer
+97,1097,Liam Bryant,Senior Modeller,FALSE,FALSE,94,1097,checker123,Modeller
+98,1098,Harper Alexander,Junior Modeller,FALSE,FALSE,94,1098,checker123,Modeller
+99,1099,Ethan Russell,Senior Checker,FALSE,FALSE,94,1099,checker123,Checker
+100,1100,Amelia Griffin,Junior Checker,FALSE,FALSE,94,1100,checker123,Checker
+101,1101,Noah Diaz,Senior Detailer,FALSE,FALSE,94,1101,checker123,Detailer
+102,1102,Madison Hayes,Project Manager,FALSE,FALSE,94,1102,checker123,Project Manager
+103,1103,Oliver Myers,Project Coordinator,FALSE,FALSE,94,1103,checker123,Project Coordinator
+104,1104,Chloe Ford,Project Coordinator,FALSE,FALSE,94,1104,checker123,Project Coordinator
+105,1105,Lucas Hamilton,Senior Checker,FALSE,FALSE,94,1105,checker123,Checker
+106,1106,Ella Graham,Junior Checker,FALSE,FALSE,94,1106,checker123,Checker

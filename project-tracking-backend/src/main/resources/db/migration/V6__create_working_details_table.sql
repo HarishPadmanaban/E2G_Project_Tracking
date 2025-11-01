@@ -13,8 +13,8 @@ CREATE TABLE work_details (
     status VARCHAR(50),
     remarks VARCHAR(255),
     is_deleted BOOLEAN DEFAULT FALSE,
-    CONSTRAINT fk_work_details_employee FOREIGN KEY (employee_id) REFERENCES employee(id),
-    CONSTRAINT fk_work_details_manager FOREIGN KEY (manager_id) REFERENCES employee(id),
+    CONSTRAINT fk_work_details_employee FOREIGN KEY (employee_id) REFERENCES employee(emp_id),
+    CONSTRAINT fk_work_details_manager FOREIGN KEY (manager_id) REFERENCES employee(emp_id),
     CONSTRAINT fk_work_details_project FOREIGN KEY (project_id) REFERENCES project(id),
     CONSTRAINT fk_work_details_activity FOREIGN KEY (activity_id) REFERENCES activity(id)
 );

@@ -9,15 +9,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface WorkDetailsRepository extends JpaRepository<WorkDetails,Long> {
-    List<WorkDetails> findByEmployeeId(Long employeeId);
+    List<WorkDetails> findByEmployee_EmpId(Long employeeId);
 
-    List<WorkDetails> findByManagerId(Long managerId);
+    List<WorkDetails> findByManager_EmpId(Long managerId);
 
     List<WorkDetails> findByProjectId(Long projectId);
 
     List<WorkDetails> findByActivityId(Long activityId);
 
-    Optional<WorkDetails> findTopByEmployeeIdAndEndTimeIsNullOrderByIdDesc(Long employeeId);
+    Optional<WorkDetails> findTopByEmployee_EmpIdAndEndTimeIsNullOrderByIdDesc(Long employeeId);
 
     @Query("SELECT w FROM WorkDetails w WHERE w.employee.id = :employeeId AND w.project.id = :projectId")
     List<WorkDetails> findByEmployeeAndProject(@Param("employeeId") Long employeeId,

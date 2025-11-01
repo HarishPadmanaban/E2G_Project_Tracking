@@ -46,17 +46,18 @@ public class CSVLoader implements CommandLineRunner {
         // Step 1: Insert employees WITHOUT reportingTo
         for (int i = 1; i < rows.size(); i++) { // skip header
             String[] row = rows.get(i);
-
+            //System.out.println(Arrays.toString(row));
             Employee emp = new Employee();
-            emp.setEmpId(row[1]);
+            emp.setEmpId(Long.parseLong(row[1]));
             emp.setName(row[2]);
             emp.setDesignation(row[3]);
             emp.setIsManager(Boolean.parseBoolean(row[4]));
             emp.setIsTL(Boolean.parseBoolean(row[5]));
             emp.setUsername(row[7]);
             //emp.setPassword(row[8]);
-            String pass = emp.getPassword().trim()+"@123";
-            emp.setPassword(PasswordUtil.hashPassword(pass));
+            emp.setDesignationCategory(row[9]);
+            String pass = emp.getEmpId()+"@123";
+            emp.setPassword(pass);
 
             Employee saved = employeeRepository.save(emp);
             tempMap.put(Long.parseLong(row[0]), saved);

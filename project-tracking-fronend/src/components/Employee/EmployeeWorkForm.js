@@ -117,7 +117,7 @@
 //   }
 // };
 // useEffect(() => {
-//   if (!employee || !employee.id) return;
+//   if (!employee || !employee.empId) return;
 
 //   // 🟢 CASE 1: Use activeWorkId if available (Stopped but not submitted)
 //   console.log(activeWorkId);
@@ -183,7 +183,7 @@
 //   } else {
 //     // 🟢 CASE 2: Check for currently active running work
 //     axios
-//       .get(`http://localhost:8080/workdetails/active/${employee.id}`)
+//       .get(`http://localhost:8080/workdetails/active/${employee.empId}`)
 //       .then((res) => {
 //         const active = res.data;
 
@@ -284,7 +284,7 @@
 //   const start = now.getHours().toString().padStart(2, "0") + ":" + now.getMinutes().toString().padStart(2, "0");
 
 //   const payload = {
-//     employeeId: employee.id,
+//     employeeId: employee.empId,
 //     managerId: employee.reportingToId,
 //     projectId: formData.projectId,
 //     activityId: formData.activityId,
@@ -323,7 +323,7 @@
 //   if (diffMinutes < 0) diffMinutes += 24 * 60;
 //   const diffHours = (diffMinutes / 60).toFixed(2);
 
-//   axios.put(`http://localhost:8080/workdetails/stop/${employee.id}`, null, {
+//   axios.put(`http://localhost:8080/workdetails/stop/${employee.empId}`, null, {
 //   params: {
 //     endTime: end + ":00",
 //     workHours: diffHours
@@ -356,7 +356,7 @@
 //     return;
 //   }
 //   const payload = {
-//     employeeId: employee.id,  // camelCase
+//     employeeId: employee.empId,  // camelCase
 //     managerId: employee.reportingToId,  // camelCase
 //     projectId: formData.projectId,  // camelCase
 //     activityId: formData.activityId,  // camelCase
@@ -754,7 +754,7 @@
 //         now.getMinutes().toString().padStart(2, "0");
 
 //       const payload = {
-//         employeeId: employee.id,
+//         employeeId: employee.empId,
 //         managerId: employee.reportingToId,
 //         projectId: formData.projectId,
 //         activityId: formData.activityId,
@@ -795,7 +795,7 @@
 //       const diffHours = (diffMinutes / 60).toFixed(2);
 
 //       axios
-//         .put(`http://localhost:8080/workdetails/stop/${employee.id}`, null, {
+//         .put(`http://localhost:8080/workdetails/stop/${employee.empId}`, null, {
 //           params: {
 //             endTime: end + ":00",
 //             workHours: diffHours,
@@ -857,7 +857,7 @@
 //     }
 
 //     const payload = {
-//       employeeId: employee.id,
+//       employeeId: employee.empId,
 //       managerId: employee.reportingToId,
 //       projectId: formData.projectId,
 //       activityId: formData.activityId,
@@ -1384,7 +1384,7 @@ const EmployeeWorkForm = () => {
 
     function checkActiveRunningWork() {
       axios
-        .get(`http://localhost:8080/workdetails/active/${employee.id}`)
+        .get(`http://localhost:8080/workdetails/active/${employee.empId}`)
         .then((res) => {
           const active = res.data;
           if (active && !active.endTime) {
@@ -1551,7 +1551,7 @@ const EmployeeWorkForm = () => {
         now.getMinutes().toString().padStart(2, "0");
 
       const payload = {
-        employeeId: employee.id,
+        employeeId: employee.empId,
         managerId: employee.reportingToId,
         projectId: formData.projectId,
         activityId: formData.activityId,
@@ -1591,7 +1591,7 @@ const EmployeeWorkForm = () => {
       if (diffMinutes < 0) diffMinutes += 24 * 60;
       const diffHours = (diffMinutes / 60).toFixed(2);
       axios
-        .put(`http://localhost:8080/workdetails/stop/${employee.id}`, null, {
+        .put(`http://localhost:8080/workdetails/stop/${employee.empId}`, null, {
           params: {
             endTime: end + ":00",
             workHours: diffHours,
@@ -1662,7 +1662,7 @@ const EmployeeWorkForm = () => {
     }
 
     const payload = {
-      employeeId: employee.id,
+      employeeId: employee.empId,
       managerId: employee.reportingToId,
       projectId: formData.projectId,
       activityId: formData.activityId,

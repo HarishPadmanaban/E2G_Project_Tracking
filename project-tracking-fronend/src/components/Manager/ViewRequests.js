@@ -14,8 +14,8 @@ const ViewRequests = () => {
 
   try {
     const [pendingRes, approvedRes] = await Promise.all([
-      axios.get(`http://localhost:8080/leave/manager/${employee.id}`),
-      axios.get(`http://localhost:8080/leave/manager-approved/${employee.id}`),
+      axios.get(`http://localhost:8080/leave/manager/${employee.empId}`),
+      axios.get(`http://localhost:8080/leave/manager-approved/${employee.empId}`),
     ]);
 
     const allRequests = [...pendingRes.data, ...approvedRes.data];

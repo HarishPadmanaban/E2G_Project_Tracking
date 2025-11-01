@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,7 +82,8 @@ public class WorkDetailsCSVLoader implements CommandLineRunner {
                 workDetails.setManager(manager.get());
                 workDetails.setProject(project.get());
                 workDetails.setActivity(activity.get());
-                workDetails.setDate(LocalDate.parse(row[4].trim()));
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                workDetails.setDate(LocalDate.parse(row[4].trim(), formatter));
                 workDetails.setWorkHours(Double.parseDouble(row[5].trim()));
                 workDetails.setStartTime(LocalTime.parse(row[6].trim()));
                 workDetails.setEndTime(LocalTime.parse(row[7].trim()));

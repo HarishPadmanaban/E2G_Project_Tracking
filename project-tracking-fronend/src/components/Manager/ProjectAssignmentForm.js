@@ -13,7 +13,7 @@ const ProjectAssignmentForm = () => {
       navigate("/"); // 👈 redirect to login page
     }
   }, [employee, loading, navigate]);
-  const managerIdToUse = employee?.manager ? employee.id : employee?.reportingToId;
+  const managerIdToUse = employee?.manager ? employee.empId : employee?.reportingToId;
   const [projects, setProjects] = useState([]);
   const [teamLeads, setTeamLeads] = useState([]);
   useEffect(() => {
@@ -22,7 +22,7 @@ const ProjectAssignmentForm = () => {
     const proj = axios
       .get(`http://localhost:8080/project/manager/${managerIdToUse}/active`) // Dummy backend endpoint
       .then((proj) => {
-        const inProgress = proj.data.filter((p) => p.workingHours === 0);
+        const inProgress = proj.data.filter((p) => p.workingHours === 0 && p.tlId===null);
         console.log(proj.data);
         setProjects(inProgress);
       })
@@ -71,85 +71,93 @@ const ProjectAssignmentForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const validateForm = () => {
-    if (!formData.projectId) {
-      alert("⚠️ Please select a project.");
-      return false;
-    }
+  const validateForm = async () => {
+  if (!formData.projectId) {
+    alert("⚠️ Please select a project.");
+    return false;
+  }
 
-    if (!formData.tl1) {
-      alert("⚠️ Please select Team Lead.");
-      return false;
-    }
+  if (!formData.tl1) {
+    alert("⚠️ Please select Team Lead.");
+    return false;
+  }
 
-    if (
-      !formData.modellingHours ||
-      !formData.checkingHours ||
-      !formData.detailingHours
-    ) {
-      alert("⚠️ Please fill all hour fields (Modelling, Checking, Detailing).");
-      return false;
-    }
+  if (
+    !formData.modellingHours ||
+    !formData.checkingHours ||
+    !formData.detailingHours
+  ) {
+    alert("⚠️ Please fill all hour fields (Modelling, Checking, Detailing).");
+    return false;
+  }
 
-    if (
-      Number(formData.modellingHours) <= 0 ||
-      Number(formData.checkingHours) <= 0 ||
-      Number(formData.detailingHours) <= 0
-    ) {
-      alert("⚠️ Hours must be greater than 0.");
-      return false;
-    }
+  if (
+    Number(formData.modellingHours) <= 0 ||
+    Number(formData.checkingHours) <= 0 ||
+    Number(formData.detailingHours) <= 0
+  ) {
+    alert("⚠️ Hours must be greater than 0.");
+    return false;
+  }
 
-    const total =
-      Number(formData.modellingHours) +
-      Number(formData.checkingHours) +
-      Number(formData.detailingHours);
+  const total =
+    Number(formData.modellingHours) +
+    Number(formData.checkingHours) +
+    Number(formData.detailingHours);
 
-    if (selectedProject && total !== selectedProject.assignedHours) {
-      alert(
-        `❌ Total assigned hours (${total}) must match project total (${selectedProject.assignedHours}).`
-      );
-      return false;
-    }
+  if (selectedProject && total !== selectedProject.assignedHours) {
+    alert(
+      `❌ Total assigned hours (${total}) must match project total (${selectedProject.assignedHours}).`
+    );
+    return false;
+  }
 
-    const payload = {
-      tlId: Number(formData.tl1),
-      modellingHours: Number(formData.modellingHours),
-      checkingHours: Number(formData.checkingHours),
-      detailingHours: Number(formData.detailingHours),
-    };
+  try {
+    // ✅ Wait for the PUT request to finish
+    const res = await axios.put(
+      `http://localhost:8080/project/${formData.projectId}/add-hours`,
+      null,
+      {
+        params: {
+          tlId: formData.tl1,
+          modellingHours: formData.modellingHours,
+          checkingHours: formData.checkingHours,
+          detailingHours: formData.detailingHours,
+        },
+      }
+    );
 
-    try {
-      const res = axios.put(
-        `http://localhost:8080/project/${formData.projectId}/add-hours`,
-        null, // No request body
-        {
-          params: {
-            tlId: formData.tl1,
-            modellingHours: formData.modellingHours,
-            checkingHours: formData.checkingHours,
-            detailingHours: formData.detailingHours,
-          }
-        }
-      );
-      alert("✅ Project updated successfully!");
-      setFormData({
-        projectId: "",
-        tl1: "",
-        modellingHours: "",
-        checkingHours: "",
-        detailingHours: "",
-      });
-      setSelectedProject(null);
-      console.log(payload);
-      const updatedProjects = axios.get(`http://localhost:8080/project/manager/${managerIdToUse}/active`);
-      const inProgress = updatedProjects.data.filter((p) => p.workingHours === 0 && p.modellingHours === 0 && p.checkingHours === 0 && p.detailingHours === 0);
-      setProjects(inProgress);
-    } catch (error) {
-      console.error("Error updating project:", error);
-      alert("❌ Failed to update project");
-    }
-  };
+    alert("✅ Project updated successfully!");
+
+    // Reset form data
+    setFormData({
+      projectId: "",
+      tl1: "",
+      modellingHours: "",
+      checkingHours: "",
+      detailingHours: "",
+    });
+    setSelectedProject(null);
+
+    // ✅ Wait for updated projects list
+    const updatedProjectsRes = await axios.get(
+      `http://localhost:8080/project/manager/${managerIdToUse}/active`
+    );
+
+    const inProgress = updatedProjectsRes.data.filter(
+      (p) =>
+        p.workingHours === 0 &&
+        p.modellingHours === 0 &&
+        p.checkingHours === 0 &&
+        p.detailingHours === 0
+    );
+
+    setProjects(inProgress);
+  } catch (error) {
+    console.error("Error updating project:", error);
+    alert("❌ Failed to update project");
+  }
+};
 
 
   return (

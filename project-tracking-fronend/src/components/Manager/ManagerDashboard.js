@@ -11,7 +11,7 @@ const ManagerDashboard = () => {
   const [managers, setManagers] = useState({});
 
   useEffect(() => {
-    if (!employee?.id) return;
+    if (!employee.empId) return;
 
     // ✅ Admin should have same access as AGM
     const isAGM =
@@ -19,7 +19,9 @@ const ManagerDashboard = () => {
       employee.designation === "Admin";
 
     // Use appropriate ID depending on role
-    const managerIdToUse = employee.manager ? employee.id : employee.reportingToId;
+    const managerIdToUse = employee.manager ? employee.empId : employee.reportingToId;
+    console.log(isAGM)
+    console.log(managerIdToUse)
 
     // Choose the endpoint dynamically
     const endpoint = isAGM

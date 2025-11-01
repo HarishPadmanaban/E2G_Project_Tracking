@@ -28,7 +28,7 @@ export const EmployeeProvider = ({ children }) => {
     console.log(employeeData)
     setEmployee(employeeData);
     // Store only the internal primary key in localStorage
-    localStorage.setItem("employeeId", employeeData.id);
+    localStorage.setItem("employeeId", employeeData.empId);
 };
 
   const logout = () => {

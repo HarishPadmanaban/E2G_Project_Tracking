@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,7 @@ public class ProjectService {
 
     public ProjectResponse convertToResponse(Project project){
         Employee e = employeeRepository.findById(project.getManagerId()).orElse(null);
+        //System.out.println(project+" "+e.toString());
         ProjectResponse response = new ProjectResponse(
                 project.getId(),
                 project.getProjectName(),
@@ -101,25 +103,30 @@ public class ProjectService {
             Project project = optionalProject.get();
 
             // Safely add (handling nulls)
-            project.setModellingHours(
-                    project.getModellingHours() == null ? addModellingHours :
-                            project.getModellingHours().add(addModellingHours)
-            );
+            if(project.getTlId()!=null && !(Objects.equals(project.getWorkingHours(), BigDecimal.ZERO))) {
+                project.setModellingHours(
+                        project.getModellingHours() == null ? addModellingHours :
+                                project.getModellingHours().add(addModellingHours)
+                );
 
-            project.setCheckingHours(
-                    project.getCheckingHours() == null ? addCheckingHours :
-                            project.getCheckingHours().add(addCheckingHours)
-            );
+                project.setCheckingHours(
+                        project.getCheckingHours() == null ? addCheckingHours :
+                                project.getCheckingHours().add(addCheckingHours)
+                );
 
-            project.setDetailingHours(
-                    project.getDetailingHours() == null ? addDetailingHours :
-                            project.getDetailingHours().add(addDetailingHours)
-            );
+                project.setDetailingHours(
+                        project.getDetailingHours() == null ? addDetailingHours :
+                                project.getDetailingHours().add(addDetailingHours)
+                );
 
-            project.setTlId(tlId);
+                project.setTlId(tlId);
 
-            // Save back to repo
-            return projectRepository.save(project);
+                // Save back to repo
+                return projectRepository.save(project);
+            }
+            else{
+                return project;
+            }
         } else {
             throw new RuntimeException("Project not found with ID: " + projectId);
         }

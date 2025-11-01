@@ -37,7 +37,6 @@ public class EmployeeService {
         if (employee != null) {
             // Map Employee entity to DataTransfer DTO
             return new DataTransfer(
-                    employee.getId(),
                     employee.getEmpId(),
                     employee.getName(),
                     employee.getDesignation(),
@@ -56,7 +55,6 @@ public class EmployeeService {
         if (employee != null) {
             // Map Employee entity to DataTransfer DTO
             return new DataTransfer(
-                    employee.getId(),
                     employee.getEmpId(),
                     employee.getName(),
                     employee.getDesignation(),
@@ -70,7 +68,7 @@ public class EmployeeService {
     }
 
     public List<Employee> getTLsUnderManager(Long managerId) {
-        return employeeRepository.findByIsTLTrueAndReportingToId(managerId);
+        return employeeRepository.findByIsTLTrueAndReportingTo_EmpId(managerId);
     }
 
     public List<Employee> getAllManagers() {
@@ -85,7 +83,7 @@ public class EmployeeService {
     {
         if(employee.getReportingTo()!=null)
         {
-            Long id = employee.getReportingTo().getId();
+            Long id = employee.getReportingTo().getEmpId();
             Employee manager = employeeRepository.findById(id).orElse(null);
             employee.setReportingTo(manager);
         }
@@ -100,7 +98,7 @@ public class EmployeeService {
 
     public Employee editEmployee(Employee employee)
     {
-        Employee old = employeeRepository.findById(employee.getId()).orElse(null);
+        Employee old = employeeRepository.findById(employee.getEmpId()).orElse(null);
         old.setName(employee.getName());
         old.setDesignation(employee.getDesignation());
         old.setIsTL(employee.getIsTL());
@@ -112,7 +110,6 @@ public class EmployeeService {
 
     private DataTransfer convertToResponse(Employee employee) {
         return new DataTransfer(
-                employee.getId(),
                 employee.getEmpId(),
                 employee.getName(),
                 employee.getDesignation(),

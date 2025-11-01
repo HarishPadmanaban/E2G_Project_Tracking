@@ -33,7 +33,7 @@ const ManagerNavbar = () => {
 
   const fetchPending = () => {
     axios
-      .get(`http://localhost:8080/leave/manager/${employee.id}`)
+      .get(`http://localhost:8080/leave/manager/${employee.empId}`)
       .then((res) => {
         const pending = res.data.filter((r) => r.status === "Pending");
         setPendingCount(pending.length);
