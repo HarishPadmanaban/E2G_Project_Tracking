@@ -295,6 +295,24 @@ textarea {
   transition: all 0.3s ease;
 }
 
+.ResourceBtn {
+  background: #3566a9;
+  color: white;
+  font-weight: bold;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  width: 490px;
+  margin: 20px auto 0;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+.ResourceBtn:hover {
+  background: #0b1a8f;
+}
+
 .submitBtn:hover {
   background: #0b8f3f;
 }
@@ -366,4 +384,191 @@ select::placeholder {
     width: 100%;
     padding: 14px;
   }
+}
+
+/* ✅ Dimmed background */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+}
+
+/* ✅ Modern Modal */
+.modalBox {
+  min-width: 560px;
+  background: #ffffff;
+  padding: 30px 32px;
+  border-radius: 14px;
+  box-shadow: 0px 10px 35px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.25s ease-out;
+}
+
+/* ✅ Header */
+.modalBox h3 {
+  font-size: 20px;
+  margin-bottom: 18px;
+  font-weight: 600;
+  color: #222;
+}
+
+/* ✅ Role buttons row */
+.filterRow {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+/* ✅ Role Button Base */
+.roleBtn {
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: 1px solid #bdbdbd;
+  background: #f5f5f5;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.roleBtn:hover {
+  background: #e8e8e8;
+}
+
+/* ✅ Active Role Button Style */
+.activeRole {
+  background: #0077ff;
+  color: #fff;
+  border: 1px solid #0077ff;
+}
+
+/* ✅ Scrollable resource options */
+.modalContent {
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 6px;
+  margin-bottom: 18px;
+}
+
+/* ✅ Resource Checkbox Labels */
+.checkItem {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  padding: 6px 0;
+  color: #333;
+  gap: 10px;
+}
+
+/* ✅ Button row */
+.modalActions {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 6px;
+}
+
+/* ✅ Buttons */
+.doneBtn {
+  background: #0a8d2f;
+  border: none;
+  color: white;
+  padding: 10px 26px;
+  font-size: 15px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.doneBtn:hover {
+  background: #007a27;
+}
+
+.cancelBtn {
+  background: transparent;
+  border: 1.6px solid #d32f2f;
+  color: #d32f2f;
+  padding: 10px 26px;
+  font-size: 15px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.cancelBtn:hover {
+  background: #ffe9e9;
+}
+
+/* ✅ Fade In Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Modal list item: checkbox, name/designation, optional role tag */
+.checkItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 6px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+/* left checkbox sizing */
+.checkItem input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+/* name + designation stacked */
+.empInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1; /* take remaining space so role tag sits to right */
+  min-width: 0; /* prevent overflow */
+}
+
+.empName {
+  font-weight: 600;
+  font-size: 15px;
+  color: #111827; /* dark */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.empDesignation {
+  font-size: 13px;
+  color: #6b7280; /* muted gray */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* optional right-side role tag */
+.empRoleTag {
+  font-size: 12px;
+  color: #0b6efd;
+  border: 1px solid #dbeafe;
+  background: #eff6ff;
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* ensure modalContent scroll is neat */
+.modalContent {
+  max-height: 260px; /* tweak as needed */
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* small responsive tweak so layout doesn't break on narrow screens */
+@media (max-width: 600px) {
+  .modalBox { width: 92%; padding: 18px; }
+  .empRoleTag { display: none; } /* hide right tag on small screens */
 }
