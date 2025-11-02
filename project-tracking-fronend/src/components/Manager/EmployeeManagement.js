@@ -65,14 +65,14 @@ const EmployeesUnderManager = () => {
     };
 
     const handleEmployeeClick = (empId) => {
-  axios
-    .get(`http://localhost:8080/project-assignment/projects/${empId}`)
-    .then((res) => {
-      setSelectedProjects(res.data);
-      setShowModal(true);
-    })
-    .catch((err) => console.error("Error fetching employee projects:", err));
-};
+        axios
+            .get(`http://localhost:8080/project-assignment/projects/${empId}`)
+            .then((res) => {
+                setSelectedProjects(res.data);
+                setShowModal(true);
+            })
+            .catch((err) => console.error("Error fetching employee projects:", err));
+    };
 
 
     return (
@@ -150,13 +150,22 @@ const EmployeesUnderManager = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {selectedProjects.map((project) => (
-                                    <tr key={project.id}>
-                                        <td>{project.id}</td>
-                                        <td>{project.projectName}</td>
+                                {selectedProjects.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="13" className={styles.noData}>
+                                            No records found.
+                                        </td>
                                     </tr>
-                                ))}
+                                ) : (
 
+                                    selectedProjects.map((project) => (
+                                        <tr key={project.id}>
+                                            <td>{project.id}</td>
+                                            <td>{project.projectName}</td>
+                                        </tr>
+                                    ))
+
+                                )}
                             </tbody>
                         </table>
 

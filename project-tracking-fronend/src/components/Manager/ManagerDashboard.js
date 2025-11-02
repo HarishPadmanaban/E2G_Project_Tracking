@@ -259,14 +259,9 @@ const ManagerDashboard = () => {
 
   const handleProjectClick = (projectId) => {
     // 🔥 Dummy data for now — Replace later by backend
-    setSelectedProjectMembers([
-      { id: 1, name: "John Doe", hours: 40 },
-      { id: 2, name: "Priya", hours: 32 },
-      { id: 3, name: "David", hours: 28 },
-    ]);
 
     axios.get(`http://localhost:8080/project-assignment/employees/${projectId}`).then(res => {
-       setSelectedProjectMembers(res.data)
+      setSelectedProjectMembers(res.data)
     });
 
     setShowModal(true);
@@ -317,7 +312,7 @@ const ManagerDashboard = () => {
                 </option>
               ))}
             </select>
-          
+
             <button onClick={clearFilters} className={styles.clearBtn}>
               Clear
             </button>
@@ -334,6 +329,7 @@ const ManagerDashboard = () => {
             <th>Client Name</th>
             {isAGM && <th>Manager Name</th>}
             <th>Assigned Hours</th>
+            <th>Extra Hours</th>
             <th>Working Hours</th>
             <th>Project Status</th>
           </tr>
@@ -351,8 +347,14 @@ const ManagerDashboard = () => {
               <tr
                 onClick={() => handleProjectClick(p.id)}
                 key={p.id}
-                className={p.modellingHours === 0 ? styles.highlightRow : ""}
+                className={`
+    ${p.modellingHours === 0 ? styles.highlightRow : ""}
+    ${((p.assignedHours || 0) + (p.extraHours || 0) - p.workingHours) <= 10
+                    ? styles.redAlertRow
+                    : ""}
+  `}
               >
+
                 <td>{p.id}</td>
                 <td>{p.projectName}</td>
                 <td>{p.clientName}</td>
@@ -361,6 +363,7 @@ const ManagerDashboard = () => {
                     <td>{managers[p.managerId] || "Unknown"}</td>
                   )}
                 <td>{p.assignedHours}</td>
+                <td>{p.extraHours || "--"}</td>
                 <td>{p.workingHours}</td>
                 <td
                   className={
@@ -390,13 +393,21 @@ const ManagerDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {selectedProjectMembers.map((m) => (
-                  <tr key={m.id}>
-                    <td>{m.empId}</td>
-                    <td>{m.name}</td>
-                    <td>{m.hours}</td>
+                {selectedProjectMembers.length === 0 ? (
+                  <tr>
+                    <td colSpan="13" className={styles.noData}>
+                      No records found.
+                    </td>
                   </tr>
-                ))}
+                ) : (
+                  selectedProjectMembers.map((m) => (
+                    <tr key={m.id}>
+                      <td>{m.empId}</td>
+                      <td>{m.name}</td>
+                      <td>{m.hours || "--"}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
 

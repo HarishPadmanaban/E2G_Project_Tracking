@@ -103,7 +103,7 @@ public class ProjectService {
         return projectRepository.findByManagerIdAndProjectStatusTrue(managerId);
     }
 
-    public Project updateProjectHours(Long tlId,Long projectId, BigDecimal addModellingHours, BigDecimal addCheckingHours, BigDecimal addDetailingHours) {
+    public Project updateProjectHours(Long tlId,Long projectId, BigDecimal addModellingHours, BigDecimal addCheckingHours, BigDecimal addDetailingHours, BigDecimal addStudyHours) {
         Optional<Project> optionalProject = projectRepository.findById(projectId);
 
         if (optionalProject.isPresent()) {
@@ -122,6 +122,11 @@ public class ProjectService {
                         project.getDetailingHours() == null ? addDetailingHours :
                                 project.getDetailingHours().add(addDetailingHours)
                 );
+
+            project.setStudyHours(
+                    project.getStudyHours() == null ? addStudyHours :
+                            project.getStudyHours().add(addStudyHours)
+            );
 
                 project.setTlId(tlId);
 
@@ -160,12 +165,14 @@ public class ProjectService {
     public ProjectResponse toggleStatus(Long id) {
         Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project found with id "+id));
         project.setProjectStatus(false);
+        project.setCompletedDate(LocalDate.now());
         return convertToResponse(projectRepository.save(project));
     }
 
     public ProjectResponse setExtra(Long id,BigDecimal extraHours) {
         Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project found with id "+id));
         project.setExtraHours(extraHours);
+        System.out.print(project.toString());
         return convertToResponse(projectRepository.save(project));
     }
 }

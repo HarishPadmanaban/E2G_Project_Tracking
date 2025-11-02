@@ -506,3 +506,14 @@
   border-color: #3b82f6;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
+
+.redAlertRow {
+  background-color: rgba(255, 87, 51, 0.25); /* Soft red warning */
+  animation: pulseAlert 1.5s infinite;
+}
+
+@keyframes pulseAlert {
+  0% { box-shadow: 0 0 0px rgba(255, 87, 51, 0.6); }
+  50% { box-shadow: 0 0 10px rgba(255, 87, 51, 0.8); }
+  100% { box-shadow: 0 0 0px rgba(255, 87, 51, 0.6); }
+}

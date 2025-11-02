@@ -14,6 +14,7 @@ import ViewApprovedRequests from './components/AGM/ViewApprovedRequests.js';
 import EmployeeManagementPage from './components/AGM/EmployeeManagementPage.js';
 import ProjectAssignmentForm from './components/Manager/ProjectAssignmentForm.js';
 import EmployeeManagement from './components/Manager/EmployeeManagement.js';
+import UpdateProject from './components/Manager/UpdateProject.js';
 import EditManagementPage from './components/AGM/EditManagementPage.js';
 import AddEmployeeForm from './components/AGM/AddEmployeeForm.js';
 import AddActivityForm from './components/AGM/AddActivityForm.js';
@@ -183,6 +184,15 @@ function App() {
   element={
     <ProtectedRoute>
       <EmployeeManagement />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/manager/update-project"
+  element={
+    <ProtectedRoute>
+      <UpdateProject />
     </ProtectedRoute>
   }
 />

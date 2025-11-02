@@ -108,6 +108,7 @@ const ProjectAssignmentForm = () => {
     modellingHours: "",
     checkingHours: "",
     detailingHours: "",
+    studyHours:""
   });
 
 
@@ -137,6 +138,7 @@ return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designatio
       modellingHours: "",
       checkingHours: "",
       detailingHours: "",
+      studyHours:""
     });
   };
 
@@ -159,15 +161,18 @@ return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designatio
     !formData.modellingHours ||
     !formData.checkingHours ||
     !formData.detailingHours
+    ||
+    !formData.studyHours
   ) {
-    alert("⚠️ Please fill all hour fields (Modelling, Checking, Detailing).");
+    alert("⚠️ Please fill all hour fields (Modelling, Checking, Detailing,Study).");
     return false;
   }
 
   if (
     Number(formData.modellingHours) <= 0 ||
     Number(formData.checkingHours) <= 0 ||
-    Number(formData.detailingHours) <= 0
+    Number(formData.detailingHours) <= 0 ||
+    Number(formData.studyHours) <= 0
   ) {
     alert("⚠️ Hours must be greater than 0.");
     return false;
@@ -176,7 +181,8 @@ return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designatio
   const total =
     Number(formData.modellingHours) +
     Number(formData.checkingHours) +
-    Number(formData.detailingHours);
+    Number(formData.detailingHours) +
+    Number(formData.studyHours);
 
   if (selectedProject && total !== selectedProject.assignedHours) {
     alert(
@@ -196,6 +202,7 @@ return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designatio
           modellingHours: formData.modellingHours,
           checkingHours: formData.checkingHours,
           detailingHours: formData.detailingHours,
+          studyHours:formData.studyHours
         },
       }
     );
@@ -333,6 +340,16 @@ return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designatio
               type="number"
               name="detailingHours"
               value={formData.detailingHours}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className={styles.fld}>
+            <label>Study Hours</label>
+            <input
+              type="number"
+              name="studyHours"
+              value={formData.studyHours}
               onChange={handleChange}
             />
           </div>

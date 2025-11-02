@@ -155,6 +155,17 @@ const ManagerNavbar = () => {
                 </li>
               </Link>)}
 
+
+              {!isAGM && (
+                <Link
+                  to="/manager/update-project"
+                  className={styles.menuLink}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <li>Update Project</li>
+                </Link>
+              )}
+
                {isAGM && (
                 <Link
                   to="/manager/view-approved-request"

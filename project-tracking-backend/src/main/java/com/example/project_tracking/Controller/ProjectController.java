@@ -57,9 +57,10 @@ public class ProjectController {
             @RequestParam Long tlId,
             @RequestParam BigDecimal modellingHours,
             @RequestParam BigDecimal checkingHours,
-            @RequestParam BigDecimal detailingHours
+            @RequestParam BigDecimal detailingHours,
+            @RequestParam BigDecimal studyHours
     ) {
-        return projectService.updateProjectHours(tlId,projectId, modellingHours, checkingHours, detailingHours);
+        return projectService.updateProjectHours(tlId,projectId, modellingHours, checkingHours, detailingHours,studyHours);
     }
 
     @PutMapping("/editproject")
@@ -75,6 +76,7 @@ public class ProjectController {
 
     @PutMapping("/set-extra-hours/{id}")
     public ResponseEntity<ProjectResponse> setExtraHours(@PathVariable Long id,@RequestParam BigDecimal extraHours){
+        System.out.println(id+"\n"+extraHours);
         return ResponseEntity.ok(projectService.setExtra(id,extraHours));
     }
 }
