@@ -507,6 +507,18 @@
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
+.coordinatorInfo {
+  margin: 10px 0 15px 0;
+  padding: 8px 12px;
+  background-color: #f8fafc;
+  border-left: 4px solid #2563eb;
+  border-radius: 6px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+
 .redAlertRow {
   background-color: rgba(255, 87, 51, 0.25); /* Soft red warning */
   animation: pulseAlert 1.5s infinite;

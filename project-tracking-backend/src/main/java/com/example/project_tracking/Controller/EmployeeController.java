@@ -40,6 +40,12 @@ public class EmployeeController {
         return ResponseEntity.ok("Employee Added");
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getEmployeeById(@PathVariable Long id)
+    {
+        return ResponseEntity.ok(employeeService.findEmployeeById(id));
+    }
+
     @GetMapping("/get")
     public ResponseEntity<?> getById(@RequestParam long id)
     {

@@ -14,7 +14,7 @@ const ManagerProjectActions = () => {
     if (!employee?.empId) return;
     try {
       const res = await axios.get(
-        `http://localhost:8080/project/${employee.empId}`
+        `http://localhost:8080/project/manager/${employee.empId}/active`
       );
       setProjects(res.data);
     } catch (err) {
@@ -92,7 +92,7 @@ const ManagerProjectActions = () => {
       {/* ✅ Shared → Select Project Dropdown */}
       <div className={styles.fld}>
         <label>Select Project</label>
-        <select onChange={handleProjectChange}>
+        <select value={selectedProject?.id || ""} onChange={handleProjectChange}>
           <option value="">Select Project</option>
           {projects.map((proj) => (
             <option key={proj.id} value={proj.id}>

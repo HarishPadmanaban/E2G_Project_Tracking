@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -58,9 +59,10 @@ public class ProjectController {
             @RequestParam BigDecimal modellingHours,
             @RequestParam BigDecimal checkingHours,
             @RequestParam BigDecimal detailingHours,
-            @RequestParam BigDecimal studyHours
-    ) {
-        return projectService.updateProjectHours(tlId,projectId, modellingHours, checkingHours, detailingHours,studyHours);
+            @RequestParam BigDecimal studyHours,
+            @RequestParam LocalDate startDate
+            ) {
+        return projectService.updateProjectHours(tlId,projectId, modellingHours, checkingHours, detailingHours,studyHours,startDate);
     }
 
     @PutMapping("/editproject")
@@ -76,7 +78,13 @@ public class ProjectController {
 
     @PutMapping("/set-extra-hours/{id}")
     public ResponseEntity<ProjectResponse> setExtraHours(@PathVariable Long id,@RequestParam BigDecimal extraHours){
-        System.out.println(id+"\n"+extraHours);
+        //System.out.println(id+"\n"+extraHours);
         return ResponseEntity.ok(projectService.setExtra(id,extraHours));
+    }
+
+    @GetMapping("/get-by-tl/{id}")
+    public ResponseEntity<?> getProjectsByTlId(@PathVariable Long id)
+    {
+        return ResponseEntity.ok(projectService.getProjectsByTl(id));
     }
 }

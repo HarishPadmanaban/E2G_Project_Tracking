@@ -10,4 +10,5 @@ public interface ProjectRepository extends JpaRepository<Project,Long> {
     List<Project> findByManagerIdAndProjectStatusTrue(Long managerId);
     List<Project> findByManagerIdAndProjectStatusFalse(Long managerId);
     List<Project> findByProjectStatusFalse();
+    List<Project> findByTlId(Long tlId);
 }

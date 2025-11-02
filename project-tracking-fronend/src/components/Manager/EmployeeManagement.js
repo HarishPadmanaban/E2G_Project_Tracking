@@ -12,6 +12,8 @@ const EmployeesUnderManager = () => {
     const [designationFilter, setDesignationFilter] = useState("");
     const [showModal, setShowModal] = useState(false);
     const [selectedProjects, setSelectedProjects] = useState([]);
+    const [selectedEmp, setSelectedEmp] = useState(null);
+
 
     useEffect(() => {
         if (!employee?.empId) return;
@@ -64,15 +66,44 @@ const EmployeesUnderManager = () => {
         setFilteredEmployees(employees);
     };
 
-    const handleEmployeeClick = (empId) => {
-        axios
-            .get(`http://localhost:8080/project-assignment/projects/${empId}`)
-            .then((res) => {
-                setSelectedProjects(res.data);
-                setShowModal(true);
-            })
-            .catch((err) => console.error("Error fetching employee projects:", err));
-    };
+    const handleEmployeeClick = async (empId) => {
+  try {
+    // First, find the clicked employee object
+    const selectedEmp = employees.find((e) => e.empId === empId);
+    setSelectedEmp(selectedEmp);
+
+    let res;
+    if (
+      selectedEmp.designation.toLowerCase().includes("project coordinator")
+    ) {
+      // ✅ If the clicked employee is a manager → fetch projects under this manager
+      res = await axios.get(`http://localhost:8080/project/get-by-tl/${empId}`);
+    } else {
+      // ✅ Else → fetch projects the employee is assigned to
+      res = await axios.get(`http://localhost:8080/project-assignment/projects/${empId}`);
+    }
+
+    const projectsWithCoordinator = await Promise.all(
+      res.data.map(async (proj) => {
+        //console.log(proj)
+        if (proj.tlId) {
+          const tlRes = await axios.get(
+            `http://localhost:8080/employee/${proj.tlId}`
+          );
+          //console.log(tlRes);
+          return { ...proj, coordinatorName: tlRes.data.name };
+        }
+        return proj;
+      })
+    );
+
+    setSelectedProjects(projectsWithCoordinator);
+    setShowModal(true);
+  } catch (err) {
+    console.error("Error fetching employee/manager projects:", err);
+  }
+};
+
 
 
     return (
@@ -159,11 +190,28 @@ const EmployeesUnderManager = () => {
                                 ) : (
 
                                     selectedProjects.map((project) => (
-                                        <tr key={project.id}>
-                                            <td>{project.id}</td>
-                                            <td>{project.projectName}</td>
-                                        </tr>
-                                    ))
+      <tr key={project.id}>
+        <td>{project.id}</td>
+        <td>
+          {project.projectName}
+          {selectedEmp &&
+            !selectedEmp.designation
+              .toLowerCase()
+              .includes("project coordinator") &&
+            project.coordinatorName && (
+              <span
+                style={{
+                  color: "#007bff",
+                  marginLeft: "8px",
+                  fontSize: "16px",
+                }}
+              >
+                ({project.coordinatorName})
+              </span>
+            )}
+        </td>
+      </tr>
+    ))
 
                                 )}
                             </tbody>
