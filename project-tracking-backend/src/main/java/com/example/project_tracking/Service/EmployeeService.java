@@ -132,4 +132,8 @@ public class EmployeeService {
 
         return true;
     }
+
+    public Employee findEmployeeById(Long id) {
+        return employeeRepository.findById(id).orElseThrow(()-> new RuntimeException("No employee found by id "+id));
+    }
 }

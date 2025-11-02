@@ -108,7 +108,8 @@ const ProjectAssignmentForm = () => {
     modellingHours: "",
     checkingHours: "",
     detailingHours: "",
-    studyHours:""
+    studyHours:"",
+    startDate: "",
   });
 
 
@@ -138,7 +139,8 @@ return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designatio
       modellingHours: "",
       checkingHours: "",
       detailingHours: "",
-      studyHours:""
+      studyHours:"",
+      startDate: "",
     });
   };
 
@@ -156,6 +158,22 @@ return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designatio
     alert("⚠️ Please select Team Lead.");
     return false;
   }
+
+  if (!formData.startDate) {
+  alert("⚠️ Please select Start Date");
+  return false;
+}
+
+const today = new Date().setHours(0, 0, 0, 0);
+const start = new Date(formData.startDate).setHours(0, 0, 0, 0);
+
+if (start < today) {
+  alert("❌ Start Date cannot be in the past.");
+  return false;
+}
+
+
+
 
   if (
     !formData.modellingHours ||
@@ -202,7 +220,8 @@ return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designatio
           modellingHours: formData.modellingHours,
           checkingHours: formData.checkingHours,
           detailingHours: formData.detailingHours,
-          studyHours:formData.studyHours
+          studyHours:formData.studyHours,
+          startDate: formData.startDate,
         },
       }
     );
@@ -233,6 +252,7 @@ return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designatio
       modellingHours: "",
       checkingHours: "",
       detailingHours: "",
+      startDate:"",
     });
     setSelectedResources([]);
     setSelectedProject(null);
@@ -311,6 +331,19 @@ return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designatio
               ))}
             </select>
           </div>
+
+          <div className={styles.fld}>
+  <label>Start Date</label>
+  <input
+    type="date"
+    name="startDate"
+    value={formData.startDate}
+    min={new Date().toISOString().split("T")[0]} 
+    onChange={handleChange}
+  />
+</div>
+
+
 
 
           {/* Assigned Hours Inputs */}

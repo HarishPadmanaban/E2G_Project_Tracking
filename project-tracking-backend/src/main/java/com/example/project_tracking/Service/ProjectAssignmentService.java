@@ -49,10 +49,20 @@ public class ProjectAssignmentService {
     }
 
     public List<Employee> getEmployeesByProject(Long projectId) {
+        System.out.println(projectId);
+        Project project = projectRepository.findById(projectId).orElseThrow(()-> new RuntimeException("No project found"));
+        System.out.println(project.toString());
+        Employee tl = null;
+        if(project.getTlId()!=null) {
+            tl = employeeRepository.findById(project.getTlId()).orElseThrow(()-> new RuntimeException("No TL - employee found"));
+        }
+        Employee manager = employeeRepository.findById(project.getManagerId()).orElseThrow(()-> new RuntimeException("No TL - employee found"));
         List<ProjectAssignment> assignments = projectAssignmentRepository.findByProject_Id(projectId);
-        return assignments.stream()
+        List<Employee> dto =  new ArrayList<>(assignments.stream()
                 .map(ProjectAssignment::getEmployee)
-                .collect(Collectors.toList());
+                .toList());
+        if(tl!=null) dto.addFirst(tl);
+        return dto;
     }
 
     public List<Project> getProjectsByEmployee(Long employeeId) {

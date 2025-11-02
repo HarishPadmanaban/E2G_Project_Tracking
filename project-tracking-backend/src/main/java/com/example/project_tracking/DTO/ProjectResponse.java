@@ -10,6 +10,9 @@ public class ProjectResponse {
     private String clientName;
     private Long managerId;
     private String managerName; // extra field
+    private Long tlId;
+    private String tlName;
+
     private BigDecimal assignedHours;
     private BigDecimal workingHours;
     private LocalDate assignedDate;
@@ -35,6 +38,33 @@ public class ProjectResponse {
 
 
     public ProjectResponse() {
+    }
+
+    public ProjectResponse(Long id, String projectName, String clientName, Long managerId, String managerName, Long tlId, String tlName, BigDecimal assignedHours, BigDecimal workingHours, LocalDate assignedDate, Boolean projectStatus, Boolean softDelete, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal modellingTime, BigDecimal checkingTime, BigDecimal detailingTime, LocalDate startDate, LocalDate completedDate, BigDecimal studyHours, BigDecimal studyHoursTracking, BigDecimal extraHours, BigDecimal extraHoursTracking) {
+        this.id = id;
+        this.projectName = projectName;
+        this.clientName = clientName;
+        this.managerId = managerId;
+        this.managerName = managerName;
+        this.tlId = tlId;
+        this.tlName = tlName;
+        this.assignedHours = assignedHours;
+        this.workingHours = workingHours;
+        this.assignedDate = assignedDate;
+        this.projectStatus = projectStatus;
+        this.softDelete = softDelete;
+        this.modellingHours = modellingHours;
+        this.checkingHours = checkingHours;
+        this.detailingHours = detailingHours;
+        this.modellingTime = modellingTime;
+        this.checkingTime = checkingTime;
+        this.detailingTime = detailingTime;
+        this.startDate = startDate;
+        this.completedDate = completedDate;
+        this.studyHours = studyHours;
+        this.studyHoursTracking = studyHoursTracking;
+        this.extraHours = extraHours;
+        this.extraHoursTracking = extraHoursTracking;
     }
 
     public ProjectResponse(Long id, String projectName, String clientName, Long managerId,
@@ -180,6 +210,22 @@ public class ProjectResponse {
 
     public void setExtraHoursTracking(BigDecimal extraHoursTracking) {
         this.extraHoursTracking = extraHoursTracking;
+    }
+
+    public Long getTlId() {
+        return tlId;
+    }
+
+    public void setTlId(Long tlId) {
+        this.tlId = tlId;
+    }
+
+    public String getTlName() {
+        return tlName;
+    }
+
+    public void setTlName(String tlName) {
+        this.tlName = tlName;
     }
 }
 

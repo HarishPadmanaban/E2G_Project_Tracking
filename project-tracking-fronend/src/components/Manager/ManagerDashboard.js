@@ -159,6 +159,8 @@ const ManagerDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedProjectMembers, setSelectedProjectMembers] = useState([]);
+  const [selectedCoordinator, setSelectedCoordinator] = useState(null);
+
 
   const isAGM =
     employee?.designation === "Assistant General Manager" ||
@@ -176,7 +178,7 @@ const ManagerDashboard = () => {
     // Use appropriate ID depending on role
     const managerIdToUse = employee.manager ? employee.empId : employee.reportingToId;
     console.log(isAGM)
-    console.log(managerIdToUse)
+    //console.log(managerIdToUse)
 
     const endpoint = isAGM
       ? `http://localhost:8080/project/`
@@ -206,8 +208,8 @@ const ManagerDashboard = () => {
       .catch((err) => console.error(err));
   }, [employee]);
 
-  console.log(filteredProjects);
-  console.table(managers);
+  //console.log(filteredProjects);
+  //console.table(managers);
 
   const applyFilter = (projList, category, searchText, managerId) => {
     let result = projList;
@@ -257,12 +259,25 @@ const ManagerDashboard = () => {
     applyFilter(projects, filter, "", "");
   };
 
-  const handleProjectClick = (projectId) => {
+  const handleProjectClick = async (project) => {
     // 🔥 Dummy data for now — Replace later by backend
 
-    axios.get(`http://localhost:8080/project-assignment/employees/${projectId}`).then(res => {
-      setSelectedProjectMembers(res.data)
+    //console.log(project);
+
+    axios.get(`http://localhost:8080/project-assignment/employees/${project.id}`).then(res => {
+
+      const filtered = res.data.filter(emp => emp.empId !== project.tlId);
+    setSelectedProjectMembers(filtered);
     });
+
+    if (project.tlId) {
+      const tlRes = await axios.get(
+        `http://localhost:8080/employee/${project.tlId}`
+      );
+      setSelectedCoordinator(tlRes.data.name); // assuming your Employee model returns "name"
+    } else {
+      setSelectedCoordinator("Not Assigned");
+    }
 
     setShowModal(true);
   };
@@ -345,7 +360,7 @@ const ManagerDashboard = () => {
           ) : (
             filteredProjects.map((p) => (
               <tr
-                onClick={() => handleProjectClick(p.id)}
+                onClick={() => handleProjectClick(p)}
                 key={p.id}
                 className={`
     ${p.modellingHours === 0 ? styles.highlightRow : ""}
@@ -383,6 +398,12 @@ const ManagerDashboard = () => {
       {showModal && (
         <div className={styles.overlay} onClick={() => setShowModal(false)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+
+            <div className={styles.coordinatorInfo}>
+  <strong>Project Coordinator:</strong>{" "}
+  {selectedCoordinator ? selectedCoordinator : "Not Assigned"}
+</div>
+
             <h3>Project Members</h3>
             <table className={styles.memberTable}>
               <thead>
