@@ -195,20 +195,44 @@ import { useEmployee } from "../../context/EmployeeContext";
 import { useNavigate } from "react-router-dom";
 import AddEmployeeForm from './AddEmployeeForm';
 
+const designationToRole = {
+  "Assistant General Manager": "Manager",
+  "Project Manager": "Manager",
+  "Admin": "Admin",
+  "Project Coordinator": "Coordinator",
+  "Senior Checker": "Checker",
+  "Junior Checker": "Checker",
+  "Senior Detailer": "Detailer",
+  "Junior Detailer": "Detailer",
+  "Senior Modeller": "Modeller",
+  "Junior Modeller": "Modeller"
+};
+
+
 const EditEmployee = () => {
   const { employee, loading } = useEmployee();
   const navigate = useNavigate();
-    const [employees, setEmployees] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDesignation, setSelectedDesignation] = useState("All");
+  const [showModal, setShowModal] = useState(false);
+  const [selectedProjects, setSelectedProjects] = useState([]);
+  const [isViewing, setIsViewing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
   const [designations] = useState([
     "Assistant General Manager",
     "Project Manager",
-    "Admin",
     "Project Coordinator",
-    "Employee",
+    "Admin",
+    "Senior Checker",
+    "Junior Checker",
+    "Senior Detailer",
+    "Junior Detailer",
+    "Senior Modeller",
+    "Junior Modeller"
   ]);
 
   const [managerList, setManagerList] = useState([]);
@@ -260,7 +284,8 @@ const EditEmployee = () => {
       data = data.filter(
         (e) =>
           e.name?.toLowerCase().includes(term) ||
-          e.empId?.toLowerCase().includes(term) ||
+          String(e.empId).toLowerCase().includes(term)
+          ||
           e.designation?.toLowerCase().includes(term)
       );
     }
@@ -280,16 +305,18 @@ const EditEmployee = () => {
   const handleEdit = (emp) => {
     setSelectedEmployee(emp);
     setFormData({
-      id:emp.id,
+      id: emp.id,
       empId: emp.empId,
       name: emp.name,
       designation: emp.designation,
-      reportingTo: emp.reportingToId || "",
+      reportingTo: emp.reportingTo?.empId || "",
       isManager: emp.manager,
       isTL: emp.tl,
       username: emp.username || "",
       password: emp.password || "",
     });
+    setIsViewing(false);  // ✅ make sure View is closed
+    setIsEditing(true);
   };
 
   // Handle input changes
@@ -301,22 +328,36 @@ const EditEmployee = () => {
     }));
   };
 
+  const handleEmployeeClick = (empId) => {
+    axios
+      .get(`http://localhost:8080/project-assignment/projects/${empId}`)
+      .then((res) => {
+        setSelectedProjects(res.data);
+        setShowModal(true);
+      })
+      .catch((err) => console.error("Error fetching employee projects:", err));
+  };
+
   // Save employee changes
   const handleSave = async () => {
     try {
+      const role = designationToRole[formData.designation] || "Employee";
       const payload = {
-        id:formData.id,
-        empId: formData.empId,
+        empId: Number(formData.empId),
         name: formData.name,
         designation: formData.designation,
+        designationCategory: role,
         isManager: ["Project Manager", "Assistant General Manager"].includes(formData.designation),
         isTL: formData.designation === "Project Coordinator",
-        username: formData.username,       
+        username: formData.username,
         password: formData.password,
         reportingTo:
-          formData.reportingTo === "" ? null : Number(formData.reportingTo),
+          formData.reportingTo === ""
+            ? null
+            : { empId: Number(formData.reportingTo) },
       };
       console.log(payload);
+
 
       await axios.put("http://localhost:8080/employee/editemployee", payload);
       alert("✅ Employee updated successfully!");
@@ -332,10 +373,12 @@ const EditEmployee = () => {
     }
   };
 
+  console.log(filteredEmployees);
+
   return (
     <div className={styles.tableContainer}>
-      { <h2 className={styles.title}>Employee Management</h2>}
-      
+      {<h2 className={styles.title}>Employee Management</h2>}
+
       {!selectedEmployee && (
         <>
           {/* Filters */}
@@ -366,12 +409,12 @@ const EditEmployee = () => {
             <button className={styles.clearBtn} onClick={clearFilters}>
               Clear Filters
             </button>
-             <button
-  className={styles.addBtn}
-  onClick={() => navigate("/manager/add-employee")}
->
-  + Add Employee
-</button>
+            <button
+              className={styles.addBtn}
+              onClick={() => navigate("/manager/add-employee")}
+            >
+              + Add Employee
+            </button>
           </div>
 
           {/* Employees Table */}
@@ -381,8 +424,7 @@ const EditEmployee = () => {
                 <th>Emp ID</th>
                 <th>Name</th>
                 <th>Designation</th>
-                <th>Manager</th>
-                <th>Is TL</th>
+                <th>Reporting To</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -395,12 +437,11 @@ const EditEmployee = () => {
                 </tr>
               ) : (
                 filteredEmployees.map((emp) => (
-                  <tr key={emp.id}>
-                    <td>{emp.empId}</td>
-                    <td>{emp.name}</td>
-                    <td>{emp.designation}</td>
-                    <td>{emp.manager ? "Yes" : "No"}</td>
-                    <td>{emp.tl ? "Yes" : "No"}</td>
+                  <tr key={emp.id} >
+                    <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.empId}</td>
+                    <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.name}</td>
+                    <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.designation}</td>
+                    <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.reportingTo?.name || "--"}</td>                    
                     <td>
                       <button
                         className={styles.actionBtn}
@@ -421,7 +462,7 @@ const EditEmployee = () => {
         <div className={styles.formContainer}>
           <button
             className={styles.backbtn}
-            onClick={() => setSelectedEmployee(null)}
+            onClick={() => { setSelectedEmployee(null); setIsEditing(false); }}
           >
             Back
           </button>
@@ -474,14 +515,14 @@ const EditEmployee = () => {
               >
                 <option value="">Select Manager</option>
                 {managerList.map((m) => (
-                  <option key={m.id} value={m.id}>
+                  <option key={m.id} value={m.empId}>
                     {m.name} ({m.designation})
                   </option>
                 ))}
               </select>
             </div>
 
-                
+
           </div>
 
           <div className={styles.formActions}>
@@ -497,6 +538,41 @@ const EditEmployee = () => {
           </div>
         </div>
       )}
+
+      {showModal && (
+        <div className={styles.overlay} onClick={() => setShowModal(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h3>Projects Working</h3>
+            <table className={styles.memberTable}>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Project Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedProjects.length === 0 ? (
+                  <tr>
+                    <td colSpan="13" className={styles.noData}>
+                      No records found.
+                    </td>
+                  </tr>
+                ) : (
+
+                  selectedProjects.map((project) => (
+                    <tr key={project.id}>
+                      <td>{project.id}</td>
+                      <td>{project.projectName}</td>
+                    </tr>
+                  ))
+
+                )}
+              </tbody>
+            </table>
+
+            <button className={styles.closeBtn} onClick={() => setShowModal(false)}>Close</button>
+          </div>
+        </div>)}
     </div>
   );
 };

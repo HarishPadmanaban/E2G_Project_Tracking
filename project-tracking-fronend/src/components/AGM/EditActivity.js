@@ -188,7 +188,6 @@ const EditActivity = () => {
                 <th>Activity Name</th>
                 <th>Category</th>
                 <th>Main Type</th>
-                <th>Soft Deleted?</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -205,8 +204,7 @@ const EditActivity = () => {
                     <td>{act.id}</td>
                     <td>{act.activityName}</td>
                     <td>{act.category}</td>
-                    <td>{act.mainType}</td>
-                    <td>{act.softDelete ? "Yes" : "No"}</td>
+                    <td>{act.mainType}</td>                  
                     <td>
                       <button
                         className={styles.actionBtn}

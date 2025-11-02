@@ -103,6 +103,7 @@ public class EmployeeService {
         Employee old = employeeRepository.findById(employee.getEmpId()).orElse(null);
         old.setName(employee.getName());
         old.setDesignation(employee.getDesignation());
+        old.setDesignationCategory(employee.getDesignationCategory());
         old.setIsTL(employee.getIsTL());
         old.setIsManager(employee.getIsManager());
         old.setReportingTo(employee.getReportingTo());

@@ -326,6 +326,16 @@
   border: 1px solid #e2e8f0;
 }
 
+.statusInProgress {
+  color: orange;
+  font-weight: 600;
+}
+
+.statusCompleted {
+  color: green;
+  font-weight: 600;
+}
+
 /* ====== Responsive Design for Filters ====== */
 @media (max-width: 768px) {
   .filterBar {
@@ -460,3 +470,85 @@
   color: #555;
 }
 
+
+/* Modal Overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 30, 30, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+/* Modal Box */
+.modal {
+  width: 60%;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal h3 {
+  margin-bottom: 12px;
+  color: #1e293b;
+}
+
+.memberTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.memberTable th {
+  background: #1e293b;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+}
+
+.memberTable td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+/* ✅ Make table rows clickable */
+.detailsTable tbody tr {
+  cursor: pointer;   /* <-- pointer hover */
+}
+.detailsTable tbody tr:hover {
+  background-color: #eaeaea; /* soft hover */
+}
+
+/* ✅ Close button moved to top-right inside modal */
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #e53935; /* Red */
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 50px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+/* Hover effect */
+.closeBtn:hover {
+  background: #b71c1c;
+}
+
+/* ✅ Ensure modal supports absolute button placement */
+.modal {
+  position: relative; /* important */
+}

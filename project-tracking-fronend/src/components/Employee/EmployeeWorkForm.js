@@ -1851,7 +1851,7 @@ const EmployeeWorkForm = () => {
                 name="startTime"
                 value={formData.startTime}
                 onChange={handleChange}
-                readOnly={isReadOnly("startTime")}
+                readOnly
               />
             </div>
 
@@ -1862,7 +1862,7 @@ const EmployeeWorkForm = () => {
                 name="endTime"
                 value={formData.endTime}
                 onChange={handleChange}
-                readOnly={isReadOnly("endTime")}
+                readOnly
               />
             </div>
 

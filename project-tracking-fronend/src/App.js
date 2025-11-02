@@ -20,6 +20,7 @@ import AddEmployeeForm from './components/AGM/AddEmployeeForm.js';
 import AddActivityForm from './components/AGM/AddActivityForm.js';
 import AssignProjectForm from './components/AGM/AssignProjectForm.js';
 import EditWorkDetails from './components/AGM/EditWorkDetails.js';
+import AssignResources from './components/PC/AssignResources.js';
 
   const Unauthorized = () => (
   <div style={{ textAlign: "center", marginTop: "50px" }}>
@@ -82,9 +83,10 @@ function App() {
 
   return (
     <div className="App">
-      {employee && !employee.manager && employee.designation !== "Assistant General Manager" && <EmployeeNavbar />}
+      {employee && !employee.manager && !employee.tl &&employee.designation !== "Assistant General Manager" && <EmployeeNavbar />}
 {employee && employee.manager && employee.designation !== "Assistant General Manager" && <ManagerNavbar />}
 {employee && employee.designation === "Assistant General Manager" && <ManagerNavbar />}
+{employee && employee.tl && !employee.manager && employee.designation !== "Assistant General Manager" &&<ManagerNavbar />}
 
       <Routes>
         <Route path="/" element={<Login />} />        
@@ -102,6 +104,15 @@ function App() {
   element={
     <ProtectedRoute>
       <ProjectAssignmentForm />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/pc/assign"
+  element={
+    <ProtectedRoute>
+      <AssignResources />
     </ProtectedRoute>
   }
 />

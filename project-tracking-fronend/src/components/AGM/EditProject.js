@@ -155,8 +155,8 @@ const EditProject = () => {
 
   return (
     <div className={styles.tableContainer}>
-      { <h2 className={styles.title}>Project Management</h2>}
-      
+      {<h2 className={styles.title}>Project Management</h2>}
+
       {!selectedProject && (
         <>
           {/* Filters */}
@@ -227,7 +227,11 @@ const EditProject = () => {
                     <td>{proj.clientName}</td>
                     <td>{proj.managerName || "—"}</td>
                     <td>{proj.assignedHours}</td>
-                    <td>{proj.projectStatus ? "Active" : "Completed"}</td>
+                    <td className={
+                      proj.projectStatus
+                        ? styles.statusInProgress
+                        : styles.statusCompleted
+                    }>{proj.projectStatus ? "In-Progress" : "Completed"}</td>
                     <td>
                       <button
                         className={styles.actionBtn}

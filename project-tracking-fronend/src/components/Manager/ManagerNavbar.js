@@ -16,6 +16,8 @@ const ManagerNavbar = () => {
   employee?.designation === "Assistant General Manager" ||
   employee?.designation === "Admin";
 
+  const isPC=employee?.designation === "Project Coordinator";
+
   const isNotAgm = employee?.designation !== "Assistant General Manager"
 
   const handleBack = () => {
@@ -97,22 +99,41 @@ const ManagerNavbar = () => {
             className={`${styles.sidebarMenu} ${menuOpen ? styles.open : ""}`}
           >
             <ul>
-              <Link
+             {!isPC && <Link
                 to="/manager/work"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
               >
                 <li>Home</li>
-              </Link>
+              </Link>}
+
+              {isPC &&
               <Link
+                to="/employee/work"
+                className={styles.menuLink}
+                onClick={() => setMenuOpen(false)}
+              >
+                <li>Home</li>
+              </Link>
+              }
+
+             {isPC && <Link
+                to="/pc/assign"
+                className={styles.menuLink}
+                onClick={() => setMenuOpen(false)}
+              >
+                <li>Assign resources</li>
+              </Link>}
+
+             {!isPC && <Link
                 to="/manager/analysis"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
               >
                 <li>Analysis</li>
-              </Link>
+              </Link>}
 
-              {!isAGM && (
+              {!isAGM && !isPC &&(
                 <Link
                   to="/manager/assign-tl"
                   className={styles.menuLink}
@@ -132,7 +153,7 @@ const ManagerNavbar = () => {
                 </Link>
               )} */}
 
-              {!isAGM && (<Link
+              {!isAGM && !isPC &&(<Link
                 to="/manager/view-employee"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
@@ -142,7 +163,7 @@ const ManagerNavbar = () => {
                 </li>
               </Link>)}
 
-              {!isAGM && (<Link
+              {!isAGM && !isPC &&(<Link
                 to="/manager/view-requests"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
@@ -156,7 +177,7 @@ const ManagerNavbar = () => {
               </Link>)}
 
 
-              {!isAGM && (
+              {!isAGM && !isPC &&(
                 <Link
                   to="/manager/update-project"
                   className={styles.menuLink}
@@ -166,7 +187,7 @@ const ManagerNavbar = () => {
                 </Link>
               )}
 
-               {isAGM && (
+               {isAGM && !isPC &&(
                 <Link
                   to="/manager/view-approved-request"
                   className={styles.menuLink}
@@ -176,7 +197,7 @@ const ManagerNavbar = () => {
                 </Link>
               )}
 
-              {isAGM && (<Link
+              {isAGM && !isPC &&(<Link
                 to="/manager/edit-all"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
@@ -186,7 +207,7 @@ const ManagerNavbar = () => {
                 </li>
               </Link>)}
 
-              {isAGM && (
+              {isAGM && !isPC &&(
                 <Link
                   to="/manager/edit-workdetails"
                   className={styles.menuLink}

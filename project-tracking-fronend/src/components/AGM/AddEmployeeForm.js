@@ -10,8 +10,8 @@ const AddEmployeeForm = () => {
     name: "",
     designation: "",
     reportingTo: "",
-    username:"",
-    password:"",
+    username: "",
+    password: "",
   });
 
 
@@ -20,9 +20,14 @@ const AddEmployeeForm = () => {
   const designations = [
     "Assistant General Manager",
     "Project Manager",
-    "Admin",
     "Project Coordinator",
-    "Employee",
+    "Admin",
+    "Senior Checker",
+    "Junior Checker",
+    "Senior Detailer",
+    "Junior Detailer",
+    "Senior Modeller",
+    "Junior Modeller"
   ];
 
   // Fetch manager list from backend
@@ -33,10 +38,20 @@ const AddEmployeeForm = () => {
       .catch(() => setManagers([]));
   }, []);
 
+  console.table(managers);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const mapDesignationToRole = (designation) => {
+    if (designation.toLowerCase().includes("checker")) return "Checker";
+    if (designation.toLowerCase().includes("modeller")) return "Modeller";
+    if (designation.toLowerCase().includes("detailer")) return "Detailer";
+    return designation; // fallback
+  };
+
 
   const handleSubmit = async () => {
     // Basic validation
@@ -45,7 +60,7 @@ const AddEmployeeForm = () => {
     if (!formData.designation) return alert("⚠️ Select Designation");
     if (!formData.reportingTo && !["Assistant General Manager"].includes(formData.designation)) {
       return alert("⚠️ Select Reporting Manager");
-    }    
+    }
     if (!formData.username.trim()) return alert("⚠️ Enter Username");
     if (!formData.password.trim()) return alert("⚠️ Enter Password");
     //if (formData.password.length <=6 ) return alert("⚠️ Password Must greater than 6");
@@ -54,15 +69,21 @@ const AddEmployeeForm = () => {
     try {
       console.log(formData);
       const payload = {
-        empId: formData.empId,
+        empId: Number(formData.empId),
         name: formData.name,
         designation: formData.designation,
-        isManager: ["Project Manager", "Assistant General Manager"].includes(formData.designation),
-        isTL: formData.designation === "Project Coordinator",
-        username: formData.username,       
-        password: formData.password, 
-        reportingTo: { id: formData.reportingTo }
+        designationCategory: mapDesignationToRole(formData.designation),
+        reportingTo:
+          formData.reportingTo === ""
+            ? null
+            : { empId: Number(formData.reportingTo) },
+        tl: formData.designation === "Project Coordinator",
+        manager: ["Project Manager", "Assistant General Manager"].includes(formData.designation),
+        username: formData.username,
+        password: formData.password
       };
+
+
 
       console.log(payload); // check
       await axios.post("http://localhost:8080/employee/addemployee", payload);
@@ -72,8 +93,8 @@ const AddEmployeeForm = () => {
         name: "",
         designation: "",
         reportingTo: "",
-        username:"",
-        password:"",
+        username: "",
+        password: "",
       });
     } catch (error) {
       console.error(error);
@@ -131,7 +152,7 @@ const AddEmployeeForm = () => {
         >
           <option value="">Select Manager</option>
           {managers.map((m) => (
-            <option key={m.id} value={m.id}>
+            <option key={m.id} value={m.empId}>
               {m.name} ({m.designation})
             </option>
           ))}

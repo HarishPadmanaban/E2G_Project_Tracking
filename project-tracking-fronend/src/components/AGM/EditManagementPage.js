@@ -4,11 +4,11 @@ import EditProject from "./EditProject";
 import EditActivity from "./EditActivity";
 import EditEmployee from "./EditEmployee";
 
-const tabs = ["Edit Project", "Edit Employee", "Edit Activity"];
+const tabs = ["Manage Project", "Manage Employee", "Manage Activity"];
 
 const EditManagementPage = () => {
-  const [activeTab, setActiveTab] = useState("Edit Project"); // tab user clicked
-  const [displayedTab, setDisplayedTab] = useState("Edit Project"); // currently rendered
+  const [activeTab, setActiveTab] = useState("Manage Project"); // tab user clicked
+  const [displayedTab, setDisplayedTab] = useState("Manage Project"); // currently rendered
   const [isFading, setIsFading] = useState(false);
 
   const handleTabChange = (tab) => {
@@ -32,11 +32,11 @@ const EditManagementPage = () => {
 
   const renderComponent = () => {
     switch (displayedTab) {
-      case "Edit Project":
+      case "Manage Project":
         return <EditProject />;
-      case "Edit Employee":
+      case "Manage Employee":
         return <EditEmployee />;
-      case "Edit Activity":
+      case "Manage Activity":
         return <EditActivity />;
       default:
         return <EditProject />;
@@ -45,8 +45,6 @@ const EditManagementPage = () => {
 
   return (
     <div className={styles.dashboardContainer}>
-      <h2 className={styles.dashboardTitle}>Edit Management</h2>
-
       <div className={styles.filterButtons}>
         {tabs.map((tab) => (
           <button
