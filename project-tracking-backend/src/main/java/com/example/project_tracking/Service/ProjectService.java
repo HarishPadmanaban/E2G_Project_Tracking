@@ -108,9 +108,6 @@ public class ProjectService {
 
         if (optionalProject.isPresent()) {
             Project project = optionalProject.get();
-
-            // Safely add (handling nulls)
-            if(project.getTlId()!=null && !(Objects.equals(project.getWorkingHours(), BigDecimal.ZERO))) {
                 project.setModellingHours(
                         project.getModellingHours() == null ? addModellingHours :
                                 project.getModellingHours().add(addModellingHours)
@@ -130,10 +127,6 @@ public class ProjectService {
 
                 // Save back to repo
                 return projectRepository.save(project);
-            }
-            else{
-                return project;
-            }
         } else {
             throw new RuntimeException("Project not found with ID: " + projectId);
         }

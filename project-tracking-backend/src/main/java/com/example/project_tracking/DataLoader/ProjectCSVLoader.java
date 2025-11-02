@@ -38,7 +38,7 @@ public class ProjectCSVLoader implements CommandLineRunner {
             return;
         }
 
-        //employeeResetter.resetProjectTable();
+        employeeResetter.resetProjectTable();
 
         List<String[]> rows;
         try (Reader reader = new InputStreamReader(

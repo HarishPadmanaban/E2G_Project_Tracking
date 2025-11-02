@@ -42,7 +42,8 @@ public class EmployeeService {
                     employee.getDesignation(),
                     employee.getIsManager(),  // isManager
                     employee.getIsTL(),       // isTL
-                    employee.getReportingTo() // reporting manager, DTO constructor handles null
+                    employee.getReportingTo() ,
+                    employee.getDesignationCategory()
             );
         } else {
             return null; // Will trigger 401 in controller
@@ -60,7 +61,8 @@ public class EmployeeService {
                     employee.getDesignation(),
                     employee.getIsManager(),  // isManager
                     employee.getIsTL(),       // isTL
-                    employee.getReportingTo() // reporting manager, DTO constructor handles null
+                    employee.getReportingTo(),
+                    employee.getDesignationCategory()
             );
         } else {
             return null; // Will trigger 401 in controller
@@ -115,7 +117,8 @@ public class EmployeeService {
                 employee.getDesignation(),
                 employee.getIsManager(),  // isManager
                 employee.getIsTL(),       // isTL
-                employee.getReportingTo() // reporting manager, DTO constructor handles null
+                employee.getReportingTo(), // reporting manager, DTO constructor handles null
+                employee.getDesignationCategory()
         );
     }
 

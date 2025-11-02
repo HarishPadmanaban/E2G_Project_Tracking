@@ -31,6 +31,8 @@ const AssignProjectForm = () => {
     if (!formData.totalHours || Number(formData.totalHours) <= 0)
       return alert("⚠️ Enter total hours > 0");
 
+    console.log(formData);
+
     try {
       await axios.post(
         `http://localhost:8080/project/save`,
@@ -85,7 +87,7 @@ const AssignProjectForm = () => {
         <select name="pmId" value={formData.pmId} onChange={handleChange}>
           <option value="">Select PM</option>
           {pms.map((pm) => (
-            <option key={pm.id} value={pm.id}>
+            <option key={pm.empId} value={pm.empId}>
               {pm.name}
             </option>
           ))}

@@ -265,10 +265,9 @@ const ManagerDashboard = () => {
       { id: 3, name: "David", hours: 28 },
     ]);
 
-    // 🚀 Backend endpoint (Future Integration)
-    // axios.get(`http://localhost:8080/project/members/${projectId}`).then(res => {
-    //    setSelectedProjectMembers(res.data)
-    // });
+    axios.get(`http://localhost:8080/project-assignment/employees/${projectId}`).then(res => {
+       setSelectedProjectMembers(res.data)
+    });
 
     setShowModal(true);
   };
@@ -393,7 +392,7 @@ const ManagerDashboard = () => {
               <tbody>
                 {selectedProjectMembers.map((m) => (
                   <tr key={m.id}>
-                    <td>{m.id}</td>
+                    <td>{m.empId}</td>
                     <td>{m.name}</td>
                     <td>{m.hours}</td>
                   </tr>

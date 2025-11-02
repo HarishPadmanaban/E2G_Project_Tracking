@@ -8,16 +8,18 @@ public class DataTransfer {
     private String designation;
     private Boolean isManager = false;
     private Boolean isTL = false;
-    private Long reportingToId;      // Only send the manager's ID
+    private Long reportingToId;// Only send the manager's ID
+    private String role;
 
 
     public DataTransfer( Long empId, String name, String designation,
-                        Boolean isManager, Boolean isTL, Employee reportingTo) {
+                        Boolean isManager, Boolean isTL, Employee reportingTo,String role) {
         this.empId = empId;
         this.name = name;
         this.designation = designation;
         this.isManager = isManager;
         this.isTL = isTL;
+        this.role = role;
 
         // Safely extract reportingTo info
         if (reportingTo != null) {
@@ -74,5 +76,13 @@ public class DataTransfer {
 
     public void setReportingToId(Long reportingToId) {
         this.reportingToId = reportingToId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

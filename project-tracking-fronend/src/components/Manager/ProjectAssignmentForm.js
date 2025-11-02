@@ -16,26 +16,32 @@ const ProjectAssignmentForm = () => {
   const managerIdToUse = employee?.manager ? employee.empId : employee?.reportingToId;
   const [projects, setProjects] = useState([]);
   const [teamLeads, setTeamLeads] = useState([]);
+  const [employeesByRole, setEmployeesByRole] = useState({
+    Modeller: [],
+    Checker: [],
+    Designer: []
+  });
+
   const [showResourceModal, setShowResourceModal] = useState(false); // ✅ NEW
   const [selectedRole, setSelectedRole] = useState("Modeller"); // ✅ NEW
   const [selectedResources, setSelectedResources] = useState([]); // ✅ NEW
 
   // ✅ replace dummyEmployees with objects that include name & designation
-  const dummyEmployees = {
-    Modeller: [
-      { id: 101, name: "Arun Kumar", designation: "Modeller - Senior" },
-      { id: 102, name: "Priya R", designation: "Modeller - Junior" },
-      { id: 103, name: "Sanjay T", designation: "Modeller - Trainee" },
-    ],
-    Checker: [
-      { id: 201, name: "Rita Singh", designation: "Checker - Senior" },
-      { id: 202, name: "Vikram P", designation: "Checker - Junior" },
-    ],
-    Designer: [
-      { id: 301, name: "Kavya M", designation: "Designer - Senior" },
-      { id: 302, name: "Deepak L", designation: "Designer - Trainee" },
-    ],
-  };
+  // const dummyEmployees = {
+  //   Modeller: [
+  //     { id: 101, name: "Arun Kumar", designation: "Modeller - Senior" },
+  //     { id: 102, name: "Priya R", designation: "Modeller - Junior" },
+  //     { id: 103, name: "Sanjay T", designation: "Modeller - Trainee" },
+  //   ],
+  //   Checker: [
+  //     { id: 201, name: "Rita Singh", designation: "Checker - Senior" },
+  //     { id: 202, name: "Vikram P", designation: "Checker - Junior" },
+  //   ],
+  //   Designer: [
+  //     { id: 301, name: "Kavya M", designation: "Designer - Senior" },
+  //     { id: 302, name: "Deepak L", designation: "Designer - Trainee" },
+  //   ],
+  // };
 
   useEffect(() => {
     if (!managerIdToUse) return;
@@ -64,6 +70,38 @@ const ProjectAssignmentForm = () => {
       .catch((err) => console.error(err));
   }, [managerIdToUse]);
 
+ useEffect(() => {
+  if (!managerIdToUse) return;
+
+  axios
+    .get(`http://localhost:8080/employee/getbymgr`, {
+      params: { mgrid: managerIdToUse },
+    })
+    .then((res) => {
+      const allEmployees = res.data;
+
+      console.log("👥 Employees under manager:", allEmployees);
+
+      // ✅ Categorize employees by their role
+      const grouped = {
+        Modeller: allEmployees.filter(emp =>
+          emp.role?.toLowerCase().includes("modeller")
+        ),
+        Checker: allEmployees.filter(emp =>
+          emp.role?.toLowerCase().includes("checker")
+        ),
+        Detailer: allEmployees.filter(emp =>
+          emp.role?.toLowerCase().includes("detailer")
+        ),
+      };
+
+      setEmployeesByRole(grouped);
+    })
+    .catch((err) => {
+      console.error("❌ Error fetching employees:", err);
+    });
+}, [managerIdToUse]);
+
   const [formData, setFormData] = useState({
     projectId: "",
     tl1: "",
@@ -72,15 +110,16 @@ const ProjectAssignmentForm = () => {
     detailingHours: "",
   });
 
+
   // ✅ updated toggle so we store role, name & designation in selectedResources
   const toggleResourceSelection = (emp) => {
     setSelectedResources((prev) => {
-      const exists = prev.find((r) => r.id === emp.id && r.role === selectedRole);
-      if (exists) {
-        return prev.filter((r) => !(r.id === emp.id && r.role === selectedRole));
-      }
-      // store useful info for later API payload
-      return [...prev, { id: emp.id, name: emp.name, designation: emp.designation, role: selectedRole }];
+      const exists = prev.find((r) => r.empId === emp.empId && r.role === selectedRole);
+if (exists) {
+  return prev.filter((r) => !(r.empId === emp.empId && r.role === selectedRole));
+}
+return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designation, role: selectedRole }];
+
     });
   };
 
@@ -147,8 +186,8 @@ const ProjectAssignmentForm = () => {
   }
 
   try {
-    // ✅ Wait for the PUT request to finish
-    const res = await axios.put(
+    // ✅ STEP 1: Add project hours
+    const hoursResponse = await axios.put(
       `http://localhost:8080/project/${formData.projectId}/add-hours`,
       null,
       {
@@ -161,9 +200,26 @@ const ProjectAssignmentForm = () => {
       }
     );
 
-    alert("✅ Project updated successfully!");
+    console.log("✅ Project Hours Update Response:", hoursResponse.data);
 
-    // Reset form data
+    // ✅ STEP 2: Assign resources (separate endpoint)
+    console.log("📦 Resources to be assigned:", selectedResources);
+
+    const payload = {
+  project_id: formData.projectId,
+  employeeIds: selectedResources.map(emp => emp.empId),
+};
+
+    const resourceResponse = await axios.post(
+      `http://localhost:8080/project-assignment/assign`,
+      payload
+    );
+
+    console.log("✅ Resource Allocation Response:", resourceResponse.data);
+
+    alert("✅ Project and resources assigned successfully!");
+
+    // ✅ Reset everything
     setFormData({
       projectId: "",
       tl1: "",
@@ -171,9 +227,10 @@ const ProjectAssignmentForm = () => {
       checkingHours: "",
       detailingHours: "",
     });
+    setSelectedResources([]);
     setSelectedProject(null);
 
-    // ✅ Wait for updated projects list
+    // ✅ Refresh updated projects
     const updatedProjectsRes = await axios.get(
       `http://localhost:8080/project/manager/${managerIdToUse}/active`
     );
@@ -187,11 +244,14 @@ const ProjectAssignmentForm = () => {
     );
 
     setProjects(inProgress);
+    console.log("🔁 Updated Project List:", updatedProjectsRes.data);
+
   } catch (error) {
-    console.error("Error updating project:", error);
-    alert("❌ Failed to update project");
+    console.error("❌ Error during assignment:", error);
+    alert("❌ Failed to assign project or resources");
   }
 };
+
 
 
   return (
@@ -238,7 +298,7 @@ const ProjectAssignmentForm = () => {
             >
               <option value="">Select Team Lead 1</option>
               {teamLeads.map((tl) => (
-                <option key={tl.id} value={tl.id}>
+                <option key={tl.empId} value={tl.empId}>
                   {tl.name}
                 </option>
               ))}
@@ -301,7 +361,7 @@ const ProjectAssignmentForm = () => {
             <h3 style={{ marginBottom: "10px" }}>Select Resources</h3>
 
             <div className={styles.filterRow}>
-              {["Modeller", "Checker", "Designer"].map((role) => (
+              {["Modeller", "Checker", "Detailer"].map((role) => (
                 <button
                   key={role}
                   className={`${styles.roleBtn} ${selectedRole === role ? styles.activeRole : ""}`}
@@ -313,10 +373,10 @@ const ProjectAssignmentForm = () => {
             </div>
 
             <div className={styles.modalContent}>
-              {dummyEmployees[selectedRole].map((emp) => {
-                const checked = selectedResources.some((r) => r.id === emp.id && r.role === selectedRole);
+              {employeesByRole[selectedRole].map((emp) => {
+                const checked = selectedResources.some((r) => r.empId === emp.empId && r.role === selectedRole);
                 return (
-                  <label key={emp.id} className={styles.checkItem}>
+                  <label key={emp.empId} className={styles.checkItem}>
                     <input
                       type="checkbox"
                       checked={checked}
