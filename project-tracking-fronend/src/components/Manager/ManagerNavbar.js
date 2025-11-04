@@ -31,7 +31,7 @@ const ManagerNavbar = () => {
   };
 
   useEffect(() => {
-  if (!employee?.id) return;
+  if (!employee?.empId) return;
 
   const fetchPending = () => {
     axios
@@ -117,13 +117,7 @@ const ManagerNavbar = () => {
               </Link>
               }
 
-             {isPC && <Link
-                to="/pc/assign"
-                className={styles.menuLink}
-                onClick={() => setMenuOpen(false)}
-              >
-                <li>Assign Activity</li>
-              </Link>}
+             
 
              {!isPC && <Link
                 to="/manager/analysis"
@@ -142,6 +136,14 @@ const ManagerNavbar = () => {
                   <li>Project Distribution</li>
                 </Link>
               )}
+
+              {(isPC || !isAGM) && <Link
+                to="/pc/assign"
+                className={styles.menuLink}
+                onClick={() => setMenuOpen(false)}
+              >
+                <li>Assign Activity</li>
+              </Link>}
 
               {/* {isAGM && (
                 <Link
@@ -225,7 +227,8 @@ const ManagerNavbar = () => {
           </button>
         </div>
 
-        <div className={styles.navCenter} style={{ marginLeft: "6%" }}>
+        <div className={styles.navCenter} style={{ marginLeft: "2%" }}>
+           <img src="/logo.png" alt="E2G Logo" className={styles.logo} />
           <h1>E2G ENGINEERING SERVICES PRIVATE LIMITED</h1>
         </div>
 

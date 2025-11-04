@@ -17,7 +17,13 @@ const Login = () => {
     employee.designation === "Assistant General Manager"
   ) {
     navigate("/manager/work", { replace: true });
-  } else {
+  } 
+  else if(employee.designation === "HR")
+  {
+    navigate("/manager/view-approved-request", { replace: true });
+  }
+  
+  else {
     navigate("/employee/work", { replace: true });
   }
 }, [employee, navigate]);

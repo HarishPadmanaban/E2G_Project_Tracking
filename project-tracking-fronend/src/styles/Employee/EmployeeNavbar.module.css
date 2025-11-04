@@ -111,9 +111,18 @@
 }
 
 /* Center: Heading */
+.logo {
+  width: 45px;
+  height: auto;
+  margin-right: 5px;
+}
+
 .navCenter {
   flex: 1;
-  margin-left: 12%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   text-align: center;
 }
 
@@ -125,6 +134,7 @@
   letter-spacing: 0.5px;
   color: white;
 }
+
 
 /* Right side: Nav links and buttons */
 .navRight {

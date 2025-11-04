@@ -8,7 +8,7 @@ const LeavePermissionForm = () => {
   const [requests, setRequests] = useState([]);
   const { employee, loading } = useEmployee();
   const [formData, setFormData] = useState({
-    employeeId: employee?.id || "",      // from logged-in user
+    employeeId: employee?.empId || "",      // from logged-in user
     managerId: employee?.reportingToId || "",
     type: "", // Leave / Permission
     leaveDuration: "", // One Day / Multiple Days
@@ -29,7 +29,7 @@ const LeavePermissionForm = () => {
     }
   }, [loading, employee]);
   useEffect(() => {
-    if (activeTab === "view" && employee?.id) {
+    if (activeTab === "view" && employee?.empId) {
       axios
         .get(`http://localhost:8080/leave/employee/${employee.empId}`)
         .then((res) => {
@@ -95,8 +95,8 @@ const LeavePermissionForm = () => {
 
     try {
       const payload = {
-        employee: { id: employee.empId },       // 👈 nested object
-        manager: { id: employee.reportingToId }, // 👈 nested object
+        employee: { empId: employee.empId },       // 👈 nested object
+        manager: { empId: employee.reportingToId }, // 👈 nested object
         type: formData.type,
         leaveDuration: formData.leaveDuration,
         fromDate: formData.fromDate || null,
@@ -133,6 +133,7 @@ const LeavePermissionForm = () => {
       } else {
         alert("⚠️ Failed to submit Leave/Permission!");
       }
+      console.log(payload);
 
     } catch (error) {
       console.error("❌ Error submitting Leave/Permission:", error);

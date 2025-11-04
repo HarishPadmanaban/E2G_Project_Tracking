@@ -20,12 +20,15 @@ const AssignActivityForm = () => {
     assignedActivity: "",
   });
 
+  const idToUse=employee.tl?employee.reportingToId:employee.empId;
+
+
   // ✅ Fetch Projects
   useEffect(() => {
     if (!employee || !employee.reportingToId) return;
 
     axios
-      .get(`http://localhost:8080/project/${employee.reportingToId}`) // Dummy API
+      .get(`http://localhost:8080/project/${idToUse}`) // Dummy API
       .then((res) => setProjects(res.data))
       .catch((err) => console.error(err));
   }, [managerId]);
@@ -35,10 +38,9 @@ const AssignActivityForm = () => {
     if (!managerId) return;
 
     axios
-      .get(`http://localhost:8080/employee/getbymgr?mgrid=${employee.reportingToId}`)
+      .get(`http://localhost:8080/employee/getbymgr?mgrid=${idToUse}`)
       .then((res) => {
-        const nonTLs = res.data.filter((emp) => emp.tl === false);
-        setEmployees(nonTLs);
+        setEmployees(res.data);
       })
       .catch((err) => console.error(err));
   }, [managerId, employee.reportingToId]);

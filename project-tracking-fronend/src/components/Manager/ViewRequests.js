@@ -10,7 +10,7 @@ const ViewRequests = () => {
   const { employee, loading } = useEmployee();
 
   const fetchRequests = async () => {
-  if (!employee?.id) return;
+  if (!employee?.empId) return;
 
   try {
     const [pendingRes, approvedRes] = await Promise.all([

@@ -130,7 +130,7 @@ function App() {
 <Route
   path="/manager/view-approved-request"
   element={
-    <ProtectedRoute allowedRoles={["Assistant General Manager","Project Manager", "Admin"]}>
+    <ProtectedRoute allowedRoles={["Assistant General Manager","Project Manager", "Admin","HR"]}>
       <ViewApprovedRequests />
     </ProtectedRoute>
   }

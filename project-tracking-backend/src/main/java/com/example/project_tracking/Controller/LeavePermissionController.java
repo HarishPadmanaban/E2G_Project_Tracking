@@ -20,6 +20,7 @@ public class LeavePermissionController {
     @PostMapping("/apply")
     public ResponseEntity<?> applyLeave(@RequestBody LeavePermission leavePermission) {
         leavePermissionService.saveLeavePermission(leavePermission);
+        System.out.println(leavePermission.toString());
         return ResponseEntity.ok("Successfully saved");
     }
 
