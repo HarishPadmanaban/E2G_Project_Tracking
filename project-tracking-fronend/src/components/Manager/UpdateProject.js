@@ -137,6 +137,18 @@ const ManagerProjectActions = () => {
             />
           </div>
 
+          <div className={styles.fld}>
+              <label>Project Activity</label>
+              <select
+                name="projectActivity"
+              >
+                <option value="">Project Activity</option>
+                <option value="IFRA">IFRA</option>
+                <option value="Client Rework">Client Rework</option>
+                <option value="Internal Rework">Internal Rework</option>
+              </select>
+            </div>
+
           <button
             className={styles.submitBtn}
             onClick={handleCompletionToggle}

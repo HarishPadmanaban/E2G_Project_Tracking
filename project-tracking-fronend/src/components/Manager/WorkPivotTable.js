@@ -125,30 +125,57 @@ const WorkPivotTable = () => {
   useEffect(() => {
     if (!employee) return;
 
-    const isAGM = employee.designation === "Assistant General Manager" || employee.designation === "Admin";
+    const isAGM =
+      employee.designation === "Assistant General Manager" ||
+      employee.designation === "Admin";
 
     const endpoint = isAGM
-      ? `http://localhost:8080/workdetails/all` // 👈 new AGM endpoint
-      : `http://localhost:8080/workdetails/manager/${employee.empId}`; // 👈 existing endpoint
+      ? `http://localhost:8080/workdetails/all`
+      : `http://localhost:8080/workdetails/manager/${employee.empId}`;
 
+    // ✅ Fetch WorkDetails + All Projects in Parallel
+    Promise.all([
+      axios.get(endpoint),
+      axios.get("http://localhost:8080/project/"),
+    ])
+      .then(([workRes, projectRes]) => {
+        const workDetails = workRes.data || [];
+        const allProjects = projectRes.data || [];
 
-    axios
-      .get(endpoint)
-      .then((res) => {
-        const pivotData = res.data.map((item, index) => ({
-          id: index,
-          Employee: item.employeeName || "Unknown",
-          Project: item.projectName || "Unassigned",
-          Activity: item.activityName || "No Activity",
-          Status: item.status || "Unknown",
-          "Work Hours": Number(item.workHours) || 0,
-          Date: item.date || "",
-          "Assigned Work": item.assignedWork || "",
-        }));
+        // ✅ Create ProjectId → AssignedHours lookup
+        const projectMap = new Map(
+          allProjects.map((p) => [
+            p.id,
+            {
+              name: p.projectName,
+              assignedHours: p.assignedHours || 0,
+            },
+          ])
+        );
+
+        // ✅ Merge Assigned Hours into Pivot Data
+        const pivotData = workDetails.map((item, index) => {
+          const projectInfo = projectMap.get(item.projectId) || {};
+          const assigned = projectInfo.assignedHours || 0;
+
+          return {
+            id: index,
+            Employee: item.employeeName || "Unknown",
+            // ✅ Show Assigned Hours next to Project
+            Project: `${item.projectName || "Unassigned"} (${assigned} hrs)`,
+            Activity: item.activityName || "No Activity",
+            Status: item.status || "Unknown",
+            "Work Hours": Number(item.workHours) || 0,
+            Date: item.date || "",
+            "Assigned Work": item.assignedWork || "",
+          };
+        });
+
         setData(pivotData);
       })
       .catch((err) => console.error("API Error:", err));
   }, [employee]);
+
 
   const exportPivotToExcel = () => {
     const table = document.querySelector(".pvtTable");

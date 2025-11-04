@@ -1,183 +1,209 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import styles from "../../styles/Employee/LeavePermissionForm.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
-const ProjectAssignmentForm = () => {
-  const { employee, loading } = useEmployee();
-  const navigate = useNavigate();
-
-  const managerIdToUse = employee?.manager ? employee.empId : employee?.reportingToId;
+const AssignActivityForm = () => {
+  const { employee } = useEmployee();
+  const managerId = employee?.empId;
 
   const [projects, setProjects] = useState([]);
-  const [employeesByRole, setEmployeesByRole] = useState({
-    Modeller: [],
-    Checker: [],
-    Detailer: []
-  });
+  const [activities, setActivities] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [filteredActivities, setFilteredActivities] = useState([]);
 
   const [formData, setFormData] = useState({
-    projectId: ""
+    projectId: "",
+    activityType: "",
+    activityId: "",
+    employeeId: "",
+    assignedActivity: "",
   });
 
-  const [showResourceModal, setShowResourceModal] = useState(false);
-  const [selectedRole, setSelectedRole] = useState("Modeller");
-  const [selectedResources, setSelectedResources] = useState([]);
-
-  // ✅ Redirect if not logged in
+  // ✅ Fetch Projects
   useEffect(() => {
-    if (!loading && !employee) {
-      navigate("/");
-    }
-  }, [employee, loading, navigate]);
+    if (!employee || !employee.reportingToId) return;
 
-  // ✅ Fetch Manager Projects
-  useEffect(() => {
-    if (!managerIdToUse) return;
     axios
-      .get(`http://localhost:8080/project/manager/${managerIdToUse}/active`)
+      .get(`http://localhost:8080/project/${employee.reportingToId}`) // Dummy API
       .then((res) => setProjects(res.data))
       .catch((err) => console.error(err));
-  }, [managerIdToUse]);
+  }, [managerId]);
 
-  // ✅ Fetch Employees under Manager
+  // ✅ Fetch Employees
   useEffect(() => {
-    if (!managerIdToUse) return;
+    if (!managerId) return;
+
     axios
-      .get(`http://localhost:8080/employee/getbymgr`, {
-        params: { mgrid: managerIdToUse },
-      })
+      .get(`http://localhost:8080/employee/getbymgr?mgrid=${employee.reportingToId}`)
       .then((res) => {
-        const all = res.data;
-        const grouped = {
-          Modeller: all.filter(emp => emp.role?.toLowerCase().includes("modeller")),
-          Checker: all.filter(emp => emp.role?.toLowerCase().includes("checker")),
-          Detailer: all.filter(emp => emp.role?.toLowerCase().includes("detailer")),
-        };
-        setEmployeesByRole(grouped);
+        const nonTLs = res.data.filter((emp) => emp.tl === false);
+        setEmployees(nonTLs);
       })
       .catch((err) => console.error(err));
-  }, [managerIdToUse]);
+  }, [managerId, employee.reportingToId]);
 
-  // ✅ Select project
-  const handleProjectChange = (e) => {
-    setFormData({ projectId: e.target.value });
+
+  // ✅ Fetch Activities based on type
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/activity/")
+      .then((res) => {
+        setActivities(res.data);
+        setFilteredActivities(res.data); // default
+      })
+      .catch((err) => console.error("Error fetching activities:", err));
+  }, []);
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    if (name === "activityType") {
+      const filtered = activities.filter(
+        (act) =>
+          act.mainType &&
+          act.mainType.toLowerCase() === value.toLowerCase()
+      );
+      setFilteredActivities(filtered);
+      setFormData((prev) => ({
+        ...prev,
+        activityType: value,
+        activityId: "",
+      }));
+    }
   };
 
-  // ✅ Select employees into array by role
-  const toggleResourceSelection = (emp) => {
-    setSelectedResources((prev) => {
-      const exists = prev.find((r) => r.empId === emp.empId);
-      if (exists) {
-        return prev.filter((r) => r.empId !== emp.empId);
-      }
-      return [...prev, emp];
-    });
+  const handleActivityChange = (e) => {
+    const selectedActivity = activities.find((act) => act.id.toString() === e.target.value);
+
+    setFormData((prev) => ({
+      ...prev,
+      activityId: e.target.value,
+      category: selectedActivity ? selectedActivity.category : "",
+    }));
   };
 
-  // ✅ Final Assign API Call
-  const handleAssign = async () => {
-    if (!formData.projectId) return alert("⚠ Select a project");
-    if (selectedResources.length === 0) return alert("⚠ Select resources");
+
+  // ✅ Submit
+  const handleSubmit = () => {
+    if (!formData.projectId || !formData.activityId || !formData.employeeId) {
+      alert("⚠️ Please fill all required fields");
+      return;
+    }
 
     const payload = {
-      project_id: formData.projectId,
-      employeeIds: selectedResources.map((e) => e.empId),
+      projectId: formData.projectId,
+      activityId: formData.activityId,
+      employeeId: formData.employeeId,
+      assignedActivity: Number(formData.assignedActivity),
     };
 
-    try {
-      await axios.post(`http://localhost:8080/project-assignment/assign`, payload);
-      alert("✅ Resources Assigned Successfully!");
 
-      setSelectedResources([]);
-      setShowResourceModal(false);
-      setFormData({ projectId: "" });
-    } catch (err) {
-      console.error(err);
-      alert("❌ Failed to assign resources");
-    }
+    axios
+      .post("http://localhost:8080/activity-assign", payload) // Dummy POST
+      .then((res) => {
+        alert("✅ Activity Assigned Successfully");
+        setFormData({
+          projectId: "",
+          activityType: "",
+          activityId: "",
+          employeeId: "",
+          assignedActivity: "",
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("❌ Failed to assign activity");
+      });
   };
 
   return (
     <div className={styles.container}>
-      <h2>Project Resource Assignment</h2>
+      <h2>Assign Activity</h2>
 
-      {/* ✅ Project Dropdown */}
+      {/* Project Dropdown */}
       <div className={styles.fld}>
         <label>Select Project</label>
-        <select name="projectId" value={formData.projectId} onChange={handleProjectChange}>
+        <select
+          name="projectId"
+          value={formData.projectId}
+          onChange={handleChange}
+        >
           <option value="">Select Project</option>
-          {projects.map((proj) => (
-            <option key={proj.id} value={proj.id}>
-              {proj.projectName} ({proj.clientName})
+          {projects.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.projectName}
             </option>
           ))}
         </select>
       </div>
 
-      {formData.projectId && (
-        <>
-          <button className={styles.ResourceBtn} onClick={() => setShowResourceModal(true)}>
-            Assign Resources ({selectedResources.length})
-          </button>
+      {/* Activity Type Dropdown */}
+      <div className={styles.fld}>
+        <label>Activity Type</label>
+        <select
+          name="activityType"
+          value={formData.activityType}
+          onChange={handleChange}
+        >
+          <option value="">Select Type</option>
+          <option value="Modelling">Modelling</option>
+          <option value="Checking">Checking</option>
+          <option value="Detailing">Detailing</option>
+          <option value="Common">Common</option>
+        </select>
+      </div>
 
-          <button className={styles.submitBtn} onClick={handleAssign}>
-            Assign
-          </button>
-        </>
-      )}
+      {/* Activity Dropdown */}
+      <div className={styles.fld}>
+        <label>Activity</label>
+        <select name="activityId" value={formData.activityId} onChange={handleActivityChange}>
+          <option value="">Select Activity</option>
+          {filteredActivities.map((act) => (
+            <option key={act.id} value={act.id}>
+              {act.activityName}
+            </option>
+          ))}
+        </select>
 
-      {/* ✅ Resource Modal */}
-      {showResourceModal && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalBox}>
-            <h3>Select Resources</h3>
+      </div>
 
-            <div className={styles.filterRow}>
-              {["Modeller", "Checker", "Detailer"].map((role) => (
-                <button
-                  key={role}
-                  className={`${styles.roleBtn} ${
-                    selectedRole === role ? styles.activeRole : ""
-                  }`}
-                  onClick={() => setSelectedRole(role)}
-                >
-                  {role}
-                </button>
-              ))}
-            </div>
+      {/* Employee Dropdown */}
+      <div className={styles.fld}>
+        <label>Assign To</label>
+        <select
+          name="employeeId"
+          value={formData.employeeId}
+          onChange={handleChange}
+        >
+          <option value="">Select Employee</option>
+          {employees.map((e) => (
+            <option key={e.empId} value={e.empId}>
+              {e.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-            <div className={styles.modalContent}>
-              {employeesByRole[selectedRole].map((emp) => {
-                const checked = selectedResources.some((r) => r.empId === emp.empId);
-                return (
-                  <label key={emp.empId} className={styles.checkItem}>
-                    <input type="checkbox" checked={checked} onChange={() => toggleResourceSelection(emp)} />
-                    <div className={styles.empInfo}>
-                      <div className={styles.empName}>{emp.name}</div>
-                      <div className={styles.empDesignation}>{emp.designation}</div>
-                    </div>
-                  </label>
-                );
-              })}
-            </div>
+      {/* Assigned Hours */}
+      <div className={styles.fld}>
+        <label>Assign Activity</label>
+        <input
+          type="text"
+          name="assignedActivity"
+          value={formData.assignedActivity}
+          onChange={handleChange}
+          placeholder="Enter Activity"
+        />
+      </div>
 
-            <div className={styles.modalActions}>
-              <button className={styles.doneBtn} onClick={() => setShowResourceModal(false)}>
-                Done
-              </button>
-              <button className={styles.cancelBtn} onClick={() => setShowResourceModal(false)}>
-                Cancel
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
-
+      <button className={styles.submitBtn} type="button" onClick={handleSubmit}>
+        Assign
+      </button>
     </div>
   );
 };
 
-export default ProjectAssignmentForm;
+export default AssignActivityForm;

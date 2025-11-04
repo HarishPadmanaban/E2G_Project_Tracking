@@ -122,7 +122,7 @@ const ManagerNavbar = () => {
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
               >
-                <li>Assign resources</li>
+                <li>Assign Activity</li>
               </Link>}
 
              {!isPC && <Link

@@ -164,7 +164,7 @@
 //           const startDate = new Date();
 //           startDate.setHours(startH, startM, 0);
 //           const diffMs = now - startDate;
-          
+
 //           if (diffMs >= 2 * 60 * 1000) {
 //             setStopDisabled(false);
 //           } else {
@@ -1450,49 +1450,49 @@ const EmployeeWorkForm = () => {
   }, [employee, projects, activities, activeWorkId, work]);
 
   const handleDiscard = () => {
-  if (!activeWorkId) {
-    alert("No active work to discard.");
-    return;
-  }
+    if (!activeWorkId) {
+      alert("No active work to discard.");
+      return;
+    }
 
-  if (!window.confirm("Are you sure you want to discard this work?")) return;
+    if (!window.confirm("Are you sure you want to discard this work?")) return;
 
-  axios
-    .delete(`http://localhost:8080/workdetails/work/discard/${activeWorkId}`)
-    .then(() => {
-      alert("Work discarded successfully!");
+    axios
+      .delete(`http://localhost:8080/workdetails/work/discard/${activeWorkId}`)
+      .then(() => {
+        alert("Work discarded successfully!");
 
-      // Clear local storage
-      localStorage.removeItem("activeWorkId");
-      setActiveWorkId(null);
+        // Clear local storage
+        localStorage.removeItem("activeWorkId");
+        setActiveWorkId(null);
 
-      // Reset form data to initial
-      setFormData({
-        projectId: "",
-        clientName: "",
-        projectActivityType: "",
-        activityId: "",
-        category: "",
-        startTime: "",
-        endTime: "",
-        workHours: "",
-        projectActivity: "",
-        assignedWork: "",
-        status: "Pending",
-        remarks: "",
+        // Reset form data to initial
+        setFormData({
+          projectId: "",
+          clientName: "",
+          projectActivityType: "",
+          activityId: "",
+          category: "",
+          startTime: "",
+          endTime: "",
+          workHours: "",
+          projectActivity: "",
+          assignedWork: "",
+          status: "Pending",
+          remarks: "",
+        });
+
+        // Reset states
+        setIsRunning(false);
+        setStartDisabled(false);
+        setStopDisabled(true);
+        setSubmitDisabled(true);
+      })
+      .catch((err) => {
+        console.error("Error discarding work:", err);
+        alert("Failed to discard work.");
       });
-
-      // Reset states
-      setIsRunning(false);
-      setStartDisabled(false);
-      setStopDisabled(true);
-      setSubmitDisabled(true);
-    })
-    .catch((err) => {
-      console.error("Error discarding work:", err);
-      alert("Failed to discard work.");
-    });
-};
+  };
 
 
   const handleChange = (e) => {
@@ -1609,15 +1609,15 @@ const EmployeeWorkForm = () => {
           setSubmitDisabled(false);
         })
         .catch((err) => {
-    console.error("Error stopping work:", err);
+          console.error("Error stopping work:", err);
 
-    // Extract backend error message safely
-    const backendMsg =
-      err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
+          // Extract backend error message safely
+          const backendMsg =
+            err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
 
-    // Show the exact backend message to user
-    alert(backendMsg);
-  });
+          // Show the exact backend message to user
+          alert(backendMsg);
+        });
     }
   };
 
@@ -1787,20 +1787,29 @@ const EmployeeWorkForm = () => {
             </div>
 
             <div className={styles.field}>
-              <label>Date</label>
-              <input
-                type="text"
-                value={new Date().toISOString().split("T")[0]}
-                readOnly
-              />
+              <label>Assigned Work</label>
+              <select
+                name="projectId"
+                value={formData.projectId}
+                onChange={handleProjectChange}
+                disabled={isReadOnly("projectId")}
+              >
+                <option value="">Assigned </option>
+                {projects.map((proj) => (
+                  <option key={proj.id} value={proj.id}>
+                    {proj.projectName}
+                  </option>
+                ))}
+              </select>
             </div>
+
           </div>
 
           {/* Activity row */}
           <div className={styles.row}>
             <div className={styles.field}>
               <label>Activity Type</label>
-              <select
+              {/* <select
                 name="projectActivityType"
                 value={formData.projectActivityType}
                 onChange={handleChange}
@@ -1811,12 +1820,18 @@ const EmployeeWorkForm = () => {
                 <option value="Checking">Checking</option>
                 <option value="Detailing">Detailing</option>
                 <option value="Common">Common</option>
-              </select>
+              </select> */}
+              <input
+                type="text"
+                value={formData.projectActivityType}
+                readOnly
+                placeholder="Activity type"
+              />
             </div>
 
             <div className={styles.field}>
               <label>Activity</label>
-              <select
+              {/* <select
                 name="activityId"
                 value={formData.activityId}
                 onChange={handleActivityChange}
@@ -1828,7 +1843,13 @@ const EmployeeWorkForm = () => {
                     {act.activityName}
                   </option>
                 ))}
-              </select>
+              </select> */}
+              <input
+                type="text"
+                value={formData.activityId}
+                readOnly
+                placeholder="Activity"
+              />
             </div>
 
             <div className={styles.field}>
@@ -1876,7 +1897,7 @@ const EmployeeWorkForm = () => {
           <div className={styles.row}>
             <div className={styles.field}>
               <label>Project Activity</label>
-              <select
+              {/* <select
                 name="projectActivity"
                 value={formData.projectActivity}
                 onChange={handleChange}
@@ -1886,17 +1907,23 @@ const EmployeeWorkForm = () => {
                 <option value="IFRA">IFRA</option>
                 <option value="Client Rework">Client Rework</option>
                 <option value="Internal Rework">Internal Rework</option>
-              </select>
-            </div>
-
-            <div className={styles.field}>
-              <label>Assigned Work</label>
+              </select> */}
               <input
                 type="text"
-                name="assignedWork"
-                value={formData.assignedWork}
-                onChange={handleChange}
-                readOnly={isReadOnly("assignedWork")}
+                value={formData.projectActivity}
+                readOnly
+                placeholder="Project Activity"
+              />
+            </div>
+
+
+
+            <div className={styles.field}>
+              <label>Date</label>
+              <input
+                type="text"
+                value={new Date().toISOString().split("T")[0]}
+                readOnly
               />
             </div>
           </div>
@@ -1959,12 +1986,12 @@ const EmployeeWorkForm = () => {
                 </button>
 
                 <button
-  type="button"
-  onClick={handleDiscard}
-  className={`${styles.discardBtn}`}
->
-  Discard
-</button>
+                  type="button"
+                  onClick={handleDiscard}
+                  className={`${styles.discardBtn}`}
+                >
+                  Discard
+                </button>
               </>
             ) : !isEditMode ? (
               <button
