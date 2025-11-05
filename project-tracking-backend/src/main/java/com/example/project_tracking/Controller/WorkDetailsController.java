@@ -33,8 +33,9 @@ public class WorkDetailsController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<WorkDetails> saveWorkDetails(@RequestBody WorkDetailsRequest workDetails) {
-        WorkDetails saved = workDetailsService.saveWorkDetails(workDetails);
+    public ResponseEntity<?> saveWorkDetails(@RequestBody WorkDetailsRequest workDetails) {
+        System.out.println(workDetails.toString());
+        WorkDetailsResponse saved = workDetailsService.saveWorkDetails(workDetails);
         return ResponseEntity.ok(saved);
     }
 
@@ -47,6 +48,12 @@ public class WorkDetailsController {
     public ResponseEntity<WorkDetailsResponse> getActiveWork(@PathVariable Long employeeId) {
         WorkDetailsResponse activeWork = workDetailsService.getActiveWorkByEmployee(employeeId);
         return ResponseEntity.ok(activeWork);
+    }
+
+    @GetMapping("/assigned-work/{id}")
+    public ResponseEntity<?> getAssigned(@PathVariable Long id)
+    {
+        return ResponseEntity.ok(workDetailsService.getAssignedWork(id));
     }
 
     @GetMapping("/employee/{id}")
@@ -84,17 +91,20 @@ public class WorkDetailsController {
         return ResponseEntity.ok(workDetailsService.getByProjectAndActivity(projId, actId));
     }
     @PutMapping("/stop/{employeeId}")
-    public ResponseEntity<WorkDetails> stopWork(
+    public ResponseEntity<?> stopWork(
             @PathVariable Long employeeId,
             @RequestParam String endTime,
             @RequestParam String workHours) {
 
-        WorkDetails updated = workDetailsService.stopWork(employeeId, endTime, workHours);
+        System.out.println(employeeId+" "+endTime+" "+workHours);
+        WorkDetailsResponse updated = workDetailsService.stopWork(employeeId, endTime, workHours);
         return ResponseEntity.ok(updated);
     }
     @PutMapping("/savefinal")
-    public ResponseEntity<WorkDetails> saveFinal(@RequestBody WorkDetailsRequest request , @RequestParam Long activeWorkId) {
-        WorkDetails saved = workDetailsService.saveFinalWork(request,activeWorkId);
+    public ResponseEntity<WorkDetailsResponse> saveFinal(@RequestBody WorkDetailsRequest request , @RequestParam Long activeWorkId) {
+        System.out.println(request.toString());
+        System.out.println(activeWorkId);
+        WorkDetailsResponse saved = workDetailsService.saveFinalWork(request,activeWorkId);
         return ResponseEntity.ok(saved);
     }
 

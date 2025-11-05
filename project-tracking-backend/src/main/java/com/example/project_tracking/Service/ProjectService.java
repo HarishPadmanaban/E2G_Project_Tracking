@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -108,14 +106,14 @@ public class ProjectService {
         return response;
     }
 
-    public void createProject(String projectName,String clientName,Long pmId,BigDecimal totalHours) {
+    public void createProject(String projectName,String clientName,Long pmId,BigDecimal totalHours,LocalDate awardedDate) {
         Project project=new Project();
 
         project.setProjectName(projectName);
         project.setClientName(clientName);
         project.setManagerId(pmId);
         project.setAssignedHours(totalHours);
-        project.setAssignedDate(LocalDate.now());
+        project.setAssignedDate(awardedDate);
 
         if(project.getModellingHours()==null){
             project.setModellingHours(BigDecimal.ZERO);
@@ -135,6 +133,10 @@ public class ProjectService {
         projectRepository.save(project);
     }
     public List<Project> getActiveProjectsByManager(Long managerId) {
+        int arr[] = new int[5];
+        List<Integer> list = new ArrayList<>();
+        HashSet<Integer> set = new HashSet<>(list);
+        System.out.println();
         return projectRepository.findByManagerIdAndProjectStatusTrue(managerId);
     }
 
@@ -216,6 +218,12 @@ public class ProjectService {
     public List<ProjectResponse> getProjectsByTl(Long tlId)
     {
         return projectRepository.findByTlId(tlId).stream().map(this::convertToResponse).toList();
+    }
+
+    public ProjectResponse setActivity(Long id,String activity) {
+        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project Found"));
+        project.setProjectActivityStatus(activity);
+        return convertToResponse(projectRepository.save(project));
     }
 }
 

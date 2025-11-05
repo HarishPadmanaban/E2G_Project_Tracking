@@ -1197,6 +1197,7 @@ const EmployeeWorkForm = () => {
   const [startDisabled, setStartDisabled] = useState(false);
   const [stopDisabled, setStopDisabled] = useState(true);
   const [submitDisabled, setSubmitDisabled] = useState(true);
+  const [assignedActivities, setAssignedActivities] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const { work } = location.state || {}; // manager view/edit if present
@@ -1210,6 +1211,7 @@ const EmployeeWorkForm = () => {
     clientName: "",
     projectActivityType: "",
     activityId: "",
+    activityName:"",
     category: "",
     startTime: "",
     endTime: "",
@@ -1218,6 +1220,7 @@ const EmployeeWorkForm = () => {
     assignedWork: "",
     status: "Pending",
     remarks: "",
+    assignedWorkId:""
   });
 
   const [isRunning, setIsRunning] = useState(false);
@@ -1270,37 +1273,9 @@ const EmployeeWorkForm = () => {
     setFilteredActivities(activities);
   }, [activities]);
 
-  // If in manager view/edit mode, preload passed work data
-  useEffect(() => {
-    if (work) {
-      setFormData({
-        projectId: work.project?.projectId?.toString() || "",
-        clientName: work.project?.clientName || "",
-        projectActivityType: work.activity?.mainType || "",
-        activityId: work.activity?.activityId?.toString() || "",
-        category: work.activity?.category || "",
-        startTime: work.startTime?.substring(0, 5) || "",
-        endTime: work.endTime?.substring(0, 5) || "",
-        workHours: work.workHours || "",
-        projectActivity: work.projectActivity || "",
-        assignedWork: work.assignedWork || "",
-        status: work.status || "Pending",
-        remarks: work.remarks || "",
-      });
-      // mark view/edit mode flags
-      setIsViewMode(true);
-      setIsEditMode(false);
-    } else {
-      // if not manager mode ensure flags are reset
-      setIsViewMode(false);
-      setIsEditMode(false);
-    }
-  }, [work]);
-
   // Resume or restore logic — ONLY run for employee mode (skip when manager view is present)
   useEffect(() => {
-    if (!employee || work) return; // skip when manager view/edit (work present)
-
+   
     // helper to enable stop button after remaining ms
     const enableStopAfter = (remainingMs) => {
       if (remainingMs <= 0) {
@@ -1313,17 +1288,21 @@ const EmployeeWorkForm = () => {
       }, remainingMs);
     };
 
+
     // CASE 1: If there's an activeWorkId (stopped-but-not-submitted), fetch by ID
     if (activeWorkId) {
       axios
         .get(`http://localhost:8080/workdetails/${activeWorkId}`)
-        .then((res) => {
+        .then(async (res) => {
           const workData = res.data;
+          console.log(workData);
           if (!workData) {
             // no work found by id -> fallback to check active
             checkActiveRunningWork();
             return;
           }
+
+           await fetchAssignedActivities(workData.projectId, employee.empId);
 
           const selectedProject = projects.find(
             (proj) => proj.id.toString() === workData.projectId?.toString()
@@ -1338,12 +1317,14 @@ const EmployeeWorkForm = () => {
             clientName: selectedProject ? selectedProject.clientName : "",
             projectActivityType: selectedActivity ? selectedActivity.mainType : "",
             activityId: workData.activityId?.toString() || "",
+            activityName:selectedActivity?.activityName?.toString()||"",
             category: selectedActivity ? selectedActivity.category : "",
             startTime: workData.startTime ? workData.startTime.substring(0, 5) : "",
             endTime: workData.endTime ? workData.endTime.substring(0, 5) : "",
             workHours: workData.workHours || "",
             projectActivity: workData.projectActivity || "",
             assignedWork: workData.assignedWork || "",
+            assignedWorkId:workData.assignedWorkId||"",
             status: workData.status || "Pending",
             remarks: workData.remarks || "",
           });
@@ -1379,14 +1360,17 @@ const EmployeeWorkForm = () => {
         });
     } else {
       // CASE 2: No activeWorkId — check if there's a currently active running work for this employee
+      console.log("checking for workID");
       checkActiveRunningWork();
     }
 
+  
     function checkActiveRunningWork() {
       axios
         .get(`http://localhost:8080/workdetails/active/${employee.empId}`)
         .then((res) => {
           const active = res.data;
+          console.log(active);
           if (active && !active.endTime) {
             const selectedProject = projects.find(
               (proj) => proj.id.toString() === active.projectId?.toString()
@@ -1395,8 +1379,11 @@ const EmployeeWorkForm = () => {
               (act) => act.id.toString() === active.activityId?.toString()
             );
 
+            //const assigned = assignedActivities.find((a) => a.id.toString()===active.)
+
             // Store running work ID locally so the stopped-but-not-submitted flow works
             setActiveWorkId(active.id);
+            console.log(active);
 
             // Autofill form for the running session
             setFormData({
@@ -1408,8 +1395,9 @@ const EmployeeWorkForm = () => {
               startTime: active.startTime ? active.startTime.substring(0, 5) : "",
               endTime: "",
               workHours: "",
+              assignedWork:active.assignedWork||"",
+              assignedWorkId:active.assignedWorkId||"",
               projectActivity: active.projectActivity || "",
-              assignedWork: active.assignedWork || "",
               status: active.status || "Pending",
               remarks: active.remarks || "",
             });
@@ -1447,7 +1435,21 @@ const EmployeeWorkForm = () => {
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [employee, projects, activities, activeWorkId, work]);
+  }, [employee, projects, activities, activeWorkId]);
+
+    const fetchAssignedActivities = async (projectId, employeeId) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/assigned-work/project/${projectId}/employee/${employeeId}/active`
+    );
+    console.log(response.data);
+    setAssignedActivities(response.data);
+  } catch (error) {
+    console.error("Error fetching assigned activities:", error);
+    setAssignedActivities([]);
+  }
+};
+
 
   const handleDiscard = () => {
     if (!activeWorkId) {
@@ -1472,12 +1474,14 @@ const EmployeeWorkForm = () => {
           clientName: "",
           projectActivityType: "",
           activityId: "",
+          activityName:"",
           category: "",
           startTime: "",
           endTime: "",
           workHours: "",
           projectActivity: "",
           assignedWork: "",
+          assignedWorkId:"",
           status: "Pending",
           remarks: "",
         });
@@ -1496,7 +1500,6 @@ const EmployeeWorkForm = () => {
 
 
   const handleChange = (e) => {
-    if (isViewMode && !isEditMode) return; // block editing if view-only
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -1518,23 +1521,27 @@ const EmployeeWorkForm = () => {
   };
 
   const handleProjectChange = (e) => {
-    const selectedProject = projects.find((proj) => proj.id.toString() === e.target.value);
-    setFormData({
-      ...formData,
-      projectId: e.target.value,
-      clientName: selectedProject ? selectedProject.clientName : "",
-    });
-  };
+  const selectedProject = projects.find((proj) => proj.id.toString() === e.target.value);
+  console.log(selectedProject);
+  // Reset form data first
+  setFormData((prev) => ({
+  ...prev,
+  projectId: e.target.value,
+  clientName: selectedProject ? selectedProject.clientName : "",
+  projectActivityType: "",
+  activityId: "",
+  category: "",
+  projectActivity: selectedProject.projectActivityStatus,
+}));
 
-  const handleActivityChange = (e) => {
-    const selectedActivity = activities.find((act) => act.id.toString() === e.target.value);
-
-    setFormData((prev) => ({
-      ...prev,
-      activityId: e.target.value,
-      category: selectedActivity ? selectedActivity.category : "",
-    }));
-  };
+  // Clear previous assigned activities
+  setAssignedActivities([]);
+  
+  // Fetch assigned activities ONLY if project is selected
+  if (e.target.value && employee) {
+    fetchAssignedActivities(e.target.value, employee.empId);
+  }
+};
 
   // Employee's Start/Stop flow (preserved)
   const handleStartStop = () => {
@@ -1555,20 +1562,29 @@ const EmployeeWorkForm = () => {
         managerId: employee.reportingToId,
         projectId: formData.projectId,
         activityId: formData.activityId,
+        activityName:formData.activityName,
         date: new Date().toISOString().split("T")[0],
         startTime: start + ":00",
         projectActivity: formData.projectActivity,
         assignedWork: formData.assignedWork,
+        assignedWorkId:formData.assignedWorkId,
         status: formData.status,
         remarks: formData.remarks,
       };
+      console.log(payload);
 
       axios
         .post("http://localhost:8080/workdetails/save", payload)
         .then((res) => {
           const workId = res.data.id;
           setActiveWorkId(workId);
-          setFormData((prev) => ({ ...prev, startTime: start }));
+          console.log(formData);
+          setFormData((prev) => ({
+  ...prev,
+  startTime: start, // only add start time
+}));
+
+          console.log(formData);
           setIsRunning(true);
           setStopDisabled(true);
           setSubmitDisabled(true);
@@ -1621,39 +1637,36 @@ const EmployeeWorkForm = () => {
     }
   };
 
+
+  const handleAssignedActivityChange = (e) => {
+  const selectedId = e.target.value;
+  const selectedAssignedActivity = assignedActivities.find(
+    (act) => act.id.toString() === selectedId
+  );
+
+  console.log(selectedAssignedActivity);
+
+  const act = activities.find((a) => a.id === selectedAssignedActivity.activityId);
+
+  console.log(act);
+
+  if (!selectedAssignedActivity || !act) return;
+
+setFormData((prev) => ({
+  ...prev,
+  assignedWorkId: selectedAssignedActivity.id,
+  assignedWork: selectedAssignedActivity.description,
+  projectActivityType: act.mainType,
+  activityName: act.activityName,
+  activityId: act.id,
+  category: act.category,
+}));
+
+};
+
   // Employee submit or Manager update (preserved)
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (isViewMode) {
-      // Manager submit for edited data
-      const payload = {
-        employeeId: work.employee?.employeeId,
-        managerId: work.manager?.managerId,
-        projectId: work.project?.projectId,
-        activityId: work.activity?.activityId,
-        date: work.date,
-        workHours: parseFloat(formData.workHours),
-        startTime: formData.startTime + ":00",
-        endTime: formData.endTime + ":00",
-        projectActivity: formData.projectActivity,
-        assignedWork: formData.assignedWork,
-        status: formData.status,
-        remarks: formData.remarks,
-      };
-
-      axios
-        .put("http://localhost:8080/api/workdetails/update", payload)
-        .then(() => {
-          alert("Work updated successfully!");
-          navigate(-1);
-        })
-        .catch((err) => {
-          console.error("Error updating work:", err);
-          alert("Update failed!");
-        });
-      return;
-    }
 
     if (!employee) return;
     if (!isFormValid(true)) {
@@ -1672,9 +1685,12 @@ const EmployeeWorkForm = () => {
       endTime: formData.endTime + ":00",
       projectActivity: formData.projectActivity,
       assignedWork: formData.assignedWork,
+      assignedWorkId:formData.assignedWorkId,
       status: formData.status,
       remarks: formData.remarks,
     };
+
+    console.log(payload)
 
     axios
       .put(`http://localhost:8080/workdetails/savefinal`, payload, {
@@ -1686,12 +1702,14 @@ const EmployeeWorkForm = () => {
           projectId: "",
           clientName: "",
           activityId: "",
+          activityName:"",
           category: "",
           startTime: "",
           endTime: "",
           workHours: "",
           projectActivity: "",
           assignedWork: "",
+          assignedWorkId:"",
           status: "Pending",
           remarks: "",
         });
@@ -1715,6 +1733,7 @@ const EmployeeWorkForm = () => {
       assignedWork,
       status,
     } = formData;
+    console.log(formData);
 
     const baseFieldsFilled =
       projectId &&
@@ -1732,7 +1751,6 @@ const EmployeeWorkForm = () => {
     if (!isEditMode) return true;
     return ![
       "projectActivity",
-      "assignedWork",
       "status",
       "startTime",
       "endTime",
@@ -1789,20 +1807,19 @@ const EmployeeWorkForm = () => {
             <div className={styles.field}>
               <label>Assigned Work</label>
               <select
-                name="projectId"
-                value={formData.projectId}
-                onChange={handleProjectChange}
-                disabled={isReadOnly("projectId")}
-              >
-                <option value="">Assigned </option>
-                {projects.map((proj) => (
-                  <option key={proj.id} value={proj.id}>
-                    {proj.projectName}
-                  </option>
-                ))}
-              </select>
-            </div>
+  name="assignedWorkId"
+  value={formData.assignedWorkId || ""}
+  onChange={handleAssignedActivityChange}
+>
+  <option value="">Select Assigned Activity</option>
+  {assignedActivities.map((act) => (
+    <option key={act.id} value={act.id}>
+      {act.description}
+    </option>
+  ))}
+</select>
 
+            </div>
           </div>
 
           {/* Activity row */}
@@ -1846,7 +1863,7 @@ const EmployeeWorkForm = () => {
               </select> */}
               <input
                 type="text"
-                value={formData.activityId}
+                value={formData.activityName}
                 readOnly
                 placeholder="Activity"
               />

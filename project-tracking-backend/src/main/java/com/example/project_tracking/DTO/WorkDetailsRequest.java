@@ -16,6 +16,15 @@ public class WorkDetailsRequest {
     private String assignedWork;
     private String status;
     private String remarks;
+    private Long assignedWorkId;
+
+    public Long getAssignedWorkId() {
+        return assignedWorkId;
+    }
+
+    public void setAssignedWorkId(Long assignedWorkId) {
+        this.assignedWorkId = assignedWorkId;
+    }
 
     public Long getEmployeeId() {
         return employeeId;
@@ -111,5 +120,24 @@ public class WorkDetailsRequest {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    @Override
+    public String toString() {
+        return "WorkDetailsRequest{" +
+                "employeeId=" + employeeId +
+                ", managerId=" + managerId +
+                ", projectId=" + projectId +
+                ", activityId=" + activityId +
+                ", date=" + date +
+                ", workHours=" + workHours +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", projectActivity='" + projectActivity + '\'' +
+                ", assignedWork='" + assignedWork + '\'' +
+                ", status='" + status + '\'' +
+                ", remarks='" + remarks + '\'' +
+                ", assignedWorkId=" + assignedWorkId +
+                '}';
     }
 }

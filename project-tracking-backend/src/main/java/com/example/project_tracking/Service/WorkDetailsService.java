@@ -1,14 +1,9 @@
 package com.example.project_tracking.Service;
+import com.example.project_tracking.DTO.AssignedWorkRequest;
 import com.example.project_tracking.DTO.WorkDetailsRequest;
 import com.example.project_tracking.DTO.WorkDetailsResponse;
-import com.example.project_tracking.Model.Activity;
-import com.example.project_tracking.Model.Employee;
-import com.example.project_tracking.Model.Project;
-import com.example.project_tracking.Model.WorkDetails;
-import com.example.project_tracking.Repository.ActivityRepository;
-import com.example.project_tracking.Repository.EmployeeRepository;
-import com.example.project_tracking.Repository.ProjectRepository;
-import com.example.project_tracking.Repository.WorkDetailsRepository;
+import com.example.project_tracking.Model.*;
+import com.example.project_tracking.Repository.*;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -27,15 +22,18 @@ public class WorkDetailsService {
     private final EmployeeRepository employeeRepository;
     private final ProjectRepository projectRepository;
     private final ActivityRepository activityRepository;
+    private final AssignedWorkRepository assignedWorkRepository;
 
     public WorkDetailsService(WorkDetailsRepository workDetailsRepository,
                               EmployeeRepository employeeRepository,
                               ProjectRepository projectRepository,
-                              ActivityRepository activityRepository) {
+                              ActivityRepository activityRepository,
+                              AssignedWorkRepository assignedWorkRepository) {
         this.workDetailsRepository = workDetailsRepository;
         this.employeeRepository = employeeRepository;
         this.projectRepository = projectRepository;
         this.activityRepository = activityRepository;
+        this.assignedWorkRepository = assignedWorkRepository;
     }
 
     public List<WorkDetailsResponse> getAll() {
@@ -51,7 +49,7 @@ public class WorkDetailsService {
                 .collect(Collectors.toList());
     }
 
-    public WorkDetails saveWorkDetails(WorkDetailsRequest request) {
+    public WorkDetailsResponse saveWorkDetails(WorkDetailsRequest request) {
         WorkDetails workDetails = new WorkDetails();
 
         // Set managed entities
@@ -69,6 +67,10 @@ public class WorkDetailsService {
 
         Activity activity = activityRepository.findById(request.getActivityId())
                 .orElseThrow(() -> new RuntimeException("Activity not found"));
+
+        AssignedWork assigned = assignedWorkRepository.findById(request.getAssignedWorkId()).orElseThrow(()-> new RuntimeException("No assigned work is found"));
+
+        workDetails.setAssignedWorkId(assigned);
         workDetails.setActivity(activity);
         workDetails.setDate(request.getDate());
         workDetails.setWorkHours(request.getWorkHours());
@@ -79,7 +81,7 @@ public class WorkDetailsService {
         workDetails.setStatus(request.getStatus());
         workDetails.setRemarks(request.getRemarks());
         
-        return workDetailsRepository.save(workDetails);
+        return convertToResponse(workDetailsRepository.save(workDetails));
     }
 
     private void updateProjectWorkingHours(Project project, Activity activity, Double workHours) {
@@ -203,11 +205,12 @@ public class WorkDetailsService {
                 work.getStatus(),
                 work.getRemarks(),
                 work.getProject().getId(),
-                work.getActivity().getId()
+                work.getActivity().getId(),
+                work.getAssignedWorkId() != null ? work.getAssignedWorkId().getId() : null
         );
     }
 
-    public WorkDetails stopWork(Long employeeId, String endTime, String workHoursStr) {
+    public WorkDetailsResponse stopWork(Long employeeId, String endTime, String workHoursStr) {
         WorkDetails work = workDetailsRepository
                 .findTopByEmployee_EmpIdAndEndTimeIsNullOrderByIdDesc(employeeId)
                 .orElseThrow(() -> new RuntimeException("No active work found for employee"));
@@ -230,11 +233,11 @@ public class WorkDetailsService {
         work.setEndTime(newEndTime);
         work.setWorkHours(calculatedHours);
 
-        return workDetailsRepository.save(work);
+        return convertToResponse(workDetailsRepository.save(work));
     }
 
 
-    public WorkDetails saveFinalWork(WorkDetailsRequest request, Long activeWorkId) {
+    public WorkDetailsResponse saveFinalWork(WorkDetailsRequest request, Long activeWorkId) {
         WorkDetails work = workDetailsRepository.findById(activeWorkId).orElse(null);
         if(work==null) return null;
         work.setStartTime(request.getStartTime());
@@ -244,6 +247,11 @@ public class WorkDetailsService {
         work.setAssignedWork(request.getAssignedWork());
         work.setStatus(request.getStatus());
         work.setRemarks(request.getRemarks());
+
+        if(request.getStatus().trim().toLowerCase().equals("completed")){
+            AssignedWork assignedWork = assignedWorkRepository.findById(request.getAssignedWorkId()).orElseThrow(()-> new RuntimeException("No assigned activity found"));
+            assignedWork.setStatus(request.getStatus().trim());
+        }
 
         Project project = projectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new RuntimeException("Project not found"));
@@ -256,7 +264,7 @@ public class WorkDetailsService {
             updateProjectWorkingHours(project, activity, request.getWorkHours());
         }
 
-        return workDetailsRepository.save(work);
+        return convertToResponse(workDetailsRepository.save(work));
     }
 
 
@@ -290,7 +298,9 @@ public class WorkDetailsService {
                 work.getStatus(),
                 work.getRemarks(),
                 work.getProject().getId(),
-                work.getActivity().getId()
+                work.getActivity().getId(),
+                work.getAssignedWorkId() != null ? work.getAssignedWorkId().getId() : null
+
         );
     }
 
@@ -319,7 +329,8 @@ public class WorkDetailsService {
                 work.getStatus(),
                 work.getRemarks(),
                 work.getProject().getId(),
-                work.getActivity().getId()
+                work.getActivity().getId(),
+                work.getAssignedWorkId() != null ? work.getAssignedWorkId().getId() : null
         );
     }
 
@@ -439,6 +450,7 @@ public class WorkDetailsService {
         }
 
         // ✅ Update other fields
+        System.out.println(request.getStatus());
         oldWork.setManager(manager);
         oldWork.setProject(project);
         oldWork.setActivity(activity);
@@ -461,5 +473,12 @@ public class WorkDetailsService {
         workDetailsRepository.delete(work);
     }
 
+    public WorkDetailsResponse getAssignedWork(Long id) {
+        WorkDetails work = workDetailsRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Work entry not found for ID: " + id));
+        System.out.println(work.toString());
+        System.out.println(work.getAssignedWorkId().getId());
+        return convertToResponse(work);
+    }
 }
 

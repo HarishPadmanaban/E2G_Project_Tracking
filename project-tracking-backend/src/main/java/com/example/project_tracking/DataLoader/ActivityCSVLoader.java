@@ -1,7 +1,9 @@
 package com.example.project_tracking.DataLoader;
+import com.example.project_tracking.DataLoader.Reset.EmployeeResetter;
 import com.example.project_tracking.Model.Activity;
 import com.example.project_tracking.Repository.ActivityRepository;
 import com.opencsv.CSVReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,9 @@ public class ActivityCSVLoader implements CommandLineRunner {
 
     private final ActivityRepository activityRepository;
 
+    @Autowired
+    private EmployeeResetter resetter;
+
     public ActivityCSVLoader(ActivityRepository activityRepository) {
         this.activityRepository = activityRepository;
     }
@@ -26,6 +31,8 @@ public class ActivityCSVLoader implements CommandLineRunner {
         if (activityRepository.count() > 0) {
             return;
         }
+
+        //resetter.resetActivityTable();
 
         List<String[]> rows;
 

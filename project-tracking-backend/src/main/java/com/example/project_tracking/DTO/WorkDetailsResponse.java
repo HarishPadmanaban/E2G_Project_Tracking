@@ -21,6 +21,7 @@ public class WorkDetailsResponse {
         private String remarks;
         private Long projectId;
         private Long activityId;
+        private Long assignedWorkId;
 
     public WorkDetailsResponse(Long id, String employeeName, String managerName, String projectName, String activityName, LocalDate date, Double workHours, LocalTime startTime, LocalTime endTime, String projectActivity, String assignedWork, String status, String remarks) {
         this.id = id;
@@ -56,7 +57,7 @@ public class WorkDetailsResponse {
         this.activityId = activityId;
     }
 
-    public WorkDetailsResponse(Long id, String employeeName, long employeeId, String managerName, long managerId, String projectName, String activityName, LocalDate date, Double workHours, LocalTime startTime, LocalTime endTime, String projectActivity, String assignedWork, String status, String remarks, Long projectId, Long activityId) {
+    public WorkDetailsResponse(Long id, String employeeName, long employeeId, String managerName, long managerId, String projectName, String activityName, LocalDate date, Double workHours, LocalTime startTime, LocalTime endTime, String projectActivity, String assignedWork, String status, String remarks, Long projectId, Long activityId,Long assignedWorkId) {
         this.id = id;
         this.employeeName = employeeName;
         this.employeeId = employeeId;
@@ -74,6 +75,15 @@ public class WorkDetailsResponse {
         this.remarks = remarks;
         this.projectId = projectId;
         this.activityId = activityId;
+        this.assignedWorkId = assignedWorkId;
+    }
+
+    public Long getAssignedWorkId() {
+        return assignedWorkId;
+    }
+
+    public void setAssignedWorkId(Long assignedWorkId) {
+        this.assignedWorkId = assignedWorkId;
     }
 
     public long getEmployeeId() {

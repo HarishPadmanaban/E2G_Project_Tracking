@@ -46,6 +46,11 @@ public class WorkDetails {
     private String status;
     private String remarks;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_work_id")
+    private AssignedWork assignedWorkId;
+
+
     public Long getId() {
         return id;
     }
@@ -148,6 +153,14 @@ public class WorkDetails {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public AssignedWork getAssignedWorkId() {
+        return assignedWorkId;
+    }
+
+    public void setAssignedWorkId(AssignedWork assignedWorkId) {
+        this.assignedWorkId = assignedWorkId;
     }
 
     @Override

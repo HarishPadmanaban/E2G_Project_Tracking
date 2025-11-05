@@ -36,9 +36,9 @@ public class ProjectController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> createProject(@RequestParam String projectName,String clientName,Long pmId,BigDecimal totalHours)
+    public ResponseEntity<?> createProject(@RequestParam String projectName,String clientName,Long pmId,BigDecimal totalHours,LocalDate awardedDate)
     {
-        projectService.createProject(projectName,clientName,pmId,totalHours);
+        projectService.createProject(projectName,clientName,pmId,totalHours,awardedDate);
         return ResponseEntity.ok("Saved Successfully");
     }
 
@@ -86,5 +86,11 @@ public class ProjectController {
     public ResponseEntity<?> getProjectsByTlId(@PathVariable Long id)
     {
         return ResponseEntity.ok(projectService.getProjectsByTl(id));
+    }
+
+    @PutMapping("/update-activity/{id}")
+    public ResponseEntity<?> setActivityStatus(@PathVariable Long id,@RequestParam String activity)
+    {
+        return ResponseEntity.ok(projectService.setActivity(id,activity));
     }
 }

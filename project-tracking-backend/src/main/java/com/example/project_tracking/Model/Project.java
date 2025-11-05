@@ -51,8 +51,8 @@ public class Project {
     private BigDecimal extraHours;
     private BigDecimal extraHoursTracking;
 
-
-
+    @Column(name = "project_activity_status")
+    private String projectActivityStatus;
 
     // Idle project flag
 
@@ -263,6 +263,14 @@ public class Project {
 
     public void setExtraHoursTracking(BigDecimal extraHoursTracking) {
         this.extraHoursTracking = extraHoursTracking;
+    }
+
+    public String getProjectActivityStatus() {
+        return projectActivityStatus;
+    }
+
+    public void setProjectActivityStatus(String projectActivityStatus) {
+        this.projectActivityStatus = projectActivityStatus;
     }
 
     @Override

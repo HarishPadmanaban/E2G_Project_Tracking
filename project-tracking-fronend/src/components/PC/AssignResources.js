@@ -31,17 +31,30 @@ const AssignActivityForm = () => {
   }, [managerId]);
 
   // ✅ Fetch Employees
-  useEffect(() => {
-    if (!managerId) return;
+  // ✅ Fetch employees when a project is selected
+useEffect(() => {
+  if (!formData.projectId) {
+    setEmployees([]);
+    return;
+  }
 
-    axios
-      .get(`http://localhost:8080/employee/getbymgr?mgrid=${employee.reportingToId}`)
-      .then((res) => {
-        const nonTLs = res.data.filter((emp) => emp.tl === false);
-        setEmployees(nonTLs);
-      })
-      .catch((err) => console.error(err));
-  }, [managerId, employee.reportingToId]);
+  axios
+    .get(`http://localhost:8080/project-assignment/employees/${formData.projectId}`)
+    .then((res) => {
+      if (res.data.length === 0) {
+        // If no employees assigned to this project, get all employees under manager
+        axios
+          .get(`http://localhost:8080/employee/getbymgr?mgrid=${employee.reportingToId}`)
+          .then((mgrRes) => setEmployees(mgrRes.data))
+          .catch((err) => console.error("Error fetching employees under manager:", err));
+      } else {
+        setEmployees(res.data);
+      }
+    })
+    .catch((err) => console.error("Error fetching project employees:", err));
+}, [formData.projectId, employee.reportingToId]);
+
+
 
 
   // ✅ Fetch Activities based on type
@@ -64,8 +77,9 @@ const AssignActivityForm = () => {
       const filtered = activities.filter(
         (act) =>
           act.mainType &&
-          act.mainType.toLowerCase() === value.toLowerCase()
+          act.mainType.trim().toLowerCase() === value.trim().toLowerCase()
       );
+     //console.log(filtered);
       setFilteredActivities(filtered);
       setFormData((prev) => ({
         ...prev,
@@ -94,15 +108,19 @@ const AssignActivityForm = () => {
     }
 
     const payload = {
-      projectId: formData.projectId,
-      activityId: formData.activityId,
-      employeeId: formData.employeeId,
-      assignedActivity: Number(formData.assignedActivity),
-    };
+  projectId: Number(formData.projectId),
+  activityId: Number(formData.activityId),
+  employeeId: Number(formData.employeeId),
+  managerId: Number(managerId), // optional if backend expects it
+  assignedById: Number(managerId), // optional
+  description: formData.assignedActivity, // keep it as string
+};
 
+
+    //console.log(payload);
 
     axios
-      .post("http://localhost:8080/activity-assign", payload) // Dummy POST
+      .post("http://localhost:8080/assigned-work", payload) // Dummy POST
       .then((res) => {
         alert("✅ Activity Assigned Successfully");
         setFormData({
@@ -152,6 +170,7 @@ const AssignActivityForm = () => {
           <option value="Modelling">Modelling</option>
           <option value="Checking">Checking</option>
           <option value="Detailing">Detailing</option>
+          <option value="Studying">Studying</option>
           <option value="Common">Common</option>
         </select>
       </div>

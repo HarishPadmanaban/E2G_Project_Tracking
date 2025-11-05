@@ -29,7 +29,7 @@ const LeavePermissionForm = () => {
     }
   }, [loading, employee]);
   useEffect(() => {
-    if (activeTab === "view" && employee?.id) {
+    if (activeTab === "view" && employee?.empId) {
       axios
         .get(`http://localhost:8080/leave/employee/${employee.empId}`)
         .then((res) => {
@@ -95,8 +95,8 @@ const LeavePermissionForm = () => {
 
     try {
       const payload = {
-        employee: { id: employee.empId },       // 👈 nested object
-        manager: { id: employee.reportingToId }, // 👈 nested object
+        employee: { empId : employee.empId },       // 👈 nested object
+        manager: { empId: employee.reportingToId }, // 👈 nested object
         type: formData.type,
         leaveDuration: formData.leaveDuration,
         fromDate: formData.fromDate || null,

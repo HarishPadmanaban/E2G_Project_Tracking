@@ -9,13 +9,16 @@ const AssignProjectForm = () => {
     clientName: "",
     pmId: "",
     totalHours: "",
+    awardedDate:"",
   });
 
   // Fetch PMs
   useEffect(() => {
     axios
       .get("http://localhost:8080/employee/getallmanagers") // replace with real endpoint
-      .then((res) => {setPMs(res.data);console.log(res.data);})
+      .then((res) => {
+        const filteredPMs = res.data.filter((emp) => emp.designation === "Project Manager");
+        setPMs(filteredPMs);console.log(res.data);})
       .catch((err) => console.error(err));
   }, []);
 
@@ -24,10 +27,10 @@ const AssignProjectForm = () => {
   };
 
   const handleSubmit = async () => {
-    // Validation
     if (!formData.projectName) return alert("⚠️ Enter Project Name");
     if (!formData.clientName) return alert("⚠️ Enter Client Name");
     if (!formData.pmId) return alert("⚠️ Select a PM");
+    if (!formData.awardedDate) return alert("⚠️ Enter Awarded Date");
     if (!formData.totalHours || Number(formData.totalHours) <= 0)
       return alert("⚠️ Enter total hours > 0");
 
@@ -43,14 +46,15 @@ const AssignProjectForm = () => {
             clientName: formData.clientName,
             pmId: formData.pmId,
             totalHours: formData.totalHours,
+            awardedDate:formData.awardedDate,
           },
         }
       );
       alert("✅ Project assigned successfully!");
-      setFormData({ projectName: "", clientName: "", pmId: "", totalHours: "" });
+      setFormData({ projectName: "", clientName: "", pmId: "", totalHours: "",awardedDate:"" });
     } catch (error) {
       console.error(error);
-      setFormData({ projectName: "", clientName: "", pmId: "", totalHours: "" });
+      setFormData({ projectName: "", clientName: "", pmId: "", totalHours: "",awardedDate:"" });
       alert("❌ Failed to assign project");
     }
   };
@@ -92,6 +96,16 @@ const AssignProjectForm = () => {
             </option>
           ))}
         </select>
+      </div>
+
+      <div className={styles.fld}>
+        <label>Awarded Date</label>
+        <input
+          type="date"
+          name="awardedDate"
+          value={formData.awardedDate}
+          onChange={handleChange}
+        />
       </div>
 
       {/* Total Hours */}

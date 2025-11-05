@@ -337,8 +337,7 @@ if (start < today) {
   <input
     type="date"
     name="startDate"
-    value={formData.startDate}
-    min={new Date().toISOString().split("T")[0]} 
+    value={formData.startDate} 
     onChange={handleChange}
   />
 </div>

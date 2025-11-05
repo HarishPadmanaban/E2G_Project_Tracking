@@ -188,6 +188,7 @@ const ManagerDashboard = () => {
       .get(endpoint)
       .then((res) => {
         setProjects(res.data);
+        console.log(res.data);
         const inProgress = res.data.filter((p) => p.projectStatus === true);
         setFilteredProjects(inProgress);
         setFilter("In Progress");
@@ -381,14 +382,19 @@ const ManagerDashboard = () => {
                 <td>{p.extraHours || "--"}</td>
                 <td>{p.workingHours}</td>
                 <td
-                  className={
-                    p.projectStatus
-                      ? styles.statusInProgress
-                      : styles.statusCompleted
-                  }
-                >
-                  {p.projectStatus ? "In-Progress" : "Completed"}
-                </td>
+  className={
+    p.projectStatus
+      ? styles.statusInProgress
+      : styles.statusCompleted
+  }
+>
+  {p.projectStatus
+    ? p.projectActivityStatus
+      ? `${p.projectActivityStatus} In-Progress`
+      : "In-Progress"
+    : "Completed"}
+</td>
+
               </tr>
             ))
           )}
@@ -410,6 +416,7 @@ const ManagerDashboard = () => {
                 <tr>
                   <th>ID</th>
                   <th>Member Name</th>
+                  <th>Designation</th>
                   <th>Worked Hours</th>
                 </tr>
               </thead>
@@ -424,7 +431,8 @@ const ManagerDashboard = () => {
                   selectedProjectMembers.map((m) => (
                     <tr key={m.id}>
                       <td>{m.empId}</td>
-                      <td>{m.name}</td>
+                      <td>{m.name} </td>
+                      <td>{m.designation}</td>
                       <td>{m.hours || "--"}</td>
                     </tr>
                   ))

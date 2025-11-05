@@ -31,7 +31,7 @@ const ManagerNavbar = () => {
   };
 
   useEffect(() => {
-  if (!employee?.id) return;
+  if (!employee?.empId) return;
 
   const fetchPending = () => {
     axios

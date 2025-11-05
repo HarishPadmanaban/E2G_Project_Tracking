@@ -8,7 +8,11 @@ const ManagerProjectActions = () => {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [extraHours, setExtraHours] = useState("");
-  const [tab, setTab] = useState("Add Hours"); // ✅ tab state
+  const [tab, setTab] = useState("Add Hours");
+
+  // 🟢 New state
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedActivity, setSelectedActivity] = useState("");
 
   const fetchProjects = async () => {
     if (!employee?.empId) return;
@@ -29,6 +33,8 @@ const ManagerProjectActions = () => {
   const handleProjectChange = (e) => {
     const p = projects.find((proj) => proj.id === parseInt(e.target.value));
     setSelectedProject(p || null);
+    setSelectedStatus(p ? (p.projectStatus ? "Active" : "Completed") : "");
+    setSelectedActivity(p?.projectActivityStatus || "");
   };
 
   const handleAddHours = async () => {
@@ -38,9 +44,8 @@ const ManagerProjectActions = () => {
     }
     try {
       await axios.put(
-        `http://localhost:8080/project/set-extra-hours/${selectedProject.id}?extraHours=${extraHours}`,
+        `http://localhost:8080/project/set-extra-hours/${selectedProject.id}?extraHours=${extraHours}`
       );
-      console.log(selectedProject.id+"\n"+extraHours);
       alert("Extra hours added ✅");
       setExtraHours("");
       fetchProjects();
@@ -50,17 +55,41 @@ const ManagerProjectActions = () => {
     }
   };
 
-  const handleCompletionToggle = async () => {
+  const handleSubmitProjectUpdate = async () => {
     try {
-      await axios.put(
-        `http://localhost:8080/project/toggle-status/${selectedProject.id}`
-      );
-      alert("Project status updated ✅");
+      // 🟢 1. Handle Status Change (Active → Completed)
+      if (
+        selectedProject.projectStatus === true &&
+        selectedStatus === "Completed"
+      ) {
+        await axios.put(
+          `http://localhost:8080/project/toggle-status/${selectedProject.id}`
+        );
+        alert("Project marked as completed ✅");
+      }
+
+      console.log(selectedActivity.projectActivityStatus);
+      console.log(selectedProject)
+
+      // 🟢 2. Handle Project Activity Update
+      if (selectedActivity && selectedActivity !== selectedProject.projectActivityStatus) {
+        await axios.put(
+  `http://localhost:8080/project/update-activity/${selectedProject.id}`,
+  null, // no body
+  {
+    params: { activity: selectedActivity }
+  }
+);
+        alert("Project activity updated ✅");
+      }
+
       fetchProjects();
       setSelectedProject(null);
+      setSelectedStatus("");
+      setSelectedActivity("");
     } catch (err) {
       console.error(err);
-      alert("Failed to update status");
+      alert("Failed to update project");
     }
   };
 
@@ -70,7 +99,7 @@ const ManagerProjectActions = () => {
     <div className={styles.container}>
       <h2 style={{ marginBottom: "20px" }}>Project Management</h2>
 
-      {/* ✅ Filter Buttons UI like your screenshot */}
+      {/* Filter Tabs */}
       <div className={styles.filterButtons}>
         {["Add Hours", "Project Completion"].map((item) => (
           <button
@@ -79,6 +108,8 @@ const ManagerProjectActions = () => {
               setTab(item);
               setSelectedProject(null);
               setExtraHours("");
+              setSelectedStatus("");
+              setSelectedActivity("");
             }}
             className={`${styles.filterBtn} ${
               tab === item ? styles.active : ""
@@ -89,7 +120,7 @@ const ManagerProjectActions = () => {
         ))}
       </div>
 
-      {/* ✅ Shared → Select Project Dropdown */}
+      {/* Shared Select Project */}
       <div className={styles.fld}>
         <label>Select Project</label>
         <select value={selectedProject?.id || ""} onChange={handleProjectChange}>
@@ -102,7 +133,7 @@ const ManagerProjectActions = () => {
         </select>
       </div>
 
-      {/* ✅ TAB 1 - Add Hours */}
+      {/* TAB 1 - Add Hours */}
       {tab === "Add Hours" && selectedProject && (
         <>
           <div className={styles.fld}>
@@ -125,38 +156,36 @@ const ManagerProjectActions = () => {
         </>
       )}
 
-      {/* ✅ TAB 2 - Mark as Completed */}
+      {/* 🟢 TAB 2 - Project Completion */}
       {tab === "Project Completion" && selectedProject && (
         <>
           <div className={styles.fld}>
             <label>Current Status</label>
-            <input
-              type="text"
-              readOnly
-              value={selectedProject.projectStatus ? "Active" : "Completed"}
-            />
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+            >
+              <option value="Active">Active</option>
+              <option value="Completed">Completed</option>
+            </select>
           </div>
 
           <div className={styles.fld}>
-              <label>Project Activity</label>
-              <select
-                name="projectActivity"
-              >
-                <option value="">Project Activity</option>
-                <option value="IFRA">IFRA</option>
-                <option value="Client Rework">Client Rework</option>
-                <option value="Internal Rework">Internal Rework</option>
-              </select>
-            </div>
+            <label>Project Activity</label>
+            <select
+              name="projectActivity"
+              value={selectedActivity}
+              onChange={(e) => setSelectedActivity(e.target.value)}
+            >
+              <option value="">Select Activity</option>
+              <option value="IFRA">IFRA</option>
+              <option value="Client Rework">Client Rework</option>
+              <option value="Internal Rework">Internal Rework</option>
+            </select>
+          </div>
 
-          <button
-            className={styles.submitBtn}
-            onClick={handleCompletionToggle}
-            disabled={!selectedProject.projectStatus} // ✅ disables if already completed
-          >
-            {selectedProject.projectStatus
-              ? "Mark as Completed"
-              : "Already Completed"}
+          <button className={styles.submitBtn} onClick={handleSubmitProjectUpdate}>
+            Submit
           </button>
         </>
       )}
