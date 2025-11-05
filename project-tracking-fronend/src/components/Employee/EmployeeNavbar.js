@@ -6,7 +6,7 @@ import { useEmployee } from "../../context/EmployeeContext";
 const EmployeeNavbar = () => {
   const navigate = useNavigate();
   const { employee, logout } = useEmployee();
-
+  const isHR=employee.designation==="HR";
  const handleBack = () => {
   // Don’t allow back on main work page
   if (window.location.pathname === "/employee/work") return;
@@ -31,17 +31,22 @@ const EmployeeNavbar = () => {
           </button>
         </div>
 
-        <div className={styles.navCenter}>
+        <div className={styles.navCenter} style={{marginLeft:
+      employee.designation === "HR"
+        ? "-1%": "11%"}}>
+          <img src="/logo.png" alt="E2G Logo" className={styles.logo} />
           <h1>E2G ENGINEERING SERVICES PRIVATE LIMITED</h1>
         </div>
 
         <div className={styles.navRight}>
-          <Link to="/employee/work" className={styles.navLink}>
+          {!isHR && <Link to="/employee/work" className={styles.navLink}>
             Work
-          </Link>
+          </Link>}
+
+          {!isHR &&
           <Link to="/employee/leave" className={styles.navLink}>
             Leave
-          </Link>
+          </Link>}
           <button className={styles.logoutBtn} onClick={handleLogout}>
             Logout
           </button>

@@ -8,7 +8,7 @@ const LeavePermissionForm = () => {
   const [requests, setRequests] = useState([]);
   const { employee, loading } = useEmployee();
   const [formData, setFormData] = useState({
-    employeeId: employee?.id || "",      // from logged-in user
+    employeeId: employee?.empId || "",      // from logged-in user
     managerId: employee?.reportingToId || "",
     type: "", // Leave / Permission
     leaveDuration: "", // One Day / Multiple Days
@@ -95,7 +95,11 @@ const LeavePermissionForm = () => {
 
     try {
       const payload = {
+<<<<<<< HEAD
         employee: { empId : employee.empId },       // 👈 nested object
+=======
+        employee: { empId: employee.empId },       // 👈 nested object
+>>>>>>> 33bbafb6ec1f40da1a64f01c0d73d02d642fed58
         manager: { empId: employee.reportingToId }, // 👈 nested object
         type: formData.type,
         leaveDuration: formData.leaveDuration,
@@ -133,6 +137,7 @@ const LeavePermissionForm = () => {
       } else {
         alert("⚠️ Failed to submit Leave/Permission!");
       }
+      console.log(payload);
 
     } catch (error) {
       console.error("❌ Error submitting Leave/Permission:", error);

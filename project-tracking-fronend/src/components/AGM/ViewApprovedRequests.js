@@ -17,6 +17,7 @@
         axios
         .get("http://localhost:8080/leave/all")
         .then((res) => {
+          console.log("data"+res.data);
             setRequests(res.data);
             setFilteredRequests(res.data);
             const managers = [...new Set(res.data.map((r) => r.managerName))];

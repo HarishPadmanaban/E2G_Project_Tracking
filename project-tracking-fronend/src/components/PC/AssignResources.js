@@ -20,12 +20,15 @@ const AssignActivityForm = () => {
     assignedActivity: "",
   });
 
+  const idToUse=employee.tl?employee.reportingToId:employee.empId;
+
+
   // ✅ Fetch Projects
   useEffect(() => {
     if (!employee || !employee.reportingToId) return;
 
     axios
-      .get(`http://localhost:8080/project/${employee.reportingToId}`) // Dummy API
+      .get(`http://localhost:8080/project/${idToUse}`) // Dummy API
       .then((res) => setProjects(res.data))
       .catch((err) => console.error(err));
   }, [managerId]);
@@ -55,6 +58,16 @@ useEffect(() => {
 }, [formData.projectId, employee.reportingToId]);
 
 
+<<<<<<< HEAD
+=======
+    axios
+      .get(`http://localhost:8080/employee/getbymgr?mgrid=${idToUse}`)
+      .then((res) => {
+        setEmployees(res.data);
+      })
+      .catch((err) => console.error(err));
+  }, [managerId, employee.reportingToId]);
+>>>>>>> 33bbafb6ec1f40da1a64f01c0d73d02d642fed58
 
 
   // ✅ Fetch Activities based on type
