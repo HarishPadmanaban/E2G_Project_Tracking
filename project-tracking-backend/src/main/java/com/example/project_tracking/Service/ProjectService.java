@@ -140,7 +140,7 @@ public class ProjectService {
         return projectRepository.findByManagerIdAndProjectStatusTrue(managerId);
     }
 
-    public Project updateProjectHours(Long tlId,Long projectId, BigDecimal addModellingHours, BigDecimal addCheckingHours, BigDecimal addDetailingHours, BigDecimal addStudyHours,LocalDate startDate) {
+    public Project updateProjectHours(Long tlId,Long projectId, BigDecimal addModellingHours, BigDecimal addCheckingHours, BigDecimal addDetailingHours, BigDecimal addStudyHours,LocalDate startDate,String projectActivity) {
         Optional<Project> optionalProject = projectRepository.findById(projectId);
 
         if (optionalProject.isPresent()) {
@@ -168,6 +168,8 @@ public class ProjectService {
                 project.setTlId(tlId);
 
                 project.setStartDate(startDate);
+
+                project.setProjectActivityStatus(projectActivity);
 
                 // Save back to repo
                 return projectRepository.save(project);

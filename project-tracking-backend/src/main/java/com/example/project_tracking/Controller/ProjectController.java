@@ -60,9 +60,10 @@ public class ProjectController {
             @RequestParam BigDecimal checkingHours,
             @RequestParam BigDecimal detailingHours,
             @RequestParam BigDecimal studyHours,
-            @RequestParam LocalDate startDate
+            @RequestParam LocalDate startDate,
+            @RequestParam String projectActivity
             ) {
-        return projectService.updateProjectHours(tlId,projectId, modellingHours, checkingHours, detailingHours,studyHours,startDate);
+        return projectService.updateProjectHours(tlId,projectId, modellingHours, checkingHours, detailingHours,studyHours,startDate,projectActivity);
     }
 
     @PutMapping("/editproject")

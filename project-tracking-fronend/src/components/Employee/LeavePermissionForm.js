@@ -95,11 +95,8 @@ const LeavePermissionForm = () => {
 
     try {
       const payload = {
-<<<<<<< HEAD
-        employee: { empId : employee.empId },       // 👈 nested object
-=======
+     // 👈 nested object
         employee: { empId: employee.empId },       // 👈 nested object
->>>>>>> 33bbafb6ec1f40da1a64f01c0d73d02d642fed58
         manager: { empId: employee.reportingToId }, // 👈 nested object
         type: formData.type,
         leaveDuration: formData.leaveDuration,

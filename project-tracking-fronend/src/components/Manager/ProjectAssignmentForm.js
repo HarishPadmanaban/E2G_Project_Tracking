@@ -16,6 +16,7 @@ const ProjectAssignmentForm = () => {
   const managerIdToUse = employee?.manager ? employee.empId : employee?.reportingToId;
   const [projects, setProjects] = useState([]);
   const [teamLeads, setTeamLeads] = useState([]);
+  const [selectedActivity, setSelectedActivity] = useState("");
   const [employeesByRole, setEmployeesByRole] = useState({
     Modeller: [],
     Checker: [],
@@ -49,7 +50,7 @@ const ProjectAssignmentForm = () => {
     const proj = axios
       .get(`http://localhost:8080/project/manager/${managerIdToUse}/active`) // Dummy backend endpoint
       .then((proj) => {
-        const inProgress = proj.data.filter((p) => p.workingHours === 0 && p.tlId===null);
+        const inProgress = proj.data.filter((p) => p.workingHours === 0 && p.tlId === null);
         console.log(proj.data);
         setProjects(inProgress);
       })
@@ -70,37 +71,37 @@ const ProjectAssignmentForm = () => {
       .catch((err) => console.error(err));
   }, [managerIdToUse]);
 
- useEffect(() => {
-  if (!managerIdToUse) return;
+  useEffect(() => {
+    if (!managerIdToUse) return;
 
-  axios
-    .get(`http://localhost:8080/employee/getbymgr`, {
-      params: { mgrid: managerIdToUse },
-    })
-    .then((res) => {
-      const allEmployees = res.data;
+    axios
+      .get(`http://localhost:8080/employee/getbymgr`, {
+        params: { mgrid: managerIdToUse },
+      })
+      .then((res) => {
+        const allEmployees = res.data;
 
-      console.log("👥 Employees under manager:", allEmployees);
+        console.log("👥 Employees under manager:", allEmployees);
 
-      // ✅ Categorize employees by their role
-      const grouped = {
-        Modeller: allEmployees.filter(emp =>
-          emp.role?.toLowerCase().includes("modeller")
-        ),
-        Checker: allEmployees.filter(emp =>
-          emp.role?.toLowerCase().includes("checker")
-        ),
-        Detailer: allEmployees.filter(emp =>
-          emp.role?.toLowerCase().includes("detailer")
-        ),
-      };
+        // ✅ Categorize employees by their role
+        const grouped = {
+          Modeller: allEmployees.filter(emp =>
+            emp.role?.toLowerCase().includes("modeller")
+          ),
+          Checker: allEmployees.filter(emp =>
+            emp.role?.toLowerCase().includes("checker")
+          ),
+          Detailer: allEmployees.filter(emp =>
+            emp.role?.toLowerCase().includes("detailer")
+          ),
+        };
 
-      setEmployeesByRole(grouped);
-    })
-    .catch((err) => {
-      console.error("❌ Error fetching employees:", err);
-    });
-}, [managerIdToUse]);
+        setEmployeesByRole(grouped);
+      })
+      .catch((err) => {
+        console.error("❌ Error fetching employees:", err);
+      });
+  }, [managerIdToUse]);
 
   const [formData, setFormData] = useState({
     projectId: "",
@@ -108,8 +109,9 @@ const ProjectAssignmentForm = () => {
     modellingHours: "",
     checkingHours: "",
     detailingHours: "",
-    studyHours:"",
+    studyHours: "",
     startDate: "",
+    projectActivity: "" 
   });
 
 
@@ -117,10 +119,10 @@ const ProjectAssignmentForm = () => {
   const toggleResourceSelection = (emp) => {
     setSelectedResources((prev) => {
       const exists = prev.find((r) => r.empId === emp.empId && r.role === selectedRole);
-if (exists) {
-  return prev.filter((r) => !(r.empId === emp.empId && r.role === selectedRole));
-}
-return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designation, role: selectedRole }];
+      if (exists) {
+        return prev.filter((r) => !(r.empId === emp.empId && r.role === selectedRole));
+      }
+      return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designation, role: selectedRole }];
 
     });
   };
@@ -139,7 +141,7 @@ return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designatio
       modellingHours: "",
       checkingHours: "",
       detailingHours: "",
-      studyHours:"",
+      studyHours: "",
       startDate: "",
     });
   };
@@ -149,135 +151,143 @@ return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designatio
   };
 
   const validateForm = async () => {
-  if (!formData.projectId) {
-    alert("⚠️ Please select a project.");
-    return false;
-  }
+    if (!formData.projectId) {
+      alert("⚠️ Please select a project.");
+      return false;
+    }
 
-  if (!formData.tl1) {
-    alert("⚠️ Please select Team Lead.");
-    return false;
-  }
+    if (!formData.tl1) {
+      alert("⚠️ Please select Team Lead.");
+      return false;
+    }
 
-  if (!formData.startDate) {
-  alert("⚠️ Please select Start Date");
-  return false;
-}
+    if (!formData.startDate) {
+      alert("⚠️ Please select Start Date");
+      return false;
+    }
 
-const today = new Date().setHours(0, 0, 0, 0);
-const start = new Date(formData.startDate).setHours(0, 0, 0, 0);
+    if (!formData.projectActivity) {
+      alert("⚠️ Please select Project Activity");
+      return false;
+    }
 
-if (start < today) {
-  alert("❌ Start Date cannot be in the past.");
-  return false;
-}
+    const today = new Date().setHours(0, 0, 0, 0);
+    const start = new Date(formData.startDate).setHours(0, 0, 0, 0);
+
+    if (start < today) {
+      alert("❌ Start Date cannot be in the past.");
+      return false;
+    }
 
 
 
 
-  if (
-    !formData.modellingHours ||
-    !formData.checkingHours ||
-    !formData.detailingHours
-    ||
-    !formData.studyHours
-  ) {
-    alert("⚠️ Please fill all hour fields (Modelling, Checking, Detailing,Study).");
-    return false;
-  }
+    if (
+      !formData.modellingHours ||
+      !formData.checkingHours ||
+      !formData.detailingHours
+      ||
+      !formData.studyHours
+    ) {
+      alert("⚠️ Please fill all hour fields (Modelling, Checking, Detailing,Study).");
+      return false;
+    }
 
-  if (
-    Number(formData.modellingHours) <= 0 ||
-    Number(formData.checkingHours) <= 0 ||
-    Number(formData.detailingHours) <= 0 ||
-    Number(formData.studyHours) <= 0
-  ) {
-    alert("⚠️ Hours must be greater than 0.");
-    return false;
-  }
+    if (
+      Number(formData.modellingHours) <= 0 ||
+      Number(formData.checkingHours) <= 0 ||
+      Number(formData.detailingHours) <= 0 ||
+      Number(formData.studyHours) <= 0
+    ) {
+      alert("⚠️ Hours must be greater than 0.");
+      return false;
+    }
 
-  const total =
-    Number(formData.modellingHours) +
-    Number(formData.checkingHours) +
-    Number(formData.detailingHours) +
-    Number(formData.studyHours);
+    const total =
+      Number(formData.modellingHours) +
+      Number(formData.checkingHours) +
+      Number(formData.detailingHours) +
+      Number(formData.studyHours);
 
-  if (selectedProject && total !== selectedProject.assignedHours) {
-    alert(
-      `❌ Total assigned hours (${total}) must match project total (${selectedProject.assignedHours}).`
-    );
-    return false;
-  }
+    if (selectedProject && total !== selectedProject.assignedHours) {
+      alert(
+        `❌ Total assigned hours (${total}) must match project total (${selectedProject.assignedHours}).`
+      );
+      return false;
+    }
 
-  try {
-    // ✅ STEP 1: Add project hours
-    const hoursResponse = await axios.put(
-      `http://localhost:8080/project/${formData.projectId}/add-hours`,
-      null,
-      {
-        params: {
-          tlId: formData.tl1,
-          modellingHours: formData.modellingHours,
-          checkingHours: formData.checkingHours,
-          detailingHours: formData.detailingHours,
-          studyHours:formData.studyHours,
-          startDate: formData.startDate,
-        },
-      }
-    );
+    try {
+      console.log(formData.projectActivity);
+      // ✅ STEP 1: Add project hours
+      const hoursResponse = await axios.put(
+        `http://localhost:8080/project/${formData.projectId}/add-hours`,
+        null,
+        {
+          params: {
+            tlId: formData.tl1,
+            modellingHours: formData.modellingHours,
+            checkingHours: formData.checkingHours,
+            detailingHours: formData.detailingHours,
+            studyHours: formData.studyHours,
+            startDate: formData.startDate,
+            projectActivity: formData.projectActivity
+          },
+        }
+      );
 
-    console.log("✅ Project Hours Update Response:", hoursResponse.data);
+      console.log("✅ Project Hours Update Response:", hoursResponse.data);
 
-    // ✅ STEP 2: Assign resources (separate endpoint)
-    console.log("📦 Resources to be assigned:", selectedResources);
+      // ✅ STEP 2: Assign resources (separate endpoint)
+      console.log("📦 Resources to be assigned:", selectedResources);
 
-    const payload = {
-  project_id: formData.projectId,
-  employeeIds: selectedResources.map(emp => emp.empId),
-};
+      const payload = {
+        project_id: formData.projectId,
+        employeeIds: selectedResources.map(emp => emp.empId),
+      };
 
-    const resourceResponse = await axios.post(
-      `http://localhost:8080/project-assignment/assign`,
-      payload
-    );
+      const resourceResponse = await axios.post(
+        `http://localhost:8080/project-assignment/assign`,
+        payload
+      );
 
-    console.log("✅ Resource Allocation Response:", resourceResponse.data);
+      console.log("✅ Resource Allocation Response:", resourceResponse.data);
 
-    alert("✅ Project and resources assigned successfully!");
+      alert("✅ Project and resources assigned successfully!");
 
-    // ✅ Reset everything
-    setFormData({
-      projectId: "",
-      tl1: "",
-      modellingHours: "",
-      checkingHours: "",
-      detailingHours: "",
-      startDate:"",
-    });
-    setSelectedResources([]);
-    setSelectedProject(null);
+      // ✅ Reset everything
+      setFormData({
+        projectId: "",
+        tl1: "",
+        modellingHours: "",
+        checkingHours: "",
+        detailingHours: "",
+        startDate: "",
+        projectActivity: ""
+      });
+      setSelectedResources([]);
+      setSelectedProject(null);
 
-    // ✅ Refresh updated projects
-    const updatedProjectsRes = await axios.get(
-      `http://localhost:8080/project/manager/${managerIdToUse}/active`
-    );
+      // ✅ Refresh updated projects
+      const updatedProjectsRes = await axios.get(
+        `http://localhost:8080/project/manager/${managerIdToUse}/active`
+      );
 
-    const inProgress = updatedProjectsRes.data.filter(
-      (p) =>
-        p.workingHours === 0 &&
-        p.modellingHours === 0 &&
-        p.checkingHours === 0 &&
-        p.detailingHours === 0
-    );
+      const inProgress = updatedProjectsRes.data.filter(
+        (p) =>
+          p.workingHours === 0 &&
+          p.modellingHours === 0 &&
+          p.checkingHours === 0 &&
+          p.detailingHours === 0
+      );
 
-    setProjects(inProgress);
-    console.log("🔁 Updated Project List:", updatedProjectsRes.data);
+      setProjects(inProgress);
+      console.log("🔁 Updated Project List:", updatedProjectsRes.data);
 
-  } catch (error) {
-    console.error("❌ Error during assignment:", error);
-    alert("❌ Failed to assign project or resources");
-  }
-};
+    } catch (error) {
+      console.error("❌ Error during assignment:", error);
+      alert("❌ Failed to assign project or resources");
+    }
+  };
 
 
 
@@ -304,9 +314,33 @@ if (start < today) {
         </select>
       </div>
 
+
+
       {/* Show next fields only after project selection */}
       {selectedProject && (
         <>
+
+          <div className={styles.fld}>
+            <label>Project Activity</label>
+            <select 
+              name="projectActivity"
+              value={selectedActivity}
+              onChange={(e) => {
+                setSelectedActivity(e.target.value);
+                setFormData(prev => ({
+                  ...prev,
+                  projectActivity: e.target.value
+                }));
+              }}
+
+            >
+              <option value="">Select Activity</option>
+              <option value="IFRA">IFRA</option>
+              <option value="Client Rework">Client Rework</option>
+              <option value="Internal Rework">Internal Rework</option>
+            </select>
+          </div>
+
           <div className={styles.fld}>
             <label style={{ "marginBottom": "8px" }}>Assigned Hours (Total)</label>
             <input
@@ -317,7 +351,7 @@ if (start < today) {
           </div>
 
           <div className={styles.fld}>
-            <label>Choose TL1</label>
+            <label>Choose TL</label>
             <select
               name="tl1"
               value={formData.tl1}
@@ -333,14 +367,15 @@ if (start < today) {
           </div>
 
           <div className={styles.fld}>
-  <label>Start Date</label>
-  <input
-    type="date"
-    name="startDate"
-    value={formData.startDate} 
-    onChange={handleChange}
-  />
-</div>
+            <label>Start Date</label>
+            <input
+              type="date"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleChange}
+              min={new Date().toISOString().split("T")[0]}
+            />
+          </div>
 
 
 

@@ -1211,7 +1211,7 @@ const EmployeeWorkForm = () => {
     clientName: "",
     projectActivityType: "",
     activityId: "",
-    activityName:"",
+    activityName: "",
     category: "",
     startTime: "",
     endTime: "",
@@ -1220,7 +1220,7 @@ const EmployeeWorkForm = () => {
     assignedWork: "",
     status: "Pending",
     remarks: "",
-    assignedWorkId:""
+    assignedWorkId: ""
   });
 
   const [isRunning, setIsRunning] = useState(false);
@@ -1275,7 +1275,7 @@ const EmployeeWorkForm = () => {
 
   // Resume or restore logic — ONLY run for employee mode (skip when manager view is present)
   useEffect(() => {
-   
+
     // helper to enable stop button after remaining ms
     const enableStopAfter = (remainingMs) => {
       if (remainingMs <= 0) {
@@ -1302,7 +1302,7 @@ const EmployeeWorkForm = () => {
             return;
           }
 
-           await fetchAssignedActivities(workData.projectId, employee.empId);
+          await fetchAssignedActivities(workData.projectId, employee.empId);
 
           const selectedProject = projects.find(
             (proj) => proj.id.toString() === workData.projectId?.toString()
@@ -1317,14 +1317,14 @@ const EmployeeWorkForm = () => {
             clientName: selectedProject ? selectedProject.clientName : "",
             projectActivityType: selectedActivity ? selectedActivity.mainType : "",
             activityId: workData.activityId?.toString() || "",
-            activityName:selectedActivity?.activityName?.toString()||"",
+            activityName: selectedActivity?.activityName?.toString() || "",
             category: selectedActivity ? selectedActivity.category : "",
             startTime: workData.startTime ? workData.startTime.substring(0, 5) : "",
             endTime: workData.endTime ? workData.endTime.substring(0, 5) : "",
             workHours: workData.workHours || "",
             projectActivity: workData.projectActivity || "",
             assignedWork: workData.assignedWork || "",
-            assignedWorkId:workData.assignedWorkId||"",
+            assignedWorkId: workData.assignedWorkId || "",
             status: workData.status || "Pending",
             remarks: workData.remarks || "",
           });
@@ -1364,7 +1364,7 @@ const EmployeeWorkForm = () => {
       checkActiveRunningWork();
     }
 
-  
+
     function checkActiveRunningWork() {
       axios
         .get(`http://localhost:8080/workdetails/active/${employee.empId}`)
@@ -1395,8 +1395,8 @@ const EmployeeWorkForm = () => {
               startTime: active.startTime ? active.startTime.substring(0, 5) : "",
               endTime: "",
               workHours: "",
-              assignedWork:active.assignedWork||"",
-              assignedWorkId:active.assignedWorkId||"",
+              assignedWork: active.assignedWork || "",
+              assignedWorkId: active.assignedWorkId || "",
               projectActivity: active.projectActivity || "",
               status: active.status || "Pending",
               remarks: active.remarks || "",
@@ -1437,18 +1437,18 @@ const EmployeeWorkForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employee, projects, activities, activeWorkId]);
 
-    const fetchAssignedActivities = async (projectId, employeeId) => {
-  try {
-    const response = await axios.get(
-      `http://localhost:8080/assigned-work/project/${projectId}/employee/${employeeId}/active`
-    );
-    console.log(response.data);
-    setAssignedActivities(response.data);
-  } catch (error) {
-    console.error("Error fetching assigned activities:", error);
-    setAssignedActivities([]);
-  }
-};
+  const fetchAssignedActivities = async (projectId, employeeId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/assigned-work/project/${projectId}/employee/${employeeId}/active`
+      );
+      console.log(response.data);
+      setAssignedActivities(response.data);
+    } catch (error) {
+      console.error("Error fetching assigned activities:", error);
+      setAssignedActivities([]);
+    }
+  };
 
 
   const handleDiscard = () => {
@@ -1474,14 +1474,14 @@ const EmployeeWorkForm = () => {
           clientName: "",
           projectActivityType: "",
           activityId: "",
-          activityName:"",
+          activityName: "",
           category: "",
           startTime: "",
           endTime: "",
           workHours: "",
           projectActivity: "",
           assignedWork: "",
-          assignedWorkId:"",
+          assignedWorkId: "",
           status: "Pending",
           remarks: "",
         });
@@ -1521,27 +1521,28 @@ const EmployeeWorkForm = () => {
   };
 
   const handleProjectChange = (e) => {
-  const selectedProject = projects.find((proj) => proj.id.toString() === e.target.value);
-  console.log(selectedProject);
-  // Reset form data first
-  setFormData((prev) => ({
-  ...prev,
-  projectId: e.target.value,
-  clientName: selectedProject ? selectedProject.clientName : "",
-  projectActivityType: "",
-  activityId: "",
-  category: "",
-  projectActivity: selectedProject.projectActivityStatus,
-}));
+    const selectedProject = projects.find((proj) => proj.id.toString() === e.target.value);
+    console.log(selectedProject);
+    // Reset form data first
+    setFormData((prev) => ({
+      ...prev,
+      projectId: e.target.value,
+      clientName: selectedProject ? selectedProject.clientName : "",
+      projectActivityType: "",
+      activityId: "",
+      category: "",
+      projectActivity: selectedProject?.projectActivityStatus || "",
 
-  // Clear previous assigned activities
-  setAssignedActivities([]);
-  
-  // Fetch assigned activities ONLY if project is selected
-  if (e.target.value && employee) {
-    fetchAssignedActivities(e.target.value, employee.empId);
-  }
-};
+    }));
+
+    // Clear previous assigned activities
+    setAssignedActivities([]);
+
+    // Fetch assigned activities ONLY if project is selected
+    if (e.target.value && employee) {
+      fetchAssignedActivities(e.target.value, employee.empId);
+    }
+  };
 
   // Employee's Start/Stop flow (preserved)
   const handleStartStop = () => {
@@ -1562,12 +1563,12 @@ const EmployeeWorkForm = () => {
         managerId: employee.reportingToId,
         projectId: formData.projectId,
         activityId: formData.activityId,
-        activityName:formData.activityName,
+        activityName: formData.activityName,
         date: new Date().toISOString().split("T")[0],
         startTime: start + ":00",
         projectActivity: formData.projectActivity,
         assignedWork: formData.assignedWork,
-        assignedWorkId:formData.assignedWorkId,
+        assignedWorkId: formData.assignedWorkId,
         status: formData.status,
         remarks: formData.remarks,
       };
@@ -1580,9 +1581,9 @@ const EmployeeWorkForm = () => {
           setActiveWorkId(workId);
           console.log(formData);
           setFormData((prev) => ({
-  ...prev,
-  startTime: start, // only add start time
-}));
+            ...prev,
+            startTime: start, // only add start time
+          }));
 
           console.log(formData);
           setIsRunning(true);
@@ -1639,30 +1640,30 @@ const EmployeeWorkForm = () => {
 
 
   const handleAssignedActivityChange = (e) => {
-  const selectedId = e.target.value;
-  const selectedAssignedActivity = assignedActivities.find(
-    (act) => act.id.toString() === selectedId
-  );
+    const selectedId = e.target.value;
+    const selectedAssignedActivity = assignedActivities.find(
+      (act) => act.id.toString() === selectedId
+    );
 
-  console.log(selectedAssignedActivity);
+    console.log(selectedAssignedActivity);
 
-  const act = activities.find((a) => a.id === selectedAssignedActivity.activityId);
+    const act = activities.find((a) => a.id === selectedAssignedActivity.activityId);
 
-  console.log(act);
+    console.log(act);
 
-  if (!selectedAssignedActivity || !act) return;
+    if (!selectedAssignedActivity || !act) return;
 
-setFormData((prev) => ({
-  ...prev,
-  assignedWorkId: selectedAssignedActivity.id,
-  assignedWork: selectedAssignedActivity.description,
-  projectActivityType: act.mainType,
-  activityName: act.activityName,
-  activityId: act.id,
-  category: act.category,
-}));
+    setFormData((prev) => ({
+      ...prev,
+      assignedWorkId: selectedAssignedActivity.id,
+      assignedWork: selectedAssignedActivity.description,
+      projectActivityType: act.mainType,
+      activityName: act.activityName,
+      activityId: act.id,
+      category: act.category,
+    }));
 
-};
+  };
 
   // Employee submit or Manager update (preserved)
   const handleSubmit = (e) => {
@@ -1685,7 +1686,7 @@ setFormData((prev) => ({
       endTime: formData.endTime + ":00",
       projectActivity: formData.projectActivity,
       assignedWork: formData.assignedWork,
-      assignedWorkId:formData.assignedWorkId,
+      assignedWorkId: formData.assignedWorkId,
       status: formData.status,
       remarks: formData.remarks,
     };
@@ -1702,14 +1703,14 @@ setFormData((prev) => ({
           projectId: "",
           clientName: "",
           activityId: "",
-          activityName:"",
+          activityName: "",
           category: "",
           startTime: "",
           endTime: "",
           workHours: "",
           projectActivity: "",
           assignedWork: "",
-          assignedWorkId:"",
+          assignedWorkId: "",
           status: "Pending",
           remarks: "",
         });
@@ -1807,17 +1808,17 @@ setFormData((prev) => ({
             <div className={styles.field}>
               <label>Assigned Work</label>
               <select
-  name="assignedWorkId"
-  value={formData.assignedWorkId || ""}
-  onChange={handleAssignedActivityChange}
->
-  <option value="">Select Assigned Activity</option>
-  {assignedActivities.map((act) => (
-    <option key={act.id} value={act.id}>
-      {act.description}
-    </option>
-  ))}
-</select>
+                name="assignedWorkId"
+                value={formData.assignedWorkId || ""}
+                onChange={handleAssignedActivityChange}
+              >
+                <option value="">Select Assigned Activity</option>
+                {assignedActivities.map((act) => (
+                  <option key={act.id} value={act.id}>
+                    {act.description}
+                  </option>
+                ))}
+              </select>
 
             </div>
           </div>

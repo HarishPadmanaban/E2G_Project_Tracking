@@ -30,7 +30,7 @@ const LoginForm = () => {
       );
 
       const employeeData = response.data;
-      
+
 
       if (!employeeData) {
         setError("Invalid username or password");
@@ -51,63 +51,67 @@ const LoginForm = () => {
 
   return (
     <div>
-      <div className={styles.companyHeader}>
+      
+        <div className={styles.companyHeader}>
           <h1 className={styles.companyName}>
-            E2G ENGINEERING SERVICES PRIVATE LIMITED
+            <img src="/logo.png" alt="E2G Logo" className={styles.logo} />
+            <span>E2G ENGINEERING SERVICES PRIVATE LIMITED</span>
           </h1>
-      </div>
+        </div>
+
+
       <div className={styles.loginContainer}>
-      <div className={styles.loginWrapper}>
-        <div className={styles.loginBox}>
-          <h2 className={styles.loginTitle}>Employee Login</h2>
+        <div className={styles.loginWrapper}>
+          <div className={styles.loginBox}>
+            <h2 className={styles.loginTitle}>Employee Login</h2>
 
-          <form onSubmit={handleLogin} className={styles.loginForm}>
-            <div className={styles.inputGroup}>
-              <label className={styles.loginLabel} htmlFor="username">
-                Username
-              </label>
-              <input
-                type="text"
-                id="username"
-                className={styles.loginInput}
-                placeholder="Enter username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
+            <form onSubmit={handleLogin} className={styles.loginForm}>
+              <div className={styles.inputGroup}>
+                <label className={styles.loginLabel} htmlFor="username">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  className={styles.loginInput}
+                  placeholder="Enter username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
 
-            <div className={styles.inputGroup}>
-  <label className={styles.loginLabel} htmlFor="password">
-    Password
-  </label>
+              <div className={styles.inputGroup}>
+                <label className={styles.loginLabel} htmlFor="password">
+                  Password
+                </label>
 
-  <div className={styles.passwordWrapper}>
-    <input
-      type={showPassword ? "text" : "password"}
-      id="password"
-      className={styles.loginInput}
-      placeholder="Enter password"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-    />
-    {/* <FontAwesomeIcon
+                <div className={styles.passwordWrapper}>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    className={styles.loginInput}
+                    placeholder="Enter password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  {/* <FontAwesomeIcon
       //icon={showPassword ? faEyeSlash : faEye}
       //className={styles.eyeIcon}
       //onClick={() => setShowPassword((prev) => !prev)}
     /> */}
-  </div>
-</div>
+                </div>
+              </div>
 
 
-            {error && <p className={styles.errorMsg}>{error}</p>}
+              {error && <p className={styles.errorMsg}>{error}</p>}
 
-            <button type="submit" className={styles.loginBtn}>
-              Login
-            </button>
-          </form>
+              <button type="submit" className={styles.loginBtn}>
+                Login
+              </button>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };
