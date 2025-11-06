@@ -20,6 +20,7 @@ body {
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
 .passwordWrapper {
   position: relative;
   display: flex;
@@ -41,7 +42,8 @@ body {
 
 .loginInput {
   width: 100%;
-  padding: 10px 40px 10px 10px; /* space for the eye icon */
+  padding: 10px 40px 10px 10px;
+  /* space for the eye icon */
   border: 1px solid #ccc;
   border-radius: 6px;
   outline: none;
@@ -57,23 +59,23 @@ body {
 /* Company Header */
 .companyHeader {
   text-align: center;
- padding: 1px;
-background: linear-gradient(135deg, #1a202c 0%, #000000 100%);
-border-radius: 0;
-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1px;
+  background: linear-gradient(135deg, #1a202c 0%, #000000 100%);
+  border-radius: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .companyName {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px; /* spacing between logo & text */
+  /* spacing between logo & text */
 }
 
-.companyName span{
-   font-size: 20px;
+.companyName span {
+  font-size: 20px;
   font-weight: 700;
-  margin: 0;
+  padding: 20px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: white;
@@ -210,8 +212,8 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 14px;
 }
 
-.errorMsg{
-  color:red;
+.errorMsg {
+  color: red;
 }
 
 /* Responsive Design */
@@ -219,15 +221,15 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   .loginContainer {
     padding: 15px;
   }
-  
+
   .companyName {
     font-size: 18px;
   }
-  
+
   .loginBox {
     padding: 30px 25px;
   }
-  
+
   .loginTitle {
     font-size: 24px;
   }
@@ -237,19 +239,19 @@ box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   .companyName {
     font-size: 16px;
   }
-  
+
   .loginBox {
     padding: 25px 20px;
   }
-  
+
   .loginTitle {
     font-size: 22px;
   }
-  
+
   .loginInput {
     padding: 12px 14px;
   }
-  
+
   .loginBtn {
     padding: 14px;
   }

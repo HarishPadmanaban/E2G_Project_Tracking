@@ -53,10 +53,10 @@ const LoginForm = () => {
     <div>
       
         <div className={styles.companyHeader}>
-          <h1 className={styles.companyName}>
+          <div className={styles.companyName}>
             <img src="/logo.png" alt="E2G Logo" className={styles.logo} />
             <span>E2G ENGINEERING SERVICES PRIVATE LIMITED</span>
-          </h1>
+          </div>
         </div>
 
 
