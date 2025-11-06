@@ -1521,6 +1521,20 @@ const EmployeeWorkForm = () => {
   };
 
   const handleProjectChange = (e) => {
+<<<<<<< HEAD
+  const selectedProject = projects.find((proj) => proj.id.toString() === e.target.value);
+  console.log(selectedProject);
+  // Reset form data first
+  setFormData((prev) => ({
+  ...prev,
+  projectId: e.target.value,
+  clientName: selectedProject ? selectedProject.clientName : "",
+  projectActivityType: "",
+  activityId: "",
+  category: "",
+  projectActivity: selectedProject?.projectActivityStatus||"",
+}));
+=======
     const selectedProject = projects.find((proj) => proj.id.toString() === e.target.value);
     console.log(selectedProject);
     // Reset form data first
@@ -1532,6 +1546,7 @@ const EmployeeWorkForm = () => {
       activityId: "",
       category: "",
       projectActivity: selectedProject?.projectActivityStatus || "",
+>>>>>>> 554b4212caf353f8f4a62c54f3092d1b1d38cb2f
 
     }));
 
@@ -1681,7 +1696,7 @@ const EmployeeWorkForm = () => {
       projectId: formData.projectId,
       activityId: formData.activityId,
       date: new Date().toISOString().split("T")[0],
-      workHours: parseFloat(formData.workHours),
+      workHours: parseFloat(formData.workHours).toFixed(2),
       startTime: formData.startTime + ":00",
       endTime: formData.endTime + ":00",
       projectActivity: formData.projectActivity,

@@ -35,10 +35,10 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
-    public List<ProjectResponse> getAll(){
+    public List<Project> getAll(){
 
         List<Project> projectList = projectRepository.findAll();
-        return projectList.stream().map(this::convertToResponse).toList();
+        return projectList;
     }
 
     public ProjectResponse convertToResponse(Project project){
@@ -72,7 +72,10 @@ public class ProjectService {
                     project.getStudyHours(),
                     project.getStudyHoursTracking(),
                     project.getExtraHours(),
-                    project.getExtraHoursTracking()
+                    project.getExtraHoursTracking(),
+                    project.getSpecialHours(),
+                    project.getSpecialHoursTracking(),
+                    project.getProjectActivityStatus()
             );
         }
       else{
@@ -100,7 +103,10 @@ public class ProjectService {
                     project.getStudyHours(),
                     project.getStudyHoursTracking(),
                     project.getExtraHours(),
-                    project.getExtraHoursTracking()
+                    project.getExtraHoursTracking(),
+                    project.getSpecialHours(),
+                    project.getSpecialHoursTracking(),
+                    project.getProjectActivityStatus()
             );
         }
         return response;

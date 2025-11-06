@@ -4,6 +4,7 @@ import com.example.project_tracking.DTO.WorkDetailsRequest;
 import com.example.project_tracking.DTO.WorkDetailsResponse;
 import com.example.project_tracking.Model.*;
 import com.example.project_tracking.Repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,26 +54,18 @@ public class WorkDetailsService {
     public WorkDetailsResponse saveWorkDetails(WorkDetailsRequest request) {
         WorkDetails workDetails = new WorkDetails();
 
-        // Set managed entities
-        Employee employee = employeeRepository.findById(request.getEmployeeId())
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
-        workDetails.setEmployee(employee);
+        // ✅ Create or fetch AssignedWork
+        AssignedWork assignedWork = findOrCreateAssignedWork(
+                request.getEmployeeId(),
+                request.getManagerId(),
+                request.getProjectId(),
+                request.getActivityId()
+        );
 
-        Employee manager = employeeRepository.findById(request.getManagerId())
-                .orElseThrow(() -> new RuntimeException("Manager not found"));
-        workDetails.setManager(manager);
+        // ✅ Link AssignedWork
+        workDetails.setAssignedWorkId(assignedWork);
 
-        Project project = projectRepository.findById(request.getProjectId())
-                .orElseThrow(() -> new RuntimeException("Project not found"));
-        workDetails.setProject(project);
-
-        Activity activity = activityRepository.findById(request.getActivityId())
-                .orElseThrow(() -> new RuntimeException("Activity not found"));
-
-        AssignedWork assigned = assignedWorkRepository.findById(request.getAssignedWorkId()).orElseThrow(()-> new RuntimeException("No assigned work is found"));
-
-        workDetails.setAssignedWorkId(assigned);
-        workDetails.setActivity(activity);
+        // ✅ Set remaining fields
         workDetails.setDate(request.getDate());
         workDetails.setWorkHours(request.getWorkHours());
         workDetails.setStartTime(request.getStartTime());
@@ -80,59 +74,100 @@ public class WorkDetailsService {
         workDetails.setAssignedWork(request.getAssignedWork());
         workDetails.setStatus(request.getStatus());
         workDetails.setRemarks(request.getRemarks());
-        
+
+        // ✅ Update project working hours if workHours is provided
+        if (request.getWorkHours() != null) {
+            updateProjectWorkingHours(
+                    assignedWork.getProject(),
+                    assignedWork.getActivity(),
+                    request.getWorkHours()
+            );
+        }
+
+        // ✅ Save WorkDetails and convert to response
         return convertToResponse(workDetailsRepository.save(workDetails));
     }
+
+
 
     private void updateProjectWorkingHours(Project project, Activity activity, Double workHours) {
         String mainType = activity.getMainType().toLowerCase();
         BigDecimal newWorkHours = BigDecimal.valueOf(workHours);
 
+        // Fetch target and current hours
         BigDecimal targetHours;
         BigDecimal currentTime;
+        BigDecimal currentExtraUsed = Optional.ofNullable(project.getExtraHoursTracking()).orElse(BigDecimal.ZERO);
+        BigDecimal extraLimit = Optional.ofNullable(project.getExtraHours()).orElse(BigDecimal.ZERO);
 
         switch (mainType) {
             case "modelling":
-                targetHours = project.getModellingHours() != null ? project.getModellingHours() : BigDecimal.ZERO;
-                currentTime = project.getModellingTime() != null ? project.getModellingTime() : BigDecimal.ZERO;
-                if (currentTime.add(newWorkHours).compareTo(targetHours) > 0) {
-                    throw new RuntimeException("Modelling hours exceeded for project: " + project.getProjectName());
-                }
-                project.setModellingTime(currentTime.add(newWorkHours));
+                targetHours = Optional.ofNullable(project.getModellingHours()).orElse(BigDecimal.ZERO);
+                currentTime = Optional.ofNullable(project.getModellingTime()).orElse(BigDecimal.ZERO);
                 break;
 
             case "checking":
-                targetHours = project.getCheckingHours() != null ? project.getCheckingHours() : BigDecimal.ZERO;
-                currentTime = project.getCheckingTime() != null ? project.getCheckingTime() : BigDecimal.ZERO;
-                if (currentTime.add(newWorkHours).compareTo(targetHours) > 0) {
-                    throw new RuntimeException("Checking hours exceeded for project: " + project.getProjectName());
-                }
-                project.setCheckingTime(currentTime.add(newWorkHours));
+                targetHours = Optional.ofNullable(project.getCheckingHours()).orElse(BigDecimal.ZERO);
+                currentTime = Optional.ofNullable(project.getCheckingTime()).orElse(BigDecimal.ZERO);
                 break;
 
             case "detailing":
-                targetHours = project.getDetailingHours() != null ? project.getDetailingHours() : BigDecimal.ZERO;
-                currentTime = project.getDetailingTime() != null ? project.getDetailingTime() : BigDecimal.ZERO;
-                if (currentTime.add(newWorkHours).compareTo(targetHours) > 0) {
-                    throw new RuntimeException("Detailing hours exceeded for project: " + project.getProjectName());
-                }
-                project.setDetailingTime(currentTime.add(newWorkHours));
+                targetHours = Optional.ofNullable(project.getDetailingHours()).orElse(BigDecimal.ZERO);
+                currentTime = Optional.ofNullable(project.getDetailingTime()).orElse(BigDecimal.ZERO);
+                break;
+
+            case "special activity":
+                targetHours = Optional.ofNullable(project.getSpecialHours()).orElse(BigDecimal.ZERO);
+                currentTime = Optional.ofNullable(project.getSpecialHoursTracking()).orElse(BigDecimal.ZERO);
+                break;
+
+            case "studying":
+                targetHours = Optional.ofNullable(project.getStudyHours()).orElse(BigDecimal.ZERO);
+                currentTime = Optional.ofNullable(project.getStudyHoursTracking()).orElse(BigDecimal.ZERO);
                 break;
 
             default:
                 throw new RuntimeException("Unknown main_type: " + mainType);
         }
 
-        // Update total working hours
-        BigDecimal currentWorkingHours = project.getWorkingHours() != null ? project.getWorkingHours() : BigDecimal.ZERO;
-        project.setWorkingHours(currentWorkingHours.add(newWorkHours));
+        // ✅ Case 1: Still within target hours
+        if (currentTime.add(newWorkHours).compareTo(targetHours) <= 0) {
+            setActivityTime(project, mainType, currentTime.add(newWorkHours));
+        }
+        // ✅ Case 2: Exceeds target — use extra hours
+        else {
+            BigDecimal extraNeeded = currentTime.add(newWorkHours).subtract(targetHours);
+
+            if (currentExtraUsed.add(extraNeeded).compareTo(extraLimit) > 0) {
+                throw new RuntimeException("Extra hours for project exceeded — approval required from AGM.");
+            }
+
+            // Update the specific activity tracking to its target limit
+            setActivityTime(project, mainType, targetHours);
+            // Increase extra hours tracking
+            project.setExtraHoursTracking(currentExtraUsed.add(extraNeeded));
+        }
+
+        // ✅ Update total working hours
+        BigDecimal totalWork = Optional.ofNullable(project.getWorkingHours()).orElse(BigDecimal.ZERO);
+        project.setWorkingHours(totalWork.add(newWorkHours));
 
         projectRepository.save(project);
     }
 
+    private void setActivityTime(Project project, String mainType, BigDecimal newValue) {
+        switch (mainType) {
+            case "modelling": project.setModellingTime(newValue); break;
+            case "checking": project.setCheckingTime(newValue); break;
+            case "detailing": project.setDetailingTime(newValue); break;
+            case "special activity": project.setSpecialHoursTracking(newValue); break;
+            case "studying": project.setStudyHoursTracking(newValue); break;
+        }
+    }
+
 
     public List<WorkDetailsResponse> getByEmployee(Long employeeId) {
-        return workDetailsRepository.findByEmployee_EmpId(employeeId)
+        return workDetailsRepository.findByAssignedWorkId_Employee_EmpId(employeeId)
                 .stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
@@ -140,7 +175,7 @@ public class WorkDetailsService {
 
     // ✅ 4. Get all logs by manager ID
     public List<WorkDetailsResponse> getByManager(Long managerId) {
-        return workDetailsRepository.findByManager_EmpId(managerId)
+        return workDetailsRepository.findByAssignedWorkId_Manager_EmpId(managerId)
                 .stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
@@ -148,7 +183,7 @@ public class WorkDetailsService {
 
     // ✅ 5. Get all logs by project ID
     public List<WorkDetailsResponse> getByProject(Long projectId) {
-        return workDetailsRepository.findByProjectId(projectId)
+        return workDetailsRepository.findByAssignedWorkId_Project_Id(projectId)
                 .stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
@@ -156,7 +191,7 @@ public class WorkDetailsService {
 
     // ✅ 6. Get all logs by activity ID
     public List<WorkDetailsResponse> getByActivity(Long activityId) {
-        return workDetailsRepository.findByActivityId(activityId)
+        return workDetailsRepository.findByAssignedWorkId_Activity_Id(activityId)
                 .stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
@@ -188,31 +223,37 @@ public class WorkDetailsService {
 
     // ✅ Helper method to map entity → DTO
     private WorkDetailsResponse convertToResponse(WorkDetails work) {
+        AssignedWork assigned = work.getAssignedWorkId();
+
+        Employee emp = assigned != null ? assigned.getEmployee() : null;
+        Employee mgr = assigned != null ? assigned.getManager() : null;
+        Project project = assigned != null ? assigned.getProject() : null;
+        Activity activity = assigned != null ? assigned.getActivity() : null;
+
         return new WorkDetailsResponse(
                 work.getId(),
-                work.getEmployee() != null ? work.getEmployee().getName() : null,
-                work.getEmployee().getEmpId(),
-                work.getManager() != null ? work.getManager().getName() : null,
-                work.getManager().getEmpId(),
-                work.getProject() != null ? work.getProject().getProjectName() : null,
-                work.getActivity() != null ? work.getActivity().getActivityName() : null,
+                emp != null ? emp.getName() : null,
+                emp != null ? emp.getEmpId() : 0L,
+                mgr != null ? mgr.getName() : null,
+                mgr != null ? mgr.getEmpId() : 0L,
+                project != null ? project.getProjectName() : null,
+                activity != null ? activity.getActivityName() : null,
                 work.getDate(),
                 work.getWorkHours(),
                 work.getStartTime(),
                 work.getEndTime(),
-                work.getProjectActivity(),
+                project != null ? project.getProjectActivityStatus() : null,
                 work.getAssignedWork(),
                 work.getStatus(),
                 work.getRemarks(),
-                work.getProject().getId(),
-                work.getActivity().getId(),
-                work.getAssignedWorkId() != null ? work.getAssignedWorkId().getId() : null
+                project != null ? project.getId() : null,
+                activity != null ? activity.getId() : null,
+                assigned != null ? assigned.getId() : null
         );
     }
 
     public WorkDetailsResponse stopWork(Long employeeId, String endTime, String workHoursStr) {
-        WorkDetails work = workDetailsRepository
-                .findTopByEmployee_EmpIdAndEndTimeIsNullOrderByIdDesc(employeeId)
+        WorkDetails work = workDetailsRepository.findTopByAssignedWorkId_Employee_EmpIdAndEndTimeIsNullOrderByIdDesc(employeeId)
                 .orElseThrow(() -> new RuntimeException("No active work found for employee"));
 
         LocalTime startTime = work.getStartTime();
@@ -223,8 +264,9 @@ public class WorkDetailsService {
         double calculatedHours = duration.toMinutes() / 60.0;
 
         // 3️⃣ Fetch related Project and Activity
-        Project project = work.getProject();
-        Activity activity = work.getActivity();
+        AssignedWork assignedWork = work.getAssignedWorkId();
+        Project project = assignedWork.getProject();
+        Activity activity = assignedWork.getActivity();
 
         // 4️⃣ Validate project-level target hours BEFORE saving
         validateTargetHours(project, activity, calculatedHours, true);
@@ -255,7 +297,6 @@ public class WorkDetailsService {
 
         Project project = projectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new RuntimeException("Project not found"));
-        work.setProject(project);
 
         Activity activity = activityRepository.findById(request.getActivityId())
                 .orElseThrow(() -> new RuntimeException("Activity not found"));
@@ -270,23 +311,25 @@ public class WorkDetailsService {
 
     public WorkDetailsResponse getActiveWorkByEmployee(Long employeeId) {
         Optional<WorkDetails> workOpt = workDetailsRepository
-                .findTopByEmployee_EmpIdAndEndTimeIsNullOrderByIdDesc(employeeId);
+                .findTopByEmployeeEmpIdAndEndTimeIsNullOrderByIdDesc(employeeId);
 
         if (workOpt.isEmpty()) return null;
 
         WorkDetails work = workOpt.get();
 
-        String employeeName = work.getEmployee().getName();
-        String managerName = work.getManager().getName();
-        String projectName = work.getProject() != null ? work.getProject().getProjectName() : "";
-        String activityName = work.getActivity() != null ? work.getActivity().getActivityName() : "";
+        AssignedWork assignedWork = work.getAssignedWorkId();
+
+        String employeeName = assignedWork.getEmployee().getName();
+        String managerName = assignedWork.getManager().getName();
+        String projectName = assignedWork.getProject() != null ? assignedWork.getProject().getProjectName() : "";
+        String activityName = assignedWork.getActivity() != null ? assignedWork.getActivity().getActivityName() : "";
 
         return new WorkDetailsResponse(
                 work.getId(),
                 employeeName,
-                work.getEmployee().getEmpId(),
+                assignedWork.getEmployee().getEmpId(),
                 managerName,
-                work.getManager().getEmpId(),
+                assignedWork.getManager().getEmpId(),
                 projectName,
                 activityName,
                 work.getDate(),
@@ -297,8 +340,8 @@ public class WorkDetailsService {
                 work.getAssignedWork(),
                 work.getStatus(),
                 work.getRemarks(),
-                work.getProject().getId(),
-                work.getActivity().getId(),
+                assignedWork.getProject().getId(),
+                assignedWork.getActivity().getId(),
                 work.getAssignedWorkId() != null ? work.getAssignedWorkId().getId() : null
 
         );
@@ -308,16 +351,18 @@ public class WorkDetailsService {
         WorkDetails work =  workDetailsRepository.findById(id).orElse(null);
         if(work==null) return null;
 
-        String employeeName = work.getEmployee().getName();
-        String managerName = work.getManager().getName();
-        String projectName = work.getProject() != null ? work.getProject().getProjectName() : "";
-        String activityName = work.getActivity() != null ? work.getActivity().getActivityName() : "";
+        AssignedWork assignedWork = work.getAssignedWorkId();
+
+        String employeeName = assignedWork.getEmployee().getName();
+        String managerName = assignedWork.getManager().getName();
+        String projectName = assignedWork.getProject() != null ? assignedWork.getProject().getProjectName() : "";
+        String activityName = assignedWork.getActivity() != null ? assignedWork.getActivity().getActivityName() : "";
         return new WorkDetailsResponse(
                 work.getId(),
                 employeeName,
-                work.getEmployee().getEmpId(),
+                assignedWork.getEmployee().getEmpId(),
                 managerName,
-                work.getManager().getEmpId(),
+                assignedWork.getManager().getEmpId(),
                 projectName,
                 activityName,
                 work.getDate(),
@@ -328,132 +373,159 @@ public class WorkDetailsService {
                 work.getAssignedWork(),
                 work.getStatus(),
                 work.getRemarks(),
-                work.getProject().getId(),
-                work.getActivity().getId(),
+                assignedWork.getProject().getId(),
+                assignedWork.getActivity().getId(),
                 work.getAssignedWorkId() != null ? work.getAssignedWorkId().getId() : null
         );
     }
 
-    public void makeChangeInActivity(Project project, Activity activity, boolean isAdd, double hours) {
-        String type = activity.getMainType().toLowerCase();
-        BigDecimal hrs = BigDecimal.valueOf(hours);
+    private void makeChangeInActivity(Project project, String activityType, BigDecimal hrs, boolean isAdd) {
+        BigDecimal extraUsed = project.getExtraHoursTracking() == null ? BigDecimal.ZERO : project.getExtraHoursTracking();
 
-        // Update specific time
-        switch (type) {
+        BiFunction<BigDecimal, BigDecimal, BigDecimal> applyChange = (current, target) -> {
+            if (!isAdd) return current.subtract(hrs);
+
+            if (current.add(hrs).compareTo(target) <= 0) {
+                // within normal assigned limit
+                return current.add(hrs);
+            } else {
+                // exceeded target → use extra hours pool
+                BigDecimal normalPart = target.subtract(current).max(BigDecimal.ZERO);
+                BigDecimal extraPart = hrs.subtract(normalPart);
+                project.setExtraHoursTracking(extraUsed.add(extraPart));
+                return target.add(normalPart);
+            }
+        };
+
+        switch (activityType.toLowerCase()) {
             case "modelling":
-                project.setModellingTime(isAdd
-                        ? project.getModellingTime().add(hrs)
-                        : project.getModellingTime().subtract(hrs));
+                project.setModellingTime(applyChange.apply(project.getModellingTime(), project.getModellingHours()));
                 break;
-
             case "checking":
-                project.setCheckingTime(isAdd
-                        ? project.getCheckingTime().add(hrs)
-                        : project.getCheckingTime().subtract(hrs));
+                project.setCheckingTime(applyChange.apply(project.getCheckingTime(), project.getCheckingHours()));
                 break;
-
             case "detailing":
-                project.setDetailingTime(isAdd
-                        ? project.getDetailingTime().add(hrs)
-                        : project.getDetailingTime().subtract(hrs));
+                project.setDetailingTime(applyChange.apply(project.getDetailingTime(), project.getDetailingHours()));
                 break;
+            case "special activity":
+                project.setSpecialHoursTracking(applyChange.apply(project.getSpecialHoursTracking(), project.getSpecialHours()));
+                break;
+            case "studying":
+                project.setStudyHoursTracking(applyChange.apply(project.getStudyHoursTracking(), project.getStudyHours()));
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid activity type: " + activityType);
         }
 
-        // Update total working hours
-        project.setWorkingHours(isAdd
-                ? project.getWorkingHours().add(hrs)
-                : project.getWorkingHours().subtract(hrs));
+        // Update total working time (common for all)
+        if (isAdd) {
+            project.setWorkingHours(project.getWorkingHours().add(hrs));
+        } else {
+            project.setWorkingHours(project.getWorkingHours().subtract(hrs));
+        }
 
         projectRepository.save(project);
     }
 
+
     private void validateTargetHours(Project project, Activity activity, double newHours, boolean isAdd) {
+        if (!isAdd) return; // no need to validate removals
+
         String type = activity.getMainType().toLowerCase();
         BigDecimal hrs = BigDecimal.valueOf(newHours);
 
+        // Retrieve existing times safely
+        BigDecimal modTime = Optional.ofNullable(project.getModellingTime()).orElse(BigDecimal.ZERO);
+        BigDecimal modTarget = Optional.ofNullable(project.getModellingHours()).orElse(BigDecimal.ZERO);
+
+        BigDecimal chkTime = Optional.ofNullable(project.getCheckingTime()).orElse(BigDecimal.ZERO);
+        BigDecimal chkTarget = Optional.ofNullable(project.getCheckingHours()).orElse(BigDecimal.ZERO);
+
+        BigDecimal detTime = Optional.ofNullable(project.getDetailingTime()).orElse(BigDecimal.ZERO);
+        BigDecimal detTarget = Optional.ofNullable(project.getDetailingHours()).orElse(BigDecimal.ZERO);
+
+        BigDecimal specialTime = Optional.ofNullable(project.getSpecialHoursTracking()).orElse(BigDecimal.ZERO);
+        BigDecimal specialTarget = Optional.ofNullable(project.getSpecialHours()).orElse(BigDecimal.ZERO);
+
+        BigDecimal studyTime = Optional.ofNullable(project.getStudyHoursTracking()).orElse(BigDecimal.ZERO);
+        BigDecimal studyTarget = Optional.ofNullable(project.getStudyHours()).orElse(BigDecimal.ZERO);
+
+        // Extra hour fields
+        BigDecimal extraLimit = Optional.ofNullable(project.getExtraHours()).orElse(BigDecimal.ZERO);
+        BigDecimal extraUsed = Optional.ofNullable(project.getExtraHoursTracking()).orElse(BigDecimal.ZERO);
+
+        // Get current time & target for the activity type
+        BigDecimal currentTime, targetTime;
+
         switch (type) {
-            case "modelling":
-                BigDecimal modTime = project.getModellingTime() != null ? project.getModellingTime() : BigDecimal.ZERO;
-                BigDecimal modTarget = project.getModellingHours() != null ? project.getModellingHours() : BigDecimal.ZERO;
-                if (isAdd && modTime.add(hrs).compareTo(modTarget) > 0) {
-                    throw new RuntimeException("Cannot add work: Modelling hours will exceed target limit for project " + project.getProjectName());
-                }
-                break;
+            case "modelling": currentTime = modTime; targetTime = modTarget; break;
+            case "checking": currentTime = chkTime; targetTime = chkTarget; break;
+            case "detailing": currentTime = detTime; targetTime = detTarget; break;
+            case "special activity": currentTime = specialTime; targetTime = specialTarget; break;
+            case "studying": currentTime = studyTime; targetTime = studyTarget; break;
+            default: throw new RuntimeException("Unknown activity type: " + type);
+        }
 
-            case "checking":
-                BigDecimal checkTime = project.getCheckingTime() != null ? project.getCheckingTime() : BigDecimal.ZERO;
-                BigDecimal checkTarget = project.getCheckingHours() != null ? project.getCheckingHours() : BigDecimal.ZERO;
-                if (isAdd && checkTime.add(hrs).compareTo(checkTarget) > 0) {
-                    throw new RuntimeException("Cannot add work: Checking hours will exceed target limit for project " + project.getProjectName());
-                }
-                break;
+        // 1️⃣ Normal activity limit check
+        if (currentTime.add(hrs).compareTo(targetTime) <= 0) {
+            // within target - all good
+            return;
+        }
 
-            case "detailing":
-                BigDecimal detTime = project.getDetailingTime() != null ? project.getDetailingTime() : BigDecimal.ZERO;
-                BigDecimal detTarget = project.getDetailingHours() != null ? project.getDetailingHours() : BigDecimal.ZERO;
-                if (isAdd && detTime.add(hrs).compareTo(detTarget) > 0) {
-                    throw new RuntimeException("Cannot add work: Detailing hours will exceed target limit for project " + project.getProjectName());
-                }
-                break;
+        // 2️⃣ Activity limit reached — now check project-level extra hours
+        BigDecimal totalExtraNeed = currentTime.add(hrs).subtract(targetTime);
+        BigDecimal remainingExtra = extraLimit.subtract(extraUsed);
 
-            default:
-                throw new RuntimeException("Unknown main type: " + type);
+        if (remainingExtra.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Assigned hours for " + type + " reached. AGM approval required for extra hours.");
+        }
+
+        // 3️⃣ Check if remaining extra is enough
+        if (totalExtraNeed.compareTo(remainingExtra) > 0) {
+            throw new RuntimeException("Extra hours for project exceeded — approval required from AGM.");
         }
     }
 
 
 
+
+    @Transactional
     public WorkDetailsResponse editWorkDetail(long id, WorkDetailsRequest request) {
         WorkDetails oldWork = workDetailsRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Work detail not found for id: " + id));
 
-        // ✅ Fetch related entities
         Employee manager = employeeRepository.findById(request.getManagerId())
                 .orElseThrow(() -> new RuntimeException("Manager not found"));
-        Project project = projectRepository.findById(request.getProjectId())
+
+        Project newProject = projectRepository.findById(request.getProjectId())
                 .orElseThrow(() -> new RuntimeException("Project not found"));
-        Activity activity = activityRepository.findById(request.getActivityId())
+
+        Activity newActivity = activityRepository.findById(request.getActivityId())
                 .orElseThrow(() -> new RuntimeException("Activity not found"));
 
-        Double oldHours = oldWork.getWorkHours() != null ? oldWork.getWorkHours() : 0.0;
-        Double newHours = request.getWorkHours() != null ? request.getWorkHours() : oldHours;
+        double oldHours = Optional.ofNullable(oldWork.getWorkHours()).orElse(0.0);
+        double newHours = Optional.ofNullable(request.getWorkHours()).orElse(oldHours);
 
-        if (!Objects.equals(oldWork.getProject().getId(), project.getId())) {
-            // Project changed
-            Project oldProject = oldWork.getProject();
+        Project oldProject = oldWork.getAssignedWorkId().getProject();
+        Activity oldActivity = oldWork.getAssignedWorkId().getActivity();
 
-            // Subtract old hours from old project
-            makeChangeInActivity(oldProject, oldWork.getActivity(), false, oldHours);
+        boolean projectChanged = !Objects.equals(oldProject.getId(), newProject.getId());
+        boolean activityChanged = !Objects.equals(oldActivity.getMainType(), newActivity.getMainType());
+        boolean hoursChanged = Double.compare(oldHours, newHours) != 0;
 
-            // ✅ Validate before adding to new project
-            validateTargetHours(project, activity, newHours, true);
-            makeChangeInActivity(project, activity, true, newHours);
+        if (projectChanged || activityChanged || hoursChanged) {
+            // Remove old time from the old project/activity
+            makeChangeInActivity(oldProject, oldActivity.getMainType(),  BigDecimal.valueOf(oldHours),false);
 
-        } else if (!Objects.equals(oldWork.getActivity().getMainType(), activity.getMainType())) {
-            // Activity type changed
-            makeChangeInActivity(oldWork.getProject(), oldWork.getActivity(), false, oldHours);
-
-            // ✅ Validate before adding new activity type
-            validateTargetHours(oldWork.getProject(), activity, newHours, true);
-            makeChangeInActivity(oldWork.getProject(), activity, true, newHours);
-
-        } else if (!Objects.equals(oldHours, newHours)) {
-            // Only hours changed
-            double diff = newHours - oldHours;
-            if (diff > 0) {
-                // ✅ Check if adding the difference will exceed limit
-                validateTargetHours(oldWork.getProject(), oldWork.getActivity(), diff, true);
-                makeChangeInActivity(oldWork.getProject(), oldWork.getActivity(), true, diff);
-            } else {
-                makeChangeInActivity(oldWork.getProject(), oldWork.getActivity(), false, Math.abs(diff));
-            }
+            // Validate and apply new hours to the new project/activity
+            validateTargetHours(newProject, newActivity, newHours, true);
+            makeChangeInActivity(newProject, newActivity.getMainType(), BigDecimal.valueOf(newHours),true);
         }
 
-        // ✅ Update other fields
-        System.out.println(request.getStatus());
-        oldWork.setManager(manager);
-        oldWork.setProject(project);
-        oldWork.setActivity(activity);
+        // Update entity fields
+        oldWork.getAssignedWorkId().setManager(manager);
+        oldWork.getAssignedWorkId().setProject(newProject);
+        oldWork.getAssignedWorkId().setActivity(newActivity);
         oldWork.setDate(request.getDate());
         oldWork.setWorkHours(newHours);
         oldWork.setStartTime(request.getStartTime());
@@ -466,18 +538,49 @@ public class WorkDetailsService {
         return convertToResponse(workDetailsRepository.save(oldWork));
     }
 
+
+
     public void discardWork(Long workId) {
         WorkDetails work = workDetailsRepository.findById(workId)
                 .orElseThrow(() -> new RuntimeException("Work entry not found for ID: " + workId));
-        System.out.println(work.toString());
+        //System.out.println(work.toString());
         workDetailsRepository.delete(work);
     }
+
+    private AssignedWork findOrCreateAssignedWork(Long employeeId, Long managerId, Long projectId, Long activityId) {
+        // 1️⃣ Check if assigned work already exists
+        Optional<AssignedWork> existing = assignedWorkRepository
+                .findByEmployee_EmpIdAndManager_EmpIdAndProject_IdAndActivity_Id(
+                        employeeId, managerId, projectId, activityId);
+
+        if (existing.isPresent()) return existing.get();
+
+        // 2️⃣ Else, create new AssignedWork
+        Employee emp = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+        Employee mgr = employeeRepository.findById(managerId)
+                .orElseThrow(() -> new RuntimeException("Manager not found"));
+        Project proj = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        Activity act = activityRepository.findById(activityId)
+                .orElseThrow(() -> new RuntimeException("Activity not found"));
+
+        AssignedWork assigned = new AssignedWork();
+        assigned.setEmployee(emp);
+        assigned.setManager(mgr);
+        assigned.setProject(proj);
+        assigned.setActivity(act);
+        assigned.setStatus("assigned"); // default initial status
+
+        return assignedWorkRepository.save(assigned);
+    }
+
 
     public WorkDetailsResponse getAssignedWork(Long id) {
         WorkDetails work = workDetailsRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Work entry not found for ID: " + id));
-        System.out.println(work.toString());
-        System.out.println(work.getAssignedWorkId().getId());
+        //System.out.println(work.toString());
+        //System.out.println(work.getAssignedWorkId().getId());
         return convertToResponse(work);
     }
 }

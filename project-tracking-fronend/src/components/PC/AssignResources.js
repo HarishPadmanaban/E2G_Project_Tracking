@@ -40,6 +40,25 @@ const AssignActivityForm = () => {
       return;
     }
 
+<<<<<<< HEAD
+  axios
+    .get(`http://localhost:8080/project-assignment/employees/${formData.projectId}`)
+    .then((res) => {
+      if (res.data.length === 0) {
+        // If no employees assigned to this project, get all employees under manager
+        axios
+          .get(`http://localhost:8080/employee/getbymgr?mgrid=${employee.empId}`)
+          .then((mgrRes) => setEmployees(mgrRes.data))
+          .catch((err) => console.error("Error fetching employees under manager:", err));
+      } else {
+        setEmployees(res.data);
+      }
+    })
+    .catch((err) => console.error("Error fetching project employees:", err));
+}, [formData.projectId, employee.reportingToId]);
+
+
+=======
     axios
       .get(`http://localhost:8080/project-assignment/employees/${formData.projectId}`)
       .then((res) => {
@@ -55,6 +74,7 @@ const AssignActivityForm = () => {
       })
       .catch((err) => console.error("Error fetching project employees:", err));
   }, [formData.projectId, employee.reportingToId]);
+>>>>>>> 554b4212caf353f8f4a62c54f3092d1b1d38cb2f
 
 
   // ✅ Fetch Activities based on type
