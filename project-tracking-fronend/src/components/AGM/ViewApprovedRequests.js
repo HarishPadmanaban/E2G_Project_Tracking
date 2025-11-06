@@ -87,7 +87,7 @@
 
     return (
         <div className={styles.container}>
-        <h2 className={styles.title}>Manager Request Overview</h2>
+        <h2 className={styles.title}>Leave Request Overview</h2>
 
         {/* Filters */}
         <div className="filterBarWrapper"></div>

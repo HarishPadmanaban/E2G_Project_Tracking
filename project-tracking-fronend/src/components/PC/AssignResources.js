@@ -20,7 +20,7 @@ const AssignActivityForm = () => {
     assignedActivity: "",
   });
 
-  const idToUse=employee.tl?employee.reportingToId:employee.empId;
+  const idToUse = employee.tl ? employee.reportingToId : employee.empId;
 
 
   // ✅ Fetch Projects
@@ -34,13 +34,13 @@ const AssignActivityForm = () => {
   }, [managerId]);
 
   // ✅ Fetch Employees
-  // ✅ Fetch employees when a project is selected
-useEffect(() => {
-  if (!formData.projectId) {
-    setEmployees([]);
-    return;
-  }
+  useEffect(() => {
+    if (!formData.projectId) {
+      setEmployees([]);
+      return;
+    }
 
+<<<<<<< HEAD
   axios
     .get(`http://localhost:8080/project-assignment/employees/${formData.projectId}`)
     .then((res) => {
@@ -58,6 +58,23 @@ useEffect(() => {
 }, [formData.projectId, employee.reportingToId]);
 
 
+=======
+    axios
+      .get(`http://localhost:8080/project-assignment/employees/${formData.projectId}`)
+      .then((res) => {
+        if (res.data.length === 0) {
+          // If no employees assigned to this project, get all employees under manager
+          axios
+            .get(`http://localhost:8080/employee/getbymgr?mgrid=${employee.reportingToId}`)
+            .then((mgrRes) => setEmployees(mgrRes.data))
+            .catch((err) => console.error("Error fetching employees under manager:", err));
+        } else {
+          setEmployees(res.data);
+        }
+      })
+      .catch((err) => console.error("Error fetching project employees:", err));
+  }, [formData.projectId, employee.reportingToId]);
+>>>>>>> 554b4212caf353f8f4a62c54f3092d1b1d38cb2f
 
 
   // ✅ Fetch Activities based on type
@@ -80,9 +97,8 @@ useEffect(() => {
       const filtered = activities.filter(
         (act) =>
           act.mainType &&
-          act.mainType.trim().toLowerCase() === value.trim().toLowerCase()
+          act.mainType.toLowerCase() === value.toLowerCase()
       );
-     //console.log(filtered);
       setFilteredActivities(filtered);
       setFormData((prev) => ({
         ...prev,
@@ -106,18 +122,18 @@ useEffect(() => {
   // ✅ Submit
   const handleSubmit = () => {
     if (!formData.projectId || !formData.activityId || !formData.employeeId) {
-      alert("⚠️ Please fill all required fields");
+      alert("⚠ Please fill all required fields");
       return;
     }
 
     const payload = {
-  projectId: Number(formData.projectId),
-  activityId: Number(formData.activityId),
-  employeeId: Number(formData.employeeId),
-  managerId: Number(managerId), // optional if backend expects it
-  assignedById: Number(managerId), // optional
-  description: formData.assignedActivity, // keep it as string
-};
+      projectId: Number(formData.projectId),
+      activityId: Number(formData.activityId),
+      employeeId: Number(formData.employeeId),
+      managerId: Number(managerId), // optional if backend expects it
+      assignedById: Number(managerId), // optional
+      description: formData.assignedActivity, // keep it as string
+    };
 
 
     //console.log(payload);
@@ -173,7 +189,6 @@ useEffect(() => {
           <option value="Modelling">Modelling</option>
           <option value="Checking">Checking</option>
           <option value="Detailing">Detailing</option>
-          <option value="Studying">Studying</option>
           <option value="Common">Common</option>
         </select>
       </div>
