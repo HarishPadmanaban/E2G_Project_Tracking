@@ -51,6 +51,9 @@ public class Project {
     private BigDecimal extraHours;
     private BigDecimal extraHoursTracking;
 
+    private BigDecimal specialHours;
+    private BigDecimal specialHoursTracking;
+
     @Column(name = "project_activity_status")
     private String projectActivityStatus;
 
@@ -271,6 +274,22 @@ public class Project {
 
     public void setProjectActivityStatus(String projectActivityStatus) {
         this.projectActivityStatus = projectActivityStatus;
+    }
+
+    public BigDecimal getSpecialHours() {
+        return specialHours;
+    }
+
+    public void setSpecialHours(BigDecimal specialHours) {
+        this.specialHours = specialHours;
+    }
+
+    public BigDecimal getSpecialHoursTracking() {
+        return specialHoursTracking;
+    }
+
+    public void setSpecialHoursTracking(BigDecimal specialHoursTracking) {
+        this.specialHoursTracking = specialHoursTracking;
     }
 
     @Override

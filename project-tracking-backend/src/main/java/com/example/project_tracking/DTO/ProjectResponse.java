@@ -36,11 +36,15 @@ public class ProjectResponse {
     private BigDecimal extraHours;
     private BigDecimal extraHoursTracking;
 
+    private String projectActivityStatus;
+    private BigDecimal specialHours;
+    private BigDecimal specialHoursTracking;
+
 
     public ProjectResponse() {
     }
 
-    public ProjectResponse(Long id, String projectName, String clientName, Long managerId, String managerName, Long tlId, String tlName, BigDecimal assignedHours, BigDecimal workingHours, LocalDate assignedDate, Boolean projectStatus, Boolean softDelete, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal modellingTime, BigDecimal checkingTime, BigDecimal detailingTime, LocalDate startDate, LocalDate completedDate, BigDecimal studyHours, BigDecimal studyHoursTracking, BigDecimal extraHours, BigDecimal extraHoursTracking) {
+    public ProjectResponse(Long id, String projectName, String clientName, Long managerId, String managerName, Long tlId, String tlName, BigDecimal assignedHours, BigDecimal workingHours, LocalDate assignedDate, Boolean projectStatus, Boolean softDelete, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal modellingTime, BigDecimal checkingTime, BigDecimal detailingTime, LocalDate startDate, LocalDate completedDate, BigDecimal studyHours, BigDecimal studyHoursTracking, BigDecimal extraHours, BigDecimal extraHoursTracking,BigDecimal specialHours,BigDecimal specialHoursTracking,String projectActivityStatus) {
         this.id = id;
         this.projectName = projectName;
         this.clientName = clientName;
@@ -65,13 +69,16 @@ public class ProjectResponse {
         this.studyHoursTracking = studyHoursTracking;
         this.extraHours = extraHours;
         this.extraHoursTracking = extraHoursTracking;
+        this.specialHours = specialHours;
+        this.specialHoursTracking = specialHoursTracking;
+        this.projectActivityStatus = projectActivityStatus;
     }
 
     public ProjectResponse(Long id, String projectName, String clientName, Long managerId,
                            String managerName, BigDecimal assignedHours, BigDecimal workingHours,
                            LocalDate assignedDate, Boolean projectStatus, Boolean softDelete,
                            BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours,
-                           BigDecimal modellingTime, BigDecimal checkingTime, BigDecimal detailingTime) {
+                           BigDecimal modellingTime, BigDecimal checkingTime, BigDecimal detailingTime,BigDecimal specialHours,BigDecimal specialHoursTracking,String projectActivityStatus) {
         this.id = id;
         this.projectName = projectName;
         this.clientName = clientName;
@@ -88,9 +95,12 @@ public class ProjectResponse {
         this.modellingTime = modellingTime;
         this.checkingTime = checkingTime;
         this.detailingTime = detailingTime;
+        this.specialHours = specialHours;
+        this.specialHoursTracking = specialHoursTracking;
+        this.projectActivityStatus = projectActivityStatus;
     }
 
-    public ProjectResponse(Long id, String projectName, String clientName, Long managerId, String managerName, BigDecimal assignedHours, BigDecimal workingHours, LocalDate assignedDate, Boolean projectStatus, Boolean softDelete, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal modellingTime, BigDecimal checkingTime, BigDecimal detailingTime, LocalDate startDate, LocalDate completedDate, BigDecimal studyHours, BigDecimal studyHoursTracking, BigDecimal extraHours, BigDecimal extraHoursTracking) {
+    public ProjectResponse(Long id, String projectName, String clientName, Long managerId, String managerName, BigDecimal assignedHours, BigDecimal workingHours, LocalDate assignedDate, Boolean projectStatus, Boolean softDelete, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal modellingTime, BigDecimal checkingTime, BigDecimal detailingTime, LocalDate startDate, LocalDate completedDate, BigDecimal studyHours, BigDecimal studyHoursTracking, BigDecimal extraHours, BigDecimal extraHoursTracking,BigDecimal specialHours,BigDecimal specialHoursTracking,String projectActivityStatus) {
         this.id = id;
         this.projectName = projectName;
         this.clientName = clientName;
@@ -113,6 +123,9 @@ public class ProjectResponse {
         this.studyHoursTracking = studyHoursTracking;
         this.extraHours = extraHours;
         this.extraHoursTracking = extraHoursTracking;
+        this.specialHours = specialHours;
+        this.specialHoursTracking = specialHoursTracking;
+        this.projectActivityStatus = projectActivityStatus;
     }
 
     // ===== Getters and Setters =====

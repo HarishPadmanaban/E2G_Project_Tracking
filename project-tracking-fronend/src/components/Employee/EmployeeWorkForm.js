@@ -1531,7 +1531,7 @@ const EmployeeWorkForm = () => {
   projectActivityType: "",
   activityId: "",
   category: "",
-  projectActivity: selectedProject.projectActivityStatus,
+  projectActivity: selectedProject?.projectActivityStatus||"",
 }));
 
   // Clear previous assigned activities
@@ -1680,7 +1680,7 @@ setFormData((prev) => ({
       projectId: formData.projectId,
       activityId: formData.activityId,
       date: new Date().toISOString().split("T")[0],
-      workHours: parseFloat(formData.workHours),
+      workHours: parseFloat(formData.workHours).toFixed(2),
       startTime: formData.startTime + ":00",
       endTime: formData.endTime + ":00",
       projectActivity: formData.projectActivity,

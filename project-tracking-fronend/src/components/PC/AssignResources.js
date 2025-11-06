@@ -47,7 +47,7 @@ useEffect(() => {
       if (res.data.length === 0) {
         // If no employees assigned to this project, get all employees under manager
         axios
-          .get(`http://localhost:8080/employee/getbymgr?mgrid=${employee.reportingToId}`)
+          .get(`http://localhost:8080/employee/getbymgr?mgrid=${employee.empId}`)
           .then((mgrRes) => setEmployees(mgrRes.data))
           .catch((err) => console.error("Error fetching employees under manager:", err));
       } else {
@@ -58,16 +58,6 @@ useEffect(() => {
 }, [formData.projectId, employee.reportingToId]);
 
 
-<<<<<<< HEAD
-=======
-    axios
-      .get(`http://localhost:8080/employee/getbymgr?mgrid=${idToUse}`)
-      .then((res) => {
-        setEmployees(res.data);
-      })
-      .catch((err) => console.error(err));
-  }, [managerId, employee.reportingToId]);
->>>>>>> 33bbafb6ec1f40da1a64f01c0d73d02d642fed58
 
 
   // ✅ Fetch Activities based on type

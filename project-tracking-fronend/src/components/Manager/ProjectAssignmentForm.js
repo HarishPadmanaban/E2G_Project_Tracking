@@ -178,8 +178,7 @@ if (start < today) {
   if (
     !formData.modellingHours ||
     !formData.checkingHours ||
-    !formData.detailingHours
-    ||
+    !formData.detailingHours||
     !formData.studyHours
   ) {
     alert("⚠️ Please fill all hour fields (Modelling, Checking, Detailing,Study).");
