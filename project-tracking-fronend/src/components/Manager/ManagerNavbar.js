@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "../../styles/Employee/EmployeeNavbar.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
+import Notifications from "../Notifications/Notifications"; // adjust path as needed
+
 import axios from "axios";
 
 const ManagerNavbar = () => {
@@ -227,10 +229,12 @@ const ManagerNavbar = () => {
           </button>
         </div>
 
-        <div className={styles.navCenter} style={{ marginLeft: "2%" }}>
+        <div className={styles.navCenter} style={{ marginLeft: "4%" }}>
            <img src="/logo.png" alt="E2G Logo" className={styles.logo} />
           <h1>E2G ENGINEERING SERVICES PRIVATE LIMITED</h1>
         </div>
+
+        <Notifications userId={employee.empId} userRole={employee.designation} />
 
         <div className={styles.navRight}>
           {isNotAgm && (
@@ -238,6 +242,8 @@ const ManagerNavbar = () => {
               Leave
             </Link>
           )}
+
+          
 
           {!isNotAgm && <Link
                 to="/manager/view-requests"
