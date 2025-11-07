@@ -26,5 +26,7 @@ CREATE TABLE project (
     checking_time DECIMAL(10,2) DEFAULT 0.00,
     detailing_time DECIMAL(10,2) DEFAULT 0.00,
     study_hours_tracking DECIMAL(10,2) DEFAULT 0.00,
-    extra_hours_tracking DECIMAL(10,2) DEFAULT 0.00
+    extra_hours_tracking DECIMAL(10,2) DEFAULT 0.00,
+    special_hours DECIMAL(10,2),
+    special_hours_tracking DECIMAL(10,2) DEFAULT 0.00
 );
