@@ -1,10 +1,15 @@
 package com.example.project_tracking.Service;
 
 import com.example.project_tracking.DTO.LeavePermissionResponse;
+import com.example.project_tracking.Model.Employee;
+import com.example.project_tracking.Model.LeaveBalance;
 import com.example.project_tracking.Model.LeavePermission;
+import com.example.project_tracking.Repository.LeaveBalanceRepository;
 import com.example.project_tracking.Repository.LeavePermissionRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,9 +18,11 @@ import java.util.stream.Collectors;
 public class LeavePermissionService {
 
     private final LeavePermissionRepository leavePermissionRepository;
+    private final LeaveBalanceRepository leaveBalanceRepository;
 
-    public LeavePermissionService(LeavePermissionRepository leavePermissionRepository) {
+    public LeavePermissionService(LeavePermissionRepository leavePermissionRepository, LeaveBalanceRepository leaveBalanceRepository) {
         this.leavePermissionRepository = leavePermissionRepository;
+        this.leaveBalanceRepository = leaveBalanceRepository;
     }
 
     // Save leave/permission request (still uses entity)
@@ -73,10 +80,41 @@ public class LeavePermissionService {
     }
 
     // Update status and return DTO
+    @Transactional
     public LeavePermissionResponse updateStatus(Long id, String status) {
         LeavePermission req = leavePermissionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Leave/Permission not found"));
         req.setStatus(status);
+        Employee emp = req.getEmployee();
+        Optional<LeaveBalance> leaveBalance = leaveBalanceRepository.findByEmployeeAndYear(emp, LocalDate.now().getYear());
+        if (leaveBalance.isPresent()){
+            LeaveBalance leaveBalance1 = leaveBalance.get();
+            if(req.getLeaveType().trim().equalsIgnoreCase("sl")){
+                if(leaveBalance1.getSickLeaves()< req.getLeaveDays()){
+                    throw new RuntimeException("Insufficient Sick Leave Balance");
+                }
+                leaveBalance1.setSickLeaves(leaveBalance1.getSickLeaves()-req.getLeaveDays());
+            }
+            if(req.getLeaveType().trim().equalsIgnoreCase("cl")){
+                if(leaveBalance1.getCasualLeaves()< req.getLeaveDays()){
+                    throw new RuntimeException("Insufficient Casual Leave Balance");
+                }
+                leaveBalance1.setCasualLeaves(leaveBalance1.getCasualLeaves()-req.getLeaveDays());
+            }
+            if(req.getLeaveType().trim().equalsIgnoreCase("Marriage Leave")){
+                if(leaveBalance1.getMarriageLeaves()< req.getLeaveDays()){
+                    throw new RuntimeException("Insufficient Marriage Leave Balance");
+                }
+                leaveBalance1.setMarriageLeaves(leaveBalance1.getMarriageLeaves()-req.getLeaveDays());
+            }
+            if(req.getLeaveType().trim().equalsIgnoreCase("Maternity Leave")){
+                if(leaveBalance1.getMaternityLeaves()< req.getLeaveDays()){
+                    throw new RuntimeException("Insufficient Maternity Leave Balance");
+                }
+                leaveBalance1.setMaternityLeaves(leaveBalance1.getMaternityLeaves()-req.getLeaveDays());
+            }
+            leaveBalanceRepository.save(leaveBalance1);
+        }
         LeavePermission updated = leavePermissionRepository.save(req);
         return mapToDTO(updated);
     }

@@ -32,5 +32,12 @@ public class EmployeeResetter {
         jdbcTemplate.execute("ALTER TABLE activity AUTO_INCREMENT = 1");
         jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS=1");
     }
+
+    public void resetLeaveTable() {
+        jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS=0");
+        jdbcTemplate.execute("DELETE FROM leave_balance");
+        jdbcTemplate.execute("ALTER TABLE leave_balance AUTO_INCREMENT = 1");
+        jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS=1");
+    }
 }
 

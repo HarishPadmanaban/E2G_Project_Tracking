@@ -182,17 +182,6 @@ const ProjectAssignmentForm = () => {
 
 
 
-<<<<<<< HEAD
-  if (
-    !formData.modellingHours ||
-    !formData.checkingHours ||
-    !formData.detailingHours||
-    !formData.studyHours
-  ) {
-    alert("⚠️ Please fill all hour fields (Modelling, Checking, Detailing,Study).");
-    return false;
-  }
-=======
     if (
       !formData.modellingHours ||
       !formData.checkingHours ||
@@ -203,7 +192,6 @@ const ProjectAssignmentForm = () => {
       alert("⚠️ Please fill all hour fields (Modelling, Checking, Detailing,Study).");
       return false;
     }
->>>>>>> 554b4212caf353f8f4a62c54f3092d1b1d38cb2f
 
     if (
       Number(formData.modellingHours) <= 0 ||
