@@ -67,8 +67,6 @@
 }
 
 .notification-item {
-  display: flex;
-    justify-content: space-between; 
   padding: 12px;
   border-radius: 6px;
   cursor: pointer;
@@ -77,6 +75,29 @@
   transition: 0.2s;
   font-weight:lighter;
   color: black;
+}
+
+.load-more-btn {
+  background-color: #2196f3;
+  color: white;
+  width: 100%;
+  text-align: center;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.clear-btn{
+  background-color: #2196f3;
+  color: white;
+  text-align: center;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 .notification-item:hover {

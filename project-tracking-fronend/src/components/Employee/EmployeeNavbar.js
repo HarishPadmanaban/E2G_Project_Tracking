@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Link, useNavigate,useLocation  } from "react-router-dom";
 import styles from "../../styles/Employee/EmployeeNavbar.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
+import Notifications from "../Notifications/Notifications";
 
 const EmployeeNavbar = () => {
   const navigate = useNavigate();
@@ -37,6 +38,8 @@ const EmployeeNavbar = () => {
           <img src="/logo.png" alt="E2G Logo" className={styles.logo} />
           <h1>E2G ENGINEERING SERVICES PRIVATE LIMITED</h1>
         </div>
+
+        <Notifications userId={employee.empId} userRole={employee.designation} />
 
         <div className={styles.navRight}>
           {!isHR && <Link to="/employee/work" className={styles.navLink}>

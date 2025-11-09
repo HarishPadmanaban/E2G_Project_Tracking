@@ -29,6 +29,8 @@ public class AssignedWorkService {
     private ProjectRepository projectRepository;
     @Autowired
     private ActivityRepository activityRepository;
+    @Autowired
+    private NotificationService notificationService;
 
     public AssignedWork createAssignedWork(AssignedWorkRequest request) {
         Employee employee = employeeRepository.findById(request.getEmployeeId())
@@ -52,6 +54,13 @@ public class AssignedWorkService {
         assignedWork.setDescription(request.getDescription());
         assignedWork.setStatus(request.getStatus() != null ? request.getStatus() : "PENDING");
         assignedWork.setAssignedDate(request.getAssignedDate() != null ? request.getAssignedDate() : java.time.LocalDate.now());
+        notificationService.createNotification(
+                manager.getEmpId(), // Sender → PM
+                employee.getEmpId(), // Receiver → Employee
+                "New Activity Assigned",
+                "You have a new activity assigned in project: " + project.getProjectName(),
+                "ACTIVITY_ASSIGNMENT"
+        );
         return assignedWorkRepository.save(assignedWork);
     }
 

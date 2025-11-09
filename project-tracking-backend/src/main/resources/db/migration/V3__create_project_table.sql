@@ -20,6 +20,7 @@ CREATE TABLE project (
     detailing_hours DECIMAL(10,2),
     study_hours DECIMAL(10,2),
     extra_hours DECIMAL(10,2),
+    special_hours DECIMAL(10,2),
 
     -- Time tracking for split-ups
     modelling_time DECIMAL(10,2) DEFAULT 0.00,
@@ -27,6 +28,5 @@ CREATE TABLE project (
     detailing_time DECIMAL(10,2) DEFAULT 0.00,
     study_hours_tracking DECIMAL(10,2) DEFAULT 0.00,
     extra_hours_tracking DECIMAL(10,2) DEFAULT 0.00,
-    special_hours DECIMAL(10,2),
     special_hours_tracking DECIMAL(10,2) DEFAULT 0.00
 );

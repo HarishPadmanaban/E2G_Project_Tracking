@@ -36,9 +36,9 @@ public class ProjectController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> createProject(@RequestParam String projectName,String clientName,Long pmId,BigDecimal totalHours,LocalDate awardedDate)
+    public ResponseEntity<?> createProject(@RequestParam String projectName,String clientName,Long pmId,Long agmId,BigDecimal totalHours,LocalDate awardedDate,LocalDate startDate,LocalDate completedDate)
     {
-        projectService.createProject(projectName,clientName,pmId,totalHours,awardedDate);
+        projectService.createProject(projectName,clientName,pmId,agmId,totalHours,awardedDate,startDate,completedDate);
         return ResponseEntity.ok("Saved Successfully");
     }
 
@@ -60,10 +60,9 @@ public class ProjectController {
             @RequestParam BigDecimal checkingHours,
             @RequestParam BigDecimal detailingHours,
             @RequestParam BigDecimal studyHours,
-            @RequestParam LocalDate startDate,
             @RequestParam String projectActivity
             ) {
-        return projectService.updateProjectHours(tlId,projectId, modellingHours, checkingHours, detailingHours,studyHours,startDate,projectActivity);
+        return projectService.updateProjectHours(tlId,projectId, modellingHours, checkingHours, detailingHours,studyHours,projectActivity);
     }
 
     @PutMapping("/editproject")
@@ -83,6 +82,12 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.setExtra(id,extraHours));
     }
 
+    @PutMapping("/extend/{id}")
+    public ResponseEntity<ProjectResponse> extendCompletedDate(@PathVariable Long id,@RequestParam LocalDate completedDate){
+        //System.out.println(id+"\n"+extraHours);
+        return ResponseEntity.ok(projectService.extendCompletedDate(id,completedDate));
+    }
+
     @GetMapping("/get-by-tl/{id}")
     public ResponseEntity<?> getProjectsByTlId(@PathVariable Long id)
     {
@@ -94,4 +99,5 @@ public class ProjectController {
     {
         return ResponseEntity.ok(projectService.setActivity(id,activity));
     }
+
 }

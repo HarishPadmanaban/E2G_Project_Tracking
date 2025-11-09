@@ -3,14 +3,17 @@ package com.example.project_tracking.Service;
 import com.example.project_tracking.DTO.ProjectRequest;
 import com.example.project_tracking.DTO.ProjectResponse;
 import com.example.project_tracking.Model.Employee;
+import com.example.project_tracking.Model.Notification;
 import com.example.project_tracking.Model.Project;
 import com.example.project_tracking.Repository.EmployeeRepository;
+import com.example.project_tracking.Repository.NotificationRepository;
 import com.example.project_tracking.Repository.ProjectRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,10 +22,14 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final EmployeeRepository employeeRepository;
+    private final NotificationService notificationService;
+    private final NotificationRepository notificationRepo;
 
-    public ProjectService(ProjectRepository projectRepository,EmployeeRepository employeeRepository) {
+    public ProjectService(ProjectRepository projectRepository, EmployeeRepository employeeRepository, NotificationService notificationService, NotificationRepository notificationRepo) {
         this.projectRepository = projectRepository;
         this.employeeRepository = employeeRepository;
+        this.notificationService = notificationService;
+        this.notificationRepo = notificationRepo;
     }
 
     public List<Project> getProjectsByManager(Long managerId) {
@@ -112,7 +119,7 @@ public class ProjectService {
         return response;
     }
 
-    public void createProject(String projectName,String clientName,Long pmId,BigDecimal totalHours,LocalDate awardedDate) {
+    public void createProject(String projectName,String clientName,Long pmId,Long agmId,BigDecimal totalHours,LocalDate awardedDate,LocalDate startDate,LocalDate completedDate) {
         Project project=new Project();
 
         project.setProjectName(projectName);
@@ -120,6 +127,8 @@ public class ProjectService {
         project.setManagerId(pmId);
         project.setAssignedHours(totalHours);
         project.setAssignedDate(awardedDate);
+        project.setStartDate(startDate);
+        project.setCompletedDate(completedDate);
 
         if(project.getModellingHours()==null){
             project.setModellingHours(BigDecimal.ZERO);
@@ -137,6 +146,13 @@ public class ProjectService {
         project.setDetailingTime(BigDecimal.ZERO);
         project.setWorkingHours(BigDecimal.ZERO);
         projectRepository.save(project);
+        notificationService.createNotification(
+                agmId,   // sender: AGM
+                pmId,    // receiver: PM
+                "New Project Assigned",
+                "AGM has assigned you a new project: " + projectName,
+                "PROJECT_ASSIGNMENT"
+        );
     }
     public List<Project> getActiveProjectsByManager(Long managerId) {
         int arr[] = new int[5];
@@ -146,7 +162,7 @@ public class ProjectService {
         return projectRepository.findByManagerIdAndProjectStatusTrue(managerId);
     }
 
-    public Project updateProjectHours(Long tlId,Long projectId, BigDecimal addModellingHours, BigDecimal addCheckingHours, BigDecimal addDetailingHours, BigDecimal addStudyHours,LocalDate startDate,String projectActivity) {
+    public Project updateProjectHours(Long tlId,Long projectId, BigDecimal addModellingHours, BigDecimal addCheckingHours, BigDecimal addDetailingHours, BigDecimal addStudyHours,String projectActivity) {
         Optional<Project> optionalProject = projectRepository.findById(projectId);
 
         if (optionalProject.isPresent()) {
@@ -173,8 +189,6 @@ public class ProjectService {
 
                 project.setTlId(tlId);
 
-                project.setStartDate(startDate);
-
                 project.setProjectActivityStatus(projectActivity);
 
                 // Save back to repo
@@ -183,6 +197,7 @@ public class ProjectService {
             throw new RuntimeException("Project not found with ID: " + projectId);
         }
     }
+
 
     public List<Project> getProjectsByManagerNotAssigned(Long managerId) {
 
@@ -219,6 +234,13 @@ public class ProjectService {
     public ProjectResponse setExtra(Long id,BigDecimal extraHours) {
         Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project found with id "+id));
         project.setExtraHours(extraHours);
+        //System.out.print(project.toString());
+        return convertToResponse(projectRepository.save(project));
+    }
+
+    public ProjectResponse extendCompletedDate(Long id,LocalDate completedDate) {
+        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project found with id "+id));
+        project.setCompletedDate(completedDate);
         //System.out.print(project.toString());
         return convertToResponse(projectRepository.save(project));
     }

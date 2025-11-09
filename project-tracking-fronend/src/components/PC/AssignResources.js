@@ -117,7 +117,6 @@ const AssignActivityForm = () => {
       description: formData.assignedActivity, // keep it as string
     };
 
-
     //console.log(payload);
 
     axios

@@ -2,7 +2,9 @@ package com.example.project_tracking.DataLoader;
 
 import com.example.project_tracking.DataLoader.Reset.EmployeeResetter;
 import com.example.project_tracking.Model.Employee;
+import com.example.project_tracking.Model.LeaveBalance;
 import com.example.project_tracking.Repository.EmployeeRepository;
+import com.example.project_tracking.Repository.LeaveBalanceRepository;
 import com.opencsv.CSVReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -21,9 +23,15 @@ public class CSVLoader implements CommandLineRunner {
 
     @Autowired
     private EmployeeResetter resetter;
+    @Autowired
+    private EmployeeResetter leaveResetter;
 
-    public CSVLoader(EmployeeRepository employeeRepository) {
+    @Autowired
+    private final LeaveBalanceRepository leaveBalanceRepository;
+
+    public CSVLoader(EmployeeRepository employeeRepository, EmployeeResetter leaveResetter, LeaveBalanceRepository leaveBalanceRepository) {
         this.employeeRepository = employeeRepository;
+        this.leaveBalanceRepository = leaveBalanceRepository;
     }
 
     @Override
@@ -32,6 +40,7 @@ public class CSVLoader implements CommandLineRunner {
             return; // prevent duplicate inserts
         }
         //resetter.resetEmployeeTable();
+        //leaveResetter.resetLeaveTable();
         Map<Long, Employee> tempMap = new HashMap<>();
         List<String[]> rows;
 
@@ -75,6 +84,8 @@ public class CSVLoader implements CommandLineRunner {
                 Employee manager = tempMap.get(reportingToId);
 
                 emp.setReportingTo(manager);
+                LeaveBalance leaveBalance = new LeaveBalance(emp);
+                leaveBalanceRepository.save(leaveBalance);
                 employeeRepository.save(emp);
             }
         }

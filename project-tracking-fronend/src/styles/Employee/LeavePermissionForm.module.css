@@ -572,3 +572,14 @@ select::placeholder {
   .modalBox { width: 92%; padding: 18px; }
   .empRoleTag { display: none; } /* hide right tag on small screens */
 }
+
+/* Allow page scroll */
+html, body {
+  overscroll-behavior: none;
+  height: auto;
+  min-height: 100%;
+  overflow-y: auto;
+  background-color: #f3f4f6; /* optional light background */
+}
+
+

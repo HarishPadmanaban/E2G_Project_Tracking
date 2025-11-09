@@ -22,6 +22,19 @@ const LeavePermissionForm = () => {
     permissionHours: "",
     permissionMinutes: "",
   });
+  const [leaveBalance, setLeaveBalance] = useState(null);
+
+useEffect(() => {
+  if (employee?.empId) {
+    axios
+      .get(`http://localhost:8080/leave/balance/employee/${employee.empId}`)
+      .then((res) => {
+        setLeaveBalance(res.data);
+      })
+      .catch((err) => console.error("Error fetching leave balance:", err));
+  }
+}, [employee]);
+
 
   useEffect(() => {
     if (!loading && !employee) {
@@ -92,6 +105,22 @@ const LeavePermissionForm = () => {
       alert(validation.msg);
       return;
     }
+
+    // ✅ Verify available leave balance before submit
+if (formData.type === "Leave") {
+  const days = parseFloat(formData.leaveDays || 0);
+
+  if (formData.leaveType === "CL" && leaveBalance?.casualLeaves < days) {
+    alert(`You only have ${leaveBalance.casualLeaves} CL remaining.`);
+    return;
+  }
+
+  if (formData.leaveType === "SL" && leaveBalance?.sickLeaves < days) {
+    alert(`You only have ${leaveBalance.sickLeaves} SL remaining.`);
+    return;
+  }
+}
+
 
     try {
       const payload = {
@@ -173,6 +202,10 @@ const LeavePermissionForm = () => {
 
 const today = new Date().toISOString().split("T")[0];
 
+const weekBefore = new Date();
+weekBefore.setDate(weekBefore.getDate() - 7);
+const formattedWeekBefore = weekBefore.toISOString().split("T")[0];
+
   return (
 
     <div
@@ -238,14 +271,23 @@ const today = new Date().toISOString().split("T")[0];
             <>
 
             <div className={styles.field}>
-                <label>Leave Type</label>
-                <select name="leaveType" value={formData.leaveType} onChange={handleChange}>
-                  <option value="">Select Leave Type</option>
-                  <option value="CL">CL</option>
-                  <option value="SL">SL</option>
-                  <option value="LOP">LOP</option>
-                </select>
-              </div>
+  <label>Leave Type</label>
+  <select
+    name="leaveType"
+    value={formData.leaveType}
+    onChange={handleChange}
+    disabled={!leaveBalance}
+  >
+    <option value="">Select Leave Type</option>
+    {leaveBalance?.casualLeaves > 0 && <option value="CL">CL</option>}
+    {leaveBalance?.sickLeaves > 0 && <option value="SL">SL</option>}
+    <option value="LOP">LOP</option>
+    {leaveBalance?.marriageLeaves > 0 && <option value="Marriage Leave">Marriage Leave</option>}
+    {leaveBalance?.maternityLeaves > 0 && <option value="Maternity Leave">Maternity Leave</option>}
+    
+  </select>
+</div>
+
 
               <div className={styles.field}>
                 <label>Leave Duration</label>
@@ -268,7 +310,13 @@ const today = new Date().toISOString().split("T")[0];
                       type="date"
                       name="fromDate"
                       value={formData.fromDate}
-                      min={formData.leaveType !== "SL" ? today : undefined}
+                      min={
+        formData.leaveType === "SL"
+          ? undefined // no restriction
+          : formData.leaveType === "CL"
+          ? formattedWeekBefore // allow 1 week before today
+          : today // only today and future
+      }
                       onChange={(e) =>
                         setFormData({ ...formData, fromDate: e.target.value, leaveDays: 1 })
                       }
@@ -290,7 +338,13 @@ const today = new Date().toISOString().split("T")[0];
                       type="date"
                       name="fromDate"
                       value={formData.fromDate}
-                      min={formData.leaveType !== "SL" ? today : undefined}
+                      min={
+        formData.leaveType === "SL"
+          ? undefined // no restriction
+          : formData.leaveType === "CL"
+          ? formattedWeekBefore // allow 1 week before today
+          : today // only today and future
+      }
                       onChange={(e) => {
                         setFormData((prev) => ({ ...prev, fromDate: e.target.value }));
                         calculateLeaveDays(e.target.value, formData.toDate);

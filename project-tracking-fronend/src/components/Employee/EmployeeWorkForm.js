@@ -1200,7 +1200,8 @@ const EmployeeWorkForm = () => {
   const [assignedActivities, setAssignedActivities] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
-  const { work } = location.state || {}; // manager view/edit if present
+  const { work } = location.state || {};
+   // manager view/edit if present
 
   const [activeWorkId, setActiveWorkId] = useState(() => {
     return localStorage.getItem("activeWorkId") || null;

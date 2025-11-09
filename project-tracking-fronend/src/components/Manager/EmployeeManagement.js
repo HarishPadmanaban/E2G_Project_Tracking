@@ -13,6 +13,7 @@ const EmployeesUnderManager = () => {
     const [showModal, setShowModal] = useState(false);
     const [selectedProjects, setSelectedProjects] = useState([]);
     const [selectedEmp, setSelectedEmp] = useState(null);
+    const [worklogs, setWorklogs] = useState([]);
 
 
     useEffect(() => {
@@ -67,42 +68,39 @@ const EmployeesUnderManager = () => {
     };
 
     const handleEmployeeClick = async (empId) => {
-  try {
-    // First, find the clicked employee object
-    const selectedEmp = employees.find((e) => e.empId === empId);
-    setSelectedEmp(selectedEmp);
+        try {
+            const selectedEmp = employees.find((e) => e.empId === empId);
+            setSelectedEmp(selectedEmp);
 
-    let res;
-    if (
-      selectedEmp.designation.toLowerCase().includes("project coordinator")
-    ) {
-      // ✅ If the clicked employee is a manager → fetch projects under this manager
-      res = await axios.get(`http://localhost:8080/project/get-by-tl/${empId}`);
-    } else {
-      // ✅ Else → fetch projects the employee is assigned to
-      res = await axios.get(`http://localhost:8080/project-assignment/projects/${empId}`);
-    }
+            let res;
+            if (selectedEmp.designation.toLowerCase().includes("project coordinator")) {
+                res = await axios.get(`http://localhost:8080/project/get-by-tl/${empId}`);
+            } else {
+                res = await axios.get(`http://localhost:8080/project-assignment/projects/${empId}`);
+            }
 
-    const projectsWithCoordinator = await Promise.all(
-      res.data.map(async (proj) => {
-        //console.log(proj)
-        if (proj.tlId) {
-          const tlRes = await axios.get(
-            `http://localhost:8080/employee/${proj.tlId}`
-          );
-          //console.log(tlRes);
-          return { ...proj, coordinatorName: tlRes.data.name };
+            const projectsWithCoordinator = await Promise.all(
+                res.data.map(async (proj) => {
+                    if (proj.tlId) {
+                        const tlRes = await axios.get(`http://localhost:8080/employee/${proj.tlId}`);
+                        return { ...proj, coordinatorName: tlRes.data.name };
+                    }
+                    return proj;
+                })
+            );
+
+            setSelectedProjects(projectsWithCoordinator);
+
+            // ✅ Fetch worklogs from backend
+            const worklogRes = await axios.get(`http://localhost:8080/workdetails/employee/${empId}`);
+            setWorklogs(worklogRes.data || []);
+
+            setShowModal(true);
+        } catch (err) {
+            console.error("Error fetching employee/manager projects or worklogs:", err);
         }
-        return proj;
-      })
-    );
+    };
 
-    setSelectedProjects(projectsWithCoordinator);
-    setShowModal(true);
-  } catch (err) {
-    console.error("Error fetching employee/manager projects:", err);
-  }
-};
 
 
 
@@ -172,7 +170,7 @@ const EmployeesUnderManager = () => {
             {showModal && (
                 <div className={styles.overlay} onClick={() => setShowModal(false)}>
                     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                        <h3>Projects Working</h3>
+                        {/* <h3>Projects Working</h3>
                         <table className={styles.memberTable}>
                             <thead>
                                 <tr>
@@ -183,43 +181,76 @@ const EmployeesUnderManager = () => {
                             <tbody>
                                 {selectedProjects.length === 0 ? (
                                     <tr>
-                                        <td colSpan="13" className={styles.noData}>
-                                            No records found.
-                                        </td>
+                                        <td colSpan="13" className={styles.noData}>No records found.</td>
                                     </tr>
                                 ) : (
-
                                     selectedProjects.map((project) => (
-      <tr key={project.id}>
-        <td>{project.id}</td>
-        <td>
-          {project.projectName}
-          {selectedEmp &&
-            !selectedEmp.designation
-              .toLowerCase()
-              .includes("project coordinator") &&
-            project.coordinatorName && (
-              <span
-                style={{
-                  color: "#007bff",
-                  marginLeft: "8px",
-                  fontSize: "16px",
-                }}
-              >
-                ({project.coordinatorName})
-              </span>
-            )}
-        </td>
-      </tr>
-    ))
+                                        <tr key={project.id}>
+                                            <td>{project.id}</td>
+                                            <td>
+                                                {project.projectName}
+                                                {selectedEmp &&
+                                                    !selectedEmp.designation
+                                                        .toLowerCase()
+                                                        .includes("project coordinator") &&
+                                                    project.coordinatorName && (
+                                                        <span
+                                                            style={{
+                                                                color: "#007bff",
+                                                                marginLeft: "8px",
+                                                                fontSize: "16px",
+                                                            }}
+                                                        >
+                                                            ({project.coordinatorName})
+                                                        </span>
+                                                    )}
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table> */}
 
+                        {/* ✅ NEW: Worklogs section */}
+                        <h3 style={{ marginTop: "20px" }}>Worklogs</h3>
+                        <table className={styles.memberTable}>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Employee</th>
+                                    <th>Assigned Work</th>
+                                    <th>Activity Name</th>
+                                    <th>Status</th>
+                                    <th>Hours Worked</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {worklogs.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="4" className={styles.noData}>No worklogs found.</td>
+                                    </tr>
+                                ) : (
+                                    worklogs.map((log, index) => (
+                                        <tr key={index}>
+                                            <td>{log.date}</td>
+                                            <td>{log.employeeName}</td>
+                                            <td>{log.assignedWork}</td>
+                                            <td>{log.activityName}</td>
+                                            <td>{log.status}</td>
+                                            <td>{log.workHours}</td>
+                                        </tr>
+                                    ))
                                 )}
                             </tbody>
                         </table>
 
-                        <button className={styles.closeBtn} onClick={() => setShowModal(false)}>Close</button>
+                        <button className={styles.closeBtn} onClick={() => setShowModal(false)}>
+                            X   
+                        </button>
                     </div>
-                </div>)}
+                </div>
+            )}
+
         </div>
     );
 };

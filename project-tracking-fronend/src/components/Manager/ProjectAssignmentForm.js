@@ -161,21 +161,9 @@ const ProjectAssignmentForm = () => {
       return false;
     }
 
-    if (!formData.startDate) {
-      alert("⚠️ Please select Start Date");
-      return false;
-    }
 
     if (!formData.projectActivity) {
       alert("⚠️ Please select Project Activity");
-      return false;
-    }
-
-    const today = new Date().setHours(0, 0, 0, 0);
-    const start = new Date(formData.startDate).setHours(0, 0, 0, 0);
-
-    if (start < today) {
-      alert("❌ Start Date cannot be in the past.");
       return false;
     }
 
@@ -228,7 +216,6 @@ const ProjectAssignmentForm = () => {
             checkingHours: formData.checkingHours,
             detailingHours: formData.detailingHours,
             studyHours: formData.studyHours,
-            startDate: formData.startDate,
             projectActivity: formData.projectActivity
           },
         }
@@ -364,20 +351,6 @@ const ProjectAssignmentForm = () => {
               ))}
             </select>
           </div>
-
-          <div className={styles.fld}>
-            <label>Start Date</label>
-            <input
-              type="date"
-              name="startDate"
-              value={formData.startDate}
-              onChange={handleChange}
-              min={new Date().toISOString().split("T")[0]}
-            />
-          </div>
-
-
-
 
           {/* Assigned Hours Inputs */}
           <div className={styles.fld}>

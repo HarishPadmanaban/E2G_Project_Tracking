@@ -44,6 +44,7 @@ public class NotificationService {
         Notification notification = notificationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Notification not found"));
         notification.setApproved(true);
+        notification.setReadStatus(true);
         return notificationRepository.save(notification);
     }
 }

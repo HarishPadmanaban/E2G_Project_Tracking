@@ -56,7 +56,9 @@ const ViewRequests = () => {
     window.dispatchEvent(new Event("refreshPendingCount"));
   } catch (err) {
     console.error("Approval failed:", err);
-    alert("Failed to approve request!");
+    const backendMsg =
+            err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
+    alert(backendMsg);
   }
 };
 

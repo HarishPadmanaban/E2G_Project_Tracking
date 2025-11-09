@@ -8,6 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/notifications")
+@CrossOrigin(origins = "*")
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -43,6 +44,7 @@ public class NotificationController {
                                            @RequestParam String type) {
         return notificationService.createNotification(senderId, receiverId, title, message, type);
     }
+
 
 }
 

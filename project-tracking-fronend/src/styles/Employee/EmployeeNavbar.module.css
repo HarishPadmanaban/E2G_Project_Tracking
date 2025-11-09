@@ -16,7 +16,7 @@
   align-items: center;
   margin-right: 15px;
   cursor: pointer;
-  z-index: 999999999999999;
+  z-index: 1;
 }
 
 .badge {

@@ -33,20 +33,47 @@ const EditProject = () => {
   }, [employee, loading, navigate]);
 
   // Fetch all projects initially
+  // Fetch all projects & managers together
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/project/")
-      .then((res) => {
-        setProjects(res.data);
-        setFilteredProjects(res.data);
-        console.log(res.data);
+    const fetchProjectsAndManagers = async () => {
+      try {
+        const [projectsRes, managersRes] = await Promise.all([
+          axios.get("http://localhost:8080/project/"),
+          axios.get("http://localhost:8080/employee/getallmanagers")
+        ]);
 
-        // Extract unique manager names
-        const managers = [...new Set(res.data.map((p) => p.managerName).filter(Boolean))];
-        setManagerList(managers);
-      })
-      .catch((err) => console.error("❌ Failed to fetch projects:", err));
+        const projects = projectsRes.data;
+        const managers = managersRes.data;
+
+        // Map managerId → managerName
+        const projectsWithManagerNames = projects.map((project) => {
+          const manager = managers.find((m) => m.empId === project.managerId);
+          return {
+            ...project,
+            managerName: manager ? manager.name : "—",
+          };
+        });
+
+        // Set project and filtered data
+        setProjects(projectsWithManagerNames);
+        setFilteredProjects(projectsWithManagerNames);
+
+        // Populate manager dropdown list
+        const managerNames = managers.map((m) => m.name);
+        setManagerList(managerNames);
+
+        console.log("✅ Projects with managers:", projectsWithManagerNames);
+        console.log("✅ Manager list:", managerNames);
+      } catch (err) {
+        console.error("❌ Failed to fetch projects or managers:", err);
+      }
+    };
+
+    fetchProjectsAndManagers();
   }, []);
+
+
+  console.log(managerList);
 
   // Filter projects based on selected filters
   useEffect(() => {
