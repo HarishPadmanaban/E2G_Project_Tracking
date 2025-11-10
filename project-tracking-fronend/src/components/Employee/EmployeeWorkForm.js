@@ -1641,30 +1641,51 @@ const EmployeeWorkForm = () => {
 
 
   const handleAssignedActivityChange = (e) => {
-    const selectedId = e.target.value;
-    const selectedAssignedActivity = assignedActivities.find(
-      (act) => act.id.toString() === selectedId
-    );
+  const selectedId = e.target.value;
 
-    console.log(selectedAssignedActivity);
-
-    const act = activities.find((a) => a.id === selectedAssignedActivity.activityId);
-
-    console.log(act);
-
-    if (!selectedAssignedActivity || !act) return;
+  if (selectedId === "special") {
+    // Hardcoded special activity details
+    const specialActivity = {
+      id: 43,
+      activityName: "Special Activity",
+      category: "Productive",
+      mainType: "Special Activity",
+      softDelete: false,
+    };
 
     setFormData((prev) => ({
       ...prev,
-      assignedWorkId: selectedAssignedActivity.id,
-      assignedWork: selectedAssignedActivity.description,
-      projectActivityType: act.mainType,
-      activityName: act.activityName,
-      activityId: act.id,
-      category: act.category,
+      assignedWorkId: 0,
+      assignedWork: "Special Work",
+      projectActivityType: specialActivity.mainType,
+      activityName: specialActivity.activityName,
+      activityId: specialActivity.id,
+      category: specialActivity.category,
     }));
 
-  };
+    return;
+  }
+
+  const selectedAssignedActivity = assignedActivities.find(
+    (act) => act.id.toString() === selectedId
+  );
+  const act = activities.find(
+    (a) => a.id === selectedAssignedActivity?.activityId
+  );
+
+  if (!selectedAssignedActivity || !act) return;
+
+  setFormData((prev) => ({
+    ...prev,
+    assignedWorkId: selectedAssignedActivity.id,
+    assignedWork: selectedAssignedActivity.description,
+    projectActivityType: act.mainType,
+    activityName: act.activityName,
+    activityId: act.id,
+    category: act.category,
+  }));
+};
+
 
   // Employee submit or Manager update (preserved)
   const handleSubmit = (e) => {
@@ -1818,7 +1839,9 @@ const EmployeeWorkForm = () => {
                   <option key={act.id} value={act.id}>
                     {act.description}
                   </option>
+                  
                 ))}
+                 <option value="special">Special Work</option>
               </select>
 
             </div>
