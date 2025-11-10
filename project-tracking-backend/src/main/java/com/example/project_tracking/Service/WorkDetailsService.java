@@ -53,14 +53,23 @@ public class WorkDetailsService {
 
     public WorkDetailsResponse saveWorkDetails(WorkDetailsRequest request) {
         WorkDetails workDetails = new WorkDetails();
+        AssignedWork assignedWork=new AssignedWork();
 
         // ✅ Create or fetch AssignedWork
-        AssignedWork assignedWork = findOrCreateAssignedWork(
-                request.getEmployeeId(),
-                request.getManagerId(),
-                request.getProjectId(),
-                request.getActivityId()
-        );
+        if (request.getAssignedWorkId() == 0) {
+
+            assignedWork = createNewAssignedWork(
+                    request.getEmployeeId(),
+                    request.getManagerId(),
+                    request.getProjectId(),
+                    request.getActivityId()
+            );
+
+        } else {
+            // ✅ Otherwise, use the provided existing assignedWorkId
+            assignedWork = assignedWorkRepository.findById(request.getAssignedWorkId())
+                    .orElseThrow(() -> new RuntimeException("AssignedWork not found"));
+        }
 
         // ✅ Link AssignedWork
         workDetails.setAssignedWorkId(assignedWork);
@@ -303,6 +312,12 @@ public class WorkDetailsService {
 
         if (request.getWorkHours() != null) {
             updateProjectWorkingHours(project, activity, request.getWorkHours());
+        }
+
+        if(request.getActivityId()==43 && request.getStatus().trim().toLowerCase().equals("pending"))
+        {
+            AssignedWork assignedWork = assignedWorkRepository.findById(request.getAssignedWorkId()).orElseThrow(()-> new RuntimeException("No assigned activity found"));
+            assignedWork.setStatus("SPECIAL-PENDING");
         }
 
         return convertToResponse(workDetailsRepository.save(work));
@@ -573,6 +588,34 @@ public class WorkDetailsService {
 
         return assignedWorkRepository.save(assigned);
     }
+
+    private AssignedWork createNewAssignedWork(Long employeeId, Long managerId, Long projectId, Long activityId) {
+        // 1️⃣ Fetch all related entities
+        Employee emp = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+        Employee mgr = employeeRepository.findById(managerId)
+                .orElseThrow(() -> new RuntimeException("Manager not found"));
+        Project proj = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        Activity act = activityRepository.findById(activityId)
+                .orElseThrow(() -> new RuntimeException("Activity not found"));
+
+        // 2️⃣ Create new AssignedWork
+        AssignedWork assigned = new AssignedWork();
+        assigned.setEmployee(emp);
+        assigned.setManager(mgr);
+        assigned.setProject(proj);
+        assigned.setActivity(act);
+        assigned.setAssignedBy(mgr); // usually the manager assigning the work
+        assigned.setDescription("Special Work created on " + java.time.LocalDate.now());
+        assigned.setAssignedDate(java.time.LocalDate.now());
+        assigned.setStatus("PENDING");
+        assigned.setDeleted(false);
+
+        // 3️⃣ Save and return
+        return assignedWorkRepository.save(assigned);
+    }
+
 
 
     public WorkDetailsResponse getAssignedWork(Long id) {

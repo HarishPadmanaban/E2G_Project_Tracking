@@ -80,10 +80,12 @@ const Notifications = () => {
                 (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
             );
             setNotifications(sorted);
+           
 
             // initialize visible notifications for page 1
             // Filter out cleared notifications
             const filtered = sorted.filter((n) => !clearedIds.includes(n.id));
+             console.log(filtered);
 
             // initialize visible notifications for page 1
             setVisibleNotifications(filtered.slice(0, LIMIT));
@@ -237,13 +239,13 @@ const Notifications = () => {
             // optimistic UI update for list + modal (mark approved & read)
             setNotifications((prev) =>
                 prev.map((item) =>
-                    item.id === notificationId ? { ...item, readStatus: true, status: "APPROVED" } : item
+                    item.id === notificationId ? { ...item, readStatus: true, status: "APPROVED", approved: true } : item
                 )
             );
 
             // also update the modal state if it's open
             setSelectedNotification((prev) =>
-                prev && prev.id === notificationId ? { ...prev, readStatus: true, status: "APPROVED" } : prev
+                prev && prev.id === notificationId ? { ...prev, readStatus: true, status: "APPROVED", approved: true } : prev
             );
 
             // reload fresh data from server
@@ -294,12 +296,12 @@ const Notifications = () => {
             // optimistic UI update for list + modal (mark rejected & read)
             setNotifications((prev) =>
                 prev.map((item) =>
-                    item.id === notificationId ? { ...item, readStatus: true, status: "REJECTED" } : item
+                    item.id === notificationId ? { ...item, readStatus: true, status: "REJECTED", approved: false } : item
                 )
             );
 
             setSelectedNotification((prev) =>
-                prev && prev.id === notificationId ? { ...prev, readStatus: true, status: "REJECTED" } : prev
+                prev && prev.id === notificationId ? { ...prev, readStatus: true, status: "REJECTED", approved: false } : prev
             );
 
 
