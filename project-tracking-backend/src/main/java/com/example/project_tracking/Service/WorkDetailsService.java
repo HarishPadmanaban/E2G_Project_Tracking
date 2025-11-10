@@ -554,7 +554,6 @@ public class WorkDetailsService {
                         employeeId, managerId, projectId, activityId);
 
         if (existing.isPresent()) return existing.get();
-
         // 2️⃣ Else, create new AssignedWork
         Employee emp = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
