@@ -89,29 +89,37 @@ public class LeavePermissionService {
         Optional<LeaveBalance> leaveBalance = leaveBalanceRepository.findByEmployeeAndYear(emp, LocalDate.now().getYear());
         if (leaveBalance.isPresent()){
             LeaveBalance leaveBalance1 = leaveBalance.get();
-            if(req.getLeaveType().trim().equalsIgnoreCase("sl")){
-                if(leaveBalance1.getSickLeaves()< req.getLeaveDays()){
-                    throw new RuntimeException("Insufficient Sick Leave Balance");
+            if(req.getType().trim().equalsIgnoreCase("Permission")){
+                if(req.getPermissionHours()>leaveBalance1.getPermissionBalance()){
+                    throw new RuntimeException("Insufficient Permission Hours Balance");
                 }
-                leaveBalance1.setSickLeaves(leaveBalance1.getSickLeaves()-req.getLeaveDays());
+                leaveBalance1.setPermissionBalance(leaveBalance1.getPermissionBalance()-req.getPermissionHours());
             }
-            if(req.getLeaveType().trim().equalsIgnoreCase("cl")){
-                if(leaveBalance1.getCasualLeaves()< req.getLeaveDays()){
-                    throw new RuntimeException("Insufficient Casual Leave Balance");
+            else{
+                if(req.getLeaveType().trim().equalsIgnoreCase("sl")){
+                    if(leaveBalance1.getSickLeaves()< req.getLeaveDays()){
+                        throw new RuntimeException("Insufficient Sick Leave Balance");
+                    }
+                    leaveBalance1.setSickLeaves(leaveBalance1.getSickLeaves()-req.getLeaveDays());
                 }
-                leaveBalance1.setCasualLeaves(leaveBalance1.getCasualLeaves()-req.getLeaveDays());
-            }
-            if(req.getLeaveType().trim().equalsIgnoreCase("Marriage Leave")){
-                if(leaveBalance1.getMarriageLeaves()< req.getLeaveDays()){
-                    throw new RuntimeException("Insufficient Marriage Leave Balance");
+                if(req.getLeaveType().trim().equalsIgnoreCase("cl")){
+                    if(leaveBalance1.getCasualLeaves()< req.getLeaveDays()){
+                        throw new RuntimeException("Insufficient Casual Leave Balance");
+                    }
+                    leaveBalance1.setCasualLeaves(leaveBalance1.getCasualLeaves()-req.getLeaveDays());
                 }
-                leaveBalance1.setMarriageLeaves(leaveBalance1.getMarriageLeaves()-req.getLeaveDays());
-            }
-            if(req.getLeaveType().trim().equalsIgnoreCase("Maternity Leave")){
-                if(leaveBalance1.getMaternityLeaves()< req.getLeaveDays()){
-                    throw new RuntimeException("Insufficient Maternity Leave Balance");
+                if(req.getLeaveType().trim().equalsIgnoreCase("Marriage Leave")){
+                    if(leaveBalance1.getMarriageLeaves()< req.getLeaveDays()){
+                        throw new RuntimeException("Insufficient Marriage Leave Balance");
+                    }
+                    leaveBalance1.setMarriageLeaves(leaveBalance1.getMarriageLeaves()-req.getLeaveDays());
                 }
-                leaveBalance1.setMaternityLeaves(leaveBalance1.getMaternityLeaves()-req.getLeaveDays());
+                if(req.getLeaveType().trim().equalsIgnoreCase("Maternity Leave")){
+                    if(leaveBalance1.getMaternityLeaves()< req.getLeaveDays()){
+                        throw new RuntimeException("Insufficient Maternity Leave Balance");
+                    }
+                    leaveBalance1.setMaternityLeaves(leaveBalance1.getMaternityLeaves()-req.getLeaveDays());
+                }
             }
             leaveBalanceRepository.save(leaveBalance1);
         }

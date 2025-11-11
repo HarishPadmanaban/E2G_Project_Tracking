@@ -41,4 +41,9 @@ id,activity_name,category,main_type,soft_delete
 40,Project discussion/Doubt clarification(Checking),Productive,Modelling,FALSE
 41,Back Checking(Checking),Productive,Detailing,FALSE
 42,Project Study,Productive,Studying,FALSE
-43,Special Activity,Productive,Special Activity,FALSE
+43,Special Activity,Productive,Modelling,FALSE
+44,Special Activity,Productive,Checking,FALSE
+45,Special Activity,Productive,Detailing,FALSE
+46,Idle,Productive,Modelling,FALSE
+47,Idle,Productive,Checking,FALSE
+48,Idle,Productive,Detailing,FALSE

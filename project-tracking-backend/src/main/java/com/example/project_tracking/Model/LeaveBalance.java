@@ -20,6 +20,7 @@ public class LeaveBalance {
     private int marriageLeaves;
     private int maternityLeaves;
     private int year;
+    private double permissionBalance;
 
     public LeaveBalance() {
     }
@@ -31,6 +32,7 @@ public class LeaveBalance {
         marriageLeaves = 14;
         maternityLeaves = 14;
         year = LocalDate.now().getYear();
+        permissionBalance = 2.0;
     }
 
     // Getters and Setters
@@ -63,6 +65,14 @@ public class LeaveBalance {
 
     public void setMaternityLeaves(int maternityLeaves) {
         this.maternityLeaves = maternityLeaves;
+    }
+
+    public double getPermissionBalance() {
+        return permissionBalance;
+    }
+
+    public void setPermissionBalance(double permissionHoursBalance) {
+        this.permissionBalance = permissionHoursBalance;
     }
 }
 
