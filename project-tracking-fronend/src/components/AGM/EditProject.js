@@ -129,14 +129,15 @@ const EditProject = () => {
     const { name, value } = e.target;
     const updatedData = { ...formData };
 
-    if (["assignedHours", "modellingHours", "checkingHours", "detailingHours"].includes(name)) {
+    if (["assignedHours", "modellingHours", "checkingHours", "detailingHours", "studyHours"].includes(name)) {
       updatedData[name] = Number(value);
 
-      if (["modellingHours", "checkingHours", "detailingHours"].includes(name)) {
+      if (["modellingHours", "checkingHours", "detailingHours", "studyHours"].includes(name)) {
         updatedData.assignedHours =
           Number(updatedData.modellingHours || 0) +
           Number(updatedData.checkingHours || 0) +
-          Number(updatedData.detailingHours || 0);
+          Number(updatedData.detailingHours || 0)+
+          Number(updatedData.studyHours || 0);
       }
     } else {
       updatedData[name] = value;
@@ -156,6 +157,7 @@ const EditProject = () => {
         modellingHours: Number(formData.modellingHours),
         checkingHours: Number(formData.checkingHours),
         detailingHours: Number(formData.detailingHours),
+        studyHours: Number(formData.studyHours),
         managerId: Number(formData.managerId),
         projectStatus: formData.projectStatus === "Pending",
       };
@@ -347,7 +349,19 @@ const EditProject = () => {
               />
             </div>
 
-            <div className={styles.fld}>
+            <div className={styles.formField}>
+              <label>Study Hours</label>
+              <input
+                type="number"
+                name="studyHours"
+                value={formData.studyHours}
+                onChange={handleChange}
+              />
+            </div>
+
+            <br></br>
+
+            <div className={styles.fld} >
               <label>Status :</label>
               <button
                 type="button"
