@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "../../styles/Employee/LeavePermissionForm.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
 import axios from "axios";
+import { useToast } from "../../context/ToastContext";
 
 const LeavePermissionForm = () => {
   const [activeTab, setActiveTab] = useState("apply");
@@ -23,6 +24,7 @@ const LeavePermissionForm = () => {
     permissionMinutes: "",
   });
   const [leaveBalance, setLeaveBalance] = useState(null);
+  const { showToast } = useToast();
 
 useEffect(() => {
   if (employee?.empId) {
@@ -38,7 +40,7 @@ useEffect(() => {
 
   useEffect(() => {
     if (!loading && !employee) {
-      alert("Employee not found or not logged in!");
+      showToast("Employee not found or not logged in!","error");
     }
   }, [loading, employee]);
   useEffect(() => {
@@ -102,7 +104,7 @@ useEffect(() => {
     console.log(formData);
     const validation = validateForm();
     if (!validation.valid) {
-      alert(validation.msg);
+      showToast(validation.msg, "warning");
       return;
     }
 
@@ -111,15 +113,25 @@ if (formData.type === "Leave") {
   const days = parseFloat(formData.leaveDays || 0);
 
   if (formData.leaveType === "CL" && leaveBalance?.casualLeaves < days) {
-    alert(`You only have ${leaveBalance.casualLeaves} CL remaining.`);
+    showToast(`You only have ${leaveBalance.casualLeaves} CL remaining.`,"info");
     return;
   }
 
   if (formData.leaveType === "SL" && leaveBalance?.sickLeaves < days) {
-    alert(`You only have ${leaveBalance.sickLeaves} SL remaining.`);
+    showToast(`You only have ${leaveBalance.sickLeaves} SL remaining.`,"info");
     return;
   }
 }
+
+if (formData.type === "Permission") {
+    const requestedHours = parseFloat(formData.permissionHours || 0);
+    const availableHours = parseFloat(leaveBalance?.permissionBalance || 0);
+
+    if (requestedHours > availableHours) {
+      showToast(`You only have ${availableHours} hours of permission left, but you requested ${requestedHours} hours.`,"info");
+      return;
+    }
+  }
 
 
     try {
@@ -143,7 +155,7 @@ if (formData.type === "Leave") {
       const response = await axios.post("http://localhost:8080/leave/apply", payload);
       console.log(response);
       if (response.status === 200 || response.status === 201) {
-        alert("✅ Leave/Permission submitted successfully!");
+        showToast("✅ Leave/Permission submitted successfully!","success");
 
         // Reset form after success
         setFormData({
@@ -160,15 +172,22 @@ if (formData.type === "Leave") {
           permissionMinutes: "",
         });
       } else {
-        alert("⚠️ Failed to submit Leave/Permission!");
+        showToast("⚠️ Failed to submit Leave/Permission!","error");
       }
       console.log(payload);
 
     } catch (error) {
       console.error("❌ Error submitting Leave/Permission:", error);
-      alert("❌ Failed to save Leave/Permission!");
+      showToast("❌ Failed to save Leave/Permission!","error");
     }
   };
+
+  function formatDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
   const validateForm = () => {
     if (!employee) return { valid: false, msg: "Employee not found or not logged in!" };
@@ -262,7 +281,9 @@ const formattedWeekBefore = weekBefore.toISOString().split("T")[0];
             <select name="type" value={formData.type} onChange={handleChange}>
               <option value="">Select Type</option>
               <option value="Leave">Leave</option>
-              <option value="Permission">Permission</option>
+              {leaveBalance?.permissionBalance > 0 && (
+      <option value="Permission">Permission</option>
+    )}
             </select>
           </div>
 
@@ -391,15 +412,17 @@ const formattedWeekBefore = weekBefore.toISOString().split("T")[0];
           {formData.type === "Permission" && (
             <>
               <div className={styles.field}>
-                <label>Date</label>
-                <input
-                  type="date"
-                  name="fromDate"
-                  min={new Date().toISOString().split("T")[0]}
-                  value={formData.fromDate}
-                  onChange={handleChange}
-                />
-              </div>
+  <label>Date</label>
+  <input
+    type="date"
+    name="fromDate"
+    min={formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1))}   
+    max={formatDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0))} 
+    value={formData.fromDate}
+    onChange={handleChange}
+  />
+</div>
+
 
               <div className={styles.field}>
                 <label>Out Time (Leave Time)</label>

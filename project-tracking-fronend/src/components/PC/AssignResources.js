@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "../../styles/Employee/LeavePermissionForm.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
+import { useToast } from "../../context/ToastContext";
+
 
 const AssignActivityForm = () => {
   const { employee } = useEmployee();
@@ -19,6 +21,8 @@ const AssignActivityForm = () => {
     employeeId: "",
     assignedActivity: "",
   });
+
+    const { showToast } = useToast();
 
   const idToUse = employee.tl ? employee.reportingToId : employee.empId;
 
@@ -104,7 +108,7 @@ const AssignActivityForm = () => {
   // ✅ Submit
   const handleSubmit = () => {
     if (!formData.projectId || !formData.activityId || !formData.employeeId) {
-      alert("⚠ Please fill all required fields");
+      showToast("⚠ Please fill all required fields","warning");
       return;
     }
 
@@ -122,7 +126,7 @@ const AssignActivityForm = () => {
     axios
       .post("http://localhost:8080/assigned-work", payload) // Dummy POST
       .then((res) => {
-        alert("✅ Activity Assigned Successfully");
+        showToast("✅ Activity Assigned Successfully","success");
         setFormData({
           projectId: "",
           activityType: "",
@@ -133,7 +137,7 @@ const AssignActivityForm = () => {
       })
       .catch((err) => {
         console.error(err);
-        alert("❌ Failed to assign activity");
+        showToast("❌ Failed to assign activity","error");
       });
   };
 

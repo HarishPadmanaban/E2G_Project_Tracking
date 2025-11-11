@@ -39,8 +39,8 @@ public class CSVLoader implements CommandLineRunner {
         if (employeeRepository.count() > 0) {
             return; // prevent duplicate inserts
         }
-        //resetter.resetEmployeeTable();
-        //leaveResetter.resetLeaveTable();
+//        resetter.resetEmployeeTable();
+//        leaveResetter.resetLeaveTable();
         Map<Long, Employee> tempMap = new HashMap<>();
         List<String[]> rows;
 

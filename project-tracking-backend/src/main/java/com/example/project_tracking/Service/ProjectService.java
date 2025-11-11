@@ -80,8 +80,6 @@ public class ProjectService {
                     project.getStudyHoursTracking(),
                     project.getExtraHours(),
                     project.getExtraHoursTracking(),
-                    project.getSpecialHours(),
-                    project.getSpecialHoursTracking(),
                     project.getProjectActivityStatus()
             );
         }
@@ -111,8 +109,6 @@ public class ProjectService {
                     project.getStudyHoursTracking(),
                     project.getExtraHours(),
                     project.getExtraHoursTracking(),
-                    project.getSpecialHours(),
-                    project.getSpecialHoursTracking(),
                     project.getProjectActivityStatus()
             );
         }

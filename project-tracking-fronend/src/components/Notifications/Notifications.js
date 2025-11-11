@@ -339,7 +339,7 @@ const Notifications = () => {
                         </button>}
 
                         <ul className="notification-list">
-                            {visibleNotifications.length === 0 && <p style={{ color: "black" }}>No Notifications</p>}
+                            {visibleNotifications.length === 0 && <p style={{ color: "#555",backgroundColor: "#f3f4f6", padding: "15px 20px",borderRadius: "8px",textAlign: "center",fontSize: "16px",fontWeight: "500",boxShadow: "0 2px 6px rgba(0,0,0,0.1)",margin: "10px auto",width: "fit-content", }}>No Notifications</p>}
                             {visibleNotifications.map((n) => (
                                 <li
                                     key={n.id}

@@ -125,11 +125,6 @@ public class WorkDetailsService {
                 currentTime = Optional.ofNullable(project.getDetailingTime()).orElse(BigDecimal.ZERO);
                 break;
 
-            case "special activity":
-                targetHours = Optional.ofNullable(project.getSpecialHours()).orElse(BigDecimal.ZERO);
-                currentTime = Optional.ofNullable(project.getSpecialHoursTracking()).orElse(BigDecimal.ZERO);
-                break;
-
             case "studying":
                 targetHours = Optional.ofNullable(project.getStudyHours()).orElse(BigDecimal.ZERO);
                 currentTime = Optional.ofNullable(project.getStudyHoursTracking()).orElse(BigDecimal.ZERO);
@@ -169,7 +164,6 @@ public class WorkDetailsService {
             case "modelling": project.setModellingTime(newValue); break;
             case "checking": project.setCheckingTime(newValue); break;
             case "detailing": project.setDetailingTime(newValue); break;
-            case "special activity": project.setSpecialHoursTracking(newValue); break;
             case "studying": project.setStudyHoursTracking(newValue); break;
         }
     }
@@ -422,9 +416,6 @@ public class WorkDetailsService {
             case "detailing":
                 project.setDetailingTime(applyChange.apply(project.getDetailingTime(), project.getDetailingHours()));
                 break;
-            case "special activity":
-                project.setSpecialHoursTracking(applyChange.apply(project.getSpecialHoursTracking(), project.getSpecialHours()));
-                break;
             case "studying":
                 project.setStudyHoursTracking(applyChange.apply(project.getStudyHoursTracking(), project.getStudyHours()));
                 break;
@@ -459,9 +450,6 @@ public class WorkDetailsService {
         BigDecimal detTime = Optional.ofNullable(project.getDetailingTime()).orElse(BigDecimal.ZERO);
         BigDecimal detTarget = Optional.ofNullable(project.getDetailingHours()).orElse(BigDecimal.ZERO);
 
-        BigDecimal specialTime = Optional.ofNullable(project.getSpecialHoursTracking()).orElse(BigDecimal.ZERO);
-        BigDecimal specialTarget = Optional.ofNullable(project.getSpecialHours()).orElse(BigDecimal.ZERO);
-
         BigDecimal studyTime = Optional.ofNullable(project.getStudyHoursTracking()).orElse(BigDecimal.ZERO);
         BigDecimal studyTarget = Optional.ofNullable(project.getStudyHours()).orElse(BigDecimal.ZERO);
 
@@ -476,7 +464,6 @@ public class WorkDetailsService {
             case "modelling": currentTime = modTime; targetTime = modTarget; break;
             case "checking": currentTime = chkTime; targetTime = chkTarget; break;
             case "detailing": currentTime = detTime; targetTime = detTarget; break;
-            case "special activity": currentTime = specialTime; targetTime = specialTarget; break;
             case "studying": currentTime = studyTime; targetTime = studyTarget; break;
             default: throw new RuntimeException("Unknown activity type: " + type);
         }
@@ -569,7 +556,6 @@ public class WorkDetailsService {
                         employeeId, managerId, projectId, activityId);
 
         if (existing.isPresent()) return existing.get();
-
         // 2️⃣ Else, create new AssignedWork
         Employee emp = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
