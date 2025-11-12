@@ -36,7 +36,7 @@ public class ProjectController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> createProject(@RequestParam String projectName,String clientName,Long pmId,Long agmId,BigDecimal totalHours,LocalDate awardedDate,LocalDate startDate,LocalDate completedDate)
+    public ResponseEntity<?> createProject(@RequestParam String projectName,@RequestParam String clientName,@RequestParam Long pmId,@RequestParam Long agmId,@RequestParam BigDecimal totalHours,@RequestParam LocalDate awardedDate,@RequestParam LocalDate startDate,@RequestParam LocalDate completedDate)
     {
         projectService.createProject(projectName,clientName,pmId,agmId,totalHours,awardedDate,startDate,completedDate);
         return ResponseEntity.ok("Saved Successfully");

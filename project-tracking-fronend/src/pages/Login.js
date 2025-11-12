@@ -22,6 +22,11 @@ const Login = () => {
   {
     navigate("/manager/view-approved-request", { replace: true });
   }
+
+  else if(employee.designation === "IT Support" || employee.designation === "Accountant")
+  {
+    navigate("/employee/leave", { replace: true })
+  }
   
   else {
     navigate("/employee/work", { replace: true });

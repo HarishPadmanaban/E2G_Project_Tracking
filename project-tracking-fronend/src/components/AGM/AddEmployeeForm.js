@@ -28,7 +28,9 @@ const AddEmployeeForm = () => {
     "Junior Detailer",
     "Senior Modeller",
     "Junior Modeller",
-    "HR"
+    "HR",
+    "IT Support",
+    "Accountant"
   ];
 
   // Fetch manager list from backend

@@ -7,7 +7,7 @@ import Notifications from "../Notifications/Notifications";
 const EmployeeNavbar = () => {
   const navigate = useNavigate();
   const { employee, logout } = useEmployee();
-  const isHR=employee.designation==="HR";
+  const isHR=employee.designation==="HR" || employee.designation==="IT Support" || employee.designation==="Accountant";
  const handleBack = () => {
   // Don’t allow back on main work page
   if (window.location.pathname === "/employee/work") return;
@@ -33,13 +33,13 @@ const EmployeeNavbar = () => {
         </div>
 
         <div className={styles.navCenter} style={{marginLeft:
-      employee.designation === "HR"
+      isHR
         ? "-1%": "11%"}}>
           <img src="/logo.png" alt="E2G Logo" className={styles.logo} />
           <h1>E2G ENGINEERING SERVICES PRIVATE LIMITED</h1>
         </div>
 
-        <Notifications userId={employee.empId} userRole={employee.designation} />
+        {!isHR && <Notifications userId={employee.empId} userRole={employee.designation} />}
 
         <div className={styles.navRight}>
           {!isHR && <Link to="/employee/work" className={styles.navLink}>

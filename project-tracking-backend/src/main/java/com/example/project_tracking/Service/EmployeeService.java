@@ -5,9 +5,11 @@ import com.example.project_tracking.DTO.LoginRequest;
 import com.example.project_tracking.DTO.ProjectRequest;
 import com.example.project_tracking.DTO.WorkDetailsResponse;
 import com.example.project_tracking.Model.Employee;
+import com.example.project_tracking.Model.LeaveBalance;
 import com.example.project_tracking.Model.Project;
 import com.example.project_tracking.Model.WorkDetails;
 import com.example.project_tracking.Repository.EmployeeRepository;
+import com.example.project_tracking.Repository.LeaveBalanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,6 +25,9 @@ public class EmployeeService {
 
     @Autowired
     private JavaMailSender mailSender;
+    @Autowired
+    private LeaveBalanceRepository leaveBalanceRepository;
+
 
     public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
@@ -82,13 +87,19 @@ public class EmployeeService {
 
     public void addEmployee(Employee employee)
     {
+
         if(employee.getReportingTo()!=null)
         {
             Long id = employee.getReportingTo().getEmpId();
             Employee manager = employeeRepository.findById(id).orElse(null);
+            System.out.println("Manager:"+manager.toString());
             employee.setReportingTo(manager);
         }
         employeeRepository.save(employee);
+        LeaveBalance leaveBalance=new LeaveBalance(employee);
+        System.out.println("Employee:"+employee.getReportingTo());
+        leaveBalanceRepository.save(leaveBalance);
+
     }
 
     public List<DataTransfer> getEmployeesByManagerId(Long mgrid) {

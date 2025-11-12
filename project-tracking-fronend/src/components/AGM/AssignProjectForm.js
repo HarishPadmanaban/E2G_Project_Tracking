@@ -56,7 +56,7 @@ const AssignProjectForm = () => {
             totalHours: formData.totalHours,
             awardedDate: formData.awardedDate,
             startDate: formData.startDate,
-            completionDate: formData.completionDate
+            completedDate: formData.completionDate
           },
         }
       );
