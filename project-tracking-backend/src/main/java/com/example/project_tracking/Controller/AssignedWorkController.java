@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/assigned-work")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 public class AssignedWorkController {
 
     @Autowired

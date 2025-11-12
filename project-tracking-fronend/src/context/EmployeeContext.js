@@ -1,6 +1,7 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import axiosInstance from "D:/E2G/E2G_Project_Tracking/project-tracking-fronend/src/components/axiosConfig.js";
 
 const EmployeeContext = createContext();
 
@@ -10,10 +11,10 @@ export const EmployeeProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const employeeId = localStorage.getItem("employeeId");
-    
+
     if (employeeId) {
-  axios
-    .get("http://localhost:8080/employee/get", {
+  axiosInstance
+    .get("/employee/get", {
       params: { id: employeeId },
     })
     .then((res) => setEmployee(res.data))
