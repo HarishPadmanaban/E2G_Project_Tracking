@@ -590,33 +590,49 @@ const ManagerDashboard = () => {
                       <tr>
                         <th>Modelling Hours <br></br>(Worked / Assigned)</th>
                         <td>
-                          {selectedProject.modellingTime} / {selectedProject.modellingHours}
+                          {selectedProject.modellingTime || "0"} / {selectedProject.modellingHours || "0"}
                         </td>
                         <th>Checking Hours <br></br>(Worked / Assigned)</th>
                         <td>
-                          {selectedProject.checkingTime} / {selectedProject.checkingHours}
+                          {selectedProject.checkingTime || "0"} / {selectedProject.checkingHours || "0"}
                         </td>
                       </tr>
 
                       <tr>
                         <th>Detailing Hours <br></br>(Worked / Assigned)</th>
                         <td>
-                          {selectedProject.detailingTime} / {selectedProject.detailingHours}
+                          {selectedProject.detailingTime || "0"} / {selectedProject.detailingHours || "0"}
                         </td>
+                        <th>Study Hours <br></br>(Worked / Assigned)</th>
+                        <td>
+                          {selectedProject.studyHoursTracking || "0"} / {selectedProject.studyHours || "0"}
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th>Special Hours <br></br>Worked</th>
+                        <td>
+                          {selectedProject.specialHoursTracking || "0"}
+                        </td>
+                        <th>Extra Hours <br></br>(Worked / Assigned)</th>
+                        <td>
+                          {selectedProject.extraHoursTracking || "0"} / {selectedProject.extraHours || "0"}
+                        </td>
+                      </tr>
+
+                      <tr>
                         <th>Assigned Date</th>
                         <td>{selectedProject.assignedDate || "—"}</td>
-                      </tr>
-
-                      <tr>
                         <th>Start Date</th>
                         <td>{selectedProject.startDate || "—"}</td>
-                        <th>Completed Date</th>
-                        <td>{selectedProject.completedDate || "—"}</td>
+                        
                       </tr>
 
                       <tr>
+                        <th>Completed Date</th>
+                        <td>{selectedProject.completedDate || "—"}</td>
                         <th>Project Status</th>
-                        <td colSpan="3">
+                        <td colSpan="2">
                           {selectedProject.projectStatus
                             ? selectedProject.projectActivityStatus
                               ? `${selectedProject.projectActivityStatus} In-Progress`

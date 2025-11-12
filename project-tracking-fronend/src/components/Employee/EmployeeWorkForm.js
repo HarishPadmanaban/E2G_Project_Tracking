@@ -1201,7 +1201,7 @@ const EmployeeWorkForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { work } = location.state || {};
-   // manager view/edit if present
+  // manager view/edit if present
 
   const [activeWorkId, setActiveWorkId] = useState(() => {
     return localStorage.getItem("activeWorkId") || null;
@@ -1502,38 +1502,52 @@ const EmployeeWorkForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Generic field update
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
 
+    // ✅ When changing activity type for Special or Idle Work
     if (name === "projectActivityType") {
-      const filtered = activities.filter(
-        (act) => act.mainType && act.mainType.toLowerCase() === value.toLowerCase()
+      const selectedType = value;
+      const selectedActivityName =
+        formData.assignedWork === "Special Work" ? "Special Activity" : "Idle";
+
+      // Find matching activity by both name + mainType
+      const match = activities.find(
+        (act) =>
+          act.activityName.toLowerCase() === selectedActivityName.toLowerCase() &&
+          act.mainType.toLowerCase() === selectedType.toLowerCase()
       );
-      setFilteredActivities(filtered);
-      setFormData((prev) => ({
-        ...prev,
-        projectActivityType: value,
-        activityId: "",
-        category: "",
-      }));
+
+      if (match) {
+        setFormData((prev) => ({
+          ...prev,
+          projectActivityType: selectedType,
+          activityName: match.activityName,
+          activityId: match.id,
+          category: match.category,
+        }));
+      }
     }
   };
 
+
   const handleProjectChange = (e) => {
-  const selectedProject = projects.find((proj) => proj.id.toString() === e.target.value);
-  console.log(selectedProject);
-  // Reset form data first
-  setFormData((prev) => ({
-  ...prev,
-  projectId: e.target.value,
-  clientName: selectedProject ? selectedProject.clientName : "",
-  projectActivityType: "",
-  activityId: "",
-  category: "",
-  projectActivity: selectedProject?.projectActivityStatus||"",
-}));
+    const selectedProject = projects.find((proj) => proj.id.toString() === e.target.value);
+    console.log(selectedProject);
+    // Reset form data first
+    setFormData((prev) => ({
+      ...prev,
+      projectId: e.target.value,
+      clientName: selectedProject ? selectedProject.clientName : "",
+      projectActivityType: "",
+      activityId: "",
+      category: "",
+      projectActivity: selectedProject?.projectActivityStatus || "",
+    }));
 
 
     // Clear previous assigned activities
@@ -1569,7 +1583,7 @@ const EmployeeWorkForm = () => {
         startTime: start + ":00",
         projectActivity: formData.projectActivity,
         assignedWork: formData.assignedWork,
-        assignedWorkId: formData.assignedWorkId,
+        assignedWorkId: formData.assignedWorkId || Number("0"),
         status: formData.status,
         remarks: formData.remarks,
       };
@@ -1641,50 +1655,43 @@ const EmployeeWorkForm = () => {
 
 
   const handleAssignedActivityChange = (e) => {
-  const selectedId = e.target.value;
+    const selected = e.target.value;
 
-  if (selectedId === "special") {
-    // Hardcoded special activity details
-    const specialActivity = {
-      id: 43,
-      activityName: "Special Activity",
-      category: "Productive",
-      mainType: "Special Activity",
-      softDelete: false,
-    };
+    // ✅ If "Special Work" or "Idle"
+    if (selected === "Special Work" || selected === "Idle") {
+      setFormData((prev) => ({
+        ...prev,
+        assignedWork: selected,
+        projectActivityType: "",
+        activityName: selected === "Special Work" ? "Special Activity" : "Idle",
+        activityId: "",
+        category: "",
+      }));
+      return;
+    }
 
-    setFormData((prev) => ({
-      ...prev,
-      assignedWorkId: 0,
-      assignedWork: "Special Work",
-      projectActivityType: specialActivity.mainType,
-      activityName: specialActivity.activityName,
-      activityId: specialActivity.id,
-      category: specialActivity.category,
-    }));
+    // ✅ Normal assigned work auto-fill
+    const selectedAssigned = assignedActivities.find(
+      (act) => act.id.toString() === selected
+    );
 
-    return;
-  }
+    const act = activities.find(
+      (a) => a.id === selectedAssigned?.activityId
+    );
 
-  const selectedAssignedActivity = assignedActivities.find(
-    (act) => act.id.toString() === selectedId
-  );
-  const act = activities.find(
-    (a) => a.id === selectedAssignedActivity?.activityId
-  );
+    if (selectedAssigned && act) {
+      setFormData((prev) => ({
+        ...prev,
+        assignedWorkId: selectedAssigned.id,
+        assignedWork: selectedAssigned.description,
+        projectActivityType: act.mainType,
+        activityName: act.activityName,
+        activityId: act.id,
+        category: act.category,
+      }));
+    }
+  };
 
-  if (!selectedAssignedActivity || !act) return;
-
-  setFormData((prev) => ({
-    ...prev,
-    assignedWorkId: selectedAssignedActivity.id,
-    assignedWork: selectedAssignedActivity.description,
-    projectActivityType: act.mainType,
-    activityName: act.activityName,
-    activityId: act.id,
-    category: act.category,
-  }));
-};
 
 
   // Employee submit or Manager update (preserved)
@@ -1831,7 +1838,11 @@ const EmployeeWorkForm = () => {
               <label>Assigned Work</label>
               <select
                 name="assignedWorkId"
-                value={formData.assignedWorkId || ""}
+                value={
+                  formData.assignedWork === "Special Work" ? "Special Work"
+                    : formData.assignedWork === "Idle" ? "Idle"
+                      : formData.assignedWorkId || ""
+                }
                 onChange={handleAssignedActivityChange}
               >
                 <option value="">Select Assigned Activity</option>
@@ -1839,9 +1850,10 @@ const EmployeeWorkForm = () => {
                   <option key={act.id} value={act.id}>
                     {act.description}
                   </option>
-                  
+
                 ))}
-                 <option value="special">Special Work</option>
+                <option value="Special Work">Special Work</option>
+                <option value="Idle">Idle</option>
               </select>
 
             </div>
@@ -1851,41 +1863,48 @@ const EmployeeWorkForm = () => {
           <div className={styles.row}>
             <div className={styles.field}>
               <label>Activity Type</label>
-              {/* <select
-                name="projectActivityType"
-                value={formData.projectActivityType}
-                onChange={handleChange}
-                disabled={isReadOnly("projectActivityType")}
-              >
-                <option value="">Activity Type</option>
-                <option value="Modelling">Modelling</option>
-                <option value="Checking">Checking</option>
-                <option value="Detailing">Detailing</option>
-                <option value="Common">Common</option>
-              </select> */}
-              <input
-                type="text"
-                value={formData.projectActivityType}
-                readOnly
-                placeholder="Activity type"
-              />
+
+              {(formData.assignedWork === "Special Work" || formData.assignedWork === "Idle") ? (
+                <select
+                  name="projectActivityType"
+                  value={formData.projectActivityType}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Activity Type</option>
+                  <option value="Modelling">Modelling</option>
+                  <option value="Checking">Checking</option>
+                  <option value="Detailing">Detailing</option>
+                  {formData.assignedWork === "Idle" && (
+                    <option value="Common">Common</option>
+                  )}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  value={formData.projectActivityType}
+                  readOnly
+                  placeholder="Activity type"
+                />
+              )}
             </div>
+
+
 
             <div className={styles.field}>
               <label>Activity</label>
               {/* <select
-                name="activityId"
-                value={formData.activityId}
-                onChange={handleActivityChange}
-                disabled={isReadOnly("activityId")}
-              >
-                <option value="">Activity</option>
-                {filteredActivities.map((act) => (
-                  <option key={act.id} value={act.id}>
-                    {act.activityName}
-                  </option>
-                ))}
-              </select> */}
+                  name="activityId"
+                  value={formData.activityId}
+                  onChange={handleActivityChange}
+                  disabled={isReadOnly("activityId")}
+                >
+                  <option value="">Activity</option>
+                  {filteredActivities.map((act) => (
+                    <option key={act.id} value={act.id}>
+                      {act.activityName}
+                    </option>
+                  ))}
+                </select> */}
               <input
                 type="text"
                 value={formData.activityName}
@@ -1940,16 +1959,16 @@ const EmployeeWorkForm = () => {
             <div className={styles.field}>
               <label>Project Activity</label>
               {/* <select
-                name="projectActivity"
-                value={formData.projectActivity}
-                onChange={handleChange}
-                disabled={isReadOnly("projectActivity")}
-              >
-                <option value="">Project Activity</option>
-                <option value="IFRA">IFRA</option>
-                <option value="Client Rework">Client Rework</option>
-                <option value="Internal Rework">Internal Rework</option>
-              </select> */}
+                  name="projectActivity"
+                  value={formData.projectActivity}
+                  onChange={handleChange}
+                  disabled={isReadOnly("projectActivity")}
+                >
+                  <option value="">Project Activity</option>
+                  <option value="IFRA">IFRA</option>
+                  <option value="Client Rework">Client Rework</option>
+                  <option value="Internal Rework">Internal Rework</option>
+                </select> */}
               <input
                 type="text"
                 value={formData.projectActivity}

@@ -212,6 +212,7 @@ public class ProjectService {
         old.setModellingHours(projectRequest.getModellingHours());
         old.setCheckingHours(projectRequest.getCheckingHours());
         old.setDetailingHours(projectRequest.getDetailingHours());
+        old.setStudyHours(projectRequest.getStudyHours());
         old.setManagerId(projectRequest.getManagerId());
         old.setProjectName(projectRequest.getProjectName());
         old.setClientName(projectRequest.getClientName());

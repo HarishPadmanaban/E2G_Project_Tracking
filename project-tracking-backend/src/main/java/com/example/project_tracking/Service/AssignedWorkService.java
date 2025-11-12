@@ -77,7 +77,7 @@ public class AssignedWorkService {
     }
 
     public List<AssignedWorkResponse> getAssignedWorksByProject(Long projectId) {
-        return assignedWorkRepository.findByProjectId(projectId).stream().map(this::convertToResponse).toList();
+        return assignedWorkRepository.findByProjectId(projectId).stream().filter(p -> p.getStatus().equals("PENDING")).map(this::convertToResponse).toList();
     }
 
     public AssignedWorkResponse updateAssignedWorkStatus(Long id, String newStatus) {

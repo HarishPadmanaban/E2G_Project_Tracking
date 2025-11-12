@@ -93,6 +93,11 @@ public class WorkDetailsService {
             );
         }
 
+        if((request.getAssignedWork().equalsIgnoreCase(("Special Work")) || request.getAssignedWork().equalsIgnoreCase(("Idle"))) && request.getStatus().equalsIgnoreCase("pending"))
+        {
+            workDetails.setStatus("SPECIAL-PENDING");
+            assignedWork.setStatus("SPECIAL-PENDING");
+        }
         // ✅ Save WorkDetails and convert to response
         return convertToResponse(workDetailsRepository.save(workDetails));
     }

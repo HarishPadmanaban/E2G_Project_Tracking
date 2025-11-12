@@ -12,13 +12,14 @@ public class ProjectRequest {
     private BigDecimal modellingHours;
     private BigDecimal checkingHours;
     private BigDecimal detailingHours;
+    private BigDecimal studyHours;
     private Long managerId;
     private boolean projectStatus;
 
     public ProjectRequest() {
     }
 
-    public ProjectRequest(Long id, String projectName, String clientName, BigDecimal assignedHours, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, Long managerId, boolean projectStatus) {
+    public ProjectRequest(Long id, String projectName, String clientName, BigDecimal assignedHours, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal studyHours, Long managerId, boolean projectStatus) {
         this.id = id;
         this.projectName = projectName;
         this.clientName = clientName;
@@ -26,8 +27,17 @@ public class ProjectRequest {
         this.modellingHours = modellingHours;
         this.checkingHours = checkingHours;
         this.detailingHours = detailingHours;
+        this.studyHours = studyHours;
         this.managerId = managerId;
         this.projectStatus = projectStatus;
+    }
+
+    public BigDecimal getStudyHours() {
+        return studyHours;
+    }
+
+    public void setStudyHours(BigDecimal studyHours) {
+        this.studyHours = studyHours;
     }
 
     public Long getId() {
