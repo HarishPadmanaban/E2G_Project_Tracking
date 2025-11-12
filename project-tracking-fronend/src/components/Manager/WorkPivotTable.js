@@ -6,13 +6,19 @@ import * as XLSX from "xlsx";
 import { useEmployee } from "../../context/EmployeeContext";
 import "../../styles/Manager/PivotTableCustom.css";
 import PivotTable from "react-pivottable/PivotTable"; // extra import for safety
+import { useToast } from "../../context/ToastContext";
 // ✅ Safe custom patch for FilterBox (no undefined errors)
+
+
+
+
 const patchPivotFilterBox = () => {
   const Pivot = require("react-pivottable/PivotTableUI"); // dynamic import ensures module is available
   const originalFilterBox = Pivot.FilterBox || PivotTableUI.FilterBox;
 
+  
+
   if (!originalFilterBox) {
-    console.warn("⚠ PivotTableUI.FilterBox not found – skipping patch.");
     return;
   }
 
@@ -27,6 +33,7 @@ const patchPivotFilterBox = () => {
     const noneSelected = selectedValues.length === 0;
     const singleSelected = selectedValues.length === 1;
     const showSelectAll = noneSelected || singleSelected;
+    
 
     const toggleAll = (selectAll) => {
       const newFilter = {};
@@ -173,14 +180,13 @@ const WorkPivotTable = () => {
 
         setData(pivotData);
       })
-      .catch((err) => console.error("API Error:", err));
   }, [employee]);
 
 
   const exportPivotToExcel = () => {
     const table = document.querySelector(".pvtTable");
     if (!table) {
-      alert("No table to export!");
+      showToast("No table to export!","info");
       return;
     }
     const wb = XLSX.utils.book_new();
@@ -188,6 +194,9 @@ const WorkPivotTable = () => {
     XLSX.utils.book_append_sheet(wb, ws, "Work Analysis");
     XLSX.writeFile(wb, "WorkPivot.xlsx");
   };
+
+    const { showToast } = useToast();
+
 
   const hasValidData = data.length > 0;
 

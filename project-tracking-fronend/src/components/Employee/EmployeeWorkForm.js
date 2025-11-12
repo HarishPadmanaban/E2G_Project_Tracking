@@ -3,6 +3,7 @@ import axios from "axios";
 import styles from "../../styles/Employee/EmployeeWorkForm.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useToast } from "../../context/ToastContext";
 
 const EmployeeWorkForm = () => {
   const { employee, loading } = useEmployee();
@@ -16,6 +17,8 @@ const EmployeeWorkForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { work } = location.state || {};
+
+  const {showToast} = useToast();
   // manager view/edit if present
 
   const [activeWorkId, setActiveWorkId] = useState(() => {
@@ -58,13 +61,17 @@ const EmployeeWorkForm = () => {
 
     axios
       .get(`http://localhost:8080/project/${employee.reportingToId}`)
-      .then((res) => setProjects(res.data))
-      .catch((err) => console.error("Error fetching projects:", err));
+      .then((res) =>
+        { 
+          const filtered = res.data.filter(project => project.tlId!=null);
+          setProjects(filtered);
+        })
+      
 
     axios
       .get("http://localhost:8080/activity/")
       .then((res) => setActivities(res.data))
-      .catch((err) => console.error("Error fetching activities:", err));
+      
   }, [employee]);
 
   // Prevent back navigation on /employee routes (only while this component is mounted)
@@ -111,7 +118,7 @@ const EmployeeWorkForm = () => {
         .get(`http://localhost:8080/workdetails/${activeWorkId}`)
         .then(async (res) => {
           const workData = res.data;
-          console.log(workData);
+          
           if (!workData) {
             // no work found by id -> fallback to check active
             checkActiveRunningWork();
@@ -176,7 +183,7 @@ const EmployeeWorkForm = () => {
         });
     } else {
       // CASE 2: No activeWorkId — check if there's a currently active running work for this employee
-      console.log("checking for workID");
+      
       checkActiveRunningWork();
     }
 
@@ -186,7 +193,7 @@ const EmployeeWorkForm = () => {
         .get(`http://localhost:8080/workdetails/active/${employee.empId}`)
         .then((res) => {
           const active = res.data;
-          console.log(active);
+          
           if (active && !active.endTime) {
             const selectedProject = projects.find(
               (proj) => proj.id.toString() === active.projectId?.toString()
@@ -199,7 +206,7 @@ const EmployeeWorkForm = () => {
 
             // Store running work ID locally so the stopped-but-not-submitted flow works
             setActiveWorkId(active.id);
-            console.log(active);
+            
 
             // Autofill form for the running session
             setFormData({
@@ -258,10 +265,10 @@ const EmployeeWorkForm = () => {
       const response = await axios.get(
         `http://localhost:8080/assigned-work/project/${projectId}/employee/${employeeId}/active`
       );
-      console.log(response.data);
+      
       setAssignedActivities(response.data);
     } catch (error) {
-      console.error("Error fetching assigned activities:", error);
+    
       setAssignedActivities([]);
     }
   };
@@ -269,7 +276,7 @@ const EmployeeWorkForm = () => {
 
   const handleDiscard = () => {
     if (!activeWorkId) {
-      alert("No active work to discard.");
+      showToast("No active work to discard.","info");
       return;
     }
 
@@ -278,7 +285,7 @@ const EmployeeWorkForm = () => {
     axios
       .delete(`http://localhost:8080/workdetails/work/discard/${activeWorkId}`)
       .then(() => {
-        alert("Work discarded successfully!");
+        showToast("Work discarded successfully!","success");
 
         // Clear local storage
         localStorage.removeItem("activeWorkId");
@@ -309,8 +316,8 @@ const EmployeeWorkForm = () => {
         setSubmitDisabled(true);
       })
       .catch((err) => {
-        console.error("Error discarding work:", err);
-        alert("Failed to discard work.");
+        
+        showToast("Failed to discard work.","error");
       });
   };
 
@@ -352,7 +359,7 @@ const EmployeeWorkForm = () => {
 
   const handleProjectChange = (e) => {
     const selectedProject = projects.find((proj) => proj.id.toString() === e.target.value);
-    console.log(selectedProject);
+    
     // Reset form data first
     setFormData((prev) => ({
       ...prev,
@@ -378,7 +385,7 @@ const EmployeeWorkForm = () => {
   const handleStartStop = () => {
     if (!isRunning) {
       if (!isFormValid(false)) {
-        alert("Please fill in all required fields before starting.");
+        showToast("Please fill in all required fields before starting.","warning");
         return;
       }
 
@@ -402,28 +409,28 @@ const EmployeeWorkForm = () => {
         status: formData.status,
         remarks: formData.remarks,
       };
-      console.log(payload);
+      
 
       axios
         .post("http://localhost:8080/workdetails/save", payload)
         .then((res) => {
           const workId = res.data.id;
           setActiveWorkId(workId);
-          console.log(formData);
+          
           setFormData((prev) => ({
             ...prev,
             startTime: start, // only add start time
           }));
 
-          console.log(formData);
+          
           setIsRunning(true);
           setStopDisabled(true);
           setSubmitDisabled(true);
           setTimeout(() => setStopDisabled(false), 2 * 60 * 1000);
         })
         .catch((err) => {
-          console.error("Error starting work:", err);
-          alert("Could not start activity.");
+        
+          showToast("Could not start activity.","error");
         });
     } else {
       const now = new Date();
@@ -456,14 +463,14 @@ const EmployeeWorkForm = () => {
           setSubmitDisabled(false);
         })
         .catch((err) => {
-          console.error("Error stopping work:", err);
+          
 
           // Extract backend error message safely
           const backendMsg =
             err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
 
           // Show the exact backend message to user
-          alert(backendMsg);
+          showToast(backendMsg,"error");
         });
     }
   };
@@ -515,7 +522,7 @@ const EmployeeWorkForm = () => {
 
     if (!employee) return;
     if (!isFormValid(true)) {
-      alert("Please fill in all required fields before submitting.");
+      showToast("Please fill in all required fields before submitting.","warning");
       return;
     }
 
@@ -535,14 +542,14 @@ const EmployeeWorkForm = () => {
       remarks: formData.remarks,
     };
 
-    console.log(payload)
+    
 
     axios
       .put(`http://localhost:8080/workdetails/savefinal`, payload, {
         params: { activeWorkId: activeWorkId },
       })
       .then(() => {
-        alert("Work submitted successfully!");
+        showToast("Work submitted successfully!","success");
         setFormData({
           projectId: "",
           clientName: "",
@@ -563,8 +570,8 @@ const EmployeeWorkForm = () => {
         setActiveWorkId(null);
       })
       .catch((err) => {
-        console.error("❌ Error submitting work:", err);
-        alert("Submission failed!");
+        
+        showToast("Submission failed!","error");
       });
   };
 
@@ -578,7 +585,7 @@ const EmployeeWorkForm = () => {
       assignedWork,
       status,
     } = formData;
-    console.log(formData);
+  
 
     const baseFieldsFilled =
       projectId &&

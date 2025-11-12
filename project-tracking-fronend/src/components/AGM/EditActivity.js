@@ -4,6 +4,7 @@ import styles from "../../styles/AGM/EditProject.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
 import { useNavigate } from "react-router-dom";
 import AddActivityForm from './AddActivityForm';
+import { useToast } from "../../context/ToastContext";
 
 const EditActivity = () => {
   const { employee, loading } = useEmployee();
@@ -17,6 +18,7 @@ const EditActivity = () => {
 
   const categories = ["Productive", "Non-Productive"];
   const mainTypes = ["Modelling", "Detailing", "Checking", "Common"];
+  const {showToast} = useToast();
 
   const [formData, setFormData] = useState({
     id: "",
@@ -39,7 +41,6 @@ const EditActivity = () => {
         setActivities(res.data);
         setFilteredActivities(res.data);
       } catch (err) {
-        console.error("❌ Failed to fetch activities:", err);
       }
     };
     fetchData();
@@ -112,15 +113,14 @@ const EditActivity = () => {
         payload
       );
 
-      alert("✅ Activity updated successfully!");
+      showToast("✅ Activity updated successfully!","success");
       setSelectedActivity(null);
 
       // Refresh list
       const refreshed = await axios.get("http://localhost:8080/activity/");
       setActivities(refreshed.data);
     } catch (err) {
-      console.error("❌ Error updating activity:", err);
-      alert("Error updating activity!");
+      showToast("Error updating activity!","error");
     }
   };
 

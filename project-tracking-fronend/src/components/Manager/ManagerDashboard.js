@@ -1,148 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { useEmployee } from "../../context/EmployeeContext.js";
-// import axios from "axios";
-// import styles from "../../styles/Manager/ManagerDashboard.module.css"; // CSS module import
-
-// const ManagerDashboard = () => {
-//   const { employee } = useEmployee();
-//   const [projects, setProjects] = useState([]);
-//   const [filteredProjects, setFilteredProjects] = useState([]);
-//   const [filter, setFilter] = useState("In Progress");
-//   const [managers, setManagers] = useState({});
-
-//   useEffect(() => {
-//     if (!employee?.id) return;
-
-//     // ✅ Admin should have same access as AGM
-//     const isAGM =
-//       employee.designation === "Assistant General Manager" ||
-//       employee.designation === "Admin";
-
-//     // Use appropriate ID depending on role
-//     const managerIdToUse = employee.manager ? employee.id : employee.reportingToId;
-
-//     // Choose the endpoint dynamically
-//     const endpoint = isAGM
-//       ? `http://localhost:8080/project/` // 👈 AGM & Admin endpoint
-//       : `http://localhost:8080/project/${managerIdToUse}`; // 👈 existing manager endpoint
-
-//     axios
-//       .get(endpoint)
-//       .then((res) => {
-//         setProjects(res.data);
-//         console.log(res.data);
-//         const inProgress = res.data.filter((p) => p.projectStatus === true);
-//         setFilteredProjects(inProgress);
-//         setFilter("In Progress");
-
-//         // ✅ Fetch all managers only for AGM & Admin
-//         if (isAGM) {
-//           axios
-//             .get("http://localhost:8080/employee/getallmanagers")
-//             .then((res) => {
-//               const mgrMap = {};
-//               res.data.forEach((m) => {
-//                 mgrMap[m.id] = m.name;
-//               });
-//               setManagers(mgrMap);
-//             })
-//             .catch((err) => console.error("Error fetching managers:", err));
-//         }
-//       })
-//       .catch((err) => console.error(err));
-//   }, [employee]);
-
-//   const handleFilter = (category) => {
-//     setFilter(category);
-
-//     if (category === "All") {
-//       setFilteredProjects(projects);
-//     } else {
-//       const filtered = projects.filter((p) => {
-//         if (category === "Completed") return p.projectStatus === false;
-//         if (category === "In Progress") return p.projectStatus === true;
-//         return false;
-//       });
-//       console.log(filteredProjects);
-//       setFilteredProjects(filtered);
-//     }
-//   };
-
-//   return (
-//     <div className={styles.dashboardContainer}>
-//       <h2 className={styles.dashboardTitle}>
-//         {employee ? `${employee.name}'s Dashboard` : "Manager Dashboard"}
-//       </h2>
-
-//       <div className={styles.filterButtons}>
-//         {["In Progress", "Completed", "All"].map((category) => (
-//           <button
-//             key={category}
-//             onClick={() => handleFilter(category)}
-//             className={`${styles.filterBtn} ${
-//               filter === category ? styles.active : ""
-//             }`}
-//           >
-//             {category}
-//           </button>
-//         ))}
-//       </div>
-
-//       <table className={styles.projectsTable}>
-//         <thead>
-//           <tr>
-//             <th>Project ID</th>
-//             <th>Project Name</th>
-//             <th>Client Name</th>
-//             {(employee.designation === "Assistant General Manager" ||
-//               employee.designation === "Admin") && <th>Manager Name</th>}
-//             <th>Assigned Hours</th>
-//             <th>Working Hours</th>
-//             <th>Project Status</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {filteredProjects.length === 0 ? (
-//             <tr>
-//               <td colSpan="5" className={styles.noData}>
-//                 No projects found.
-//               </td>
-//             </tr>
-//           ) : (
-//             filteredProjects.map((p) => (
-//               <tr
-//                 key={p.id}
-//                 className={p.modellingHours === 0 ? styles.highlightRow : ""}
-//               >
-//                 <td>{p.id}</td>
-//                 <td>{p.projectName}</td>
-//                 <td>{p.clientName}</td>
-//                 {(employee.designation === "Assistant General Manager" ||
-//                   employee.designation === "Admin") && (
-//                   <td>{managers[p.managerId] || "Unknown"}</td>
-//                 )}
-//                 <td>{p.assignedHours}</td>
-//                 <td>{p.workingHours}</td>
-//                 <td
-//                   className={
-//                     p.projectStatus
-//                       ? styles.statusInProgress
-//                       : styles.statusCompleted
-//                   }
-//                 >
-//                   {p.projectStatus ? "In-Progress" : "Completed"}
-//                 </td>
-//               </tr>
-//             ))
-//           )}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// };
-
-// export default ManagerDashboard;
-
 
 import React, { useEffect, useState } from "react";
 import { useEmployee } from "../../context/EmployeeContext.js";
@@ -221,8 +76,7 @@ const ManagerDashboard = () => {
 
     // Use appropriate ID depending on role
     const managerIdToUse = employee.manager ? employee.empId : employee.reportingToId;
-    console.log(isAGM)
-    //console.log(managerIdToUse)
+
 
     const endpoint = isAGM
       ? `http://localhost:8080/project/`
@@ -232,7 +86,7 @@ const ManagerDashboard = () => {
       .get(endpoint)
       .then((res) => {
         setProjects(res.data);
-        console.log(res.data);
+        
         const inProgress = res.data.filter((p) => p.projectStatus === true);
         setFilteredProjects(inProgress);
         setFilter("In Progress");
@@ -247,14 +101,13 @@ const ManagerDashboard = () => {
               });
               setManagers(mgrMap);
             })
-            .catch((err) => console.error("Error fetching managers:", err));
+            
         }
       })
-      .catch((err) => console.error(err));
+
   }, [employee]);
 
-  //console.log(filteredProjects);
-  //console.table(managers);
+
 
 
 
@@ -276,7 +129,7 @@ const ManagerDashboard = () => {
           [p.id]: tlMap[p.tlId] || "Not Assigned", // map project id → TL name
         }));
       } catch (err) {
-        console.error(`Error fetching TL for project ${p.id}:`, err);
+        
         setTl((prev) => ({
           ...prev,
           [p.id]: "Not Assigned",
@@ -340,15 +193,12 @@ const ManagerDashboard = () => {
       // 🔹 Get Worklogs for this project
       const worklogRes = await axios.get(`http://localhost:8080/workdetails/project/${project.id}`);
       const projectWorklogs = worklogRes.data;
-      console.log(projectWorklogs)
-      console.log("========")
+
 
       // 🔹 Get all assigned members
       const empRes = await axios.get(`http://localhost:8080/project-assignment/employees/${project.id}`);
       const allMembers = empRes.data.filter(emp => emp.empId !== project.tlId);
-      console.log("all members:");
-      console.log(allMembers);
-
+   
       // 🔹 Filter out members with 0 total work hours in this project
       const membersWithWork = allMembers.filter(member => {
         const totalWork = projectWorklogs
@@ -358,9 +208,7 @@ const ManagerDashboard = () => {
         return totalWork > 0;
       });
 
-      console.log("filtered members");
-      console.log(membersWithWork);
-
+      
       setSelectedProjectMembers(membersWithWork);
 
       // 🔹 Get Project Coordinator (TL)
@@ -370,7 +218,7 @@ const ManagerDashboard = () => {
           const matchedTl = tlsRes.data.find(tl => tl.empId === project.tlId);
           setSelectedCoordinator(matchedTl ? matchedTl.name : "TL Not Found");
         } catch (err) {
-          console.error("❌ Failed to fetch TL list:", err);
+          
           setSelectedCoordinator("Error loading coordinator");
         }
       } else {
@@ -382,12 +230,12 @@ const ManagerDashboard = () => {
       setShowWorklogs(false);
 
     } catch (err) {
-      console.error("Error loading project details:", err);
+      
     }
   };
 
 
-  console.log(selectedProjectMembers)
+  
 
   return (
     <div className={styles.dashboardContainer}>
@@ -663,7 +511,7 @@ const ManagerDashboard = () => {
 
                           setShowWorklogs(true);
                         } catch (err) {
-                          console.error("Error fetching worklogs:", err);
+                          
                         }
                       }}
                     >

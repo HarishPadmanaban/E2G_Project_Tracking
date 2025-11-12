@@ -33,7 +33,7 @@ useEffect(() => {
       .then((res) => {
         setLeaveBalance(res.data);
       })
-      .catch((err) => console.error("Error fetching leave balance:", err));
+      
   }
 }, [employee]);
 
@@ -52,11 +52,9 @@ useEffect(() => {
             (a, b) => new Date(b.appliedDate) - new Date(a.appliedDate)
           );
           setRequests(sorted);
-          console.log(sorted);
+          
         })
-        .catch((err) =>
-          console.error("Error fetching employee requests:", err)
-        );
+        
     }
   }, [activeTab, employee]);
 
@@ -101,7 +99,7 @@ useEffect(() => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    
     const validation = validateForm();
     if (!validation.valid) {
       showToast(validation.msg, "warning");
@@ -153,7 +151,7 @@ if (formData.type === "Permission") {
       };
 
       const response = await axios.post("http://localhost:8080/leave/apply", payload);
-      console.log(response);
+      
       if (response.status === 200 || response.status === 201) {
         showToast("✅ Leave/Permission submitted successfully!","success");
 
@@ -174,10 +172,9 @@ if (formData.type === "Permission") {
       } else {
         showToast("⚠️ Failed to submit Leave/Permission!","error");
       }
-      console.log(payload);
 
     } catch (error) {
-      console.error("❌ Error submitting Leave/Permission:", error);
+      
       showToast("❌ Failed to save Leave/Permission!","error");
     }
   };

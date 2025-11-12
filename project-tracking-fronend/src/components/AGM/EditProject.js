@@ -4,6 +4,7 @@ import styles from "../../styles/AGM/EditProject.module.css"
 import { useEmployee } from "../../context/EmployeeContext";
 import AssignProjectForm from './AssignProjectForm';
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../../context/ToastContext";
 
 const EditProject = () => {
   const { employee, loading } = useEmployee();
@@ -14,6 +15,7 @@ const EditProject = () => {
   const [managerList, setManagerList] = useState([]);
   const [selectedManager, setSelectedManager] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const {showToast} = useToast();
 
   const [formData, setFormData] = useState({
     id: "",
@@ -62,10 +64,7 @@ const EditProject = () => {
         const managerNames = managers.map((m) => m.name);
         setManagerList(managerNames);
 
-        console.log("✅ Projects with managers:", projectsWithManagerNames);
-        console.log("✅ Manager list:", managerNames);
       } catch (err) {
-        console.error("❌ Failed to fetch projects or managers:", err);
       }
     };
 
@@ -73,7 +72,7 @@ const EditProject = () => {
   }, []);
 
 
-  console.log(managerList);
+  
 
   // Filter projects based on selected filters
   useEffect(() => {
@@ -162,10 +161,10 @@ const EditProject = () => {
         projectStatus: formData.projectStatus === "Pending",
       };
 
-      console.log(updatedPayload);
+      
       await axios.put(`http://localhost:8080/project/editproject`, updatedPayload);
 
-      alert("✅ Project updated successfully!");
+      showToast("✅ Project updated successfully!","success");
       setSelectedProject(null);
 
       // Refresh list
@@ -177,8 +176,8 @@ const EditProject = () => {
       const managers = [...new Set(refreshed.data.map((p) => p.managerName).filter(Boolean))];
       setManagerList(managers);
     } catch (error) {
-      console.error("❌ Error updating project:", error);
-      alert("Error updating project!");
+      
+      showToast("Error updating project!","error");
     }
   };
 

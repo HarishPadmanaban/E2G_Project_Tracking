@@ -25,7 +25,7 @@ const EmployeesUnderManager = () => {
                 setEmployees(res.data);
                 setFilteredEmployees(res.data);
             })
-            .catch((err) => console.error("Error fetching employees:", err));
+            
     }, [employee]);
 
     const applyFilter = (list, search, designation) => {
@@ -95,9 +95,12 @@ const EmployeesUnderManager = () => {
             const worklogRes = await axios.get(`http://localhost:8080/workdetails/employee/${empId}`);
             setWorklogs(worklogRes.data || []);
 
+            
+            
+
             setShowModal(true);
         } catch (err) {
-            console.error("Error fetching employee/manager projects or worklogs:", err);
+            
         }
     };
 
@@ -218,6 +221,7 @@ const EmployeesUnderManager = () => {
                                 <tr>
                                     <th>Date</th>
                                     <th>Employee</th>
+                                    <th>Project Name</th>
                                     <th>Assigned Work</th>
                                     <th>Activity Name</th>
                                     <th>Status</th>
@@ -234,6 +238,7 @@ const EmployeesUnderManager = () => {
                                         <tr key={index}>
                                             <td>{log.date}</td>
                                             <td>{log.employeeName}</td>
+                                            <td>{log.projectName}</td>
                                             <td>{log.assignedWork}</td>
                                             <td>{log.activityName}</td>
                                             <td>{log.status}</td>

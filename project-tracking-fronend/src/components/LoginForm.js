@@ -38,13 +38,13 @@ const LoginForm = () => {
       }
 
       login(employeeData);
-      console.log(employeeData);
+      
     } catch (err) {
       if (err.response && err.response.status === 401) {
         setError("Invalid username or password");
       } else {
         setError("Something went wrong. Please try again later.");
-        console.error(err);
+
       }
     }
   };

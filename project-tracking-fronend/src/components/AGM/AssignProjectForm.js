@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "../../styles/AGM/AddActivity.module.css"; // reuse CSS
 import axios from "axios";
+import { useToast } from "../../context/ToastContext";
 import { useEmployee } from "../../context/EmployeeContext";
 
 const AssignProjectForm = () => {
@@ -15,6 +16,8 @@ const AssignProjectForm = () => {
     startDate: "",
     completionDate: "",
   });
+  const { showToast } = useToast();
+  
 
   // Fetch PMs
   useEffect(() => {
@@ -22,9 +25,8 @@ const AssignProjectForm = () => {
       .get("http://localhost:8080/employee/getallmanagers") // replace with real endpoint
       .then((res) => {
         const filteredPMs = res.data.filter((emp) => emp.designation === "Project Manager");
-        setPMs(filteredPMs); console.log(res.data);
+        setPMs(filteredPMs);
       })
-      .catch((err) => console.error(err));
   }, []);
 
   const handleChange = (e) => {
@@ -32,16 +34,15 @@ const AssignProjectForm = () => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.projectName) return alert("⚠️ Enter Project Name");
-    if (!formData.clientName) return alert("⚠️ Enter Client Name");
-    if (!formData.pmId) return alert("⚠️ Select a PM");
-    if (!formData.awardedDate) return alert("⚠️ Enter Awarded Date");
-    if (!formData.startDate) return alert("⚠️ Enter Start Date");
-    if (!formData.completionDate) return alert("⚠️ Enter Completion Date");
+    if (!formData.projectName) return showToast("⚠️ Enter Project Name","warning");
+    if (!formData.clientName) return showToast("⚠️ Enter Client Name","warning");
+    if (!formData.pmId) return showToast("⚠️ Select a PM","warning");
+    if (!formData.awardedDate) return showToast("⚠️ Enter Awarded Date","warning");
+    if (!formData.startDate) return showToast("⚠️ Enter Start Date","warning");
+    if (!formData.completionDate) return showToast("⚠️ Enter Completion Date","warning");
     if (!formData.totalHours || Number(formData.totalHours) <= 0)
-      return alert("⚠️ Enter total hours > 0");
+      return showToast("⚠️ Enter total hours > 0","warning");
 
-    console.log(formData);
 
     try {
       await axios.post(
@@ -60,16 +61,16 @@ const AssignProjectForm = () => {
           },
         }
       );
-      alert("✅ Project assigned successfully!");
+      showToast("✅ Project assigned successfully!","success");
       setFormData({
         projectName: "", clientName: "", pmId: "", totalHours: "", awardedDate: "", startDate: "",completionDate: ""
       });
     } catch (error) {
-      console.error(error);
+  
       setFormData({
         projectName: "", clientName: "", pmId: "", totalHours: "", awardedDate: "", startDate: "",completionDate: ""
       });
-      alert("❌ Failed to assign project");
+      showToast("❌ Failed to assign project","error");
     }
   };
 

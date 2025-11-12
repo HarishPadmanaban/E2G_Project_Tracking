@@ -10,7 +10,7 @@ export const EmployeeProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const employeeId = localStorage.getItem("employeeId");
-    console.log(employeeId);
+    
     if (employeeId) {
   axios
     .get("http://localhost:8080/employee/get", {
@@ -25,7 +25,7 @@ export const EmployeeProvider = ({ children }) => {
   }, []);
 
   const login = (employeeData) => {
-    console.log(employeeData)
+    
     setEmployee(employeeData);
     // Store only the internal primary key in localStorage
     localStorage.setItem("employeeId", employeeData.empId);

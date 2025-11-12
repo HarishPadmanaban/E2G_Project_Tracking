@@ -12,7 +12,7 @@ const ManagerNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
 
-  //console.log(employee);
+
 
   const isAGM =
   employee?.designation === "Assistant General Manager" ||
@@ -42,7 +42,7 @@ const ManagerNavbar = () => {
         const pending = res.data.filter((r) => r.status === "Pending");
         setPendingCount(pending.length);
       })
-      .catch((err) => console.error(err));
+      
   };
 
   // Fetch initially

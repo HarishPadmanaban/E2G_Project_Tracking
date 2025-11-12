@@ -3,6 +3,8 @@ import styles from "../../styles/Employee/LeavePermissionForm.module.css"; // re
 import { useEmployee } from "../../context/EmployeeContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../../context/ToastContext";
+
 
 const ProjectAssignmentForm = () => {
   const { employee, loading } = useEmployee();
@@ -25,7 +27,9 @@ const ProjectAssignmentForm = () => {
 
   const [showResourceModal, setShowResourceModal] = useState(false); // ✅ NEW
   const [selectedRole, setSelectedRole] = useState("Modeller"); // ✅ NEW
-  const [selectedResources, setSelectedResources] = useState([]); // ✅ NEW
+  const [selectedResources, setSelectedResources] = useState([]); // ✅ NEW4
+  const { showToast } = useToast();
+  
 
   // ✅ replace dummyEmployees with objects that include name & designation
   // const dummyEmployees = {
@@ -51,24 +55,24 @@ const ProjectAssignmentForm = () => {
       .get(`http://localhost:8080/project/manager/${managerIdToUse}/active`) // Dummy backend endpoint
       .then((proj) => {
         const inProgress = proj.data.filter((p) => p.workingHours === 0 && p.tlId === null);
-        console.log(proj.data);
+        
         setProjects(inProgress);
       })
-      .catch((err) => console.error(err));
+      
   }, [managerIdToUse]);
 
 
   useEffect(() => {
     if (!managerIdToUse) return;
 
-    console.log(managerIdToUse);
+    
     const res = axios
       .get(`http://localhost:8080/employee/gettls?mgrid=${managerIdToUse}`) // Dummy backend endpoint
       .then((res) => {
-        console.log(res.data);
+        
         setTeamLeads(res.data);
       })
-      .catch((err) => console.error(err));
+      
   }, [managerIdToUse]);
 
   useEffect(() => {
@@ -81,7 +85,7 @@ const ProjectAssignmentForm = () => {
       .then((res) => {
         const allEmployees = res.data;
 
-        console.log("👥 Employees under manager:", allEmployees);
+        
 
         // ✅ Categorize employees by their role
         const grouped = {
@@ -99,7 +103,7 @@ const ProjectAssignmentForm = () => {
         setEmployeesByRole(grouped);
       })
       .catch((err) => {
-        console.error("❌ Error fetching employees:", err);
+        
       });
   }, [managerIdToUse]);
 
@@ -152,18 +156,18 @@ const ProjectAssignmentForm = () => {
 
   const validateForm = async () => {
     if (!formData.projectId) {
-      alert("⚠️ Please select a project.");
+      showToast("⚠️ Please select a project.","warning");
       return false;
     }
 
     if (!formData.tl1) {
-      alert("⚠️ Please select Team Lead.");
+      showToast("⚠️ Please select Team Lead.","warning");
       return false;
     }
 
 
     if (!formData.projectActivity) {
-      alert("⚠️ Please select Project Activity");
+      showToast("⚠️ Please select Project Activity","warning");
       return false;
     }
 
@@ -176,7 +180,7 @@ const ProjectAssignmentForm = () => {
     !formData.detailingHours||
     !formData.studyHours
   ) {
-    alert("⚠️ Please fill all hour fields (Modelling, Checking, Detailing,Study).");
+    showToast("⚠️ Please fill all hour fields (Modelling, Checking, Detailing,Study).","warning");
     return false;
   }
 
@@ -186,7 +190,7 @@ const ProjectAssignmentForm = () => {
       Number(formData.detailingHours) <= 0 ||
       Number(formData.studyHours) <= 0
     ) {
-      alert("⚠️ Hours must be greater than 0.");
+      showToast("⚠️ Hours must be greater than 0.","warning");
       return false;
     }
 
@@ -197,14 +201,14 @@ const ProjectAssignmentForm = () => {
       Number(formData.studyHours);
 
     if (selectedProject && total !== selectedProject.assignedHours) {
-      alert(
+      showToast(
         `❌ Total assigned hours (${total}) must match project total (${selectedProject.assignedHours}).`
-      );
+      ,"error");
       return false;
     }
 
     try {
-      console.log(formData.projectActivity);
+      
       // ✅ STEP 1: Add project hours
       const hoursResponse = await axios.put(
         `http://localhost:8080/project/${formData.projectId}/add-hours`,
@@ -221,10 +225,10 @@ const ProjectAssignmentForm = () => {
         }
       );
 
-      console.log("✅ Project Hours Update Response:", hoursResponse.data);
+      
 
       // ✅ STEP 2: Assign resources (separate endpoint)
-      console.log("📦 Resources to be assigned:", selectedResources);
+      
 
       const payload = {
         project_id: formData.projectId,
@@ -236,9 +240,9 @@ const ProjectAssignmentForm = () => {
         payload
       );
 
-      console.log("✅ Resource Allocation Response:", resourceResponse.data);
+      
 
-      alert("✅ Project and resources assigned successfully!");
+      showToast("✅ Project and resources assigned successfully!","success");
 
       // ✅ Reset everything
       setFormData({
@@ -267,11 +271,11 @@ const ProjectAssignmentForm = () => {
       );
 
       setProjects(inProgress);
-      console.log("🔁 Updated Project List:", updatedProjectsRes.data);
+      
 
     } catch (error) {
-      console.error("❌ Error during assignment:", error);
-      alert("❌ Failed to assign project or resources");
+      
+      showToast("❌ Failed to assign project or resources","error");
     }
   };
 
@@ -476,216 +480,3 @@ const ProjectAssignmentForm = () => {
 };
 
 export default ProjectAssignmentForm;
-
-// import React, { useState, useEffect } from "react";
-// import styles from "../../styles/Employee/LeavePermissionForm.module.css";
-// import { useEmployee } from "../../context/EmployeeContext";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
-
-// const ProjectAssignmentForm = () => {
-//   const { employee, loading } = useEmployee();
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     if (!loading && !employee) {
-//       navigate("/");
-//     }
-//   }, [employee, loading, navigate]);
-
-//   const managerIdToUse = employee?.manager ? employee.id : employee?.reportingToId;
-
-//   const [projects, setProjects] = useState([]);
-//   const [teamLeads, setTeamLeads] = useState([]);
-//   const [selectedProject, setSelectedProject] = useState(null);
-
-//   const [showResourceModal, setShowResourceModal] = useState(false); // ✅ NEW
-//   const [selectedRole, setSelectedRole] = useState("Modeller"); // ✅ NEW
-//   const [selectedResources, setSelectedResources] = useState([]); // ✅ NEW
-
-//   // ✅ Dummy employees by role
-//   const dummyEmployees = {
-//     Modeller: [
-//       { id: 101, name: "Modeller - Senior" },
-//       { id: 102, name: "Modeller - Junior" },
-//       { id: 103, name: "Modeller - Trainee" },
-//     ],
-//     Checker: [
-//       { id: 201, name: "Checker - Senior" },
-//       { id: 202, name: "Checker - Junior" },
-//     ],
-//     Designer: [
-//       { id: 301, name: "Designer - Senior" },
-//       { id: 302, name: "Designer - Trainee" },
-//     ],
-//   };
-
-//   const [formData, setFormData] = useState({
-//     projectId: "",
-//     tl1: "",
-//     modellingHours: "",
-//     checkingHours: "",
-//     detailingHours: "",
-//   });
-
-//   useEffect(() => {
-//     if (!managerIdToUse) return;
-
-//     axios
-//       .get(`http://localhost:8080/project/manager/${managerIdToUse}/active`)
-//       .then((proj) => {
-//         const inProgress = proj.data.filter((p) => p.workingHours === 0);
-//         setProjects(inProgress);
-//       })
-//       .catch((err) => console.error(err));
-//   }, [managerIdToUse]);
-
-//   useEffect(() => {
-//     if (!managerIdToUse) return;
-//     axios
-//       .get(`http://localhost:8080/employee/gettls?mgrid=${managerIdToUse}`)
-//       .then((res) => setTeamLeads(res.data))
-//       .catch((err) => console.error(err));
-//   }, [managerIdToUse]);
-
-//   const handleProjectChange = (e) => {
-//     const selected = projects.find((p) => p.id === parseInt(e.target.value));
-//     setSelectedProject(selected);
-//     setFormData({
-//       projectId: selected?.id || "",
-//       tl1: "",
-//       modellingHours: "",
-//       checkingHours: "",
-//       detailingHours: "",
-//     });
-//   };
-
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const toggleResourceSelection = (emp) => {
-//     setSelectedResources((prev) => {
-//       const exists = prev.find((r) => r.id === emp.id);
-//       if (exists) {
-//         return prev.filter((r) => r.id !== emp.id);
-//       }
-//       return [...prev, emp];
-//     });
-//   };
-
-//   const validateForm = () => {
-//     if (!formData.projectId) {
-//       alert("⚠️ Please select a project.");
-//       return;
-//     }
-
-//     alert("✅ Assigned Resources: " + JSON.stringify(selectedResources));
-//   };
-
-//   return (
-//     <div className={styles.container}>
-//       <h2>Project Distribution</h2>
-
-//       {/* Project Dropdown */}
-//       <div className={styles.fld}>
-//         <label>Choose Project</label>
-//         <select name="projectId" value={formData.projectId} onChange={handleProjectChange}>
-//           <option value="">Select Project</option>
-//           {projects.map((proj) => (
-//             <option key={proj.id} value={proj.id}>
-//               {proj.projectName} ({proj.clientName})
-//             </option>
-//           ))}
-//         </select>
-//       </div>
-
-//       {selectedProject && (
-//         <>
-//           <div className={styles.fld}>
-//             <label>Assigned Hours (Total)</label>
-//             <input type="text" value={selectedProject.assignedHours} readOnly />
-//           </div>
-
-//           <div className={styles.fld}>
-//             <label>Choose TL1</label>
-//             <select name="tl1" value={formData.tl1} onChange={handleChange}>
-//               <option value="">Select Team Lead 1</option>
-//               {teamLeads.map((tl) => (
-//                 <option key={tl.id} value={tl.id}>
-//                   {tl.name}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-
-//           {/* ✅ Assign Resources Button */}
-//           <button
-//             type="button"
-//             className={styles.submitBtn}
-//             onClick={() => setShowResourceModal(true)}
-//           >
-//             Assign Resources ({selectedResources.length} Selected)
-//           </button>
-
-//           {/* ✅ Modal for selecting employees */}
-//           {showResourceModal && (
-//             <div className={styles.modalOverlay}>
-//               <div className={styles.modalBox}>
-//                 <h3>Select Resources</h3>
-
-//                 <div className={styles.filterRow}>
-//                   {["Modeller", "Checker", "Designer"].map((role) => (
-//                     <button
-//                       key={role}
-//                       className={`${styles.roleBtn} ${
-//                         selectedRole === role ? styles.activeRole : ""
-//                       }`}
-//                       onClick={() => setSelectedRole(role)}
-//                     >
-//                       {role}
-//                     </button>
-//                   ))}
-//                 </div>
-
-//                 <div className={styles.modalContent}>
-//                   {dummyEmployees[selectedRole].map((emp) => (
-//                     <label key={emp.id} className={styles.checkItem}>
-//                       <input
-//                         type="checkbox"
-//                         checked={selectedResources.some((r) => r.id === emp.id)}
-//                         onChange={() => toggleResourceSelection(emp)}
-//                       />
-//                       {emp.name}
-//                     </label>
-//                   ))}
-//                 </div>
-
-//                 <div className={styles.modalActions}>
-//                   <button
-//                     className={styles.submitBtn}
-//                     onClick={() => setShowResourceModal(false)}
-//                   >
-//                     Done ✅
-//                   </button>
-//                   <button
-//                     className={styles.closeBtn}
-//                     onClick={() => setShowResourceModal(false)}
-//                   >
-//                     Cancel ❌
-//                   </button>
-//                 </div>
-//               </div>
-//             </div>
-//           )}
-
-//           <button type="button" className={styles.submitBtn} onClick={validateForm}>
-//             Assign
-//           </button>
-//         </>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default ProjectAssignmentForm;

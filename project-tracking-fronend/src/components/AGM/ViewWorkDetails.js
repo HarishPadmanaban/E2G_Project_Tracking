@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "../../styles/Employee/EmployeeWorkForm.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
+import { useToast } from "../../context/ToastContext";
 
 
 const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
@@ -9,6 +10,7 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [selectedActivityId, setSelectedActivityId] = useState(null);
+  const {showToast} = useToast();
 
   const [formData, setFormData] = useState({
     id: "",
@@ -65,10 +67,9 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
     axios
       .get(`http://localhost:8080/project/${work.managerId}`)
       .then((res) => {
-        console.log("✅ Projects fetched:", res.data);
         setProjects(Array.isArray(res.data) ? res.data : []);
       })
-      .catch((err) => console.error("❌ Error fetching projects:", err));
+      
   }, [work?.managerId]);
 
 
@@ -84,7 +85,7 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
         setSelectedType(res.data || "");
       })
       .catch((err) => {
-        console.error("❌ Error fetching type:", err);
+      
         setType("N/A");
       });
   }, [work?.activityId]);
@@ -97,7 +98,7 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
         setActivities(res.data);
         setFilteredActivities(res.data);
       })
-      .catch((err) => console.error("Error fetching activities:", err));
+      
   }, []);
 
   // 🟢 Handle edit toggle
@@ -121,24 +122,24 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
       remarks: formData.remarks,
     };
 
-    console.log("📦 Payload being sent:", payload);
+    
 
     try {
       const res = await axios.put(
         `http://localhost:8080/workdetails/edit-log/${formData.id}`,
         payload
       );
-      console.log("✅ Update successful:", res.data);
+      
       if (onUpdate) onUpdate(res.data);
-      alert("Work log updated successfully!");
+      showToast("Work log updated successfully!","success");
       setIsEditing(false);
     } catch (err) {
-      console.error("❌ Error updating work log:", err);
+  
      const backendMsg =
       err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
 
     // Show the exact backend message to user
-    alert(backendMsg);
+    showToast(backendMsg,"error");
     }
   };
 
