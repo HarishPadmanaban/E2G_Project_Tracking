@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosConfig";
 import styles from '../../styles/AGM/AddActivity.module.css'
 import { useToast } from "../../context/ToastContext";
 
@@ -30,7 +30,7 @@ const AddActivityForm = () => {
     if (!formData.mainType) return showToast("⚠️ Select Main Type","warning");
 
     try {
-      await axios.post("http://localhost:8080/activity/save", formData); 
+      await axiosInstance.post("/activity/save", formData); 
       showToast("✅ Activity added successfully!","success");
       console.log(formData);
       setFormData({ activityName: "", category: "", mainType: "" });

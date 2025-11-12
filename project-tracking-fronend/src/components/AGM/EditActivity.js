@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosConfig";
 import styles from "../../styles/AGM/EditProject.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
 import { useNavigate } from "react-router-dom";
@@ -37,7 +37,7 @@ const EditActivity = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/activity/");
+        const res = await axiosInstance.get("/activity/");
         setActivities(res.data);
         setFilteredActivities(res.data);
       } catch (err) {
@@ -109,8 +109,8 @@ const EditActivity = () => {
         softDelete: formData.softDelete,
       };
 
-      await axios.put(
-        `http://localhost:8080/activity/edit/${formData.id}`,
+      await axiosInstance.put(
+        `/activity/edit/${formData.id}`,
         payload
       );
 
@@ -118,7 +118,7 @@ const EditActivity = () => {
       setSelectedActivity(null);
 
       // Refresh list
-      const refreshed = await axios.get("http://localhost:8080/activity/");
+      const refreshed = await axiosInstance.get("/activity/");
       setActivities(refreshed.data);
     } catch (err) {
       console.error("❌ Error updating activity:", err);

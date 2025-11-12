@@ -1,5 +1,5 @@
 // import React, { useState, useEffect } from "react";
-// import axios from "axios";
+// import axiosInstance from "axiosInstance";
 // import styles from "../../styles/AGM/EditProject.module.css";
 // import { useEmployee } from "../../context/EmployeeContext";
 // import { useNavigate } from "react-router-dom";
@@ -29,7 +29,7 @@
 //         const fetchWorkDetails = async () => {
 //             try {
 //                 // ✅ API call to backend
-//                 const response = await axios.get("http://localhost:8080/workdetails/all");
+//                 const response = await axiosInstance.get("http://localhost:8080/workdetails/all");
 
 //                 // assuming response.data is an array of objects like the one you shared
 //                 const data = response.data;
@@ -334,7 +334,7 @@
 
 // export default EditWorkDetails;
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosConfig";
 import styles from "../../styles/AGM/EditProject.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
 import ViewWorkDetails from "./ViewWorkDetails"; // ✅ import your ViewWorkForm component
@@ -364,7 +364,7 @@ const EditWorkDetails = () => {
   useEffect(() => {
     const fetchWorkDetails = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/workdetails/all");
+        const response = await axiosInstance.get("/workdetails/all");
         const data = response.data;
         const sorted = data.sort((a, b) => new Date(b.date) - new Date(a.date));
         setWorkDetails(sorted);

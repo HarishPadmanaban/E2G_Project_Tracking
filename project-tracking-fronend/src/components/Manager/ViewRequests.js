@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import styles from "../../styles/Manager/ViewRequests.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
 import { useToast } from "../../context/ToastContext";
+import axiosInstance from "../axiosConfig";
 
 const ViewRequests = () => {
   const [requests, setRequests] = useState([]);
@@ -17,8 +17,8 @@ const ViewRequests = () => {
 
   try {
     const [pendingRes, approvedRes] = await Promise.all([
-      axios.get(`http://localhost:8080/leave/manager/${employee.empId}`),
-      axios.get(`http://localhost:8080/leave/manager-approved/${employee.empId}`),
+      axiosInstance.get(`/leave/manager/${employee.empId}`),
+      axiosInstance.get(`/leave/manager-approved/${employee.empId}`),
     ]);
 
     const allRequests = [...pendingRes.data, ...approvedRes.data];
@@ -51,7 +51,7 @@ const ViewRequests = () => {
 
   const handleApprove = async (id) => {
   try {
-    await axios.put(`http://localhost:8080/leave/status/${id}`, null, {
+    await axiosInstance.put(`/leave/status/${id}`, null, {
       params: { status: "Approved" },
     });
     showToast("Request Approved ✅","success");
@@ -67,7 +67,7 @@ const ViewRequests = () => {
 
 const handleReject = async (id) => {
   try {
-    await axios.delete(`http://localhost:8080/leave/${id}`);
+    await axiosInstance.delete(`/leave/${id}`);
     showToast("Request Rejected ❌","success");
     await fetchRequests(); // 🔁 refetch after rejection
     window.dispatchEvent(new Event("refreshPendingCount"));

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import styles from "../../styles/Employee/LeavePermissionForm.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
 import { useToast } from "../../context/ToastContext";
+import axiosInstance from "../axiosConfig";
 
 
 const AssignActivityForm = () => {
@@ -31,8 +31,8 @@ const AssignActivityForm = () => {
   useEffect(() => {
     if (!employee || !employee.reportingToId) return;
 
-    axios
-      .get(`http://localhost:8080/project/${idToUse}`) // Dummy API
+    axiosInstance
+      .get(`/project/${idToUse}`) // Dummy API
       .then((res) => {
         const filtered = res.data.filter(project => project.tlId!=null);
         setProjects(filtered);
@@ -47,13 +47,13 @@ const AssignActivityForm = () => {
       return;
     }
 
-  axios
-    .get(`http://localhost:8080/project-assignment/employees/${formData.projectId}`)
+  axiosInstance
+    .get(`/project-assignment/employees/${formData.projectId}`)
     .then((res) => {
       if (res.data.length === 0) {
         // If no employees assigned to this project, get all employees under manager
-        axios
-          .get(`http://localhost:8080/employee/getbymgr?mgrid=${employee.empId}`)
+        axiosInstance
+          .get(`/employee/getbymgr?mgrid=${employee.empId}`)
           .then((mgrRes) => setEmployees(mgrRes.data))
           .catch((err) => console.error("Error fetching employees under manager:", err));
       } else {
@@ -68,8 +68,8 @@ const AssignActivityForm = () => {
 
   // ✅ Fetch Activities based on type
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/activity/")
+    axiosInstance
+      .get("/activity/")
       .then((res) => {
         setActivities(res.data);
         setFilteredActivities(res.data); // default
@@ -126,8 +126,8 @@ const AssignActivityForm = () => {
 
     //console.log(payload);
 
-    axios
-      .post("http://localhost:8080/assigned-work", payload) // Dummy POST
+    axiosInstance
+      .post("/assigned-work", payload) // Dummy POST
       .then((res) => {
         showToast("✅ Activity Assigned Successfully","success");
         setFormData({

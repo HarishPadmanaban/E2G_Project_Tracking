@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosConfig";
 import styles from "../../styles/AGM/AddActivity.module.css"; // reuse same CSS
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../context/ToastContext";
@@ -36,8 +36,8 @@ const AddEmployeeForm = () => {
 
   // Fetch manager list from backend
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/employee/getallmanagers")
+    axiosInstance
+      .get("/employee/getallmanagers")
       .then((res) => setManagers(res.data))
       .catch(() => setManagers([]));
   }, []);
@@ -89,7 +89,7 @@ const AddEmployeeForm = () => {
 
 
       console.log(payload); // check
-      await axios.post("http://localhost:8080/employee/addemployee", payload);
+      await axiosInstance.post("/employee/addemployee", payload);
       showToast("✅ Employee added successfully!","success");
       setFormData({
         empId: "",

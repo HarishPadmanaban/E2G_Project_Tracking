@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PivotTableUI from "react-pivottable/PivotTableUI";
 import "react-pivottable/pivottable.css";
-import axios from "axios";
+import axiosInstance from "../axiosConfig";
 import * as XLSX from "xlsx";
 import { useEmployee } from "../../context/EmployeeContext";
 import "../../styles/Manager/PivotTableCustom.css";
@@ -138,13 +138,13 @@ const WorkPivotTable = () => {
       employee.designation === "Admin";
 
     const endpoint = isAGM
-      ? `http://localhost:8080/workdetails/all`
-      : `http://localhost:8080/workdetails/manager/${employee.empId}`;
+      ? `/workdetails/all`
+      : `/workdetails/manager/${employee.empId}`;
 
     // ✅ Fetch WorkDetails + All Projects in Parallel
     Promise.all([
-      axios.get(endpoint),
-      axios.get("http://localhost:8080/project/"),
+      axiosInstance.get(endpoint),
+      axiosInstance.get("/project/"),
     ])
       .then(([workRes, projectRes]) => {
         const workDetails = workRes.data || [];

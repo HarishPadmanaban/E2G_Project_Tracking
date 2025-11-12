@@ -4,6 +4,7 @@ import { useEmployee } from "../../context/EmployeeContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../context/ToastContext";
+import axiosInstance from "../axiosConfig";
 
 
 const ProjectAssignmentForm = () => {
@@ -78,8 +79,8 @@ const ProjectAssignmentForm = () => {
   useEffect(() => {
     if (!managerIdToUse) return;
 
-    axios
-      .get(`http://localhost:8080/employee/getbymgr`, {
+    axiosInstance
+      .get(`/employee/getbymgr`, {
         params: { mgrid: managerIdToUse },
       })
       .then((res) => {
@@ -210,8 +211,8 @@ const ProjectAssignmentForm = () => {
     try {
       console.log(formData.projectActivity);
       // ✅ STEP 1: Add project hours
-      const hoursResponse = await axios.put(
-        `http://localhost:8080/project/${formData.projectId}/add-hours`,
+      const hoursResponse = await axiosInstance.put(
+        `/project/${formData.projectId}/add-hours`,
         null,
         {
           params: {
@@ -235,8 +236,8 @@ const ProjectAssignmentForm = () => {
         employeeIds: selectedResources.map(emp => emp.empId),
       };
 
-      const resourceResponse = await axios.post(
-        `http://localhost:8080/project-assignment/assign`,
+      const resourceResponse = await axiosInstance.post(
+        `/project-assignment/assign`,
         payload
       );
 
@@ -258,8 +259,8 @@ const ProjectAssignmentForm = () => {
       setSelectedProject(null);
 
       // ✅ Refresh updated projects
-      const updatedProjectsRes = await axios.get(
-        `http://localhost:8080/project/manager/${managerIdToUse}/active`
+      const updatedProjectsRes = await axiosInstance.get(
+        `/project/manager/${managerIdToUse}/active`
       );
 
       const inProgress = updatedProjectsRes.data.filter(
