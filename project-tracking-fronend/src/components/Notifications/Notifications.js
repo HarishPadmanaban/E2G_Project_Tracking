@@ -3,6 +3,8 @@ import { FaBell } from "react-icons/fa";
 import axios from "axios";
 import "../../styles/Notifications/Notifications.css";
 import { useEmployee } from "../../context/EmployeeContext";
+import { useToast } from "../../context/ToastContext";
+
 
 const Notifications = () => {
     const { employee } = useEmployee(); // current user (AGM or PM etc.)
@@ -26,6 +28,7 @@ const Notifications = () => {
     const [openModal, setOpenModal] = useState(false);
     const [selectedNotification, setSelectedNotification] = useState(null);
     const [actionLoading, setActionLoading] = useState(false);
+    const { showToast } = useToast();
 
     // Clear all read notifications
     const handleClearAll = () => {
@@ -174,7 +177,7 @@ const Notifications = () => {
         const senderOfRequest = selectedNotification.senderId; // expected to exist
 
         if (!projectId) {
-            alert("Cannot find projectId in notification message. Approval aborted.");
+            showToast("Cannot find projectId in notification message. Approval aborted.","error");
             setActionLoading(false);
             return;
         }
@@ -184,7 +187,7 @@ const Notifications = () => {
             if (selectedNotification.type === "EXTRA_HOURS") {
                 const hours = extractRequestedHours(msg);
                 if (!hours || hours <= 0) {
-                    alert("Invalid requested hours in notification message.");
+                    showToast("Invalid requested hours in notification message.","info");
                     setActionLoading(false);
                     return;
                 }
@@ -198,7 +201,7 @@ const Notifications = () => {
                 const requestedDate = extractRequestedDate(selectedNotification.message);
 
                 if (!requestedDate) {
-                    alert("Invalid requested completion date in the notification.");
+                    showToast("Invalid requested completion date in the notification.","info");
                     setActionLoading(false);
                     return;
                 }
@@ -207,7 +210,7 @@ const Notifications = () => {
                     `http://localhost:8080/project/extend/${projectId}?completedDate=${requestedDate}`
                 );
 
-                alert("Project completion date updated successfully ✅");
+                showToast("Project completion date updated successfully ✅","success");
             }
             else {
                 // Not a request type we handle here
@@ -222,7 +225,7 @@ const Notifications = () => {
             if (!senderOfRequest) {
                 // if senderId not returned from backend, inform to add it in response
                 console.error("senderId missing on notification object — cannot send reply to PM.");
-                alert("Approved locally, but couldn't send reply to requester because senderId is missing on notification. Please include senderId in notification GET response.");
+                showToast("Approved locally, but couldn't send reply to requester because senderId is missing on notification. Please include senderId in notification GET response.","info");
             } else {
                 const replyTitle = `${selectedNotification.type === "EXTRA_HOURS" ? "Extra Hours Approved" : "Extension Approved"}`;
                 const replyMessage = `Project: ${projectName} | projectId=${projectId} | Your request has been APPROVED by ${employee.name || "AGM"}.`;
@@ -250,11 +253,11 @@ const Notifications = () => {
 
             // reload fresh data from server
             await fetchNotifications();
-            alert("Request approved and project updated ✅");
+            showToast("Request approved and project updated ✅","success");
 
         } catch (err) {
             console.error("Error during approval flow", err);
-            alert("Failed to complete approval. Check console for details.");
+            showToast("Failed to complete approval. Check console for details.","error");
         } finally {
             setActionLoading(false);
             closeDetails();
@@ -279,7 +282,7 @@ const Notifications = () => {
             // Send a reply notification back to requester (PM) that it's rejected
             if (!senderOfRequest) {
                 console.error("senderId missing on notification object — cannot send reply to PM.");
-                alert("Rejected locally, but couldn't send reply to requester because senderId is missing on notification. Please include senderId in notification GET response.");
+                showToast("Rejected locally, but couldn't send reply to requester because senderId is missing on notification. Please include senderId in notification GET response.","info");
             } else {
                 const replyTitle = `${selectedNotification.type === "EXTRA_HOURS" ? "Extra Hours Rejected" : "Extension Rejected"}`;
                 const replyMessage = `Project: ${projectName} | projectId=${projectId} | Your request has been REJECTED by ${employee.name || "AGM"}. Reason: ${selectedNotification.type === "EXTRA_HOURS" ? "Extra hours not approved" : "Extension not approved"}`;
@@ -306,10 +309,10 @@ const Notifications = () => {
 
 
             await fetchNotifications();
-            alert("Request rejected and requester notified ❌");
+            showToast("Request rejected and requester notified ❌","info");
         } catch (err) {
             console.error("Error during rejection flow", err);
-            alert("Failed to complete rejection. Check console for details.");
+            showToast("Failed to complete rejection. Check console for details.","error");
         } finally {
             setActionLoading(false);
             closeDetails();

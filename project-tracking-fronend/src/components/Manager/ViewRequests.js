@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "../../styles/Manager/ViewRequests.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
+import { useToast } from "../../context/ToastContext";
 
 const ViewRequests = () => {
   const [requests, setRequests] = useState([]);
   const [filteredRequests, setFilteredRequests] = useState([]);
   const [filter, setFilter] = useState("Pending");
   const { employee, loading } = useEmployee();
+  const { showToast } = useToast();
+  
 
   const fetchRequests = async () => {
   if (!employee?.empId) return;
@@ -51,26 +54,26 @@ const ViewRequests = () => {
     await axios.put(`http://localhost:8080/leave/status/${id}`, null, {
       params: { status: "Approved" },
     });
-    alert("Request Approved ✅");
+    showToast("Request Approved ✅","success");
     await fetchRequests(); // 🔁 refetch after approval
     window.dispatchEvent(new Event("refreshPendingCount"));
   } catch (err) {
     console.error("Approval failed:", err);
     const backendMsg =
             err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
-    alert(backendMsg);
+    showToast(backendMsg,"error");
   }
 };
 
 const handleReject = async (id) => {
   try {
     await axios.delete(`http://localhost:8080/leave/${id}`);
-    alert("Request Rejected ❌");
+    showToast("Request Rejected ❌","success");
     await fetchRequests(); // 🔁 refetch after rejection
     window.dispatchEvent(new Event("refreshPendingCount"));
   } catch (err) {
     console.error("Rejection failed:", err);
-    alert("Failed to reject request!");
+    showToast("Failed to reject request!","error");
   }
 };
 

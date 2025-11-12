@@ -6,10 +6,13 @@ import * as XLSX from "xlsx";
 import { useEmployee } from "../../context/EmployeeContext";
 import "../../styles/Manager/PivotTableCustom.css";
 import PivotTable from "react-pivottable/PivotTable"; // extra import for safety
+import { useToast } from "../../context/ToastContext";
 // ✅ Safe custom patch for FilterBox (no undefined errors)
 const patchPivotFilterBox = () => {
   const Pivot = require("react-pivottable/PivotTableUI"); // dynamic import ensures module is available
   const originalFilterBox = Pivot.FilterBox || PivotTableUI.FilterBox;
+  const { showToast } = useToast();
+  
 
   if (!originalFilterBox) {
     console.warn("⚠ PivotTableUI.FilterBox not found – skipping patch.");
@@ -180,7 +183,7 @@ const WorkPivotTable = () => {
   const exportPivotToExcel = () => {
     const table = document.querySelector(".pvtTable");
     if (!table) {
-      alert("No table to export!");
+      showToast("No table to export!","info");
       return;
     }
     const wb = XLSX.utils.book_new();

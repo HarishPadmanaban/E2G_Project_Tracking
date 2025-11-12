@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useEmployee } from "../../context/EmployeeContext";
 import styles from "../../styles/Employee/LeavePermissionForm.module.css";
+import { useToast } from "../../context/ToastContext";
 
 const ManagerProjectActions = () => {
   const { employee, loading } = useEmployee();
@@ -15,6 +16,8 @@ const ManagerProjectActions = () => {
 
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedActivity, setSelectedActivity] = useState("");
+  const { showToast } = useToast();
+  
 
   const fetchProjects = async () => {
     if (!employee?.empId) return;
@@ -40,7 +43,7 @@ const ManagerProjectActions = () => {
         await axios.put(
           `http://localhost:8080/project/toggle-status/${selectedProject.id}`
         );
-        alert("Project marked as completed ✅");
+        showToast("Project marked as completed ✅","success");
       }
 
       // ✅ Update Project Activity
@@ -55,14 +58,14 @@ const ManagerProjectActions = () => {
             params: { activity: selectedActivity },
           }
         );
-        alert("Project activity updated ✅");
+        showToast("Project activity updated ✅","success");
       }
 
       fetchProjects();
       resetFields();
     } catch (err) {
       console.error(err);
-      alert("Failed to update project");
+      showToast("Failed to update project","error");
     }
   };
 
@@ -83,12 +86,12 @@ const ManagerProjectActions = () => {
 
   const handleSendRequest = async () => {
   if (!selectedProject) {
-    alert("Select a project");
+    showToast("Select a project","warning");
     return;
   }
 
   if (!requestType) {
-    alert("Select request type");
+    showToast("Select request type","warning");
     return;
   }
 
@@ -101,7 +104,7 @@ const ManagerProjectActions = () => {
 
   if (requestType === "EXTRA_HOURS") {
     if (!extraHours || extraHours <= 0) {
-      alert("Enter valid extra hours");
+      showToast("Enter valid extra hours","warning");
       return;
     }
     title = "Extra Hours Request";
@@ -110,7 +113,7 @@ const ManagerProjectActions = () => {
 
   if (requestType === "COMPLETION_EXTENSION") {
     if (!newCompletionDate) {
-      alert("Select new completion date");
+      showToast("Select new completion date","warning");
       return;
     }
     title = "Completion Date Extension";
@@ -127,7 +130,7 @@ const ManagerProjectActions = () => {
 
   try {
     await axios.post(url);
-    alert("Request sent ✅");
+    showToast("Request sent ✅","success");
 
     // Clear the form
     setRequestType("");
@@ -137,7 +140,7 @@ const ManagerProjectActions = () => {
     setReason("");
   } catch (err) {
     console.error(err);
-    alert("Failed to send request ❌");
+    showToast("Failed to send request ❌","error");
   }
 };
 

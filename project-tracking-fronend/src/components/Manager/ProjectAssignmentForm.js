@@ -3,6 +3,8 @@ import styles from "../../styles/Employee/LeavePermissionForm.module.css"; // re
 import { useEmployee } from "../../context/EmployeeContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../../context/ToastContext";
+
 
 const ProjectAssignmentForm = () => {
   const { employee, loading } = useEmployee();
@@ -25,7 +27,9 @@ const ProjectAssignmentForm = () => {
 
   const [showResourceModal, setShowResourceModal] = useState(false); // ✅ NEW
   const [selectedRole, setSelectedRole] = useState("Modeller"); // ✅ NEW
-  const [selectedResources, setSelectedResources] = useState([]); // ✅ NEW
+  const [selectedResources, setSelectedResources] = useState([]); // ✅ NEW4
+  const { showToast } = useToast();
+  
 
   // ✅ replace dummyEmployees with objects that include name & designation
   // const dummyEmployees = {
@@ -152,18 +156,18 @@ const ProjectAssignmentForm = () => {
 
   const validateForm = async () => {
     if (!formData.projectId) {
-      alert("⚠️ Please select a project.");
+      showToast("⚠️ Please select a project.","warning");
       return false;
     }
 
     if (!formData.tl1) {
-      alert("⚠️ Please select Team Lead.");
+      showToast("⚠️ Please select Team Lead.","warning");
       return false;
     }
 
 
     if (!formData.projectActivity) {
-      alert("⚠️ Please select Project Activity");
+      showToast("⚠️ Please select Project Activity","warning");
       return false;
     }
 
@@ -176,7 +180,7 @@ const ProjectAssignmentForm = () => {
     !formData.detailingHours||
     !formData.studyHours
   ) {
-    alert("⚠️ Please fill all hour fields (Modelling, Checking, Detailing,Study).");
+    showToast("⚠️ Please fill all hour fields (Modelling, Checking, Detailing,Study).","warning");
     return false;
   }
 
@@ -186,7 +190,7 @@ const ProjectAssignmentForm = () => {
       Number(formData.detailingHours) <= 0 ||
       Number(formData.studyHours) <= 0
     ) {
-      alert("⚠️ Hours must be greater than 0.");
+      showToast("⚠️ Hours must be greater than 0.","warning");
       return false;
     }
 
@@ -197,9 +201,9 @@ const ProjectAssignmentForm = () => {
       Number(formData.studyHours);
 
     if (selectedProject && total !== selectedProject.assignedHours) {
-      alert(
+      showToast(
         `❌ Total assigned hours (${total}) must match project total (${selectedProject.assignedHours}).`
-      );
+      ,"error");
       return false;
     }
 
@@ -238,7 +242,7 @@ const ProjectAssignmentForm = () => {
 
       console.log("✅ Resource Allocation Response:", resourceResponse.data);
 
-      alert("✅ Project and resources assigned successfully!");
+      showToast("✅ Project and resources assigned successfully!","success");
 
       // ✅ Reset everything
       setFormData({
@@ -271,7 +275,7 @@ const ProjectAssignmentForm = () => {
 
     } catch (error) {
       console.error("❌ Error during assignment:", error);
-      alert("❌ Failed to assign project or resources");
+      showToast("❌ Failed to assign project or resources","error");
     }
   };
 
