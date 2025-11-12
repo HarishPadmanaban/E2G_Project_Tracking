@@ -33,7 +33,10 @@ const AssignActivityForm = () => {
 
     axios
       .get(`http://localhost:8080/project/${idToUse}`) // Dummy API
-      .then((res) => setProjects(res.data))
+      .then((res) => {
+        const filtered = res.data.filter(project => project.tlId!=null);
+        setProjects(filtered);
+      })
       .catch((err) => console.error(err));
   }, [managerId]);
 
@@ -174,6 +177,7 @@ const AssignActivityForm = () => {
           <option value="Modelling">Modelling</option>
           <option value="Checking">Checking</option>
           <option value="Detailing">Detailing</option>
+          <option value="Studying">Studying</option>
           <option value="Common">Common</option>
         </select>
       </div>

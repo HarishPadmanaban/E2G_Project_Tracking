@@ -8,10 +8,14 @@ import "../../styles/Manager/PivotTableCustom.css";
 import PivotTable from "react-pivottable/PivotTable"; // extra import for safety
 import { useToast } from "../../context/ToastContext";
 // ✅ Safe custom patch for FilterBox (no undefined errors)
+
+
+
+
 const patchPivotFilterBox = () => {
   const Pivot = require("react-pivottable/PivotTableUI"); // dynamic import ensures module is available
   const originalFilterBox = Pivot.FilterBox || PivotTableUI.FilterBox;
-  const { showToast } = useToast();
+
   
 
   if (!originalFilterBox) {
@@ -30,6 +34,7 @@ const patchPivotFilterBox = () => {
     const noneSelected = selectedValues.length === 0;
     const singleSelected = selectedValues.length === 1;
     const showSelectAll = noneSelected || singleSelected;
+    
 
     const toggleAll = (selectAll) => {
       const newFilter = {};
@@ -191,6 +196,9 @@ const WorkPivotTable = () => {
     XLSX.utils.book_append_sheet(wb, ws, "Work Analysis");
     XLSX.writeFile(wb, "WorkPivot.xlsx");
   };
+
+    const { showToast } = useToast();
+
 
   const hasValidData = data.length > 0;
 

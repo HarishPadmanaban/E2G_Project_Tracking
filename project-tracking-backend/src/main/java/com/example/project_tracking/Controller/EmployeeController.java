@@ -35,7 +35,7 @@ public class EmployeeController {
     @PostMapping("/addemployee")
     public ResponseEntity<?> addEmployee(@RequestBody Employee employee)
     {
-        System.out.println(employee.toString());
+        //System.out.println(employee.toString());
         employeeService.addEmployee(employee);
         return ResponseEntity.ok("Employee Added");
     }

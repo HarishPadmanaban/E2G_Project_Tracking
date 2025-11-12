@@ -21,9 +21,6 @@ import java.util.stream.Collectors;
 public class EmployeeService {
     private  final EmployeeRepository employeeRepository;
 
-    @Autowired
-    private JavaMailSender mailSender;
-
     public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
@@ -88,6 +85,7 @@ public class EmployeeService {
             Employee manager = employeeRepository.findById(id).orElse(null);
             employee.setReportingTo(manager);
         }
+
         employeeRepository.save(employee);
     }
 

@@ -1188,6 +1188,7 @@ import axios from "axios";
 import styles from "../../styles/Employee/EmployeeWorkForm.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useToast } from "../../context/ToastContext";
 
 const EmployeeWorkForm = () => {
   const { employee, loading } = useEmployee();
@@ -1201,6 +1202,8 @@ const EmployeeWorkForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { work } = location.state || {};
+
+  const {showToast} = useToast();
   // manager view/edit if present
 
   const [activeWorkId, setActiveWorkId] = useState(() => {
@@ -1243,7 +1246,12 @@ const EmployeeWorkForm = () => {
 
     axios
       .get(`http://localhost:8080/project/${employee.reportingToId}`)
-      .then((res) => setProjects(res.data))
+      .then((res) =>
+        { 
+          //console.log(res.data);
+          const filtered = res.data.filter(project => project.tlId!=null);
+          setProjects(filtered);
+        })
       .catch((err) => console.error("Error fetching projects:", err));
 
     axios
@@ -1454,7 +1462,7 @@ const EmployeeWorkForm = () => {
 
   const handleDiscard = () => {
     if (!activeWorkId) {
-      alert("No active work to discard.");
+      showToast("No active work to discard.","info");
       return;
     }
 
@@ -1463,7 +1471,7 @@ const EmployeeWorkForm = () => {
     axios
       .delete(`http://localhost:8080/workdetails/work/discard/${activeWorkId}`)
       .then(() => {
-        alert("Work discarded successfully!");
+        showToast("Work discarded successfully!","success");
 
         // Clear local storage
         localStorage.removeItem("activeWorkId");
@@ -1495,7 +1503,7 @@ const EmployeeWorkForm = () => {
       })
       .catch((err) => {
         console.error("Error discarding work:", err);
-        alert("Failed to discard work.");
+        showToast("Failed to discard work.","error");
       });
   };
 
@@ -1563,7 +1571,7 @@ const EmployeeWorkForm = () => {
   const handleStartStop = () => {
     if (!isRunning) {
       if (!isFormValid(false)) {
-        alert("Please fill in all required fields before starting.");
+        showToast("Please fill in all required fields before starting.","warning");
         return;
       }
 
@@ -1608,7 +1616,7 @@ const EmployeeWorkForm = () => {
         })
         .catch((err) => {
           console.error("Error starting work:", err);
-          alert("Could not start activity.");
+          showToast("Could not start activity.","error");
         });
     } else {
       const now = new Date();
@@ -1648,7 +1656,7 @@ const EmployeeWorkForm = () => {
             err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
 
           // Show the exact backend message to user
-          alert(backendMsg);
+          showToast(backendMsg,"error");
         });
     }
   };
@@ -1700,7 +1708,7 @@ const EmployeeWorkForm = () => {
 
     if (!employee) return;
     if (!isFormValid(true)) {
-      alert("Please fill in all required fields before submitting.");
+      showToast("Please fill in all required fields before submitting.","warning");
       return;
     }
 
@@ -1727,7 +1735,7 @@ const EmployeeWorkForm = () => {
         params: { activeWorkId: activeWorkId },
       })
       .then(() => {
-        alert("Work submitted successfully!");
+        showToast("Work submitted successfully!","success");
         setFormData({
           projectId: "",
           clientName: "",
@@ -1749,7 +1757,7 @@ const EmployeeWorkForm = () => {
       })
       .catch((err) => {
         console.error("❌ Error submitting work:", err);
-        alert("Submission failed!");
+        showToast("Submission failed!","error");
       });
   };
 
