@@ -3,8 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "../../styles/Employee/EmployeeNavbar.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
 import Notifications from "../Notifications/Notifications"; // adjust path as needed
-
-import axios from "axios";
+import axiosInstance from "../axiosConfig";
 
 const ManagerNavbar = () => {
   const navigate = useNavigate();
@@ -36,8 +35,8 @@ const ManagerNavbar = () => {
   if (!employee?.empId) return;
 
   const fetchPending = () => {
-    axios
-      .get(`http://localhost:8080/leave/manager/${employee.empId}`)
+    axiosInstance
+      .get(`/leave/manager/${employee.empId}`)
       .then((res) => {
         const pending = res.data.filter((r) => r.status === "Pending");
         setPendingCount(pending.length);

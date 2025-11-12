@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosConfig";
 import styles from "../../styles/Employee/EmployeeWorkForm.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
 import { useToast } from "../../context/ToastContext";
@@ -64,8 +64,8 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
   useEffect(() => {
     if (!work?.managerId) return; // ✅ ensure managerId is present before API call
 
-    axios
-      .get(`http://localhost:8080/project/${work.managerId}`)
+    axiosInstance
+      .get(`/project/${work.managerId}`)
       .then((res) => {
         setProjects(Array.isArray(res.data) ? res.data : []);
       })
@@ -78,8 +78,8 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
   useEffect(() => {
     if (!work?.activityId) return;
 
-    axios
-      .get(`http://localhost:8080/activity/get-type/${work.activityId}`)
+    axiosInstance
+      .get(`/activity/get-type/${work.activityId}`)
       .then((res) => {
         setType(res.data || "");
         setSelectedType(res.data || "");
@@ -92,8 +92,8 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
 
   // 🟢 Fetch all activities
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/activity/")
+    axiosInstance
+      .get("/activity/")
       .then((res) => {
         setActivities(res.data);
         setFilteredActivities(res.data);
@@ -125,8 +125,8 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
     
 
     try {
-      const res = await axios.put(
-        `http://localhost:8080/workdetails/edit-log/${formData.id}`,
+      const res = await axiosInstance.put(
+        `/workdetails/edit-log/${formData.id}`,
         payload
       );
       

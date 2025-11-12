@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "../../styles/AGM/AddActivity.module.css"; // reuse CSS
-import axios from "axios";
+import axiosInstance from "../axiosConfig";
 import { useToast } from "../../context/ToastContext";
 import { useEmployee } from "../../context/EmployeeContext";
 
@@ -21,8 +21,8 @@ const AssignProjectForm = () => {
 
   // Fetch PMs
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/employee/getallmanagers") // replace with real endpoint
+    axiosInstance
+      .get("/employee/getallmanagers") // replace with real endpoint
       .then((res) => {
         const filteredPMs = res.data.filter((emp) => emp.designation === "Project Manager");
         setPMs(filteredPMs);
@@ -45,8 +45,8 @@ const AssignProjectForm = () => {
 
 
     try {
-      await axios.post(
-        `http://localhost:8080/project/save`,
+      await axiosInstance.post(
+        `/project/save`,
         null,
         {
           params: {

@@ -1,8 +1,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useEmployee } from "../../context/EmployeeContext.js";
-import axios from "axios";
 import styles from "../../styles/Manager/ManagerDashboard.module.css";
+import axiosInstance from "../axiosConfig.js";
 
 const ManagerDashboard = () => {
   const { employee } = useEmployee();
@@ -79,10 +79,10 @@ const ManagerDashboard = () => {
 
 
     const endpoint = isAGM
-      ? `http://localhost:8080/project/`
-      : `http://localhost:8080/project/${managerIdToUse}`;
+      ? `/project/`
+      : `/project/${managerIdToUse}`;
 
-    axios
+    axiosInstance
       .get(endpoint)
       .then((res) => {
         setProjects(res.data);
@@ -92,8 +92,8 @@ const ManagerDashboard = () => {
         setFilter("In Progress");
 
         if (isAGM) {
-          axios
-            .get("http://localhost:8080/employee/getallmanagers")
+          axiosInstance
+            .get("/employee/getallmanagers")
             .then((res) => {
               const mgrMap = {};
               res.data.forEach((m) => {
@@ -116,8 +116,8 @@ const ManagerDashboard = () => {
 
     projects.forEach(async (p) => {
       try {
-        const res = await axios.get(
-          `http://localhost:8080/employee/gettls?mgrid=${p.managerId}`
+        const res = await axiosInstance.get(
+          `/employee/gettls?mgrid=${p.managerId}`
         );
         const tlMap = {};
         res.data.forEach((tl) => {
@@ -191,12 +191,12 @@ const ManagerDashboard = () => {
       setSelectedProject(project);
 
       // 🔹 Get Worklogs for this project
-      const worklogRes = await axios.get(`http://localhost:8080/workdetails/project/${project.id}`);
+      const worklogRes = await axiosInstance.get(`/workdetails/project/${project.id}`);
       const projectWorklogs = worklogRes.data;
 
 
       // 🔹 Get all assigned members
-      const empRes = await axios.get(`http://localhost:8080/project-assignment/employees/${project.id}`);
+      const empRes = await axiosInstance.get(`/project-assignment/employees/${project.id}`);
       const allMembers = empRes.data.filter(emp => emp.empId !== project.tlId);
    
       // 🔹 Filter out members with 0 total work hours in this project
@@ -214,7 +214,7 @@ const ManagerDashboard = () => {
       // 🔹 Get Project Coordinator (TL)
       if (project.tlId) {
         try {
-          const tlsRes = await axios.get(`http://localhost:8080/employee/gettls?mgrid=${project.managerId}`);
+          const tlsRes = await axiosInstance.get(`/employee/gettls?mgrid=${project.managerId}`);
           const matchedTl = tlsRes.data.find(tl => tl.empId === project.tlId);
           setSelectedCoordinator(matchedTl ? matchedTl.name : "TL Not Found");
         } catch (err) {
@@ -506,7 +506,7 @@ const ManagerDashboard = () => {
                       onClick={async () => {
                         try {
                           // 🔹 Temporary Dummy Worklog Data for Pagination Test
-                          const res = await axios.get(`http://localhost:8080/workdetails/project/${selectedProject.id} `);
+                          const res = await axiosInstance.get(`/workdetails/project/${selectedProject.id} `);
                           setWorklogs(res.data);
 
                           setShowWorklogs(true);

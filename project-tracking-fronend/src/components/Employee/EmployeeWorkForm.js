@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosConfig";
 import styles from "../../styles/Employee/EmployeeWorkForm.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -59,8 +59,8 @@ const EmployeeWorkForm = () => {
   useEffect(() => {
     if (!employee || !employee.reportingToId) return;
 
-    axios
-      .get(`http://localhost:8080/project/${employee.reportingToId}`)
+    axiosInstance
+      .get(`/project/${employee.reportingToId}`)
       .then((res) =>
         { 
           const filtered = res.data.filter(project => project.tlId!=null);
@@ -68,8 +68,8 @@ const EmployeeWorkForm = () => {
         })
       
 
-    axios
-      .get("http://localhost:8080/activity/")
+    axiosInstance
+      .get("/activity/")
       .then((res) => setActivities(res.data))
       
   }, [employee]);
@@ -114,8 +114,8 @@ const EmployeeWorkForm = () => {
 
     // CASE 1: If there's an activeWorkId (stopped-but-not-submitted), fetch by ID
     if (activeWorkId) {
-      axios
-        .get(`http://localhost:8080/workdetails/${activeWorkId}`)
+      axiosInstance
+        .get(`/workdetails/${activeWorkId}`)
         .then(async (res) => {
           const workData = res.data;
           
@@ -189,8 +189,8 @@ const EmployeeWorkForm = () => {
 
 
     function checkActiveRunningWork() {
-      axios
-        .get(`http://localhost:8080/workdetails/active/${employee.empId}`)
+      axiosInstance
+        .get(`/workdetails/active/${employee.empId}`)
         .then((res) => {
           const active = res.data;
           
@@ -262,8 +262,8 @@ const EmployeeWorkForm = () => {
 
   const fetchAssignedActivities = async (projectId, employeeId) => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/assigned-work/project/${projectId}/employee/${employeeId}/active`
+      const response = await axiosInstance.get(
+        `/assigned-work/project/${projectId}/employee/${employeeId}/active`
       );
       
       setAssignedActivities(response.data);
@@ -282,8 +282,8 @@ const EmployeeWorkForm = () => {
 
     if (!window.confirm("Are you sure you want to discard this work?")) return;
 
-    axios
-      .delete(`http://localhost:8080/workdetails/work/discard/${activeWorkId}`)
+    axiosInstance
+      .delete(`/workdetails/work/discard/${activeWorkId}`)
       .then(() => {
         showToast("Work discarded successfully!","success");
 
@@ -411,8 +411,8 @@ const EmployeeWorkForm = () => {
       };
       
 
-      axios
-        .post("http://localhost:8080/workdetails/save", payload)
+      axiosInstance
+        .post("/workdetails/save", payload)
         .then((res) => {
           const workId = res.data.id;
           setActiveWorkId(workId);
@@ -444,8 +444,8 @@ const EmployeeWorkForm = () => {
       let diffMinutes = endH * 60 + endM - (startH * 60 + startM);
       if (diffMinutes < 0) diffMinutes += 24 * 60;
       const diffHours = (diffMinutes / 60).toFixed(2);
-      axios
-        .put(`http://localhost:8080/workdetails/stop/${employee.empId}`, null, {
+      axiosInstance
+        .put(`/workdetails/stop/${employee.empId}`, null, {
           params: {
             endTime: end + ":00",
             workHours: diffHours,
@@ -544,8 +544,8 @@ const EmployeeWorkForm = () => {
 
     
 
-    axios
-      .put(`http://localhost:8080/workdetails/savefinal`, payload, {
+    axiosInstance
+      .put(`/workdetails/savefinal`, payload, {
         params: { activeWorkId: activeWorkId },
       })
       .then(() => {

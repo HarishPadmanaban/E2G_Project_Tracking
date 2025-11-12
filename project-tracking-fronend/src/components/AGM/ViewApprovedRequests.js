@@ -1,5 +1,5 @@
     import React, { useEffect, useState } from "react";
-    import axios from "axios";
+  import axiosInstance from "../axiosConfig";
     import styles from "../../styles/Manager/ViewRequests.module.css";
 
     const ViewApprovedRequests = () => {
@@ -14,8 +14,8 @@
 
 
     useEffect(() => {
-        axios
-        .get("http://localhost:8080/leave/all")
+        axiosInstance
+        .get("/leave/all")
         .then((res) => {
             setRequests(res.data);
             setFilteredRequests(res.data);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useEmployee } from "../../context/EmployeeContext";
-import axios from "axios";
 import styles from "../../styles/Manager/ManagerDashboard.module.css";
+import axiosInstance from "../axiosConfig";
 
 const EmployeesUnderManager = () => {
     const { employee } = useEmployee();
@@ -19,8 +19,8 @@ const EmployeesUnderManager = () => {
     useEffect(() => {
         if (!employee?.empId) return;
 
-        axios
-            .get(`http://localhost:8080/employee/getbymgr?mgrid=${employee.empId}`)
+        axiosInstance
+            .get(`/employee/getbymgr?mgrid=${employee.empId}`)
             .then((res) => {
                 setEmployees(res.data);
                 setFilteredEmployees(res.data);
@@ -74,15 +74,15 @@ const EmployeesUnderManager = () => {
 
             let res;
             if (selectedEmp.designation.toLowerCase().includes("project coordinator")) {
-                res = await axios.get(`http://localhost:8080/project/get-by-tl/${empId}`);
+                res = await axiosInstance.get(`/project/get-by-tl/${empId}`);
             } else {
-                res = await axios.get(`http://localhost:8080/project-assignment/projects/${empId}`);
+                res = await axiosInstance.get(`/project-assignment/projects/${empId}`);
             }
 
             const projectsWithCoordinator = await Promise.all(
                 res.data.map(async (proj) => {
                     if (proj.tlId) {
-                        const tlRes = await axios.get(`http://localhost:8080/employee/${proj.tlId}`);
+                        const tlRes = await axiosInstance.get(`/employee/${proj.tlId}`);
                         return { ...proj, coordinatorName: tlRes.data.name };
                     }
                     return proj;
@@ -92,7 +92,7 @@ const EmployeesUnderManager = () => {
             setSelectedProjects(projectsWithCoordinator);
 
             // ✅ Fetch worklogs from backend
-            const worklogRes = await axios.get(`http://localhost:8080/workdetails/employee/${empId}`);
+            const worklogRes = await axiosInstance.get(`/workdetails/employee/${empId}`);
             setWorklogs(worklogRes.data || []);
 
             

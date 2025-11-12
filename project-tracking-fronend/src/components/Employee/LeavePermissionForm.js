@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "../../styles/Employee/LeavePermissionForm.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
-import axios from "axios";
+import axiosInstance from "../axiosConfig";
 import { useToast } from "../../context/ToastContext";
 
 const LeavePermissionForm = () => {
@@ -28,8 +28,8 @@ const LeavePermissionForm = () => {
 
 useEffect(() => {
   if (employee?.empId) {
-    axios
-      .get(`http://localhost:8080/leave/balance/employee/${employee.empId}`)
+    axiosInstance
+      .get(`/leave/balance/employee/${employee.empId}`)
       .then((res) => {
         setLeaveBalance(res.data);
       })
@@ -45,8 +45,8 @@ useEffect(() => {
   }, [loading, employee]);
   useEffect(() => {
     if (activeTab === "view" && employee?.empId) {
-      axios
-        .get(`http://localhost:8080/leave/employee/${employee.empId}`)
+      axiosInstance
+        .get(`/leave/employee/${employee.empId}`)
         .then((res) => {
           const sorted = res.data.sort(
             (a, b) => new Date(b.appliedDate) - new Date(a.appliedDate)
@@ -150,8 +150,8 @@ if (formData.type === "Permission") {
         appliedDate: new Date().toISOString().split("T")[0],
       };
 
-      const response = await axios.post("http://localhost:8080/leave/apply", payload);
-      
+      const response = await axiosInstance.post("/leave/apply", payload);
+      console.log(response);
       if (response.status === 200 || response.status === 201) {
         showToast("✅ Leave/Permission submitted successfully!","success");
 

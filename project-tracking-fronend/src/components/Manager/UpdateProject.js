@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useEmployee } from "../../context/EmployeeContext";
 import styles from "../../styles/Employee/LeavePermissionForm.module.css";
 import { useToast } from "../../context/ToastContext";
+import axiosInstance from "../axiosConfig";
 
 const ManagerProjectActions = () => {
   const { employee, loading } = useEmployee();
@@ -22,8 +22,8 @@ const ManagerProjectActions = () => {
   const fetchProjects = async () => {
     if (!employee?.empId) return;
     try {
-      const res = await axios.get(
-        `http://localhost:8080/project/manager/${employee.empId}/active`
+      const res = await axiosInstance.get(
+        `/project/manager/${employee.empId}/active`
       );
       setProjects(res.data);
     } catch (err) {
@@ -40,8 +40,8 @@ const ManagerProjectActions = () => {
         selectedProject.projectStatus === true &&
         selectedStatus === "Completed"
       ) {
-        await axios.put(
-          `http://localhost:8080/project/toggle-status/${selectedProject.id}`
+        await axiosInstance.put(
+          `/project/toggle-status/${selectedProject.id}`
         );
         showToast("Project marked as completed ✅","success");
       }
@@ -51,8 +51,8 @@ const ManagerProjectActions = () => {
         selectedActivity &&
         selectedActivity !== selectedProject.projectActivityStatus
       ) {
-        await axios.put(
-          `http://localhost:8080/project/update-activity/${selectedProject.id}`,
+        await axiosInstance.put(
+          `/project/update-activity/${selectedProject.id}`,
           null,
           {
             params: { activity: selectedActivity },
@@ -121,7 +121,7 @@ const ManagerProjectActions = () => {
   }
 
   const url =
-    `http://localhost:8080/notifications/create` +
+    `/notifications/create` +
     `?senderId=${employee.empId}` +
     `&receiverId=${agmId}` +
     `&title=${encodeURIComponent(title)}` +
@@ -129,7 +129,7 @@ const ManagerProjectActions = () => {
     `&type=${requestType}`;
 
   try {
-    await axios.post(url);
+    await axiosInstance.post(url);
     showToast("Request sent ✅","success");
 
     // Clear the form

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosConfig";
 import styles from "../../styles/AGM/EditProject.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
 import { useNavigate } from "react-router-dom";
@@ -70,11 +70,11 @@ const EditEmployee = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const empRes = await axios.get("http://localhost:8080/employee/getallemployees");
+        const empRes = await axiosInstance.get("/employee/getallemployees");
         setEmployees(empRes.data);
         setFilteredEmployees(empRes.data);
 
-        const mgrRes = await axios.get("http://localhost:8080/employee/getallmanagers");
+        const mgrRes = await axiosInstance.get("/employee/getallmanagers");
         setManagerList(mgrRes.data);
       } catch (err) {
         
@@ -141,8 +141,8 @@ const EditEmployee = () => {
   };
 
   const handleEmployeeClick = (empId) => {
-    axios
-      .get(`http://localhost:8080/project-assignment/projects/${empId}`)
+    axiosInstance
+      .get(`/project-assignment/projects/${empId}`)
       .then((res) => {
         setSelectedProjects(res.data);
         setShowModal(true);
@@ -171,12 +171,12 @@ const EditEmployee = () => {
       
 
 
-      await axios.put("http://localhost:8080/employee/editemployee", payload);
+      await axiosInstance.put("/employee/editemployee", payload);
       showToast("✅ Employee updated successfully!","success");
       setSelectedEmployee(null);
 
       // Refresh list
-      const refreshed = await axios.get("http://localhost:8080/employee/getallemployees");
+      const refreshed = await axiosInstance.get("/employee/getallemployees");
       setEmployees(refreshed.data);
       setFilteredEmployees(refreshed.data);
     } catch (error) {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosConfig";
 import styles from "../../styles/AGM/EditProject.module.css"
 import { useEmployee } from "../../context/EmployeeContext";
 import AssignProjectForm from './AssignProjectForm';
@@ -40,8 +40,8 @@ const EditProject = () => {
     const fetchProjectsAndManagers = async () => {
       try {
         const [projectsRes, managersRes] = await Promise.all([
-          axios.get("http://localhost:8080/project/"),
-          axios.get("http://localhost:8080/employee/getallmanagers")
+          axiosInstance.get("/project/"),
+          axiosInstance.get("/employee/getallmanagers")
         ]);
 
         const projects = projectsRes.data;
@@ -161,14 +161,14 @@ const EditProject = () => {
         projectStatus: formData.projectStatus === "Pending",
       };
 
-      
-      await axios.put(`http://localhost:8080/project/editproject`, updatedPayload);
+      console.log(updatedPayload);
+      await axiosInstance.put(`/project/editproject`, updatedPayload);
 
       showToast("✅ Project updated successfully!","success");
       setSelectedProject(null);
 
       // Refresh list
-      const refreshed = await axios.get("http://localhost:8080/project/");
+      const refreshed = await axiosInstance.get("/project/");
       setProjects(refreshed.data);
       setFilteredProjects(refreshed.data);
 

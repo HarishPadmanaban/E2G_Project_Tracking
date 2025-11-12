@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { FaBell } from "react-icons/fa";
-import axios from "axios";
 import "../../styles/Notifications/Notifications.css";
 import { useEmployee } from "../../context/EmployeeContext";
 import { useToast } from "../../context/ToastContext";
+import axiosInstance from "../axiosConfig";
 
 
 const Notifications = () => {
@@ -78,7 +78,7 @@ const Notifications = () => {
     const fetchNotifications = async () => {
         if (!userId) return;
         try {
-            const res = await axios.get(`http://localhost:8080/notifications/${userId}`);
+            const res = await axiosInstance.get(`/notifications/${userId}`);
             const sorted = (res.data || []).sort(
                 (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
             );
@@ -126,7 +126,7 @@ const Notifications = () => {
         if (!isActionableRequest) {
             if (!n.readStatus) {
                 try {
-                    await axios.put(`http://localhost:8080/notifications/read/${n.id}`);
+                    await axiosInstance.put(`/notifications/read/${n.id}`);
                     // optimistic update for the list
                     setNotifications((prev) =>
                         prev.map((item) => (item.id === n.id ? { ...item, readStatus: true } : item))
@@ -151,13 +151,13 @@ const Notifications = () => {
     const sendReplyNotification = async ({ senderId, receiverId, title, message, type }) => {
         try {
             const url =
-                `http://localhost:8080/notifications/create` +
+                `/notifications/create` +
                 `?senderId=${senderId}` +
                 `&receiverId=${receiverId}` +
                 `&title=${encodeURIComponent(title)}` +
                 `&message=${encodeURIComponent(message)}` +
                 `&type=${encodeURIComponent(type)}`;
-            await axios.post(url);
+            await axiosInstance.post(url);
         } catch (err) {
             
             throw err;
@@ -192,8 +192,8 @@ const Notifications = () => {
                 }
 
                 // Call your existing extra-hours endpoint (you used this earlier)
-                await axios.put(
-                    `http://localhost:8080/project/set-extra-hours/${projectId}?extraHours=${hours}`
+                await axiosInstance.put(
+                    `/project/set-extra-hours/${projectId}?extraHours=${hours}`
                 );
             } else if (selectedNotification.type === "COMPLETION_EXTENSION") {
                 const projectId = extractProjectId(selectedNotification.message);
@@ -205,8 +205,8 @@ const Notifications = () => {
                     return;
                 }
 
-                await axios.put(
-                    `http://localhost:8080/project/extend/${projectId}?completedDate=${requestedDate}`
+                await axiosInstance.put(
+                    `/project/extend/${projectId}?completedDate=${requestedDate}`
                 );
 
                 showToast("Project completion date updated successfully ✅","success");
@@ -214,7 +214,7 @@ const Notifications = () => {
 
             // 2) Mark notification as approved on server
             // Your controller has PUT /notifications/approve/{id}
-            await axios.put(`http://localhost:8080/notifications/approve/${notificationId}`);
+            await axiosInstance.put(`/notifications/approve/${notificationId}`);
 
             // 3) Send a reply notification back to requester (PM) that it's approved
             if (!senderOfRequest) {
@@ -272,7 +272,7 @@ const Notifications = () => {
 
         try {
             // Mark original notification as read (no specific "reject" endpoint available)
-            await axios.put(`http://localhost:8080/notifications/read/${notificationId}`);
+            await axiosInstance.put(`/notifications/read/${notificationId}`);
 
             // Send a reply notification back to requester (PM) that it's rejected
             if (!senderOfRequest) {

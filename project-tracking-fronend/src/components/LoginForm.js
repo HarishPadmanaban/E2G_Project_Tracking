@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../styles/Login.module.css"; // your CSS file
-import axios from "axios";
 import { useEmployee } from "../context/EmployeeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import axiosInstance from "./axiosConfig";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -13,6 +13,7 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { login } = useEmployee();
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,8 +25,8 @@ const LoginForm = () => {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/employee/login",
+      const response = await axiosInstance.post(
+        "/employee/login",
         { username, password }
       );
 
