@@ -318,7 +318,7 @@ const Notifications = () => {
             closeDetails();
         }
     };
-    console.log(selectedNotification);
+    //console.log(selectedNotification);
 
     return (
         <>
