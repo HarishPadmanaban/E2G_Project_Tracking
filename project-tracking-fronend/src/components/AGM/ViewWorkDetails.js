@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "../../styles/Employee/EmployeeWorkForm.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
+import { useToast } from "../../context/ToastContext";
 
 
 const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
@@ -9,6 +10,7 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [selectedActivityId, setSelectedActivityId] = useState(null);
+  const {showToast} = useToast();
 
   const [formData, setFormData] = useState({
     id: "",
@@ -130,7 +132,7 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
       );
       console.log("✅ Update successful:", res.data);
       if (onUpdate) onUpdate(res.data);
-      alert("Work log updated successfully!");
+      showToast("Work log updated successfully!","success");
       setIsEditing(false);
     } catch (err) {
       console.error("❌ Error updating work log:", err);
@@ -138,7 +140,7 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
       err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
 
     // Show the exact backend message to user
-    alert(backendMsg);
+    showToast(backendMsg,"error");
     }
   };
 

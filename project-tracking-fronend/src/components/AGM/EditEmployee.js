@@ -194,6 +194,7 @@ import styles from "../../styles/AGM/EditProject.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
 import { useNavigate } from "react-router-dom";
 import AddEmployeeForm from './AddEmployeeForm';
+import { useToast } from "../../context/ToastContext";
 
 const designationToRole = {
   "Assistant General Manager": "Manager",
@@ -221,6 +222,7 @@ const EditEmployee = () => {
   const [selectedProjects, setSelectedProjects] = useState([]);
   const [isViewing, setIsViewing] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const {showToast} = useToast();
 
   const [designations] = useState([
     "Assistant General Manager",
@@ -360,7 +362,7 @@ const EditEmployee = () => {
 
 
       await axios.put("http://localhost:8080/employee/editemployee", payload);
-      alert("✅ Employee updated successfully!");
+      showToast("✅ Employee updated successfully!","success");
       setSelectedEmployee(null);
 
       // Refresh list
@@ -369,7 +371,7 @@ const EditEmployee = () => {
       setFilteredEmployees(refreshed.data);
     } catch (error) {
       console.error("❌ Error updating employee:", error);
-      alert("Error updating employee!");
+      showToast("Error updating employee!","error");
     }
   };
 

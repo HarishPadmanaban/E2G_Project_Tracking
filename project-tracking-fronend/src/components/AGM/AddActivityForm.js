@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styles from '../../styles/AGM/AddActivity.module.css'
+import { useToast } from "../../context/ToastContext";
 
 const AddActivityForm = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,9 @@ const AddActivityForm = () => {
     mainType: "",
     softDelete: false
   });
+
+  const { showToast } = useToast();
+  
 
   const categories = ["Productive", "Non-Productive"];
   const mainTypes = ["Modelling", "Detailing", "Checking", "Common"];
@@ -21,18 +25,18 @@ const AddActivityForm = () => {
   const handleSubmit = async () => {
     // Basic validation
     if (!formData.activityName.trim())
-      return alert("⚠️ Enter Activity Name");
-    if (!formData.category) return alert("⚠️ Select Category");
-    if (!formData.mainType) return alert("⚠️ Select Main Type");
+      return showToast("⚠️ Enter Activity Name","info");
+    if (!formData.category) return showToast("⚠️ Select Category","warning");
+    if (!formData.mainType) return showToast("⚠️ Select Main Type","warning");
 
     try {
       await axios.post("http://localhost:8080/activity/save", formData); 
-      alert("✅ Activity added successfully!");
+      showToast("✅ Activity added successfully!","success");
       console.log(formData);
       setFormData({ activityName: "", category: "", mainType: "" });
     } catch (error) {
       console.error(error);
-      alert("❌ Failed to add activity");
+      showToast("❌ Failed to add activity","error");
       setFormData({ activityName: "", category: "", mainType: "" });
     }
   };

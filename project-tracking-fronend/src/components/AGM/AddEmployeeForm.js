@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "../../styles/AGM/AddActivity.module.css"; // reuse same CSS
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../../context/ToastContext";
 
 const AddEmployeeForm = () => {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ const AddEmployeeForm = () => {
 
 
   const [managers, setManagers] = useState([]);
+  const { showToast } = useToast();
+  
 
   const designations = [
     "Assistant General Manager",
@@ -56,15 +59,14 @@ const AddEmployeeForm = () => {
 
   const handleSubmit = async () => {
     // Basic validation
-    if (!formData.empId.trim()) return alert("⚠️ Enter Employee ID");
-    if (!formData.name.trim()) return alert("⚠️ Enter Employee Name");
-    if (!formData.designation) return alert("⚠️ Select Designation");
+    if (!formData.empId.trim()) return showToast("⚠️ Enter Employee ID","warning");
+    if (!formData.name.trim()) return showToast("⚠️ Enter Employee Name","warning");
+    if (!formData.designation) return showToast("⚠️ Select Designation","warning");
     if (!formData.reportingTo && !["Assistant General Manager"].includes(formData.designation)) {
-      return alert("⚠️ Select Reporting Manager");
+      return showToast("⚠️ Select Reporting Manager","warning");
     }
-    if (!formData.username.trim()) return alert("⚠️ Enter Username");
-    if (!formData.password.trim()) return alert("⚠️ Enter Password");
-    //if (formData.password.length <=6 ) return alert("⚠️ Password Must greater than 6");
+    if (!formData.username.trim()) return showToast("⚠️ Enter Username","warning");
+    if (!formData.password.trim()) return showToast("⚠️ Enter Password","warning");
     if (formData.designation === "Project Manager" || formData.designation === "Assistant General Manager") formData.isManager = true;
     if (formData.designation === "Project Coordinator") formData.isTL = true;
     try {
@@ -88,7 +90,7 @@ const AddEmployeeForm = () => {
 
       console.log(payload); // check
       await axios.post("http://localhost:8080/employee/addemployee", payload);
-      alert("✅ Employee added successfully!");
+      showToast("✅ Employee added successfully!","success");
       setFormData({
         empId: "",
         name: "",
@@ -99,7 +101,7 @@ const AddEmployeeForm = () => {
       });
     } catch (error) {
       console.error(error);
-      alert("❌ Failed to add employee");
+      showToast("❌ Failed to add employee","error");
     }
   };
 
