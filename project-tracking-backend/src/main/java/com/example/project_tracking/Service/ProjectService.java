@@ -38,14 +38,16 @@ public class ProjectService {
 
         // Filter based on modellingHour being not null
         return projects.stream()
-                .filter(p -> p.getModellingHours() != null)
+                .filter(p -> p.getModellingHours() != null && !p.getSoftDelete())
                 .collect(Collectors.toList());
     }
 
     public List<Project> getAll(){
 
         List<Project> projectList = projectRepository.findAll();
-        return projectList;
+        return projectList.stream()
+                .filter(p -> !p.getSoftDelete())
+                .collect(Collectors.toList());
     }
 
     public ProjectResponse convertToResponse(Project project){
@@ -155,7 +157,9 @@ public class ProjectService {
         List<Integer> list = new ArrayList<>();
         HashSet<Integer> set = new HashSet<>(list);
         System.out.println();
-        return projectRepository.findByManagerIdAndProjectStatusTrue(managerId);
+        return projectRepository.findByManagerIdAndProjectStatusTrue(managerId).stream()
+                .filter(p -> !p.getSoftDelete())
+                .collect(Collectors.toList());
     }
 
     public Project updateProjectHours(Long tlId,Long projectId, BigDecimal addModellingHours, BigDecimal addCheckingHours, BigDecimal addDetailingHours, BigDecimal addStudyHours,String projectActivity) {
@@ -201,7 +205,7 @@ public class ProjectService {
 
         // Filter based on modellingHour being not null
         return projects.stream()
-                .filter(p -> p.getModellingHours() == null)
+                .filter(p -> p.getModellingHours() == null && !p.getSoftDelete())
                 .collect(Collectors.toList());
     }
 
@@ -244,13 +248,19 @@ public class ProjectService {
 
     public List<ProjectResponse> getProjectsByTl(Long tlId)
     {
-        return projectRepository.findByTlId(tlId).stream().map(this::convertToResponse).toList();
+        return projectRepository.findByTlId(tlId).stream().filter(p -> !p.getSoftDelete()).map(this::convertToResponse).toList();
     }
 
     public ProjectResponse setActivity(Long id,String activity) {
         Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project Found"));
         project.setProjectActivityStatus(activity);
         return convertToResponse(projectRepository.save(project));
+    }
+
+    public Project softDelete(Long id) {
+        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project Found"));
+        project.setSoftDelete(true);
+        return projectRepository.save(project);
     }
 }
 

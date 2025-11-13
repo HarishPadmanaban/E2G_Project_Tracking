@@ -14,10 +14,13 @@ public class ActivityService {
         this.activityRepository = activityRepository;
     }
 
-    public List<Activity> findAllActivity()
-    {
-        return activityRepository.findAll();
+    public List<Activity> findAllActivity() {
+        return activityRepository.findAll()
+                .stream()
+                .filter(activity -> !activity.getSoftDelete()) // assuming softDelete is boolean
+                .toList();
     }
+
 
     public List<Activity> findActiveActivities()
     {

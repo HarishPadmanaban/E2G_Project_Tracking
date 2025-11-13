@@ -82,4 +82,10 @@ public class EmployeeController {
     {
         return ResponseEntity.ok(employeeService.editEmployee(employee));
     }
+
+    @PutMapping("/soft-delete/{id}")
+    public ResponseEntity<?> softDeleteEmployee(@PathVariable Long id) {
+        return ResponseEntity.ok(employeeService.softDelete(id));
+    }
+
 }

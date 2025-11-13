@@ -54,13 +54,14 @@
 .detailsTable td {
   padding: 12px 15px;
   border-bottom: 1px solid #eee;
-  overflow: hidden;
+  overflow: visible;
   text-align: center;
   vertical-align: middle;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  text-overflow: unset;
 }
+
+
 
 /* Modern gradient header for detailsTable */
 .detailsTable thead th {
@@ -89,7 +90,7 @@
 .detailsTable th:nth-child(6),
 .detailsTable td:nth-child(6) { width: 120px; }  /* Status */
 .detailsTable th:nth-child(7),
-.detailsTable td:nth-child(7) { width: 100px; }  /* Action */
+.detailsTable td:nth-child(7) { width: 117px; }  /* Action */
 
 .detailsTable tbody tr {
   transition: all 0.2s ease;
@@ -105,6 +106,8 @@
   transition: background 0.2s ease;
 }
 
+
+
 /* ====== Action Button ====== */
 .actionBtn {
   background: linear-gradient(135deg, #1a2d54, #253b72);
@@ -114,7 +117,9 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin-right: 8px;
 }
+
 
 .actionBtn:hover {
   background: linear-gradient(135deg, #253b72, #3a4c89);

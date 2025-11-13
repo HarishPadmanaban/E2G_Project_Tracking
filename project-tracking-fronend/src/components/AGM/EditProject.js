@@ -15,7 +15,7 @@ const EditProject = () => {
   const [managerList, setManagerList] = useState([]);
   const [selectedManager, setSelectedManager] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
-  const {showToast} = useToast();
+  const { showToast } = useToast();
 
   const [formData, setFormData] = useState({
     id: "",
@@ -72,7 +72,7 @@ const EditProject = () => {
   }, []);
 
 
-  
+
 
   // Filter projects based on selected filters
   useEffect(() => {
@@ -123,6 +123,24 @@ const EditProject = () => {
     });
   };
 
+  // Delete Project
+  const handleDelete = async (projectId) => {
+    if (window.confirm("Are you sure you want to delete this project?")) {
+      try {
+        await axiosInstance.put(`/project/soft-delete/${projectId}`);
+        showToast("🗑️ Project deleted successfully!", "success");
+
+        // Remove deleted project from state
+        const updated = projects.filter((p) => p.id !== projectId);
+        setProjects(updated);
+        setFilteredProjects(updated);
+      } catch (error) {
+        showToast("Error deleting project!", "error");
+      }
+    }
+  };
+
+
   // Input change handler
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -135,7 +153,7 @@ const EditProject = () => {
         updatedData.assignedHours =
           Number(updatedData.modellingHours || 0) +
           Number(updatedData.checkingHours || 0) +
-          Number(updatedData.detailingHours || 0)+
+          Number(updatedData.detailingHours || 0) +
           Number(updatedData.studyHours || 0);
       }
     } else {
@@ -164,7 +182,7 @@ const EditProject = () => {
       console.log(updatedPayload);
       await axiosInstance.put(`/project/editproject`, updatedPayload);
 
-      showToast("✅ Project updated successfully!","success");
+      showToast("✅ Project updated successfully!", "success");
       setSelectedProject(null);
 
       // Refresh list
@@ -176,8 +194,8 @@ const EditProject = () => {
       const managers = [...new Set(refreshed.data.map((p) => p.managerName).filter(Boolean))];
       setManagerList(managers);
     } catch (error) {
-      
-      showToast("Error updating project!","error");
+
+      showToast("Error updating project!", "error");
     }
   };
 
@@ -260,14 +278,25 @@ const EditProject = () => {
                         ? styles.statusInProgress
                         : styles.statusCompleted
                     }>{proj.projectStatus ? "In-Progress" : "Completed"}</td>
-                    <td>
+                    
+                      <td>
+                        <div style={{display:"flex"}}>
                       <button
-                        className={styles.actionBtn}
+                        className={`${styles.actionBtn}`}
                         onClick={() => handleEdit(proj)}
                       >
-                        ✏️ Edit
+                        ✏️Edit
                       </button>
+
+                      <button
+                        className={`${styles.actionBtn}`}
+                        onClick={() => handleDelete(proj.id)}  
+                      >
+                        🗑️
+                      </button>
+                    </div>
                     </td>
+
                   </tr>
                 ))
               )}

@@ -32,7 +32,7 @@ const EditEmployee = () => {
   const [selectedProjects, setSelectedProjects] = useState([]);
   const [isViewing, setIsViewing] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const {showToast} = useToast();
+  const { showToast } = useToast();
 
   const [designations] = useState([
     "Assistant General Manager",
@@ -77,7 +77,7 @@ const EditEmployee = () => {
         const mgrRes = await axiosInstance.get("/employee/getallmanagers");
         setManagerList(mgrRes.data);
       } catch (err) {
-        
+
       }
     };
     fetchData();
@@ -113,6 +113,23 @@ const EditEmployee = () => {
     setFilteredEmployees(employees);
   };
 
+  const handleDelete = async (empId) => {
+    if (window.confirm("Are you sure you want to delete this employee?")) {
+      try {
+        await axiosInstance.put(`/employee/soft-delete/${empId}`);
+        showToast("🗑️ Employee deleted successfully!", "success");
+
+        // Remove deleted employee from the table
+        const updated = employees.filter((e) => e.empId !== empId);
+        setEmployees(updated);
+        setFilteredEmployees(updated);
+      } catch (error) {
+        showToast("Error deleting employee!", "error");
+      }
+    }
+  };
+
+
   // Handle edit click
   const handleEdit = (emp) => {
     setSelectedEmployee(emp);
@@ -147,7 +164,7 @@ const EditEmployee = () => {
         setSelectedProjects(res.data);
         setShowModal(true);
       })
-      
+
   };
 
   // Save employee changes
@@ -168,11 +185,11 @@ const EditEmployee = () => {
             ? null
             : { empId: Number(formData.reportingTo) },
       };
-      
+
 
 
       await axiosInstance.put("/employee/editemployee", payload);
-      showToast("✅ Employee updated successfully!","success");
+      showToast("✅ Employee updated successfully!", "success");
       setSelectedEmployee(null);
 
       // Refresh list
@@ -180,8 +197,8 @@ const EditEmployee = () => {
       setEmployees(refreshed.data);
       setFilteredEmployees(refreshed.data);
     } catch (error) {
-      
-      showToast("Error updating employee!","error");
+
+      showToast("Error updating employee!", "error");
     }
   };
 
@@ -253,7 +270,7 @@ const EditEmployee = () => {
                     <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.empId}</td>
                     <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.name}</td>
                     <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.designation}</td>
-                    <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.reportingTo?.name || "--"}</td>                    
+                    <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.reportingTo?.name || "--"}</td>
                     <td>
                       <button
                         className={styles.actionBtn}
@@ -261,6 +278,13 @@ const EditEmployee = () => {
                       >
                         ✏️ Edit
                       </button>
+                      <button
+                        className={styles.actionBtn}
+                        onClick={() => handleDelete(emp.empId)}
+                      >
+                        🗑️
+                      </button>
+
                     </td>
                   </tr>
                 ))

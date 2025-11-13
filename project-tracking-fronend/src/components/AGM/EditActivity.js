@@ -212,6 +212,13 @@ const EditActivity = () => {
                       >
                         ✏️ Edit
                       </button>
+
+                      <button
+                        className={styles.actionBtn}
+                        onClick={() => handleEdit(act)}
+                      >
+                        🗑️
+                      </button>
                     </td>
                   </tr>
                 ))

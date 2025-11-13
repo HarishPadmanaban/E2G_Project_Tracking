@@ -146,4 +146,15 @@ public class EmployeeService {
     public Employee findEmployeeById(Long id) {
         return employeeRepository.findById(id).orElseThrow(()-> new RuntimeException("No employee found by id "+id));
     }
+
+    public String softDelete(Long id) {
+        Employee emp = employeeRepository.findById(id).orElse(null);
+        if (emp == null) {
+            throw new RuntimeException("Employee not found");
+        }
+        //emp.set; // or emp.setStatus("INACTIVE");
+        employeeRepository.save(emp);
+        return "Employee soft deleted successfully!";
+    }
+
 }

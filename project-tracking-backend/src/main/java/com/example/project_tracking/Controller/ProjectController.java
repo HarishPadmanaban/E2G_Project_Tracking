@@ -100,4 +100,10 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.setActivity(id,activity));
     }
 
+    @PutMapping("soft-delete/{id}")
+    public ResponseEntity<?> softDelete(@PathVariable Long id)
+    {
+        return ResponseEntity.ok(projectService.softDelete(id));
+    }
+
 }
