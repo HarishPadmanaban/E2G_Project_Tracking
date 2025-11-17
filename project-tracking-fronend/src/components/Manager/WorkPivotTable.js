@@ -192,7 +192,8 @@ const WorkPivotTable = () => {
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.table_to_sheet(table);
     XLSX.utils.book_append_sheet(wb, ws, "Work Analysis");
-    XLSX.writeFile(wb, "WorkPivot.xlsx");
+    const fileName = `Work_Details_${new Date().toISOString().slice(0,10)}.xlsx`;
+    XLSX.writeFile(wb, fileName);
   };
 
     const { showToast } = useToast();

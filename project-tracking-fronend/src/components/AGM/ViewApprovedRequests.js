@@ -1,6 +1,7 @@
     import React, { useEffect, useState } from "react";
   import axiosInstance from "../axiosConfig";
     import styles from "../../styles/Manager/ViewRequests.module.css";
+    import * as XLSX from "xlsx";
 
     const ViewApprovedRequests = () => {
     const [requests, setRequests] = useState([]);
@@ -82,6 +83,36 @@
         setCustomRange({ from: "", to: "" });
         setFilteredRequests(requests);
     };
+
+    const exportToExcel = () => {
+  if (filteredRequests.length === 0) {
+    alert("No data available to export!");
+    return;
+  }
+
+  const worksheetData = filteredRequests.map((r) => ({
+    Manager: r.managerName || "-",
+    Employee: r.employeeName || "-",
+    AppliedDate: r.appliedDate || "-",
+    Type: r.type,
+    From: r.fromDate || "-",
+    To: r.toDate || "-",
+    LeaveType: r.type === "Leave" ? r.leaveType || "-" : "-",
+    LeaveDays: r.type === "Leave" ? r.leaveDays || "-" : "-",
+    PermissionInTime: r.type === "Permission" ? r.permissionInTime || "-" : "-",
+    PermissionOutTime: r.type === "Permission" ? r.permissionOutTime || "-" : "-",
+    PermissionHours: r.type === "Permission" ? r.permissionHours || "-" : "-",
+    Reason: r.reason || "-",
+    Status: r.status,
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Requests");
+  const fileName = `Leave_Requests_${new Date().toISOString().slice(0,10)}.xlsx`;
+  XLSX.writeFile(workbook, fileName);
+};
+
 
     return (
         <div className={styles.container}>
@@ -179,6 +210,10 @@
     </div>
   </div>
 )}
+
+<button className={styles.exportBtn} onClick={exportToExcel}>
+  Export to Excel
+</button>
 
 
         {/* Table */}

@@ -7,6 +7,19 @@
   overflow-x: auto;
 }
 
+.exportBtn {
+  background-color: #1f74d4;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+.exportBtn:hover {
+  background-color: #155a9c;
+}
+
 
 
 .filterButtons {
