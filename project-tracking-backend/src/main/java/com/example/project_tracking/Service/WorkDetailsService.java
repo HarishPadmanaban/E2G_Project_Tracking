@@ -115,7 +115,7 @@ public class WorkDetailsService {
         BigDecimal extraLimit = Optional.ofNullable(project.getExtraHours()).orElse(BigDecimal.ZERO);
 
         switch (mainType) {
-            case "modelling":
+            case "modeling":
                 targetHours = Optional.ofNullable(project.getModellingHours()).orElse(BigDecimal.ZERO);
                 currentTime = Optional.ofNullable(project.getModellingTime()).orElse(BigDecimal.ZERO);
                 break;
@@ -166,7 +166,7 @@ public class WorkDetailsService {
 
     private void setActivityTime(Project project, String mainType, BigDecimal newValue) {
         switch (mainType) {
-            case "modelling": project.setModellingTime(newValue); break;
+            case "modeling": project.setModellingTime(newValue); break;
             case "checking": project.setCheckingTime(newValue); break;
             case "detailing": project.setDetailingTime(newValue); break;
             case "studying": project.setStudyHoursTracking(newValue); break;
@@ -412,7 +412,7 @@ public class WorkDetailsService {
         };
 
         switch (activityType.toLowerCase()) {
-            case "modelling":
+            case "modeling":
                 project.setModellingTime(applyChange.apply(project.getModellingTime(), project.getModellingHours()));
                 break;
             case "checking":
@@ -466,7 +466,7 @@ public class WorkDetailsService {
         BigDecimal currentTime, targetTime;
 
         switch (type) {
-            case "modelling": currentTime = modTime; targetTime = modTarget; break;
+            case "modeling": currentTime = modTime; targetTime = modTarget; break;
             case "checking": currentTime = chkTime; targetTime = chkTarget; break;
             case "detailing": currentTime = detTime; targetTime = detTarget; break;
             case "studying": currentTime = studyTime; targetTime = studyTarget; break;

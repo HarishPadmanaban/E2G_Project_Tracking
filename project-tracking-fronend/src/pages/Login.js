@@ -13,17 +13,17 @@ const Login = () => {
   if (employee.manager) {
     navigate("/manager/work", { replace: true });
   } else if (
-    employee.designation === "Admin" ||
-    employee.designation === "Assistant General Manager"
+    employee.designation.trim() === "Assistant IT Manager" ||
+    employee.designation.trim() === "Assistant General Manager"
   ) {
     navigate("/manager/work", { replace: true });
   } 
-  else if(employee.designation === "HR")
+  else if(employee.designation.trim() === "HR Manager")
   {
     navigate("/manager/view-approved-request", { replace: true });
   }
 
-  else if(employee.designation === "IT Support" || employee.designation === "Accountant")
+  else if(employee.role.trim() === "IT Admin " || employee.role.trim() === "Accounts")
   {
     navigate("/employee/leave", { replace: true })
   }

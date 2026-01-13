@@ -12,6 +12,7 @@ CREATE TABLE project (
     project_status BOOLEAN DEFAULT TRUE,
     project_activity_status VARCHAR(50),
     soft_delete BOOLEAN DEFAULT FALSE,
+    remainder_sent_date DATE DEFAULT NULL,
 
     -- Split-up hours (nullable initially)
     modelling_hours DECIMAL(10,2),

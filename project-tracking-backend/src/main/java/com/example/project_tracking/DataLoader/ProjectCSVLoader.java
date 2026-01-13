@@ -38,7 +38,7 @@ public class ProjectCSVLoader implements CommandLineRunner {
             return;
         }
 
-        employeeResetter.resetProjectTable();
+        //employeeResetter.resetProjectTable();
 
         List<String[]> rows;
         try (Reader reader = new InputStreamReader(
@@ -70,21 +70,17 @@ public class ProjectCSVLoader implements CommandLineRunner {
                 project.setClientName(row[2].trim());
                 project.setManagerId(Long.parseLong(row[3].trim()));
                 project.setAssignedHours(parseBigDecimal(row[4]));
-                project.setWorkingHours(parseBigDecimal(row[5]));
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                project.setAssignedDate(LocalDate.parse(row[6].trim(),formatter));
-                project.setProjectStatus(Boolean.parseBoolean(row[7].trim()));
-                project.setSoftDelete(Boolean.parseBoolean(row[8].trim()));
+                project.setWorkingHours(parseBigDecimal(0.0+""));
+//                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+//                project.setAssignedDate(LocalDate.parse(row[6].trim(),formatter));
+//                project.setProjectStatus(Boolean.parseBoolean(row[7].trim()));
+//                project.setSoftDelete(Boolean.parseBoolean(row[8].trim()));
 
                 // Split-up assigned hours (columns 9-11)
                 project.setModellingHours(parseBigDecimal(row[9]));
                 project.setCheckingHours(parseBigDecimal(row[10]));
                 project.setDetailingHours(parseBigDecimal(row[11]));
-
-                // ✅ CHANGED: Time tracking - now as BigDecimal (columns 12-14)
-                project.setModellingTime(parseBigDecimal(row[12]));
-                project.setCheckingTime(parseBigDecimal(row[13]));
-                project.setDetailingTime(parseBigDecimal(row[14]));
+                project.setStudyHours(parseBigDecimal(row[12]));
 
                 projectRepository.save(project);
                 successCount++;

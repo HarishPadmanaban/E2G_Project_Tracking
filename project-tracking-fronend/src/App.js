@@ -93,7 +93,7 @@ function App() {
         <Route
   path="/manager/assign-project"
   element={
-    <ProtectedRoute allowedRoles={["Assistant General Manager", "Admin"]}>
+    <ProtectedRoute allowedRoles={["Assistant General Manager", "Assistant IT Manager"]}>
       <EmployeeManagementPage />
     </ProtectedRoute>
   }
@@ -120,7 +120,7 @@ function App() {
 <Route
   path="/manager/edit-workdetails"
   element={
-    <ProtectedRoute allowedRoles={["Assistant General Manager", "Admin"]}>
+    <ProtectedRoute allowedRoles={["Assistant General Manager", "Assistant IT Manager"]}>
       <EditWorkDetails/>
     </ProtectedRoute>
   }
@@ -130,7 +130,7 @@ function App() {
 <Route
   path="/manager/view-approved-request"
   element={
-    <ProtectedRoute allowedRoles={["Assistant General Manager","Project Manager", "Admin","HR"]}>
+    <ProtectedRoute allowedRoles={["Assistant General Manager","Project Manager","Senior Project Manager", "Assistant IT Manager","HR Manager"]}>
       <ViewApprovedRequests />
     </ProtectedRoute>
   }
@@ -139,7 +139,7 @@ function App() {
 <Route
   path="/manager/analysis"
   element={
-    <ProtectedRoute allowedRoles={["Project Manager", "Admin", "Assistant General Manager"]}>
+    <ProtectedRoute allowedRoles={["Project Manager","Senior Project Manager", "Assistant IT Manager", "Assistant General Manager"]}>
       <WorkPivotTable />
     </ProtectedRoute>
   }
@@ -157,7 +157,7 @@ function App() {
 <Route
   path="/manager/view-requests"
   element={
-    <ProtectedRoute allowedRoles={["Project Manager", "Assistant General Manager"]}>
+    <ProtectedRoute allowedRoles={["Project Manager","Senior Project Manager", "Assistant General Manager"]}>
       <ViewRequests />
     </ProtectedRoute>
   }
@@ -166,7 +166,7 @@ function App() {
 <Route
   path="/manager/add-employee"
   element={
-    <ProtectedRoute allowedRoles={["Assistant General Manager","Admin"]}>
+    <ProtectedRoute allowedRoles={["Assistant General Manager","Assistant IT Manager"]}>
       <AddEmployeeForm />
     </ProtectedRoute>
   }
@@ -175,7 +175,7 @@ function App() {
 <Route
   path="/manager/add-project"
   element={
-    <ProtectedRoute allowedRoles={["Assistant General Manager","Admin"]}>
+    <ProtectedRoute allowedRoles={["Assistant General Manager","Assistant IT Manager"]}>
       <AssignProjectForm />
     </ProtectedRoute>
   }
@@ -184,7 +184,7 @@ function App() {
 <Route
   path="/manager/add-activity"
   element={
-    <ProtectedRoute allowedRoles={["Assistant General Manager","Admin"]}>
+    <ProtectedRoute allowedRoles={["Assistant General Manager","Assistant IT Manager"]}>
       <AddActivityForm />
     </ProtectedRoute>
   }
@@ -211,20 +211,20 @@ function App() {
 <Route
   path="/manager/edit-all"
   element={
-    <ProtectedRoute allowedRoles={["Admin", "Assistant General Manager"]}>
+    <ProtectedRoute allowedRoles={["Assistant IT Manager", "Assistant General Manager"]}>
       <EditManagementPage />
     </ProtectedRoute>
   }
 />
 
         <Route path="/employee/work" element={
-      <ProtectedRoute excludedRoles={["Project Manager", "Admin", "Assistant General Manager"]}>
+      <ProtectedRoute excludedRoles={["Project Manager","Senior Project Manager", "Assistant IT Manager", "Assistant General Manager"]}>
             <EmployeeWorkForm />
           </ProtectedRoute>} />
         <Route path="/employee/leave" element={      <ProtectedRoute excludedRoles={["Assistant General Manager"]}>
 <LeavePermissionForm /></ProtectedRoute>} />
         <Route path="/manager/work" element={
-          <ProtectedRoute allowedRoles={["Assistant General Manager","Project Manager", "Admin"]}>
+          <ProtectedRoute allowedRoles={["Assistant General Manager","Project Manager","Senior Project Manager", "Assistant IT Manager"]}>
             <ManagerDashboard />
           </ProtectedRoute>
         } />

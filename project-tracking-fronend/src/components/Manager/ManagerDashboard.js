@@ -62,8 +62,8 @@ const ManagerDashboard = () => {
   }, [showWorklogs]);
 
   const isAGM =
-    employee?.designation === "Assistant General Manager" ||
-    employee?.designation === "Admin";
+    employee?.designation.trim() === "Assistant General Manager" ||
+    employee?.designation.trim() === "Assistant IT Manager";
 
   useEffect(() => {
     if (!employee.empId) return;
@@ -71,8 +71,8 @@ const ManagerDashboard = () => {
     //const managerIdToUse = employee.manager ? employee.id : employee.reportingToId;
     // ✅ Admin should have same access as AGM
     const isAGM =
-      employee.designation === "Assistant General Manager" ||
-      employee.designation === "Admin";
+      employee.designation.trim() === "Assistant IT Manager" ||
+      employee.designation.trim() === "Assistant General Manager"
 
     // Use appropriate ID depending on role
     const managerIdToUse = employee.manager ? employee.empId : employee.reportingToId;
@@ -86,7 +86,7 @@ const ManagerDashboard = () => {
       .get(endpoint)
       .then((res) => {
         setProjects(res.data);
-        
+
         const inProgress = res.data.filter((p) => p.projectStatus === true);
         setFilteredProjects(inProgress);
         setFilter("In Progress");
@@ -101,7 +101,7 @@ const ManagerDashboard = () => {
               });
               setManagers(mgrMap);
             })
-            
+
         }
       })
 
@@ -129,7 +129,7 @@ const ManagerDashboard = () => {
           [p.id]: tlMap[p.tlId] || "Not Assigned", // map project id → TL name
         }));
       } catch (err) {
-        
+
         setTl((prev) => ({
           ...prev,
           [p.id]: "Not Assigned",
@@ -198,7 +198,7 @@ const ManagerDashboard = () => {
       // 🔹 Get all assigned members
       const empRes = await axiosInstance.get(`/project-assignment/employees/${project.id}`);
       const allMembers = empRes.data.filter(emp => emp.empId !== project.tlId);
-   
+
       // 🔹 Filter out members with 0 total work hours in this project
       const membersWithWork = allMembers.filter(member => {
         const totalWork = projectWorklogs
@@ -208,7 +208,7 @@ const ManagerDashboard = () => {
         return totalWork > 0;
       });
 
-      
+
       setSelectedProjectMembers(membersWithWork);
 
       // 🔹 Get Project Coordinator (TL)
@@ -218,7 +218,7 @@ const ManagerDashboard = () => {
           const matchedTl = tlsRes.data.find(tl => tl.empId === project.tlId);
           setSelectedCoordinator(matchedTl ? matchedTl.name : "TL Not Found");
         } catch (err) {
-          
+
           setSelectedCoordinator("Error loading coordinator");
         }
       } else {
@@ -230,12 +230,12 @@ const ManagerDashboard = () => {
       setShowWorklogs(false);
 
     } catch (err) {
-      
+
     }
   };
 
 
-  
+
 
   return (
     <div className={styles.dashboardContainer}>
@@ -330,8 +330,8 @@ const ManagerDashboard = () => {
                 <td>{p.projectName}</td>
                 <td>{p.clientName}</td>
 
-                {(employee.designation === "Assistant General Manager" ||
-                  employee.designation === "Admin") && (
+                {(employee.designation.trim() === "Assistant General Manager" ||
+                  employee.designation === "Assistant IT Manager") && (
                     <td>{managers[p.managerId] || "Unknown"}</td>
                   )}
                 <td>{tl[p.id] || "Not assigned"}</td>
@@ -473,7 +473,7 @@ const ManagerDashboard = () => {
                         <td>{selectedProject.assignedDate || "—"}</td>
                         <th>Start Date</th>
                         <td>{selectedProject.startDate || "—"}</td>
-                        
+
                       </tr>
 
                       <tr>
@@ -511,7 +511,7 @@ const ManagerDashboard = () => {
 
                           setShowWorklogs(true);
                         } catch (err) {
-                          
+
                         }
                       }}
                     >

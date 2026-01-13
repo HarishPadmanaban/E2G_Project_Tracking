@@ -50,7 +50,9 @@ public class ActivityService {
         if(activity!=null)
         {
             activity.setSoftDelete(true);
+            activityRepository.save(activity);
         }
+
     }
 
     public String getMainType(Long id)

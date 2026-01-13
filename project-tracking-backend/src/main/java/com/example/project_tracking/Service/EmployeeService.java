@@ -74,15 +74,15 @@ public class EmployeeService {
     }
 
     public List<Employee> getTLsUnderManager(Long managerId) {
-        return employeeRepository.findByIsTLTrueAndReportingTo_EmpId(managerId);
+        return employeeRepository.findByIsTLTrueAndReportingTo_EmpId(managerId).stream().filter(e -> !e.getSoftDelete()).collect(Collectors.toList());
     }
 
     public List<Employee> getAllManagers() {
-        return employeeRepository.findByIsManagerTrue();
+        return employeeRepository.findByIsManagerTrue().stream().filter(e -> !e.getSoftDelete()).collect(Collectors.toList());
     }
 
     public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
+        return employeeRepository.findAll().stream().filter(e -> !e.getSoftDelete()).collect(Collectors.toList());
     }
 
     public void addEmployee(Employee employee)
@@ -105,7 +105,7 @@ public class EmployeeService {
     public List<DataTransfer> getEmployeesByManagerId(Long mgrid) {
         Employee emp = employeeRepository.findById(mgrid).orElse(null);
         if(emp==null) return null;
-        return employeeRepository.findByReportingTo(emp).stream().map(this::convertToResponse).collect(Collectors.toList());
+        return employeeRepository.findByReportingTo(emp).stream().filter(e -> !e.getSoftDelete()).map(this::convertToResponse).collect(Collectors.toList());
     }
 
     public Employee editEmployee(Employee employee)
@@ -133,15 +133,6 @@ public class EmployeeService {
         );
     }
 
-    // Pending
-    public boolean forgotPassword(LoginRequest request,String email) {
-        Optional<Employee> employee = employeeRepository.findByUsernameAndPassword(request.getUsername(),request.getPassword());
-        if(employee.isEmpty()){
-            return false;
-        }
-
-        return true;
-    }
 
     public Employee findEmployeeById(Long id) {
         return employeeRepository.findById(id).orElseThrow(()-> new RuntimeException("No employee found by id "+id));
@@ -152,7 +143,7 @@ public class EmployeeService {
         if (emp == null) {
             throw new RuntimeException("Employee not found");
         }
-        //emp.set; // or emp.setStatus("INACTIVE");
+        emp.setSoftDelete(true); // or emp.setStatus("INACTIVE");
         employeeRepository.save(emp);
         return "Employee soft deleted successfully!";
     }

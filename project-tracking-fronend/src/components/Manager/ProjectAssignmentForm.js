@@ -21,39 +21,24 @@ const ProjectAssignmentForm = () => {
   const [teamLeads, setTeamLeads] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState("");
   const [employeesByRole, setEmployeesByRole] = useState({
-    Modeller: [],
+    Modeler: [],
     Checker: [],
     Designer: []
   });
 
   const [showResourceModal, setShowResourceModal] = useState(false); // ✅ NEW
-  const [selectedRole, setSelectedRole] = useState("Modeller"); // ✅ NEW
+  const [selectedRole, setSelectedRole] = useState("Modeler"); // ✅ NEW
   const [selectedResources, setSelectedResources] = useState([]); // ✅ NEW4
   const { showToast } = useToast();
   
 
-  // ✅ replace dummyEmployees with objects that include name & designation
-  // const dummyEmployees = {
-  //   Modeller: [
-  //     { id: 101, name: "Arun Kumar", designation: "Modeller - Senior" },
-  //     { id: 102, name: "Priya R", designation: "Modeller - Junior" },
-  //     { id: 103, name: "Sanjay T", designation: "Modeller - Trainee" },
-  //   ],
-  //   Checker: [
-  //     { id: 201, name: "Rita Singh", designation: "Checker - Senior" },
-  //     { id: 202, name: "Vikram P", designation: "Checker - Junior" },
-  //   ],
-  //   Designer: [
-  //     { id: 301, name: "Kavya M", designation: "Designer - Senior" },
-  //     { id: 302, name: "Deepak L", designation: "Designer - Trainee" },
-  //   ],
-  // };
+
 
   useEffect(() => {
     if (!managerIdToUse) return;
 
-    const proj = axios
-      .get(`http://localhost:8080/project/manager/${managerIdToUse}/active`) // Dummy backend endpoint
+    const proj = axiosInstance
+      .get(`/project/manager/${managerIdToUse}/active`) // Dummy backend endpoint
       .then((proj) => {
         const inProgress = proj.data.filter((p) => p.workingHours === 0 && p.tlId === null);
         
@@ -67,8 +52,8 @@ const ProjectAssignmentForm = () => {
     if (!managerIdToUse) return;
 
     
-    const res = axios
-      .get(`http://localhost:8080/employee/gettls?mgrid=${managerIdToUse}`) // Dummy backend endpoint
+    const res = axiosInstance
+      .get(`/employee/gettls?mgrid=${managerIdToUse}`) // Dummy backend endpoint
       .then((res) => {
         
         setTeamLeads(res.data);
@@ -86,12 +71,12 @@ const ProjectAssignmentForm = () => {
       .then((res) => {
         const allEmployees = res.data;
 
-        
+        console.log(allEmployees);
 
         // ✅ Categorize employees by their role
         const grouped = {
-          Modeller: allEmployees.filter(emp =>
-            emp.role?.toLowerCase().includes("modeller")
+          Modeler: allEmployees.filter(emp =>
+            emp.role?.toLowerCase().includes("modeler")
           ),
           Checker: allEmployees.filter(emp =>
             emp.role?.toLowerCase().includes("checker")
@@ -127,7 +112,7 @@ const ProjectAssignmentForm = () => {
       if (exists) {
         return prev.filter((r) => !(r.empId === emp.empId && r.role === selectedRole));
       }
-      return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designation, role: selectedRole }];
+      return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designation.trim(), role: selectedRole }];
 
     });
   };
@@ -263,13 +248,7 @@ const ProjectAssignmentForm = () => {
         `/project/manager/${managerIdToUse}/active`
       );
 
-      const inProgress = updatedProjectsRes.data.filter(
-        (p) =>
-          p.workingHours === 0 &&
-          p.modellingHours === 0 &&
-          p.checkingHours === 0 &&
-          p.detailingHours === 0
-      );
+      const inProgress = updatedProjectsRes.data.filter((p) => p.workingHours === 0 && p.tlId === null);
 
       setProjects(inProgress);
       
@@ -326,7 +305,12 @@ const ProjectAssignmentForm = () => {
 
             >
               <option value="">Select Activity</option>
-              <option value="IFRA">IFRA</option>
+              <option value="IFA">IFA</option>
+              <option value="REIFA">REIFA</option>
+              <option value="IFC">IFC</option>
+              <option value="REIFC">REIFC</option>
+              <option value="BFA">BFA</option>
+              <option value="Field Measurement">Field Measurement</option>
               <option value="Client Rework">Client Rework</option>
               <option value="Internal Rework">Internal Rework</option>
             </select>
@@ -422,7 +406,7 @@ const ProjectAssignmentForm = () => {
             <h3 style={{ marginBottom: "10px" }}>Select Resources</h3>
 
             <div className={styles.filterRow}>
-              {["Modeller", "Checker", "Detailer"].map((role) => (
+              {["Modeler", "Checker", "Detailer"].map((role) => (
                 <button
                   key={role}
                   className={`${styles.roleBtn} ${selectedRole === role ? styles.activeRole : ""}`}
@@ -436,6 +420,7 @@ const ProjectAssignmentForm = () => {
             <div className={styles.modalContent}>
               {employeesByRole[selectedRole].map((emp) => {
                 const checked = selectedResources.some((r) => r.empId === emp.empId && r.role === selectedRole);
+                console.log(employeesByRole);
                 return (
                   <label key={emp.empId} className={styles.checkItem}>
                     <input
@@ -446,7 +431,7 @@ const ProjectAssignmentForm = () => {
 
                     <div className={styles.empInfo}>
                       <div className={styles.empName}>{emp.name}</div>
-                      <div className={styles.empDesignation}>{emp.designation}</div>
+                      <div className={styles.empDesignation}>{emp.designation.trim()}</div>
                     </div>
 
                     {/* optional: show role tag on the far right */}

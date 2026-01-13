@@ -13,6 +13,7 @@ CREATE TABLE employee (
     username VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     category VARCHAR(100) NOT NULL,
+    soft_delete BOOLEAN DEFAULT FALSE,
 
     CONSTRAINT fk_reporting_to
         FOREIGN KEY (reporting_to)

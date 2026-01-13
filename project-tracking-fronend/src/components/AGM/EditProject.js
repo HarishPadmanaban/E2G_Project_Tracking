@@ -25,6 +25,7 @@ const EditProject = () => {
     modellingHours: "",
     checkingHours: "",
     detailingHours: "",
+    studyHours: "",
     managerId: "",
     projectStatus: ""
   });
@@ -110,6 +111,7 @@ const EditProject = () => {
   // When clicking edit, populate form
   const handleEdit = (project) => {
     setSelectedProject(project);
+    console.log(project);
     setFormData({
       id: project.id,
       projectName: project.projectName,
@@ -117,6 +119,7 @@ const EditProject = () => {
       assignedHours: project.assignedHours,
       modellingHours: project.modellingHours,
       checkingHours: project.checkingHours,
+      studyHours:project.studyHours,
       detailingHours: project.detailingHours,
       managerId: project.managerId,
       projectStatus: project.projectStatus ? "Pending" : "Completed",
@@ -348,7 +351,7 @@ const EditProject = () => {
             </div>
 
             <div className={styles.formField}>
-              <label>Modelling Hours</label>
+              <label>Modeling Hours</label>
               <input
                 type="number"
                 name="modellingHours"

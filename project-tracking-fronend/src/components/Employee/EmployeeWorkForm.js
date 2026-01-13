@@ -63,8 +63,8 @@ const EmployeeWorkForm = () => {
       .get(`/project/${employee.reportingToId}`)
       .then((res) =>
         { 
-          const filtered = res.data.filter(project => project.tlId!=null);
-          setProjects(filtered);
+          //const filtered = res.data.filter(project => project.tlId!=null);
+          setProjects(res.data);
         })
       
 
@@ -444,6 +444,8 @@ const EmployeeWorkForm = () => {
       let diffMinutes = endH * 60 + endM - (startH * 60 + startM);
       if (diffMinutes < 0) diffMinutes += 24 * 60;
       const diffHours = (diffMinutes / 60).toFixed(2);
+      console.log(end)
+      console.log(diffHours)
       axiosInstance
         .put(`/workdetails/stop/${employee.empId}`, null, {
           params: {
@@ -468,7 +470,7 @@ const EmployeeWorkForm = () => {
           // Extract backend error message safely
           const backendMsg =
             err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
-
+            console.log(backendMsg)
           // Show the exact backend message to user
           showToast(backendMsg,"error");
         });
@@ -581,7 +583,7 @@ const EmployeeWorkForm = () => {
       projectActivityType,
       activityId,
       category,
-      projectActivity,
+      //projectActivity,
       assignedWork,
       status,
     } = formData;
@@ -592,7 +594,7 @@ const EmployeeWorkForm = () => {
       projectActivityType &&
       activityId &&
       category &&
-      projectActivity &&
+      //projectActivity &&
       assignedWork;
 
     return checkStatus ? baseFieldsFilled && status : baseFieldsFilled;
@@ -602,7 +604,7 @@ const EmployeeWorkForm = () => {
     if (!isViewMode) return false;
     if (!isEditMode) return true;
     return ![
-      "projectActivity",
+      //"projectActivity",
       "status",
       "startTime",
       "endTime",
@@ -693,7 +695,7 @@ const EmployeeWorkForm = () => {
                   onChange={handleChange}
                 >
                   <option value="">Select Activity Type</option>
-                  <option value="Modelling">Modelling</option>
+                  <option value="Modeling">Modeling</option>
                   <option value="Checking">Checking</option>
                   <option value="Detailing">Detailing</option>
                   {formData.assignedWork === "Idle" && (

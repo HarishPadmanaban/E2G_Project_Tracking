@@ -21,20 +21,47 @@ const AddEmployeeForm = () => {
   
 
   const designations = [
-    "Assistant General Manager",
-    "Project Manager",
-    "Project Coordinator",
-    "Admin",
-    "Senior Checker",
-    "Junior Checker",
-    "Senior Detailer",
-    "Junior Detailer",
-    "Senior Modeller",
-    "Junior Modeller",
-    "HR",
-    "IT Support",
-    "Accountant"
-  ];
+  "Assistant General Manager",
+  "Senior Project Manager",
+  "Project Manager",
+  "Project Coordinator",
+  "IT Manager",
+  "Assistant IT Manager",
+  "HR Manager",
+  "IT Admin",
+  "Senior IT Admin",
+  "Junior IT Admin",
+  "Senior Engineer",
+  "Junior Engineer",
+  "Junior Engineer Grade 1",
+  "Engineer",
+  "Senior Modeler",
+  "Junior Modeler",
+  "Modeler",
+  "Trainee Modeler",
+  "Senior Checker",
+  "Junior Checker",
+  "Checker",
+  "Trainee Checker",
+  "Senior Detailer",
+  "Junior Detailer",
+  "Detailer",
+  "Trainee Detailer",
+  "Senior Sales Executive",
+  "Junior Sales Executive",
+  "Sales Executive",
+  "Junior API Developer",
+  "Senior API Developer",
+  "API Developer",
+  "Assistant Accounts Manager",
+  "Accountant",
+  "Estimator",
+  "Trainee Estimator",
+  "Senior Estimator",
+  "Junior Estimator",
+  "Trainee"
+];
+
 
   // Fetch manager list from backend
   useEffect(() => {
@@ -52,37 +79,67 @@ const AddEmployeeForm = () => {
   };
 
   const mapDesignationToRole = (designation) => {
-    if (designation.toLowerCase().includes("checker")) return "Checker";
-    if (designation.toLowerCase().includes("modeller")) return "Modeller";
-    if (designation.toLowerCase().includes("detailer")) return "Detailer";
-    return designation; // fallback
-  };
+  
+  // IT & Admin Roles
+  if (designation.toLowerCase().includes("admin")) return "IT Admin";
+  
+  // Engineering Roles
+  if (designation.toLowerCase().includes("engineer")) return "Engineer";
+  
+  // Modeler Roles
+  if (designation.toLowerCase().includes("modeler")) return "Modeler";
+  
+  // Checker Roles
+  if (designation.toLowerCase().includes("checker")) return "Checker";
+  
+  // Detailer Roles
+  if (designation.toLowerCase().includes("detailer")) return "Detailer";
+  
+  // Sales Roles
+  if (designation.toLowerCase().includes("sales")) return "Sales";
+  
+  // Developer Roles (API, IT, etc.)
+  if (designation.toLowerCase().includes("developer")) return "Developer";
+  
+  // Estimator Roles
+  if (designation.toLowerCase().includes("estimator")) return "Estimator";
+  
+  // Accountant Roles
+  if (designation.toLowerCase().includes("accounts")) return "Accounts";
+  
+  // Trainee Roles
+  if (designation.toLowerCase().includes("trainee")) return "Trainee";
+  
+  // Fallback to return the designation if no match is found
+  return designation; 
+};
+
 
 
   const handleSubmit = async () => {
     // Basic validation
     if (!formData.empId.trim()) return showToast("⚠️ Enter Employee ID","warning");
     if (!formData.name.trim()) return showToast("⚠️ Enter Employee Name","warning");
-    if (!formData.designation) return showToast("⚠️ Select Designation","warning");
-    if (!formData.reportingTo && !["Assistant General Manager"].includes(formData.designation)) {
+    if (!formData.designation.trim()) return showToast("⚠️ Select Designation","warning");
+    if (!formData.reportingTo && !["Assistant General Manager"].includes(formData.designation.trim())) {
       return showToast("⚠️ Select Reporting Manager","warning");
     }
     if (!formData.username.trim()) return showToast("⚠️ Enter Username","warning");
     if (!formData.password.trim()) return showToast("⚠️ Enter Password","warning");
-    if (formData.designation === "Project Manager" || formData.designation === "Assistant General Manager") formData.isManager = true;
-    if (formData.designation === "Project Coordinator") formData.isTL = true;
+    if (formData.designation.trim() === "Project Manager" || formData.designation.trim() === "Assistant General Manager") formData.isManager = true;
+    if (formData.designation.trim() === "Project Coordinator") formData.isTL = true;
     try {
       const payload = {
         empId: Number(formData.empId),
         name: formData.name,
-        designation: formData.designation,
-        designationCategory: mapDesignationToRole(formData.designation),
+        designation: formData.designation.trim(),
+        designationCategory: mapDesignationToRole(formData.designation.trim()),
         reportingTo:
           formData.reportingTo === ""
             ? null
             : { empId: Number(formData.reportingTo) },
-        tl: formData.designation === "Project Coordinator",
-        manager: ["Project Manager", "Assistant General Manager"].includes(formData.designation),
+        tl: formData.designation.trim() === "Project Coordinator",
+        manager: ["Project Manager", "Assistant General Manager"].includes(formData.designation.trim()),
         username: formData.username,
         password: formData.password
       };
@@ -135,7 +192,7 @@ const AddEmployeeForm = () => {
         <label>Designation</label>
         <select
           name="designation"
-          value={formData.designation}
+          value={formData.designation.trim()}
           onChange={handleChange}
         >
           <option value="">Select Designation</option>
@@ -157,7 +214,7 @@ const AddEmployeeForm = () => {
           <option value="">Select Manager</option>
           {managers.map((m) => (
             <option key={m.id} value={m.empId}>
-              {m.name} ({m.designation})
+              {m.name} ({m.designation.trim()})
             </option>
           ))}
         </select>

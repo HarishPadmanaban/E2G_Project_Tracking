@@ -34,8 +34,9 @@ const AssignActivityForm = () => {
     axiosInstance
       .get(`/project/${idToUse}`) // Dummy API
       .then((res) => {
-        const filtered = res.data.filter(project => project.tlId!=null);
-        setProjects(filtered);
+        //const filtered = res.data.filter(project => project.tlId!=null);
+        console.log(res.data);
+        setProjects(res.data);
       })
       .catch((err) => console.error(err));
   }, [managerId]);
@@ -53,7 +54,7 @@ const AssignActivityForm = () => {
       if (res.data.length === 0) {
         // If no employees assigned to this project, get all employees under manager
         axiosInstance
-          .get(`/employee/getbymgr?mgrid=${employee.empId}`)
+          .get(`/employee/getbymgr?mgrid=${idToUse}`)
           .then((mgrRes) => setEmployees(mgrRes.data))
           .catch((err) => console.error("Error fetching employees under manager:", err));
       } else {
@@ -119,7 +120,7 @@ const AssignActivityForm = () => {
       projectId: Number(formData.projectId),
       activityId: Number(formData.activityId),
       employeeId: Number(formData.employeeId),
-      managerId: Number(managerId), // optional if backend expects it
+      managerId: Number(idToUse), // optional if backend expects it
       assignedById: Number(managerId), // optional
       description: formData.assignedActivity, // keep it as string
     };
@@ -174,7 +175,7 @@ const AssignActivityForm = () => {
           onChange={handleChange}
         >
           <option value="">Select Type</option>
-          <option value="Modelling">Modelling</option>
+          <option value="Modeling">Modeling</option>
           <option value="Checking">Checking</option>
           <option value="Detailing">Detailing</option>
           <option value="Studying">Studying</option>

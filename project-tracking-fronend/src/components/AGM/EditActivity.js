@@ -17,7 +17,7 @@ const EditActivity = () => {
   const [selectedType, setSelectedType] = useState("All");
 
   const categories = ["Productive", "Non-Productive"];
-  const mainTypes = ["Modelling", "Detailing", "Checking", "Common"];
+  const mainTypes = ["Modeling", "Detailing", "Checking", "Common"];
   const {showToast} = useToast();
 
   const [formData, setFormData] = useState({
@@ -124,6 +124,22 @@ const EditActivity = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this Activity?")) {
+      try {
+        await axiosInstance.delete(`/activity/${id}`);
+        showToast("🗑️ Activity deleted successfully!", "success");
+
+        // Remove deleted activity from the table
+        const updated = activities.filter((e) => e.id !== id);
+        setActivities(updated);
+        setFilteredActivities(updated);
+      } catch (error) {
+        showToast("Error deleting activity!", "error");
+      }
+    }
+  };
+
 
   return (
      <div className={styles.tableContainer}>
@@ -215,7 +231,7 @@ const EditActivity = () => {
 
                       <button
                         className={styles.actionBtn}
-                        onClick={() => handleEdit(act)}
+                        onClick={() => handleDelete(act.id)}
                       >
                         🗑️
                       </button>
