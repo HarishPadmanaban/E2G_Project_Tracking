@@ -36,6 +36,12 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
   const [selectedType, setSelectedType] = useState("");
   const [projectActivityOptions] = useState([
     "IFRA",
+    "IFA",
+    "REIFA",
+    "IFC",
+    "REIFC",
+    "BFA",
+    "Field Measurement",
     "Client Rework",
     "Internal Rework",
   ]);
