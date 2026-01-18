@@ -268,8 +268,19 @@ public class WorkDetailsService {
         LocalTime newEndTime = LocalTime.parse(endTime);
 
         // 2️⃣ Calculate work duration in hours BEFORE setting end time
-        Duration duration = Duration.between(startTime, newEndTime);
+        Duration duration;
+
+        if (newEndTime.isBefore(startTime)) {
+            // Overnight shift (crosses midnight)
+            duration = Duration.between(startTime, LocalTime.MIDNIGHT)
+                    .plus(Duration.between(LocalTime.MIN, newEndTime));
+        } else {
+            // Same-day shift
+            duration = Duration.between(startTime, newEndTime);
+        }
+
         double calculatedHours = duration.toMinutes() / 60.0;
+
 
         // 3️⃣ Fetch related Project and Activity
         AssignedWork assignedWork = work.getAssignedWorkId();

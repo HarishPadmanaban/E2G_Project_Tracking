@@ -3,6 +3,7 @@ package com.example.project_tracking.Controller;
 import com.example.project_tracking.DTO.DataTransfer;
 import com.example.project_tracking.DTO.ProjectAssignmentRequestDTO;
 import com.example.project_tracking.DTO.ProjectResponse;
+import com.example.project_tracking.DTO.ResourcesDeletion;
 import com.example.project_tracking.Model.Employee;
 import com.example.project_tracking.Model.Project;
 import com.example.project_tracking.Model.ProjectAssignment;
@@ -61,6 +62,28 @@ public class ProjectAssignmentController {
     public ResponseEntity<List<DataTransfer>> getEmployeesByProject(@PathVariable Long projectId) {
         List<Employee> employees = projectAssignmentService.getEmployeesByProject(projectId);
         List<DataTransfer> dto = employees.stream().map(this::localConversion2).toList();
+        return ResponseEntity.ok(dto);
+    }
+    @DeleteMapping("/resource-delete")
+    public ResponseEntity<String> bulkDeleteWorkDetails(
+            @RequestBody ResourcesDeletion request) {
+
+        projectAssignmentService.deleteWorkDetailsByIds(request.getIds());
+
+        return ResponseEntity.ok("Work logs deleted successfully");
+    }
+
+    @GetMapping("/employees/not-in-project")
+    public ResponseEntity<List<DataTransfer>> getEmployeesNotInProject(
+            @RequestParam Long projectId,
+            @RequestParam Long reportingToId) {
+
+        List<Employee> employees =
+                projectAssignmentService.getEmployeesNotInProject(projectId,reportingToId);
+
+        List<DataTransfer> dto = employees.stream()
+                .map(this::localConversion2)
+                .toList();
         return ResponseEntity.ok(dto);
     }
 

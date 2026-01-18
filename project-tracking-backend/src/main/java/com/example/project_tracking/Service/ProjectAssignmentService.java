@@ -4,9 +4,11 @@ import com.example.project_tracking.DTO.ProjectAssignmentRequestDTO;
 import com.example.project_tracking.Model.Employee;
 import com.example.project_tracking.Model.Project;
 import com.example.project_tracking.Model.ProjectAssignment;
+import com.example.project_tracking.Model.WorkDetails;
 import com.example.project_tracking.Repository.EmployeeRepository;
 import com.example.project_tracking.Repository.ProjectAssignmentRepository;
 import com.example.project_tracking.Repository.ProjectRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -72,5 +74,46 @@ public class ProjectAssignmentService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void deleteWorkDetailsByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new RuntimeException("No work IDs provided for deletion");
+        }
+
+        List<ProjectAssignment> works = projectAssignmentRepository.findAllById(ids);
+
+        if (works.size() != ids.size()) {
+            throw new RuntimeException("Some work IDs were not found in the database");
+        }
+        projectAssignmentRepository.deleteAll(works);
+    }
+    public List<Employee> getEmployeesNotInProject(Long projectId, Long reportingToId) {
+
+        // Fetch project
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+
+        // Fetch reporting manager / TL
+        Employee reportingTo = employeeRepository.findById(reportingToId)
+                .orElseThrow(() -> new RuntimeException("Reporting employee not found"));
+
+        // Get assigned employees for the project
+        List<ProjectAssignment> assignments =
+                projectAssignmentRepository.findByProject_Id(projectId);
+
+        List<Long> assignedEmpIds = assignments.stream()
+                .map(pa -> pa.getEmployee().getEmpId())
+                .toList();
+
+        // If no one is assigned yet → return all under reportingTo
+        if (assignedEmpIds.isEmpty()) {
+            return employeeRepository.findByReportingTo(reportingTo);
+        }
+
+        // Fetch employees NOT in project under reportingTo
+        return employeeRepository.findByReportingToAndEmpIdNotIn(
+                reportingTo, assignedEmpIds
+        );
+    }
 
 }

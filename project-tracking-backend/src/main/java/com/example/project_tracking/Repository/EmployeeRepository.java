@@ -17,4 +17,5 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
     List<Employee> findByReportingTo(Employee e);
     List<Employee> findByIsTLTrueAndReportingTo_EmpId(Long managerEmpId);
     List<Employee> findByIsManagerTrue();
+    List<Employee> findByReportingToAndEmpIdNotIn(Employee reportingTo, List<Long> empIds);
 }
