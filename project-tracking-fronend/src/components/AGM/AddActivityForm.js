@@ -15,7 +15,7 @@ const AddActivityForm = () => {
   
 
   const categories = ["Productive", "Non-Productive"];
-  const mainTypes = ["Modelling", "Detailing", "Checking", "Common"];
+  const mainTypes = ["Modeling", "Detailing", "Checking", "Common"];
 
   const handleChange = (e) => {
     const { name, value } = e.target;

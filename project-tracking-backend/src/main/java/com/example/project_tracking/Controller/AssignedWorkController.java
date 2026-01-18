@@ -36,6 +36,11 @@ public class AssignedWorkController {
         return ResponseEntity.ok(assignedWorkService.getAssignedWorksByEmployee(empId));
     }
 
+    @GetMapping("/manager/{managerId}")
+    public ResponseEntity<?> getAssignedWorksByManager(@PathVariable Long managerId) {
+        return ResponseEntity.ok(assignedWorkService.getAssignedWorksByManager(managerId));
+    }
+
     @GetMapping("/project/{projectId}")
     public ResponseEntity<?> getAssignedWorksByProject(@PathVariable Long projectId) {
         return ResponseEntity.ok(assignedWorkService.getAssignedWorksByProject(projectId));

@@ -26,21 +26,21 @@ const LeavePermissionForm = () => {
   const [leaveBalance, setLeaveBalance] = useState(null);
   const { showToast } = useToast();
 
-useEffect(() => {
-  if (employee?.empId) {
-    axiosInstance
-      .get(`/leave/balance/employee/${employee.empId}`)
-      .then((res) => {
-        setLeaveBalance(res.data);
-      })
-      
-  }
-}, [employee]);
+  useEffect(() => {
+    if (employee?.empId) {
+      axiosInstance
+        .get(`/leave/balance/employee/${employee.empId}`)
+        .then((res) => {
+          setLeaveBalance(res.data);
+        })
+
+    }
+  }, [employee]);
 
 
   useEffect(() => {
     if (!loading && !employee) {
-      showToast("Employee not found or not logged in!","error");
+      showToast("Employee not found or not logged in!", "error");
     }
   }, [loading, employee]);
   useEffect(() => {
@@ -52,9 +52,9 @@ useEffect(() => {
             (a, b) => new Date(b.appliedDate) - new Date(a.appliedDate)
           );
           setRequests(sorted);
-          
+
         })
-        
+
     }
   }, [activeTab, employee]);
 
@@ -99,7 +99,7 @@ useEffect(() => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const validation = validateForm();
     if (!validation.valid) {
       showToast(validation.msg, "warning");
@@ -107,29 +107,39 @@ useEffect(() => {
     }
 
     // ✅ Verify available leave balance before submit
-if (formData.type === "Leave") {
-  const days = parseFloat(formData.leaveDays || 0);
+    if (formData.type === "Leave") {
+      const days = parseFloat(formData.leaveDays || 0);
 
-  if (formData.leaveType === "CL" && leaveBalance?.casualLeaves < days) {
-    showToast(`You only have ${leaveBalance.casualLeaves} CL remaining.`,"info");
-    return;
-  }
+      if (formData.leaveType === "CL" && leaveBalance?.casualLeaves < days) {
+        showToast(`You only have ${leaveBalance.casualLeaves} CL remaining.`, "info");
+        return;
+      }
 
-  if (formData.leaveType === "SL" && leaveBalance?.sickLeaves < days) {
-    showToast(`You only have ${leaveBalance.sickLeaves} SL remaining.`,"info");
-    return;
-  }
-}
+      if (formData.leaveType === "SL" && leaveBalance?.sickLeaves < days) {
+        showToast(`You only have ${leaveBalance.sickLeaves} SL remaining.`, "info");
+        return;
+      }
 
-if (formData.type === "Permission") {
-    const requestedHours = parseFloat(formData.permissionHours || 0);
-    const availableHours = parseFloat(leaveBalance?.permissionBalance || 0);
+      if (formData.leaveType === "Marriage Leave" && leaveBalance?.marriageLeaves < days) {
+        showToast(`You only have ${leaveBalance.marriageLeaves} Marriage leaves remaining.`, "info");
+        return;
+      }
 
-    if (requestedHours > availableHours) {
-      showToast(`You only have ${availableHours} hours of permission left, but you requested ${requestedHours} hours.`,"info");
-      return;
+      if (formData.leaveType === "Maternity Leave" && leaveBalance?.maternityLeaves < days) {
+        showToast(`You only have ${leaveBalance.maternityLeaves} Maternity leaves remaining.`, "info");
+        return;
+      }
     }
-  }
+
+    if (formData.type === "Permission") {
+      const requestedHours = parseFloat(formData.permissionHours || 0);
+      const availableHours = parseFloat(leaveBalance?.permissionBalance || 0);
+
+      if (requestedHours > availableHours) {
+        showToast(`You only have ${availableHours} hours of permission left, but you requested ${requestedHours} hours.`, "info");
+        return;
+      }
+    }
 
 
     try {
@@ -153,7 +163,7 @@ if (formData.type === "Permission") {
       const response = await axiosInstance.post("/leave/apply", payload);
       console.log(response);
       if (response.status === 200 || response.status === 201) {
-        showToast("✅ Leave/Permission submitted successfully!","success");
+        showToast("✅ Leave/Permission submitted successfully!", "success");
 
         // Reset form after success
         setFormData({
@@ -170,21 +180,21 @@ if (formData.type === "Permission") {
           permissionMinutes: "",
         });
       } else {
-        showToast("⚠️ Failed to submit Leave/Permission!","error");
+        showToast("⚠️ Failed to submit Leave/Permission!", "error");
       }
 
     } catch (error) {
-      
-      showToast("❌ Failed to save Leave/Permission!","error");
+
+      showToast("❌ Failed to save Leave/Permission!", "error");
     }
   };
 
   function formatDate(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
 
   const validateForm = () => {
     if (!employee) return { valid: false, msg: "Employee not found or not logged in!" };
@@ -216,11 +226,11 @@ if (formData.type === "Permission") {
     return { valid: true };
   };
 
-const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0];
 
-const weekBefore = new Date();
-weekBefore.setDate(weekBefore.getDate() - 7);
-const formattedWeekBefore = weekBefore.toISOString().split("T")[0];
+  const weekBefore = new Date();
+  weekBefore.setDate(weekBefore.getDate() - 7);
+  const formattedWeekBefore = weekBefore.toISOString().split("T")[0];
 
   return (
 
@@ -279,8 +289,8 @@ const formattedWeekBefore = weekBefore.toISOString().split("T")[0];
               <option value="">Select Type</option>
               <option value="Leave">Leave</option>
               {leaveBalance?.permissionBalance > 0 && (
-      <option value="Permission">Permission</option>
-    )}
+                <option value="Permission">Permission</option>
+              )}
             </select>
           </div>
 
@@ -288,23 +298,23 @@ const formattedWeekBefore = weekBefore.toISOString().split("T")[0];
           {formData.type === "Leave" && (
             <>
 
-            <div className={styles.field}>
-  <label>Leave Type</label>
-  <select
-    name="leaveType"
-    value={formData.leaveType}
-    onChange={handleChange}
-    disabled={!leaveBalance}
-  >
-    <option value="">Select Leave Type</option>
-    {leaveBalance?.casualLeaves > 0 && <option value="CL">CL</option>}
-    {leaveBalance?.sickLeaves > 0 && <option value="SL">SL</option>}
-    <option value="LOP">LOP</option>
-    {leaveBalance?.marriageLeaves > 0 && <option value="Marriage Leave">Marriage Leave</option>}
-    {leaveBalance?.maternityLeaves > 0 && <option value="Maternity Leave">Maternity Leave</option>}
-    
-  </select>
-</div>
+              <div className={styles.field}>
+                <label>Leave Type</label>
+                <select
+                  name="leaveType"
+                  value={formData.leaveType}
+                  onChange={handleChange}
+                  disabled={!leaveBalance}
+                >
+                  <option value="">Select Leave Type</option>
+                  {leaveBalance?.casualLeaves > 0 && <option value="CL">CL</option>}
+                  {leaveBalance?.sickLeaves > 0 && <option value="SL">SL</option>}
+                  <option value="LOP">LOP</option>
+                  {leaveBalance?.marriageLeaves > 0 && <option value="Marriage Leave">Marriage Leave</option>}
+                  {leaveBalance?.maternityLeaves > 0 && <option value="Maternity Leave">Maternity Leave</option>}
+
+                </select>
+              </div>
 
 
               <div className={styles.field}>
@@ -329,12 +339,12 @@ const formattedWeekBefore = weekBefore.toISOString().split("T")[0];
                       name="fromDate"
                       value={formData.fromDate}
                       min={
-        formData.leaveType === "SL"
-          ? undefined // no restriction
-          : formData.leaveType === "CL"
-          ? formattedWeekBefore // allow 1 week before today
-          : today // only today and future
-      }
+                        formData.leaveType === "SL" || formData.leaveType === "Marriage Leave" || formData.leaveType === "Maternity Leave"
+                          ? undefined // no restriction
+                          : formData.leaveType === "CL"
+                            ? formattedWeekBefore // allow 1 week before today
+                            : today // only today and future
+                      }
                       onChange={(e) =>
                         setFormData({ ...formData, fromDate: e.target.value, leaveDays: 1 })
                       }
@@ -357,12 +367,12 @@ const formattedWeekBefore = weekBefore.toISOString().split("T")[0];
                       name="fromDate"
                       value={formData.fromDate}
                       min={
-        formData.leaveType === "SL"
-          ? undefined // no restriction
-          : formData.leaveType === "CL"
-          ? formattedWeekBefore // allow 1 week before today
-          : today // only today and future
-      }
+                        formData.leaveType === "SL" || formData.leaveType === "Marriage Leave" || formData.leaveType === "Maternity Leave"
+                          ? undefined // no restriction
+                          : formData.leaveType === "CL"
+                            ? formattedWeekBefore // allow 1 week before today
+                            : today // only today and future
+                      }
                       onChange={(e) => {
                         setFormData((prev) => ({ ...prev, fromDate: e.target.value }));
                         calculateLeaveDays(e.target.value, formData.toDate);
@@ -376,7 +386,13 @@ const formattedWeekBefore = weekBefore.toISOString().split("T")[0];
                       type="date"
                       name="toDate"
                       value={formData.toDate}
-                      min={formData.leaveType !== "SL" ? today : undefined}
+                      min={
+                        formData.leaveType === "SL" || formData.leaveType === "Marriage Leave" || formData.leaveType === "Maternity Leave"  
+                          ? formData.fromDate // no restriction
+                          : formData.leaveType === "CL"
+                            ? formData.fromDate // allow 1 week before today
+                            : today // only today and future
+                      }
                       onChange={(e) => {
                         setFormData((prev) => ({ ...prev, toDate: e.target.value }));
                         calculateLeaveDays(formData.fromDate, e.target.value);
@@ -391,7 +407,7 @@ const formattedWeekBefore = weekBefore.toISOString().split("T")[0];
                 </>
               )}
 
-              
+
 
               <div className={styles.field}>
                 <label>Reason</label>
@@ -409,16 +425,16 @@ const formattedWeekBefore = weekBefore.toISOString().split("T")[0];
           {formData.type === "Permission" && (
             <>
               <div className={styles.field}>
-  <label>Date</label>
-  <input
-    type="date"
-    name="fromDate"
-    min={formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1))}   
-    max={formatDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0))} 
-    value={formData.fromDate}
-    onChange={handleChange}
-  />
-</div>
+                <label>Date</label>
+                <input
+                  type="date"
+                  name="fromDate"
+                  min={formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1))}
+                  max={formatDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0))}
+                  value={formData.fromDate}
+                  onChange={handleChange}
+                />
+              </div>
 
 
               <div className={styles.field}>
@@ -504,10 +520,10 @@ const formattedWeekBefore = weekBefore.toISOString().split("T")[0];
             ) : (
               requests.map((r) => (
                 <tr key={r.id}>
-                  <td style={{width:"85px"}}>{r.appliedDate || "-"}</td>
+                  <td style={{ width: "85px" }}>{r.appliedDate || "-"}</td>
                   <td>{r.type}</td>
-                  <td style={{width:"85px"}}>{r.fromDate || "-"}</td>
-                  <td style={{width:"85px"}}>{r.toDate || "-"}</td>
+                  <td style={{ width: "85px" }}>{r.fromDate || "-"}</td>
+                  <td style={{ width: "85px" }}>{r.toDate || "-"}</td>
                   <td>{r.type === "Leave" ? r.leaveType || "-" : "-"}</td>
                   <td>{r.type === "Leave" ? r.leaveDays || "-" : "-"}</td>
                   <td>{r.type === "Permission" ? r.permissionInTime || "-" : "-"}</td>
@@ -515,15 +531,15 @@ const formattedWeekBefore = weekBefore.toISOString().split("T")[0];
                   <td>{r.type === "Permission" ? r.permissionHours || "-" : "-"}</td>
                   <td>{r.reason || "-"}</td>
                   <td
-  style={{
-    color: 
-      r.status?.trim().toLowerCase() === "approved" ? "#16a34a" :
-      r.status?.trim().toLowerCase() === "rejected" ? "#dc2626" : "#f59e0b",
-    fontWeight: "600"
-  }}
->
-  {r.status}
-</td>
+                    style={{
+                      color:
+                        r.status?.trim().toLowerCase() === "approved" ? "#16a34a" :
+                          r.status?.trim().toLowerCase() === "rejected" ? "#dc2626" : "#f59e0b",
+                      fontWeight: "600"
+                    }}
+                  >
+                    {r.status}
+                  </td>
 
 
                 </tr>

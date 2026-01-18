@@ -7,17 +7,46 @@ import AddEmployeeForm from './AddEmployeeForm';
 import { useToast } from "../../context/ToastContext";
 
 const designationToRole = {
-  "Assistant General Manager": "Manager",
-  "Project Manager": "Manager",
-  "Admin": "Admin",
-  "Project Coordinator": "Coordinator",
+  "Senior Engineer": "Connection Engineer",
+  "Junior Engineer": "Connection Engineer",
+  "Junior Engineer Grade 1": "Connection Engineer",
+  "Engineer": "Connection Engineer",
+
+  // Modeler Roles
+  "Senior Modeler": "Modeler",
+  "Junior Modeler": "Modeler",
+  "Modeler": "Modeler",
+  "Trainee Modeler": "Modeler",
+
+  // Checker Roles
   "Senior Checker": "Checker",
   "Junior Checker": "Checker",
+  "Checker": "Checker",
+  "Trainee Checker": "Checker",
+
+  // Detailer Roles
   "Senior Detailer": "Detailer",
   "Junior Detailer": "Detailer",
-  "Senior Modeller": "Modeller",
-  "Junior Modeller": "Modeller"
+  "Detailer": "Detailer",
+  "Trainee Detailer": "Detailer",
+
+  // Sales Roles
+  "Senior Sales Executive": "Sales",
+  "Junior Sales Executive": "Sales",
+  "Sales Executive": "Sales",
+
+  // API Developer Roles
+  "Junior API Developer": "Developer",
+  "Senior API Developer": "Developer",
+  "API Developer": "Developer",
+
+  // Estimator Roles
+  "Estimator": "Estimator",
+  "Trainee Estimator": "Estimator",
+  "Senior Estimator": "Estimator",
+  "Junior Estimator": "Estimator",
 };
+
 
 
 const EditEmployee = () => {
@@ -35,17 +64,46 @@ const EditEmployee = () => {
   const { showToast } = useToast();
 
   const [designations] = useState([
-    "Assistant General Manager",
-    "Project Manager",
-    "Project Coordinator",
-    "Admin",
-    "Senior Checker",
-    "Junior Checker",
-    "Senior Detailer",
-    "Junior Detailer",
-    "Senior Modeller",
-    "Junior Modeller"
-  ]);
+  "Assistant General Manager",
+  "Senior Project Manager",
+  "Project Manager",
+  "Project Coordinator",
+  "IT Manager",
+  "Assistant IT Manager",
+  "HR Manager",
+  "IT Admin",
+  "Senior IT Admin",
+  "Junior IT Admin",
+  "Senior Engineer",
+  "Junior Engineer",
+  "Junior Engineer Grade 1",
+  "Engineer",
+  "Senior Modeler",
+  "Junior Modeler",
+  "Modeler",
+  "Trainee Modeler",
+  "Senior Checker",
+  "Junior Checker",
+  "Checker",
+  "Trainee Checker",
+  "Senior Detailer",
+  "Junior Detailer",
+  "Detailer",
+  "Trainee Detailer",
+  "Senior Sales Executive",
+  "Junior Sales Executive",
+  "Sales Executive",
+  "Junior API Developer",
+  "Senior API Developer",
+  "API Developer",
+  "Assistant Accounts Manager",
+  "Accountant",
+  "Estimator",
+  "Trainee Estimator",
+  "Senior Estimator",
+  "Junior Estimator",
+  "Trainee"
+]);
 
   const [managerList, setManagerList] = useState([]);
 
@@ -88,7 +146,7 @@ const EditEmployee = () => {
     let data = [...employees];
 
     if (selectedDesignation !== "All") {
-      data = data.filter((emp) => emp.designation === selectedDesignation);
+      data = data.filter((emp) => emp.designation.trim().trim().trim() === selectedDesignation);
     }
 
     if (searchTerm.trim() !== "") {
@@ -98,7 +156,7 @@ const EditEmployee = () => {
           e.name?.toLowerCase().includes(term) ||
           String(e.empId).toLowerCase().includes(term)
           ||
-          e.designation?.toLowerCase().includes(term)
+          e.designation.trim().trim().trim()?.toLowerCase().includes(term)
       );
     }
 
@@ -137,7 +195,7 @@ const EditEmployee = () => {
       id: emp.id,
       empId: emp.empId,
       name: emp.name,
-      designation: emp.designation,
+      designation: emp.designation.trim().trim().trim(),
       reportingTo: emp.reportingTo?.empId || "",
       isManager: emp.manager,
       isTL: emp.tl,
@@ -170,14 +228,14 @@ const EditEmployee = () => {
   // Save employee changes
   const handleSave = async () => {
     try {
-      const role = designationToRole[formData.designation] || "Employee";
+      const role = designationToRole[formData.designation.trim().trim().trim()] || "Employee";
       const payload = {
         empId: Number(formData.empId),
         name: formData.name,
-        designation: formData.designation,
+        designation: formData.designation.trim().trim().trim(),
         designationCategory: role,
-        isManager: ["Project Manager", "Assistant General Manager"].includes(formData.designation),
-        isTL: formData.designation === "Project Coordinator",
+        isManager: ["Project Manager", "Assistant General Manager"].includes(formData.designation.trim().trim().trim()),
+        isTL: formData.designation.trim().trim().trim() === "Project Coordinator",
         username: formData.username,
         password: formData.password,
         reportingTo:
@@ -269,7 +327,7 @@ const EditEmployee = () => {
                   <tr key={emp.id} >
                     <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.empId}</td>
                     <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.name}</td>
-                    <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.designation}</td>
+                    <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.designation.trim().trim().trim()}</td>
                     <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.reportingTo?.name || "--"}</td>
                     <td>
                       <button
@@ -330,7 +388,7 @@ const EditEmployee = () => {
               <label>Designation</label>
               <select
                 name="designation"
-                value={formData.designation}
+                value={formData.designation.trim().trim().trim()}
                 onChange={handleChange}
               >
                 <option value="">Select Designation</option>
@@ -352,7 +410,7 @@ const EditEmployee = () => {
                 <option value="">Select Manager</option>
                 {managerList.map((m) => (
                   <option key={m.id} value={m.empId}>
-                    {m.name} ({m.designation})
+                    {m.name} ({m.designation.trim().trim().trim()})
                   </option>
                 ))}
               </select>

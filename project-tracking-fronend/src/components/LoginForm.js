@@ -23,7 +23,8 @@ const LoginForm = () => {
       setError("Please enter username and password");
       return;
     }
-
+    console.log(username);
+    console.log(password);
     try {
       const response = await axiosInstance.post(
         "/employee/login",
@@ -31,6 +32,7 @@ const LoginForm = () => {
       );
 
       const employeeData = response.data;
+      console.log(employeeData);
 
 
       if (!employeeData) {

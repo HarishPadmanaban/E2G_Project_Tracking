@@ -7,7 +7,7 @@ import Notifications from "../Notifications/Notifications";
 const EmployeeNavbar = () => {
   const navigate = useNavigate();
   const { employee, logout } = useEmployee();
-  const isHR=employee.designation==="HR" || employee.designation==="IT Support" || employee.designation==="Accountant";
+  const isHR=employee.designation.trim()==="HR Manager" || employee.role.trim()==="IT Admin" || employee.role.trim()==="Accounts";
  const handleBack = () => {
   // Don’t allow back on main work page
   if (window.location.pathname === "/employee/work") return;
@@ -46,10 +46,10 @@ const EmployeeNavbar = () => {
             Work
           </Link>}
 
-          {!isHR &&
+
           <Link to="/employee/leave" className={styles.navLink}>
             Leave
-          </Link>}
+          </Link>
           <button className={styles.logoutBtn} onClick={handleLogout}>
             Logout
           </button>

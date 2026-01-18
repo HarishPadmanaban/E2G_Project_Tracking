@@ -14,12 +14,13 @@ const ManagerNavbar = () => {
 
 
   const isAGM =
-  employee?.designation === "Assistant General Manager" ||
-  employee?.designation === "Admin";
+    employee?.designation.trim() === "Assistant IT Manager" ||
+    employee?.designation.trim() === "Assistant General Manager"
 
-  const isPC=employee?.designation === "Project Coordinator";
+  const isPC = employee?.designation.trim() === "Project Coordinator" || employee?.designation.trim() === "Assistant Project Manager";
+  console.log(isPC);
 
-  const isNotAgm = employee?.designation !== "Assistant General Manager"
+  const isNotAgm = employee?.designation.trim() !== "Assistant General Manager"
 
   const handleBack = () => {
     if (window.location.pathname === "/manager/work") return;
@@ -32,30 +33,30 @@ const ManagerNavbar = () => {
   };
 
   useEffect(() => {
-  if (!employee?.empId) return;
+    if (!employee?.empId) return;
 
-  const fetchPending = () => {
-    axiosInstance
-      .get(`/leave/manager/${employee.empId}`)
-      .then((res) => {
-        const pending = res.data.filter((r) => r.status === "Pending");
-        setPendingCount(pending.length);
-      })
-      
-  };
+    const fetchPending = () => {
+      axiosInstance
+        .get(`/leave/manager/${employee.empId}`)
+        .then((res) => {
+          const pending = res.data.filter((r) => r.status === "Pending");
+          setPendingCount(pending.length);
+        })
 
-  // Fetch initially
-  fetchPending();
+    };
 
-  // Listen for custom refresh event dispatched from ViewRequests
-  const handleRefresh = () => fetchPending();
-  window.addEventListener("refreshPendingCount", handleRefresh);
+    // Fetch initially
+    fetchPending();
 
-  // Cleanup
-  return () => {
-    window.removeEventListener("refreshPendingCount", handleRefresh);
-  };
-}, [employee]);
+    // Listen for custom refresh event dispatched from ViewRequests
+    const handleRefresh = () => fetchPending();
+    window.addEventListener("refreshPendingCount", handleRefresh);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("refreshPendingCount", handleRefresh);
+    };
+  }, [employee]);
 
 
   useEffect(() => {
@@ -100,7 +101,7 @@ const ManagerNavbar = () => {
             className={`${styles.sidebarMenu} ${menuOpen ? styles.open : ""}`}
           >
             <ul>
-             {!isPC && <Link
+              {!isPC && <Link
                 to="/manager/work"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
@@ -109,18 +110,18 @@ const ManagerNavbar = () => {
               </Link>}
 
               {isPC &&
-              <Link
-                to="/employee/work"
-                className={styles.menuLink}
-                onClick={() => setMenuOpen(false)}
-              >
-                <li>Home</li>
-              </Link>
+                <Link
+                  to="/employee/work"
+                  className={styles.menuLink}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <li>Home</li>
+                </Link>
               }
 
-             
 
-             {!isPC && <Link
+
+              {!isPC && <Link
                 to="/manager/analysis"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
@@ -128,7 +129,7 @@ const ManagerNavbar = () => {
                 <li>Analysis</li>
               </Link>}
 
-              {!isAGM && !isPC &&(
+              {!isAGM && !isPC && (
                 <Link
                   to="/manager/assign-tl"
                   className={styles.menuLink}
@@ -156,17 +157,17 @@ const ManagerNavbar = () => {
                 </Link>
               )} */}
 
-              {!isAGM && !isPC &&(<Link
+              {!isAGM && !isPC && (<Link
                 to="/manager/view-employee"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
               >
                 <li>
-                  View Employees              
+                  View Employees
                 </li>
               </Link>)}
 
-              {!isAGM && !isPC &&(<Link
+              {!isAGM && !isPC && (<Link
                 to="/manager/view-requests"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
@@ -180,7 +181,7 @@ const ManagerNavbar = () => {
               </Link>)}
 
 
-              {!isAGM && !isPC &&(
+              {!isAGM && !isPC && (
                 <Link
                   to="/manager/update-project"
                   className={styles.menuLink}
@@ -190,7 +191,7 @@ const ManagerNavbar = () => {
                 </Link>
               )}
 
-               {isAGM && !isPC &&(
+              {isAGM && !isPC && (
                 <Link
                   to="/manager/view-approved-request"
                   className={styles.menuLink}
@@ -200,7 +201,7 @@ const ManagerNavbar = () => {
                 </Link>
               )}
 
-              {isAGM && !isPC &&(<Link
+              {isAGM && !isPC && (<Link
                 to="/manager/edit-all"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
@@ -210,7 +211,7 @@ const ManagerNavbar = () => {
                 </li>
               </Link>)}
 
-              {isAGM && !isPC &&(
+              {isAGM && !isPC && (
                 <Link
                   to="/manager/edit-workdetails"
                   className={styles.menuLink}
@@ -219,7 +220,7 @@ const ManagerNavbar = () => {
                   <li>Edit Work Details</li>
                 </Link>
               )}
-              
+
             </ul>
           </div>
           {menuOpen && <div className={styles.overlay}></div>}
@@ -229,7 +230,7 @@ const ManagerNavbar = () => {
         </div>
 
         <div className={styles.navCenter} style={{ marginLeft: "4%" }}>
-           <img src="/logo.png" alt="E2G Logo" className={styles.logo} />
+          <img src="/logo.png" alt="E2G Logo" className={styles.logo} />
           <h1>E2G ENGINEERING SERVICES PRIVATE LIMITED</h1>
         </div>
 
@@ -242,20 +243,20 @@ const ManagerNavbar = () => {
             </Link>
           )}
 
-          
+
 
           {!isNotAgm && <Link
-                to="/manager/view-requests"
-                className={styles.menuLink}
-                onClick={() => setMenuOpen(false)}
-              >
-                <div>
-                  View Requests
-                  {pendingCount > 0 && (
-                    <span className={styles.badge}>{pendingCount}</span>
-                  )}
-                </div>
-              </Link>}
+            to="/manager/view-requests"
+            className={styles.menuLink}
+            onClick={() => setMenuOpen(false)}
+          >
+            <div>
+              View Requests
+              {pendingCount > 0 && (
+                <span className={styles.badge}>{pendingCount}</span>
+              )}
+            </div>
+          </Link>}
           <button className={styles.logoutBtn} onClick={handleLogout}>
             Logout
           </button>

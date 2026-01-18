@@ -271,3 +271,32 @@
     font-size: 20px;
   }
 }
+
+.searchWrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  gap: 8px;
+}
+
+.searchInput {
+  padding: 8px 12px;
+  width: 260px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.clearButton {
+  background: #554e4e;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.clearBtn:hover {
+  background: #ddd;
+}
+

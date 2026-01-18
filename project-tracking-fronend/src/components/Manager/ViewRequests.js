@@ -8,74 +8,101 @@ const ViewRequests = () => {
   const [requests, setRequests] = useState([]);
   const [filteredRequests, setFilteredRequests] = useState([]);
   const [filter, setFilter] = useState("Pending");
+  const [searchText, setSearchText] = useState("");
+
   const { employee, loading } = useEmployee();
   const { showToast } = useToast();
-  
+
+
+
+  const applyFilters = (allRequests, statusFilter, search) => {
+    return allRequests.filter((r) => {
+      const matchesStatus =
+        statusFilter === "All" ? true : r.status === statusFilter;
+
+      const matchesSearch =
+        !search ||
+        r.employeeName?.toLowerCase().includes(search.toLowerCase());
+
+      return matchesStatus && matchesSearch;
+    });
+  };
 
   const fetchRequests = async () => {
-  if (!employee?.empId) return;
+    if (!employee?.empId) return;
 
-  try {
-    const [pendingRes, approvedRes] = await Promise.all([
-      axiosInstance.get(`/leave/manager/${employee.empId}`),
-      axiosInstance.get(`/leave/manager-approved/${employee.empId}`),
-    ]);
+    try {
+      const [pendingRes, approvedRes] = await Promise.all([
+        axiosInstance.get(`/leave/manager/${employee.empId}`),
+        axiosInstance.get(`/leave/manager-approved/${employee.empId}`),
+      ]);
 
-    const allRequests = [...pendingRes.data, ...approvedRes.data];
-    setRequests(allRequests);
+      const allRequests = [...pendingRes.data, ...approvedRes.data];
+      setRequests(allRequests);
 
-    
+      const filtered = applyFilters(allRequests, filter, searchText);
+      setFilteredRequests(filtered);
 
-    // Maintain current filter after refresh
-    const filtered = allRequests.filter((r) =>
-      filter === "All" ? true : r.status === filter
-    );
-    setFilteredRequests(filtered);
-  } catch (err) {
-    
-  }
-};
+    } catch (err) {
+
+    }
+  };
 
 
   useEffect(() => {
-  fetchRequests();
-}, [employee]);
+    fetchRequests();
+  }, [employee]);
 
 
   // Filter change handler
   const handleFilter = (category) => {
     setFilter(category);
-    const filtered = requests.filter((r) => r.status === category);
+    const filtered = applyFilters(requests, category, searchText);
     setFilteredRequests(filtered);
   };
 
-  const handleApprove = async (id) => {
-  try {
-    await axiosInstance.put(`/leave/status/${id}`, null, {
-      params: { status: "Approved" },
-    });
-    showToast("Request Approved ✅","success");
-    await fetchRequests(); // 🔁 refetch after approval
-    window.dispatchEvent(new Event("refreshPendingCount"));
-  } catch (err) {
-    
-    const backendMsg =
-            err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
-    showToast(backendMsg,"error");
-  }
-};
 
-const handleReject = async (id) => {
-  try {
-    await axiosInstance.delete(`/leave/${id}`);
-    showToast("Request Rejected ❌","success");
-    await fetchRequests(); // 🔁 refetch after rejection
-    window.dispatchEvent(new Event("refreshPendingCount"));
-  } catch (err) {
-    
-    showToast("Failed to reject request!","error");
-  }
-};
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchText(value);
+    const filtered = applyFilters(requests, filter, value);
+    setFilteredRequests(filtered);
+  };
+
+  const clearSearch = () => {
+    setSearchText("");
+    const filtered = applyFilters(requests, filter, "");
+    setFilteredRequests(filtered);
+  };
+
+
+  const handleApprove = async (id) => {
+    try {
+      await axiosInstance.put(`/leave/status/${id}`, null, {
+        params: { status: "Approved" },
+      });
+      showToast("Request Approved ✅", "success");
+      await fetchRequests(); // 🔁 refetch after approval
+      window.dispatchEvent(new Event("refreshPendingCount"));
+    } catch (err) {
+
+      const backendMsg =
+        err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
+      showToast(backendMsg, "error");
+    }
+  };
+
+  const handleReject = async (id) => {
+    try {
+      await axiosInstance.delete(`/leave/${id}`);
+      showToast("Request Rejected ❌", "success");
+      await fetchRequests(); // 🔁 refetch after rejection
+      window.dispatchEvent(new Event("refreshPendingCount"));
+    } catch (err) {
+
+      showToast("Failed to reject request!", "error");
+    }
+  };
 
 
   if (loading) return <div className={styles.noData}>Loading...</div>;
@@ -90,14 +117,34 @@ const handleReject = async (id) => {
           <button
             key={category}
             onClick={() => handleFilter(category)}
-            className={`${styles.filterBtn} ${
-              filter === category ? styles.active : ""
-            }`}
+            className={`${styles.filterBtn} ${filter === category ? styles.active : ""
+              }`}
           >
             {category}
           </button>
         ))}
       </div>
+
+      <div className={styles.searchWrapper}>
+        <input
+          type="text"
+          placeholder="Search by employee name..."
+          value={searchText}
+          onChange={handleSearch}
+          className={styles.searchInput}
+        />
+
+        {searchText && (
+          <button
+            className={styles.clearButton}
+            onClick={clearSearch}
+            title="Clear"
+          >
+            ✕
+          </button>
+        )}
+      </div>
+
 
       <div className={styles.tableWrapper}>
         <table className={styles.requestTable}>

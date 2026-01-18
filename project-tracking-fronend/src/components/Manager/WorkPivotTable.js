@@ -16,7 +16,7 @@ const patchPivotFilterBox = () => {
   const Pivot = require("react-pivottable/PivotTableUI"); // dynamic import ensures module is available
   const originalFilterBox = Pivot.FilterBox || PivotTableUI.FilterBox;
 
-  
+
 
   if (!originalFilterBox) {
     return;
@@ -33,7 +33,7 @@ const patchPivotFilterBox = () => {
     const noneSelected = selectedValues.length === 0;
     const singleSelected = selectedValues.length === 1;
     const showSelectAll = noneSelected || singleSelected;
-    
+
 
     const toggleAll = (selectAll) => {
       const newFilter = {};
@@ -133,8 +133,8 @@ const WorkPivotTable = () => {
     if (!employee) return;
 
     const isAGM =
-      employee.designation === "Assistant General Manager" ||
-      employee.designation === "Admin";
+      employee.designation.trim() === "Assistant IT Manager" ||
+      employee.designation.trim() === "Assistant General Manager"
 
     const endpoint = isAGM
       ? `/workdetails/all`
@@ -186,7 +186,7 @@ const WorkPivotTable = () => {
   const exportPivotToExcel = () => {
     const table = document.querySelector(".pvtTable");
     if (!table) {
-      showToast("No table to export!","info");
+      showToast("No table to export!", "info");
       return;
     }
     const wb = XLSX.utils.book_new();
@@ -196,7 +196,7 @@ const WorkPivotTable = () => {
     XLSX.writeFile(wb, fileName);
   };
 
-    const { showToast } = useToast();
+  const { showToast } = useToast();
 
 
   const hasValidData = data.length > 0;

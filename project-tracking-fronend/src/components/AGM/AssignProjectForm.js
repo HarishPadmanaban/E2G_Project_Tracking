@@ -24,7 +24,7 @@ const AssignProjectForm = () => {
     axiosInstance
       .get("/employee/getallmanagers") // replace with real endpoint
       .then((res) => {
-        const filteredPMs = res.data.filter((emp) => emp.designation === "Project Manager");
+        const filteredPMs = res.data.filter((emp) => emp.designation.trim() === "Project Manager" || emp.designation.trim() ==="Senior Project Manager");
         setPMs(filteredPMs);
       })
   }, []);

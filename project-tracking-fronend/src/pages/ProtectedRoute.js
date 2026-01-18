@@ -9,12 +9,12 @@ const ProtectedRoute = ({ children , allowedRoles ,excludedRoles }) => {
     return <Navigate to="/" replace />; // redirect to login
   }
 
-  if (allowedRoles && !allowedRoles.includes(employee.designation)) {
+  if (allowedRoles && !allowedRoles.includes(employee.designation.trim())) {
     // Unauthorized access → redirect to "unauthorized" or home page
     return <Navigate to="/unauthorized" replace />;
   }
 
-  if (excludedRoles && excludedRoles.includes(employee.designation)) {
+  if (excludedRoles && excludedRoles.includes(employee.designation.trim())) {
     return <Navigate to="/unauthorized" replace />;
   }
 

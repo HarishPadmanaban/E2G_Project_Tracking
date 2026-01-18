@@ -177,6 +177,7 @@ body {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
 
+
 /* Wider container for view tab (tables) */
 .viewContainer {
   max-width: 1200px;   /* expand width */
@@ -583,3 +584,247 @@ html, body {
 }
 
 
+.topFilterRow {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.searchInput {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+.searchInput:focus, .managerDropdown:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.filterSelect {
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid #475569;
+  background-color: #f8fafc;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+  transition: all 0.2s ease;
+  min-width: 150px;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.clearBtn {
+  background: #d9534f;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.clearBtn:hover {
+  background: #c9302c;
+}
+
+.projectsTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  table-layout: fixed;
+  display: block;
+  max-height: 400px; /* enables scroll when needed */
+  overflow-y: auto;
+}
+
+.projectsTable thead {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.projectsTable tbody {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+
+}
+
+.projectsTable th,
+.projectsTable td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  overflow: hidden; 
+  text-align: center; /* <-- add this */
+  vertical-align: middle;
+}
+
+.projectsTable tbody tr {
+  transition: all 0.2s ease;
+  height: 50px; 
+}
+
+.projectsTable thead th {
+  background: linear-gradient(135deg, #1e293b, #334155); /* gradient dark blue/gray */
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 12px 15px;
+  text-align: center; /* optional: center headers */
+}
+
+
+.projectsTable th,
+.projectsTable td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.projectsTable thead th {
+  background-color: rgb(54, 52, 52);
+  color: white;
+}
+
+
+.projectsTable tbody tr {
+  transition: all 0.1s ease;
+  height: 50px;
+}
+
+.projectsTable th {
+  white-space: normal;
+  word-break: break-word;
+  overflow: visible;
+  height: auto;
+  text-align: center;
+  vertical-align: middle;
+  padding: 12px 15px;
+  transition: all 0.2s ease;
+}
+
+
+.noData {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+  font-size: 15px;
+  font-style: italic;
+  background-color: #fafafa;
+}
+
+@media (max-width: 900px) {
+  .projectsTable th {
+    font-size: 13px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .projectsTable th {
+    font-size: 11px;
+  }
+}
+
+
+@media (max-width: 1200px) {
+  .projectsTable th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 50px;
+    line-height: 50px;
+    padding: 8px 10px;
+  }
+}
+
+/* 🟦 On very small screens: make text smaller */
+@media (max-width: 600px) {
+  .projectsTable th {
+    font-size: 13px;
+  }
+}
+
+.statusInProgress {
+  color: orange;
+  font-weight: 600;
+}
+
+.statusCompleted {
+  color: green;
+  font-weight: 600;
+}
+
+.actionBtn {
+  background: linear-gradient(135deg, #1a2d54, #253b72);
+  border: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 8px;
+}
+
+
+.actionBtn:hover {
+  background: linear-gradient(135deg, #253b72, #3a4c89);
+  transform: scale(1.03);
+}
+
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+
+.paginationBtn,
+.pageNumber {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 14px;
+}
+
+.paginationBtn:disabled {
+  background-color: #b0b0b0;
+  cursor: not-allowed;
+}
+
+.pageNumber {
+  background-color: #eaeaea;
+  color: #333;
+}
+
+.pageNumber:hover {
+  background-color: #d4d4d4;
+}
+
+.activePage {
+  background-color: #007bff;
+  color: white;
+  font-weight: 600;
+}
+
+.ellipsis {
+  padding: 0 5px;
+  color: #666;
+}

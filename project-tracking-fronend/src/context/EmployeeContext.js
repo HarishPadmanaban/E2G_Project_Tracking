@@ -1,7 +1,7 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import axiosInstance from "D:/E2G/E2G_Project_Tracking/project-tracking-fronend/src/components/axiosConfig.js";
+import axiosInstance from '../components/axiosConfig.js';
+
 
 const EmployeeContext = createContext();
 

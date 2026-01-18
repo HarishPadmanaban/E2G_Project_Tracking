@@ -277,7 +277,7 @@ const ViewWorkDetails = ({ work, onBack,onUpdate }) => {
               {isEditing ? (
                 <select value={selectedType} onChange={handleTypeChange}>
                   <option value="">Select Type</option>
-                  <option value="Modelling">Modelling</option>
+                  <option value="Modeling">Modeling</option>
                   <option value="Checking">Checking</option>
                   <option value="Detailing">Detailing</option>
                   <option value="Common">Common</option>

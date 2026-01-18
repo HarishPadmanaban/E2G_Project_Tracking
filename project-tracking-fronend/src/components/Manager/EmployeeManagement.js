@@ -42,7 +42,7 @@ const EmployeesUnderManager = () => {
 
         if (designation) {
             result = result.filter((e) =>
-                e.designation.toLowerCase().includes(designation.toLowerCase())
+                e.designation.trim().toLowerCase().includes(designation.toLowerCase())
             );
         }
 
@@ -73,7 +73,7 @@ const EmployeesUnderManager = () => {
             setSelectedEmp(selectedEmp);
 
             let res;
-            if (selectedEmp.designation.toLowerCase().includes("project coordinator")) {
+            if (selectedEmp.designation.trim().toLowerCase().includes("project coordinator")) {
                 res = await axiosInstance.get(`/project/get-by-tl/${empId}`);
             } else {
                 res = await axiosInstance.get(`/project-assignment/projects/${empId}`);
@@ -131,7 +131,7 @@ const EmployeesUnderManager = () => {
                         <option value="">All Designation</option>
                         <option value="checker">Checker</option>
                         <option value="detailer">Detailer</option>
-                        <option value="modeller">Modeller</option>
+                        <option value="modeler">Modeler</option>
                     </select>
 
                     <button onClick={clearFilters} className={styles.clearBtn}>
@@ -173,46 +173,7 @@ const EmployeesUnderManager = () => {
             {showModal && (
                 <div className={styles.overlay} onClick={() => setShowModal(false)}>
                     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                        {/* <h3>Projects Working</h3>
-                        <table className={styles.memberTable}>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Project Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {selectedProjects.length === 0 ? (
-                                    <tr>
-                                        <td colSpan="13" className={styles.noData}>No records found.</td>
-                                    </tr>
-                                ) : (
-                                    selectedProjects.map((project) => (
-                                        <tr key={project.id}>
-                                            <td>{project.id}</td>
-                                            <td>
-                                                {project.projectName}
-                                                {selectedEmp &&
-                                                    !selectedEmp.designation
-                                                        .toLowerCase()
-                                                        .includes("project coordinator") &&
-                                                    project.coordinatorName && (
-                                                        <span
-                                                            style={{
-                                                                color: "#007bff",
-                                                                marginLeft: "8px",
-                                                                fontSize: "16px",
-                                                            }}
-                                                        >
-                                                            ({project.coordinatorName})
-                                                        </span>
-                                                    )}
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table> */}
+                        
 
                         {/* ✅ NEW: Worklogs section */}
                         <h3 style={{ marginTop: "20px" }}>Worklogs</h3>
@@ -226,6 +187,7 @@ const EmployeesUnderManager = () => {
                                     <th>Activity Name</th>
                                     <th>Status</th>
                                     <th>Hours Worked</th>
+                                    <th>Remarks</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -243,6 +205,7 @@ const EmployeesUnderManager = () => {
                                             <td>{log.activityName}</td>
                                             <td>{log.status}</td>
                                             <td>{log.workHours}</td>
+                                            <td>{log.remarks}</td>
                                         </tr>
                                     ))
                                 )}

@@ -1,4 +1,4 @@
-    import React, { useEffect, useState } from "react";
+  import React, { useEffect, useState } from "react";
   import axiosInstance from "../axiosConfig";
     import styles from "../../styles/Manager/ViewRequests.module.css";
     import * as XLSX from "xlsx";
@@ -25,55 +25,78 @@
         })
     }, []);
 
+    const parseLocalDate = (dateStr) => {
+  if (!dateStr) return null;
+  const [y, m, d] = dateStr.split("-");
+  return new Date(y, m - 1, d);  // Local timezone (not UTC!)
+};
+
+
     useEffect(() => {
-        let data = [...requests];
-        const today = new Date();
+  let data = [...requests];
+  const today = new Date();
 
-        // Filter by Manager
-        if (selectedManager !== "All") {
-        data = data.filter((r) => r.managerName === selectedManager);
-        }
+  // Filter by Manager
+  if (selectedManager !== "All") {
+    data = data.filter((r) => r.managerName === selectedManager);
+  }
 
-        // Filter by Status
-        if (statusFilter !== "All") {
-        data = data.filter((r) => r.status === statusFilter);
-        }
+  // Filter by Status
+  if (statusFilter !== "All") {
+    data = data.filter((r) => r.status === statusFilter);
+  }
 
-        // Filter by Date Range
-        if (dateFilter === "Today") {
-        data = data.filter(
-            (r) => new Date(r.appliedDate).toDateString() === today.toDateString()
-        );
-        } else if (dateFilter === "Yesterday") {
-        const yesterday = new Date();
-        yesterday.setDate(today.getDate() - 1);
-        data = data.filter(
-            (r) => new Date(r.appliedDate).toDateString() === yesterday.toDateString()
-        );
-        } else if (dateFilter === "Last 7 Days") {
-        const past7 = new Date();
-        past7.setDate(today.getDate() - 7);
-        data = data.filter(
-            (r) => new Date(r.appliedDate) >= past7 && new Date(r.appliedDate) <= today
-        );
-        } else if (dateFilter === "Last 30 Days") {
-        const past30 = new Date();
-        past30.setDate(today.getDate() - 30);
-        data = data.filter(
-            (r) => new Date(r.appliedDate) >= past30 && new Date(r.appliedDate) <= today
-        );
-        } else if (dateFilter === "Custom" && customRange.from && customRange.to) {
-        const from = new Date(customRange.from);
-        const to = new Date(customRange.to);
-        data = data.filter(
-            (r) => new Date(r.appliedDate) >= from && new Date(r.appliedDate) <= to
-        );
-        }
+  // DATE FILTER FIXED
+  if (dateFilter === "Today") {
+    data = data.filter(
+      (r) => parseLocalDate(r.appliedDate).toDateString() === today.toDateString()
+    );
+  } 
+  else if (dateFilter === "Yesterday") {
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+    data = data.filter(
+      (r) =>
+        parseLocalDate(r.appliedDate).toDateString() ===
+        yesterday.toDateString()
+    );
+  } 
+  else if (dateFilter === "Last 7 Days") {
+    const past7 = new Date();
+    past7.setDate(today.getDate() - 7);
+    data = data.filter(
+      (r) =>
+        parseLocalDate(r.appliedDate) >= past7 &&
+        parseLocalDate(r.appliedDate) <= today
+    );
+  } 
+  else if (dateFilter === "Last 30 Days") {
+    const past30 = new Date();
+    past30.setDate(today.getDate() - 30);
+    data = data.filter(
+      (r) =>
+        parseLocalDate(r.appliedDate) >= past30 &&
+        parseLocalDate(r.appliedDate) <= today
+    );
+  } 
+  else if (dateFilter === "Custom" && customRange.from && customRange.to) {
+    const from = parseLocalDate(customRange.from);
+    const to = parseLocalDate(customRange.to);
+    data = data.filter(
+      (r) =>
+        parseLocalDate(r.appliedDate) >= from &&
+        parseLocalDate(r.appliedDate) <= to
+    );
+  }
 
-         data.sort((a, b) => new Date(b.appliedDate) - new Date(a.appliedDate));
+  data.sort(
+    (a, b) =>
+      parseLocalDate(b.appliedDate) - parseLocalDate(a.appliedDate)
+  );
 
-        setFilteredRequests(data);
-    }, [selectedManager, statusFilter, dateFilter, customRange, requests]);
+  setFilteredRequests(data);
+}, [selectedManager, statusFilter, dateFilter, customRange, requests]);
+
 
     // 🔹 Clear Filters
     const clearFilters = () => {
@@ -275,9 +298,9 @@
             </tbody>
             </table>
         </div>
-        
+       
         </div>
-        
+       
     );
     };
 

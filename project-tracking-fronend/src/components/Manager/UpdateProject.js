@@ -17,7 +17,7 @@ const ManagerProjectActions = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedActivity, setSelectedActivity] = useState("");
   const { showToast } = useToast();
-  
+
 
   const fetchProjects = async () => {
     if (!employee?.empId) return;
@@ -27,7 +27,7 @@ const ManagerProjectActions = () => {
       );
       setProjects(res.data);
     } catch (err) {
-      
+
     }
   };
 
@@ -43,7 +43,7 @@ const ManagerProjectActions = () => {
         await axiosInstance.put(
           `/project/toggle-status/${selectedProject.id}`
         );
-        showToast("Project marked as completed ✅","success");
+        showToast("Project marked as completed ✅", "success");
       }
 
       // ✅ Update Project Activity
@@ -58,14 +58,14 @@ const ManagerProjectActions = () => {
             params: { activity: selectedActivity },
           }
         );
-        showToast("Project activity updated ✅","success");
+        showToast("Project activity updated ✅", "success");
       }
 
       fetchProjects();
       resetFields();
     } catch (err) {
-      
-      showToast("Failed to update project","error");
+
+      showToast("Failed to update project", "error");
     }
   };
 
@@ -85,63 +85,63 @@ const ManagerProjectActions = () => {
   }, [employee]);
 
   const handleSendRequest = async () => {
-  if (!selectedProject) {
-    showToast("Select a project","warning");
-    return;
-  }
-
-  if (!requestType) {
-    showToast("Select request type","warning");
-    return;
-  }
-
-  const agmId = Number(1001); 
-  const projectName = selectedProject.projectName;// make sure this exists
-  const projectId = selectedProject.id;
-
-  let title = "";
-  let message = "";
-
-  if (requestType === "EXTRA_HOURS") {
-    if (!extraHours || extraHours <= 0) {
-      showToast("Enter valid extra hours","warning");
+    if (!selectedProject) {
+      showToast("Select a project", "warning");
       return;
     }
-    title = "Extra Hours Request";
-    message = `Project: ${projectName} | projectId=${projectId} | Requesting ${extraHours} extra hours. Reason: ${reason}`;
-  }
 
-  if (requestType === "COMPLETION_EXTENSION") {
-    if (!newCompletionDate) {
-      showToast("Select new completion date","warning");
+    if (!requestType) {
+      showToast("Select request type", "warning");
       return;
     }
-    title = "Completion Date Extension";
-    message = `Project: ${projectName} | projectId=${projectId} | Request to extend completion date to ${newCompletionDate}. Reason: ${reason}`;
-  }
 
-  const url =
-    `/notifications/create` +
-    `?senderId=${employee.empId}` +
-    `&receiverId=${agmId}` +
-    `&title=${encodeURIComponent(title)}` +
-    `&message=${encodeURIComponent(message)}` +
-    `&type=${requestType}`;
+    const agmId = Number(1004);
+    const projectName = selectedProject.projectName;// make sure this exists
+    const projectId = selectedProject.id;
 
-  try {
-    await axiosInstance.post(url);
-    showToast("Request sent ✅","success");
+    let title = "";
+    let message = "";
 
-    // Clear the form
-    setRequestType("");
-    setExtraHours("");
-    resetFields();
-    setNewCompletionDate("");
-    setReason("");
-  } catch (err) {
-    showToast("Failed to send request ❌","error");
-  }
-};
+    if (requestType === "EXTRA_HOURS") {
+      if (!extraHours || extraHours <= 0) {
+        showToast("Enter valid extra hours", "warning");
+        return;
+      }
+      title = "Extra Hours Request";
+      message = `Project: ${projectName} | projectId=${projectId} | Requesting ${extraHours} extra hours. Reason: ${reason}`;
+    }
+
+    if (requestType === "COMPLETION_EXTENSION") {
+      if (!newCompletionDate) {
+        showToast("Select new completion date", "warning");
+        return;
+      }
+      title = "Completion Date Extension";
+      message = `Project: ${projectName} | projectId=${projectId} | Request to extend completion date to ${newCompletionDate}. Reason: ${reason}`;
+    }
+
+    const url =
+      `/notifications/create` +
+      `?senderId=${employee.empId}` +
+      `&receiverId=${agmId}` +
+      `&title=${encodeURIComponent(title)}` +
+      `&message=${encodeURIComponent(message)}` +
+      `&type=${requestType}`;
+
+    try {
+      await axiosInstance.post(url);
+      showToast("Request sent ✅", "success");
+
+      // Clear the form
+      setRequestType("");
+      setExtraHours("");
+      resetFields();
+      setNewCompletionDate("");
+      setReason("");
+    } catch (err) {
+      showToast("Failed to send request ❌", "error");
+    }
+  };
 
 
   const handleProjectChange = (e) => {
@@ -178,9 +178,8 @@ const ManagerProjectActions = () => {
               setReason("");
               setNewCompletionDate("");
             }}
-            className={`${styles.filterBtn} ${
-              tab === item ? styles.active : ""
-            }`}
+            className={`${styles.filterBtn} ${tab === item ? styles.active : ""
+              }`}
           >
             {item}
           </button>
@@ -315,7 +314,12 @@ const ManagerProjectActions = () => {
                   onChange={(e) => setSelectedActivity(e.target.value)}
                 >
                   <option value="">Select Activity</option>
-                  <option value="IFRA">IFRA</option>
+                  <option value="IFA">IFA</option>
+                  <option value="REIFA">REIFA</option>
+                  <option value="IFC">IFC</option>
+                  <option value="REIFC">REIFC</option>
+                  <option value="BFA">BFA</option>
+                  <option value="Field Measurement">Field Measurement</option>
                   <option value="Client Rework">Client Rework</option>
                   <option value="Internal Rework">Internal Rework</option>
                 </select>
@@ -331,7 +335,7 @@ const ManagerProjectActions = () => {
           )}
         </>
       )}
-      
+
     </div>
   );
 };

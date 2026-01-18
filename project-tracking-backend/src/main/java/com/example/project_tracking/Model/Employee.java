@@ -35,6 +35,9 @@ public class Employee {
     @Column(name = "category",nullable = false)
     private String designationCategory;
 
+    @Column(name="soft_delete")
+    private Boolean softDelete = false;
+
 
     public Employee() {
     }
@@ -140,5 +143,13 @@ public class Employee {
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 '}';
+    }
+
+    public Boolean getSoftDelete() {
+        return softDelete;
+    }
+
+    public void setSoftDelete(Boolean softDelete) {
+        this.softDelete = softDelete;
     }
 }

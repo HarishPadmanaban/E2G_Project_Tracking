@@ -117,5 +117,10 @@ public class AssignedWorkService {
                 assignedWork.getStatus(),
                 assignedWork.getProject().getProjectActivityStatus());
     }
+
+    public List<AssignedWorkResponse> getAssignedWorksByManager(Long managerId) {
+        return assignedWorkRepository.findByManager_EmpId(managerId).stream().map(this::convertToResponse).toList();
+    }
+
 }
 

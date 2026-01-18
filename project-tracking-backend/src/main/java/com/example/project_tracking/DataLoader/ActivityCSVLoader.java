@@ -27,7 +27,7 @@ public class ActivityCSVLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Prevent duplicate inserts
+         //Prevent duplicate inserts
         if (activityRepository.count() > 0) {
             return;
         }

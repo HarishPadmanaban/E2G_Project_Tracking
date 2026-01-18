@@ -49,6 +49,30 @@ const EditWorkDetails = () => {
   }, []);
 
   useEffect(() => {
+  if (filters.manager === "All") {
+    // Show ALL projects if no manager selected
+    const allProjects = [...new Set(workDetails.map((w) => w.projectName))];
+    setProjectList(allProjects);
+  } else {
+    // Show only projects belonging to selected manager
+    const filteredProjects = [
+      ...new Set(
+        workDetails
+          .filter((w) => w.managerName === filters.manager)
+          .map((w) => w.projectName)
+      ),
+    ];
+    setProjectList(filteredProjects);
+
+    // If current selected project is not valid anymore → reset to All
+    if (!filteredProjects.includes(filters.project)) {
+      setFilters((prev) => ({ ...prev, project: "All" }));
+    }
+  }
+}, [filters.manager, workDetails]);
+
+
+  useEffect(() => {
     let data = [...workDetails];
 
     if (filters.manager !== "All") {
