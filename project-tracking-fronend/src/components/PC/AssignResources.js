@@ -51,8 +51,8 @@ const AssignActivityForm = () => {
     axiosInstance
       .get(`/project/${idToUse}`) // Dummy API
       .then((res) => {
-        //const filtered = res.data.filter(project => project.tlId!=null);
-        console.log(res.data);
+        
+        
         setProjects(res.data);
       })
       .catch((err) => console.error(err));
@@ -65,9 +65,12 @@ const AssignActivityForm = () => {
       return;
     }
 
+    
+
     axiosInstance
       .get(`/project-assignment/employees/${formData.projectId}`)
       .then((res) => {
+        
         if (res.data.length === 0) {
           // If no employees assigned to this project, get all employees under manager
           axiosInstance
@@ -168,7 +171,7 @@ const AssignActivityForm = () => {
       description: formData.assignedActivity, // keep it as string
     };
 
-    //console.log(payload);
+
 
     axiosInstance
       .post("/assigned-work", payload) // Dummy POST

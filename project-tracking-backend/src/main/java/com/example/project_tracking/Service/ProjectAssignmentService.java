@@ -1,5 +1,6 @@
 package com.example.project_tracking.Service;
 
+import com.example.project_tracking.DTO.DataTransfer;
 import com.example.project_tracking.DTO.ProjectAssignmentRequestDTO;
 import com.example.project_tracking.Model.Employee;
 import com.example.project_tracking.Model.Project;
@@ -31,8 +32,6 @@ public class ProjectAssignmentService {
     public List<ProjectAssignment> assignProjectToEmployees(ProjectAssignmentRequestDTO dto) {
         Project project = projectRepository.findById(dto.getProject_id()).orElseThrow(() -> new RuntimeException("No project Found"));
         List<Long> employeeIds = dto.getEmployeeIds();
-
-
         List<ProjectAssignment> assignments = new ArrayList<>();
 
         for (Long empId : employeeIds) {
@@ -50,22 +49,75 @@ public class ProjectAssignmentService {
         return projectAssignmentRepository.saveAll(assignments);
     }
 
-    public List<Employee> getEmployeesByProject(Long projectId) {
-        System.out.println(projectId);
-        Project project = projectRepository.findById(projectId).orElseThrow(()-> new RuntimeException("No project found"));
-        System.out.println(project.toString());
+//    public List<Employee> getEmployeesByProject(Long projectId) {
+//        System.out.println(projectId);
+//        Project project = projectRepository.findById(projectId).orElseThrow(()-> new RuntimeException("No project found"));
+//        System.out.println(project.toString());
+//        Employee tl = null;
+//        if(project.getTlId()!=null) {
+//            tl = employeeRepository.findById(project.getTlId()).orElseThrow(()-> new RuntimeException("No TL - employee found"));
+//        }
+//        Employee manager = employeeRepository.findById(project.getManagerId()).orElseThrow(()-> new RuntimeException("No TL - employee found"));
+//        List<ProjectAssignment> assignments = projectAssignmentRepository.findByProject_Id(projectId);
+//        List<Employee> dto =  new ArrayList<>(assignments.stream()
+//                .map(ProjectAssignment::getEmployee)
+//                .toList());
+//        if(tl!=null) dto.addFirst(tl);
+//        return dto;
+//    }
+
+    public List<DataTransfer> getEmployeesByProject(Long projectId) {
+
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("No project found"));
+
         Employee tl = null;
-        if(project.getTlId()!=null) {
-            tl = employeeRepository.findById(project.getTlId()).orElseThrow(()-> new RuntimeException("No TL - employee found"));
+        if (project.getTlId() != null) {
+            tl = employeeRepository.findById(project.getTlId())
+                    .orElseThrow(() -> new RuntimeException("No TL found"));
         }
-        Employee manager = employeeRepository.findById(project.getManagerId()).orElseThrow(()-> new RuntimeException("No TL - employee found"));
-        List<ProjectAssignment> assignments = projectAssignmentRepository.findByProject_Id(projectId);
-        List<Employee> dto =  new ArrayList<>(assignments.stream()
-                .map(ProjectAssignment::getEmployee)
-                .toList());
-        if(tl!=null) dto.addFirst(tl);
-        return dto;
+
+        Employee manager = employeeRepository.findById(project.getManagerId())
+                .orElseThrow(() -> new RuntimeException("No Manager found"));
+
+        List<ProjectAssignment> assignments =
+                projectAssignmentRepository.findByProject_Id(projectId);
+
+        List<DataTransfer> result = new ArrayList<>();
+
+        // ✅ Add assigned employees (WITH assignmentId)
+        for (ProjectAssignment pa : assignments) {
+            Employee e = pa.getEmployee();
+
+            result.add(new DataTransfer(
+                    pa.getAssignmentId(),          // ✅ IMPORTANT
+                    e.getEmpId(),
+                    e.getName(),
+                    e.getDesignation(),
+                    e.getManager(),
+                    e.getTL(),
+                    e.getReportingTo(),
+                    e.getDesignation()
+            ));
+        }
+
+        // ✅ Add TL separately (NO assignmentId → cannot be deleted)
+        if (tl != null) {
+            result.add(0, new DataTransfer(
+                    null,                          // ❌ no assignment
+                    tl.getEmpId(),
+                    tl.getName(),
+                    tl.getDesignation(),
+                    tl.getManager(),
+                    true,
+                    tl.getReportingTo(),
+                    "TL"
+            ));
+        }
+
+        return result;
     }
+
 
     public List<Project> getProjectsByEmployee(Long employeeId) {
         List<ProjectAssignment> assignments = projectAssignmentRepository.findByEmployee_EmpId(employeeId);

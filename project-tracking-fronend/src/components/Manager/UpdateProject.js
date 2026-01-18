@@ -12,6 +12,11 @@ const ManagerProjectActions = () => {
   const [tab, setTab] = useState("Send Request");
   const [requestType, setRequestType] = useState("");
   const [reason, setReason] = useState("");
+  const [showAddResourceModal, setShowAddResourceModal] = useState(false);
+  const [availableEmployees, setAvailableEmployees] = useState([]);
+  const [selectedResources, setSelectedResources] = useState([]);
+  const [loadingEmployees, setLoadingEmployees] = useState(false);
+
   const [newCompletionDate, setNewCompletionDate] = useState("");
 
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -30,6 +35,41 @@ const ManagerProjectActions = () => {
 
     }
   };
+
+  const handleAddResources = async () => {
+  if (!selectedProject) {
+    showToast("Please select a project", "warning");
+    return;
+  }
+
+  if (selectedResources.length === 0) {
+    showToast("Please select at least one resource", "warning");
+    return;
+  }
+
+  try {
+    const payload = {
+      project_id: selectedProject.id,
+      employeeIds: selectedResources,
+    };
+
+    // 🚀 backend call (enable when endpoint is ready)
+    await axiosInstance.post("/project-assignment/assign", payload);
+
+    
+
+    showToast("✅ Resources added successfully", "success");
+
+    // reset states
+    setShowAddResourceModal(false);
+    setSelectedResources([]);
+    setRequestType("");
+  } catch (err) {
+    console.error(err);
+    showToast("❌ Failed to add resources", "error");
+  }
+};
+
 
   const handleSubmitProjectUpdate = async () => {
     if (!selectedProject) return;
@@ -143,6 +183,45 @@ const ManagerProjectActions = () => {
     }
   };
 
+  const openAddResourceModal = async () => {
+    if (!selectedProject) {
+      showToast("Select a project first", "warning");
+      return;
+    }
+
+    try {
+      setLoadingEmployees(true);
+      
+      const res = await axiosInstance.get(
+        "/project-assignment/employees/not-in-project",
+        {
+          params: {
+            projectId: selectedProject.id,
+            reportingToId: selectedProject.managerId
+          },
+        }
+      );
+
+      setAvailableEmployees(res.data);
+      setSelectedResources([]);
+      setShowAddResourceModal(true);
+    } catch (err) {
+      showToast("Failed to load employees", "error");
+    } finally {
+      setLoadingEmployees(false);
+    }
+  };
+
+
+  const toggleResourceSelection = (empId) => {
+    setSelectedResources((prev) =>
+      prev.includes(empId)
+        ? prev.filter((id) => id !== empId)
+        : [...prev, empId]
+    );
+  };
+
+
 
   const handleProjectChange = (e) => {
     const p = projects.find((proj) => proj.id === parseInt(e.target.value));
@@ -212,6 +291,10 @@ const ManagerProjectActions = () => {
                   setExtraHours("");
                   setReason("");
                   setNewCompletionDate("");
+
+                  if (e.target.value === "RESOURCE_ADDITION") {
+                    openAddResourceModal();
+                  }
                 }}
               >
                 <option value="">Select Request Type</option>
@@ -337,8 +420,61 @@ const ManagerProjectActions = () => {
         </>
       )}
 
+      {showAddResourceModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalBox}>
+            <h3>Add Resources to {selectedProject?.projectName}</h3>
+
+            {loadingEmployees ? (
+              <p>Loading employees...</p>
+            ) : availableEmployees.length === 0 ? (
+              <p>No employees available</p>
+            ) : (
+              <div className={styles.modalContent}>
+                {availableEmployees.map((emp) => (
+                  <label key={emp.empId} className={styles.checkItem}>
+                    <input
+                      type="checkbox"
+                      checked={selectedResources.includes(emp.empId)}
+                      onChange={() => toggleResourceSelection(emp.empId)}
+                    />
+
+                    <div className={styles.empInfo}>
+                      <div className={styles.empName}>{emp.name}</div>
+                      <div className={styles.empDesignation}>
+                        {emp.designation}
+                      </div>
+                    </div>
+                  </label>
+                ))}
+              </div>
+            )}
+
+            <div className={styles.modalActions}>
+              <button
+                className={styles.doneBtn}
+                disabled={selectedResources.length === 0}
+                onClick={handleAddResources}
+              >
+                Add ({selectedResources.length})
+              </button>
+
+              <button
+                className={styles.cancelBtn}
+                onClick={() => setShowAddResourceModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
+
+
 };
 
 export default ManagerProjectActions;

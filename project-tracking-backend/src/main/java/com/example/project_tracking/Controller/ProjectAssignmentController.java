@@ -59,14 +59,20 @@ public class ProjectAssignmentController {
     }
 
     @GetMapping("/employees/{projectId}")
-    public ResponseEntity<List<DataTransfer>> getEmployeesByProject(@PathVariable Long projectId) {
-        List<Employee> employees = projectAssignmentService.getEmployeesByProject(projectId);
-        List<DataTransfer> dto = employees.stream().map(this::localConversion2).toList();
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<List<DataTransfer>> getEmployeesByProject(
+            @PathVariable Long projectId) {
+
+        return ResponseEntity.ok(
+                projectAssignmentService.getEmployeesByProject(projectId)
+        );
     }
+
+
     @DeleteMapping("/resource-delete")
     public ResponseEntity<String> bulkDeleteWorkDetails(
             @RequestBody ResourcesDeletion request) {
+
+        System.out.println(request.getIds().toString());
 
         projectAssignmentService.deleteWorkDetailsByIds(request.getIds());
 
@@ -86,7 +92,5 @@ public class ProjectAssignmentController {
                 .toList();
         return ResponseEntity.ok(dto);
     }
-
-
 
 }

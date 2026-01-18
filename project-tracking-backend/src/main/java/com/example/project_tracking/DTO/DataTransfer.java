@@ -3,6 +3,7 @@ package com.example.project_tracking.DTO;
 import com.example.project_tracking.Model.Employee;
 
 public class DataTransfer {
+    private Long assignmentId;
     private Long empId;
     private String name;
     private String designation;
@@ -12,8 +13,9 @@ public class DataTransfer {
     private String role;
 
 
-    public DataTransfer( Long empId, String name, String designation,
+    public DataTransfer( Long assignmentId,Long empId, String name, String designation,
                         Boolean isManager, Boolean isTL, Employee reportingTo,String role) {
+        this.assignmentId=assignmentId;
         this.empId = empId;
         this.name = name;
         this.designation = designation;
@@ -29,6 +31,30 @@ public class DataTransfer {
         }
     }
 
+    public DataTransfer(Long empId, String name, String designation,
+                         Boolean isManager, Boolean isTL, Employee reportingTo,String role) {
+        this.empId = empId;
+        this.name = name;
+        this.designation = designation;
+        this.isManager = isManager;
+        this.isTL = isTL;
+        this.role = role;
+
+        // Safely extract reportingTo info
+        if (reportingTo != null) {
+            this.reportingToId = reportingTo.getEmpId();
+        } else {
+            this.reportingToId = null;
+        }
+    }
+
+    public Long getAssignmentId() {
+        return assignmentId;
+    }
+
+    public void setAssignmentId(Long assignmentId) {
+        this.assignmentId = assignmentId;
+    }
 
     public Long getEmpId() {
         return empId;

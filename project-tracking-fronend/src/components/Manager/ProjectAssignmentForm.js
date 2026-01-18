@@ -55,6 +55,7 @@ const ProjectAssignmentForm = () => {
     axiosInstance
       .get(`/project-assignment/employees/${resourceProjectId}`)
       .then(res => {
+        
         setProjectResources(res.data);
         setSelectedToRemove([]);
         setRemoveMode(false);
@@ -101,7 +102,6 @@ const ProjectAssignmentForm = () => {
       .then((res) => {
         const allEmployees = res.data;
 
-        console.log(allEmployees);
 
         // ✅ Categorize employees by their role
         const grouped = {
@@ -161,6 +161,39 @@ const ProjectAssignmentForm = () => {
 
     });
   };
+
+  const handleDeallocateResources = async () => {
+  if (selectedToRemove.length === 0) {
+    showToast("⚠️ Select at least one resource", "warning");
+    return;
+  }
+
+  if (!window.confirm("Are you sure you want to deallocate selected resources?")) {
+    return;
+  }
+
+  try {
+    await axiosInstance.delete("/project-assignment/resource-delete", {
+      data: { ids: selectedToRemove }
+    });
+
+    showToast("✅ Resources deallocated successfully", "success");
+
+    // Refresh list
+    const res = await axiosInstance.get(
+      `/project-assignment/employees/${resourceProjectId}`
+    );
+    setProjectResources(res.data);
+
+    setRemoveMode(false);
+    setSelectedToRemove([]);
+
+  } catch (err) {
+    showToast("❌ Failed to deallocate resources", "error");
+  }
+};
+
+
 
   const handleResourceProjectChange = (e) => {
     const selected = resourceProjects.find(
@@ -406,8 +439,10 @@ const ProjectAssignmentForm = () => {
                           <td>
                             <input
                               type="checkbox"
-                              checked={selectedToRemove.includes(emp.empId)}
-                              onChange={() => toggleRemoveSelection(emp.empId)}
+                              checked={selectedToRemove.includes(emp.assignmentId)}
+                              onChange={() => toggleRemoveSelection(emp.assignmentId)}
+                              disabled={!emp.assignmentId} // prevents TL deletion
+
                             />
                           </td>
                         )}
@@ -470,13 +505,11 @@ const ProjectAssignmentForm = () => {
                   <button
                     className={styles.doneBtn}
                     disabled={selectedToRemove.length === 0}
-                    onClick={() => {
-                      // 🚨 call deallocate endpoint later
-                      console.log("IDs to deallocate:", selectedToRemove);
-                    }}
+                    onClick={handleDeallocateResources}
                   >
                     Deallocate Selected
                   </button>
+
                 </div>
               )}
             </>
@@ -602,7 +635,7 @@ const ProjectAssignmentForm = () => {
         </>
       )}
       {/* ✅ Keep Modal Outside So form doesn't hide */}
-      {showResourceModal && !(
+      {showResourceModal && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalBox}>
             <h3 style={{ marginBottom: "10px" }}>Select Resources</h3>
@@ -622,7 +655,7 @@ const ProjectAssignmentForm = () => {
             <div className={styles.modalContent}>
               {employeesByRole[selectedRole].map((emp) => {
                 const checked = selectedResources.some((r) => r.empId === emp.empId && r.role === selectedRole);
-                console.log(employeesByRole);
+                
                 return (
                   <label key={emp.empId} className={styles.checkItem}>
                     <input
