@@ -217,6 +217,7 @@ const ManagerProjectActions = () => {
                 <option value="">Select Request Type</option>
                 <option value="EXTRA_HOURS">Extra Hours Request</option>
                 <option value="COMPLETION_EXTENSION">Completion Date Extension</option>
+                <option value="RESOURCE_ADDITION">Add Resources</option>
               </select>
             </div>
           )}

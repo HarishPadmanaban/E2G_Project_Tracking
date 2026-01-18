@@ -828,3 +828,58 @@ html, body {
   padding: 0 5px;
   color: #666;
 }
+
+.resourceTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.resourceTable th,
+.resourceTable td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.actionsCol {
+  text-align: right;
+}
+
+.menuWrapper {
+  position: relative;
+}
+
+.menuBtn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.menuDropdown {
+  position: absolute;
+  right: 0;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  border-radius: 4px;
+  z-index: 10;
+}
+
+.menuDropdown button {
+  padding: 8px 12px;
+  width: 100%;
+  border: none;
+  background: white;
+  cursor: pointer;
+}
+
+.menuDropdown button:hover {
+  background: #f5f5f5;
+}
+
+.removeBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}

@@ -16,10 +16,26 @@ const ProjectAssignmentForm = () => {
       navigate("/"); // 👈 redirect to login page
     }
   }, [employee, loading, navigate]);
+
+
+
   const managerIdToUse = employee?.manager ? employee.empId : employee?.reportingToId;
   const [projects, setProjects] = useState([]);
+  const [resourceProjects, setResourceProjects] = useState([]);
+  const [openMenuId, setOpenMenuId] = useState(null);
+
   const [teamLeads, setTeamLeads] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState("");
+  const [activeTab, setActiveTab] = useState("distribution");
+  const [projectResources, setProjectResources] = useState([]);
+  const [loadingResources, setLoadingResources] = useState(false);
+
+  const [removeMode, setRemoveMode] = useState(false); // 👈 checkbox mode
+  const [selectedToRemove, setSelectedToRemove] = useState([]);
+
+  const [resourceProjectId, setResourceProjectId] = useState("");
+  const [resourceProject, setResourceProject] = useState(null);
+
   const [employeesByRole, setEmployeesByRole] = useState({
     Modeler: [],
     Checker: [],
@@ -30,8 +46,22 @@ const ProjectAssignmentForm = () => {
   const [selectedRole, setSelectedRole] = useState("Modeler"); // ✅ NEW
   const [selectedResources, setSelectedResources] = useState([]); // ✅ NEW4
   const { showToast } = useToast();
-  
 
+  useEffect(() => {
+    if (!resourceProjectId) return;
+
+    setLoadingResources(true);
+
+    axiosInstance
+      .get(`/project-assignment/employees/${resourceProjectId}`)
+      .then(res => {
+        setProjectResources(res.data);
+        setSelectedToRemove([]);
+        setRemoveMode(false);
+      })
+      .finally(() => setLoadingResources(false));
+
+  }, [resourceProjectId]);
 
 
   useEffect(() => {
@@ -41,24 +71,24 @@ const ProjectAssignmentForm = () => {
       .get(`/project/manager/${managerIdToUse}/active`) // Dummy backend endpoint
       .then((proj) => {
         const inProgress = proj.data.filter((p) => p.workingHours === 0 && p.tlId === null);
-        
         setProjects(inProgress);
+        setResourceProjects(proj.data)
       })
-      
+
   }, [managerIdToUse]);
 
 
   useEffect(() => {
     if (!managerIdToUse) return;
 
-    
+
     const res = axiosInstance
       .get(`/employee/gettls?mgrid=${managerIdToUse}`) // Dummy backend endpoint
       .then((res) => {
-        
+
         setTeamLeads(res.data);
       })
-      
+
   }, [managerIdToUse]);
 
   useEffect(() => {
@@ -89,7 +119,7 @@ const ProjectAssignmentForm = () => {
         setEmployeesByRole(grouped);
       })
       .catch((err) => {
-        
+
       });
   }, [managerIdToUse]);
 
@@ -101,8 +131,23 @@ const ProjectAssignmentForm = () => {
     detailingHours: "",
     studyHours: "",
     startDate: "",
-    projectActivity: "" 
+    projectActivity: ""
   });
+
+  const toggleRemoveSelection = (empId) => {
+    setSelectedToRemove(prev =>
+      prev.includes(empId)
+        ? prev.filter(id => id !== empId)
+        : [...prev, empId]
+    );
+  };
+
+  const enableRemoveMode = () => {
+    setRemoveMode(true);
+    setOpenMenuId(null);
+  };
+
+
 
 
   // ✅ updated toggle so we store role, name & designation in selectedResources
@@ -115,6 +160,14 @@ const ProjectAssignmentForm = () => {
       return [...prev, { empId: emp.empId, name: emp.name, designation: emp.designation.trim(), role: selectedRole }];
 
     });
+  };
+
+  const handleResourceProjectChange = (e) => {
+    const selected = resourceProjects.find(
+      (p) => p.id === parseInt(e.target.value)
+    );
+    setResourceProjectId(e.target.value);
+    setResourceProject(selected || null);
   };
 
 
@@ -142,33 +195,33 @@ const ProjectAssignmentForm = () => {
 
   const validateForm = async () => {
     if (!formData.projectId) {
-      showToast("⚠️ Please select a project.","warning");
+      showToast("⚠️ Please select a project.", "warning");
       return false;
     }
 
     if (!formData.tl1) {
-      showToast("⚠️ Please select Team Lead.","warning");
+      showToast("⚠️ Please select Team Lead.", "warning");
       return false;
     }
 
 
     if (!formData.projectActivity) {
-      showToast("⚠️ Please select Project Activity","warning");
+      showToast("⚠️ Please select Project Activity", "warning");
       return false;
     }
 
 
 
 
-  if (
-    !formData.modellingHours ||
-    !formData.checkingHours ||
-    !formData.detailingHours||
-    !formData.studyHours
-  ) {
-    showToast("⚠️ Please fill all hour fields (Modelling, Checking, Detailing,Study).","warning");
-    return false;
-  }
+    if (
+      !formData.modellingHours ||
+      !formData.checkingHours ||
+      !formData.detailingHours ||
+      !formData.studyHours
+    ) {
+      showToast("⚠️ Please fill all hour fields (Modelling, Checking, Detailing,Study).", "warning");
+      return false;
+    }
 
     if (
       Number(formData.modellingHours) <= 0 ||
@@ -176,7 +229,7 @@ const ProjectAssignmentForm = () => {
       Number(formData.detailingHours) <= 0 ||
       Number(formData.studyHours) <= 0
     ) {
-      showToast("⚠️ Hours must be greater than 0.","warning");
+      showToast("⚠️ Hours must be greater than 0.", "warning");
       return false;
     }
 
@@ -189,12 +242,12 @@ const ProjectAssignmentForm = () => {
     if (selectedProject && total !== selectedProject.assignedHours) {
       showToast(
         `❌ Total assigned hours (${total}) must match project total (${selectedProject.assignedHours}).`
-      ,"error");
+        , "error");
       return false;
     }
 
     try {
-      
+
       // ✅ STEP 1: Add project hours
       const hoursResponse = await axiosInstance.put(
         `/project/${formData.projectId}/add-hours`,
@@ -211,10 +264,10 @@ const ProjectAssignmentForm = () => {
         }
       );
 
-      
+
 
       // ✅ STEP 2: Assign resources (separate endpoint)
-      
+
 
       const payload = {
         project_id: formData.projectId,
@@ -226,9 +279,9 @@ const ProjectAssignmentForm = () => {
         payload
       );
 
-      
 
-      showToast("✅ Project and resources assigned successfully!","success");
+
+      showToast("✅ Project and resources assigned successfully!", "success");
 
       // ✅ Reset everything
       setFormData({
@@ -251,11 +304,11 @@ const ProjectAssignmentForm = () => {
       const inProgress = updatedProjectsRes.data.filter((p) => p.workingHours === 0 && p.tlId === null);
 
       setProjects(inProgress);
-      
+
 
     } catch (error) {
-      
-      showToast("❌ Failed to assign project or resources","error");
+
+      showToast("❌ Failed to assign project or resources", "error");
     }
   };
 
@@ -265,34 +318,183 @@ const ProjectAssignmentForm = () => {
     <div className={styles.container}>
       <h2>Project Distribution</h2>
 
-      {/* Project Dropdown */}
-      <div className={styles.fld}>
-        <label>Choose Project</label>
-        <select
-          name="projectId"
-          value={formData.projectId}
-          onChange={handleProjectChange}
+      <div className={styles.filterButtons}>
+        <button
+          onClick={() => setActiveTab("distribution")}
+          className={`${styles.filterBtn} ${activeTab === "distribution" ? styles.active : ""
+            }`}
         >
-          <option value="">Select Project</option>
-          {projects
-            .filter((p) => p.projectStatus)
-            .map((proj) => (
-              <option key={proj.id} value={proj.id}>
-                {proj.projectName} ({proj.clientName})
-              </option>
-            ))}
-        </select>
+          Project Distribution
+        </button>
+
+        <button
+          onClick={() => setActiveTab("resources")}
+          className={`${styles.filterBtn} ${activeTab === "resources" ? styles.active : ""
+            }`}
+        >
+          Manage Resources
+        </button>
       </div>
+
+
+      {/* Project Dropdown */}
+      {activeTab === "distribution" && (
+        <>
+          <div className={styles.fld}>
+            <label>Choose Project</label>
+            <select
+              name="projectId"
+              value={formData.projectId}
+              onChange={handleProjectChange}
+            >
+              <option value="">Select Project</option>
+              {projects
+                .filter((p) => p.projectStatus)
+                .map((proj) => (
+                  <option key={proj.id} value={proj.id}>
+                    {proj.projectName} ({proj.clientName})
+                  </option>
+                ))}
+            </select>
+          </div>
+        </>
+      )}
+
+
+      {activeTab === "resources" && (
+        <>
+
+          {/* Project dropdown */}
+          <div className={styles.fld}>
+            <label>Choose Project</label>
+            <select
+              value={resourceProjectId}
+              onChange={handleResourceProjectChange}
+            >
+              <option value="">Select Project</option>
+              {resourceProjects.map((proj) => (
+                <option key={proj.id} value={proj.id}>
+                  {proj.projectName} ({proj.clientName})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Show button only after project selection */}
+
+          {resourceProject && (
+            <>
+              {loadingResources ? (
+                <p>Loading resources...</p>
+              ) : projectResources.length === 0 ? (
+                <p>No resources assigned to this project.</p>
+              ) : (
+                <table className={styles.resourceTable}>
+                  <thead>
+                    <tr>
+                      {removeMode && <th></th>}
+                      <th>Name</th>
+                      <th>Designation</th>
+                      <th>Role</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {projectResources.map(emp => (
+                      <tr key={emp.empId}>
+                        {removeMode && (
+                          <td>
+                            <input
+                              type="checkbox"
+                              checked={selectedToRemove.includes(emp.empId)}
+                              onChange={() => toggleRemoveSelection(emp.empId)}
+                            />
+                          </td>
+                        )}
+
+                        <td>{emp.name}</td>
+                        <td>{emp.designation}</td>
+                        <td>{emp.role}</td>
+
+                        <td className={styles.actionsCol}>
+                          {!removeMode && (
+                            <div className={styles.menuWrapper}>
+                              <div className={styles.menuWrapper}>
+                                <button
+                                  className={styles.menuBtn}
+                                  onClick={() =>
+                                    setOpenMenuId(openMenuId === emp.empId ? null : emp.empId)
+                                  }
+                                >
+                                  ⋮
+                                </button>
+
+                                {openMenuId === emp.empId && (
+                                  <div className={styles.menuDropdown}>
+                                    <button
+                                      onClick={() => {
+                                        enableRemoveMode();
+                                        setOpenMenuId(null);
+                                      }}
+                                    >
+                                      Remove
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+
+              {/* Remove action bar */}
+              {removeMode && (
+                <div className={styles.removeBar}>
+                  <span>{selectedToRemove.length} selected</span>
+
+                  <button
+                    className={styles.cancelBtn}
+                    onClick={() => {
+                      setRemoveMode(false);
+                      setSelectedToRemove([]);
+                    }}
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    className={styles.doneBtn}
+                    disabled={selectedToRemove.length === 0}
+                    onClick={() => {
+                      // 🚨 call deallocate endpoint later
+                      console.log("IDs to deallocate:", selectedToRemove);
+                    }}
+                  >
+                    Deallocate Selected
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+
+        </>
+      )}
+
 
 
 
       {/* Show next fields only after project selection */}
-      {selectedProject && (
+      {selectedProject && activeTab === "distribution" && (
         <>
 
           <div className={styles.fld}>
             <label>Project Activity</label>
-            <select 
+            <select
               name="projectActivity"
               value={selectedActivity}
               onChange={(e) => {
@@ -400,7 +602,7 @@ const ProjectAssignmentForm = () => {
         </>
       )}
       {/* ✅ Keep Modal Outside So form doesn't hide */}
-      {showResourceModal && (
+      {showResourceModal && !(
         <div className={styles.modalOverlay}>
           <div className={styles.modalBox}>
             <h3 style={{ marginBottom: "10px" }}>Select Resources</h3>
