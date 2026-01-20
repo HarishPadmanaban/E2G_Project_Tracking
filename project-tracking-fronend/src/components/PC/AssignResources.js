@@ -51,8 +51,8 @@ const AssignActivityForm = () => {
     axiosInstance
       .get(`/project/${idToUse}`) // Dummy API
       .then((res) => {
-        
-        
+
+
         setProjects(res.data);
       })
       .catch((err) => console.error(err));
@@ -65,12 +65,12 @@ const AssignActivityForm = () => {
       return;
     }
 
-    
+
 
     axiosInstance
       .get(`/project-assignment/employees/${formData.projectId}`)
       .then((res) => {
-        
+
         if (res.data.length === 0) {
           // If no employees assigned to this project, get all employees under manager
           axiosInstance
@@ -105,6 +105,38 @@ const AssignActivityForm = () => {
       .catch((err) => console.error("Error fetching assigned work:", err));
   }, [activeTab, idToUse]);
 
+
+  const handlePendingRowClick = async (work) => {
+    // ✔ Match any status that CONTAINS "PENDING"
+    if (!work.status || !work.status.toUpperCase().includes("PENDING")) return;
+
+    const confirm = window.confirm(
+      "Do you wish to reassign the work?"
+    );
+
+    if (!confirm) return;
+
+    try {
+      await axiosInstance.post(
+        "/notifications/create",
+        null,
+        {
+          params: {
+            senderId: idToUse,
+            receiverId: work.employeeId,
+            title: "Activity Reassign",
+            message: `Manager wants to reassign the activity "${work.activityName}" for project "${work.projectName}".`,
+            type: "REASSIGN_REQUEST",
+          },
+        }
+      );
+
+      showToast("📢 Reassign notification sent!", "success");
+    } catch (error) {
+      console.error(error);
+      showToast("❌ Failed to send notification", "error");
+    }
+  };
 
 
   const handleChange = (e) => {
@@ -377,7 +409,16 @@ const AssignActivityForm = () => {
                 </tr>
               ) : (
                 filteredAssignedWorks.map((work) => (
-                  <tr key={work.id}>
+                  <tr
+                    key={work.id}
+                    onClick={() => handlePendingRowClick(work)}
+                    className={
+                      work.status?.toUpperCase().includes("PENDING")
+                        ? styles.clickableRow
+                        : ""
+                    }
+                  >
+
                     <td>{work.assignedDate}</td>
                     <td>{work.employeeName}</td>
                     <td>{work.projectName}</td>
@@ -393,14 +434,19 @@ const AssignActivityForm = () => {
                           : styles.statusInProgress
                       }
                     >
-                      {work.status}
+                      {work.status.toUpperCase()}
                     </td>
                     <td>
                       <button
-
                         className={styles.actionBtn}
-                        onClick={() => handleDelete(work.id)}
-                      >🗑️</button>
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(work.id);
+                        }}
+                      >
+                        🗑️
+                      </button>
+
                     </td>
                   </tr>
                 ))

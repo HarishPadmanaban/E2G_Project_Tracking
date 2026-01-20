@@ -58,7 +58,10 @@ public class AssignedWorkService {
                 manager.getEmpId(), // Sender → PM
                 employee.getEmpId(), // Receiver → Employee
                 "New Activity Assigned",
-                "You have a new activity assigned in project: " + project.getProjectName(),
+                "\"" + activity.getActivityName() + "\" is assigned in project \""
+                        + project.getProjectName()
+                        + "\"\nDescription: "
+                        + assignedWork.getDescription(),
                 "ACTIVITY_ASSIGNMENT"
         );
         return assignedWorkRepository.save(assignedWork);

@@ -105,6 +105,7 @@
         setDateFilter("All");
         setCustomRange({ from: "", to: "" });
         setFilteredRequests(requests);
+        setShowCustomBox(false);
     };
 
     const exportToExcel = () => {

@@ -883,3 +883,11 @@ html, body {
   align-items: center;
   margin-top: 15px;
 }
+
+.clickableRow {
+  cursor: pointer;
+}
+
+.clickableRow:hover {
+  background-color: #e6e4e3;
+}
