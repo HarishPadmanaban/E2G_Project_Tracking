@@ -260,65 +260,63 @@ public class WorkDetailsService {
         );
     }
 
-    public WorkDetailsResponse stopWork(Long employeeId, String endTime, String workHoursStr) {
-        WorkDetails work = workDetailsRepository.findTopByAssignedWorkId_Employee_EmpIdAndEndTimeIsNullOrderByIdDesc(employeeId)
+    public WorkDetailsResponse stopWork(Long employeeId) {
+        WorkDetails work = workDetailsRepository
+                .findTopByAssignedWorkId_Employee_EmpIdAndEndTimeIsNullOrderByIdDesc(employeeId)
                 .orElseThrow(() -> new RuntimeException("No active work found for employee"));
 
         LocalTime startTime = work.getStartTime();
-        LocalTime newEndTime = LocalTime.parse(endTime);
+        LocalTime endTime = LocalTime.now().withNano(0); // ✅ BACKEND TIME
 
-        // 2️⃣ Calculate work duration in hours BEFORE setting end time
         Duration duration;
 
-        if (newEndTime.isBefore(startTime)) {
-            // Overnight shift (crosses midnight)
+        // Midnight-safe calculation
+        if (endTime.isBefore(startTime)) {
             duration = Duration.between(startTime, LocalTime.MIDNIGHT)
-                    .plus(Duration.between(LocalTime.MIN, newEndTime));
+                    .plus(Duration.between(LocalTime.MIN, endTime));
         } else {
-            // Same-day shift
-            duration = Duration.between(startTime, newEndTime);
+            duration = Duration.between(startTime, endTime);
         }
 
         double calculatedHours = duration.toMinutes() / 60.0;
+        calculatedHours = Math.round(calculatedHours * 100.0) / 100.0;
 
-
-        // 3️⃣ Fetch related Project and Activity
         AssignedWork assignedWork = work.getAssignedWorkId();
-        Project project = assignedWork.getProject();
-        Activity activity = assignedWork.getActivity();
 
-        // 4️⃣ Validate project-level target hours BEFORE saving
-        validateTargetHours(project, activity, calculatedHours, true);
+        // Validate against project limits
+        validateTargetHours(
+                assignedWork.getProject(),
+                assignedWork.getActivity(),
+                calculatedHours,
+                true
+        );
 
-        // 5️⃣ If validation passes, set end time and work hours
-        work.setEndTime(newEndTime);
+        work.setEndTime(endTime);
         work.setWorkHours(calculatedHours);
 
         return convertToResponse(workDetailsRepository.save(work));
     }
 
 
+
     public WorkDetailsResponse saveFinalWork(WorkDetailsRequest request, Long activeWorkId) {
-        WorkDetails work = workDetailsRepository.findById(activeWorkId).orElse(null);
+        AssignedWork as = assignedWorkRepository.findById(request.getAssignedWorkId()).orElseThrow(()-> new RuntimeException("No Assigned work found"));
+        WorkDetails work = workDetailsRepository
+                .findById(activeWorkId)
+                .orElseThrow(() -> new RuntimeException("No work log found for assigned work"));
+
         if(work==null) return null;
-        work.setStartTime(request.getStartTime());
-        work.setEndTime(request.getEndTime());
-        work.setWorkHours(request.getWorkHours());
-        work.setProjectActivity(request.getProjectActivity());
-        work.setAssignedWork(request.getAssignedWork());
         work.setStatus(request.getStatus());
         work.setRemarks(request.getRemarks());
 
         if(request.getStatus().trim().toLowerCase().equals("completed")){
-            AssignedWork assignedWork = assignedWorkRepository.findById(request.getAssignedWorkId()).orElseThrow(()-> new RuntimeException("No assigned activity found"));
-            assignedWork.setStatus(request.getStatus().trim());
+            //AssignedWork assignedWork = assignedWorkRepository.findById(request.getAssignedWorkId()).orElseThrow(()-> new RuntimeException("No assigned activity found"));
+            as.setStatus(request.getStatus().trim());
         }
 
-        Project project = projectRepository.findById(request.getProjectId())
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+        Project project = as.getProject();
 
-        Activity activity = activityRepository.findById(request.getActivityId())
-                .orElseThrow(() -> new RuntimeException("Activity not found"));
+        Activity activity = as.getActivity();
 
         if (request.getWorkHours() != null) {
             updateProjectWorkingHours(project, activity, request.getWorkHours());
@@ -326,8 +324,8 @@ public class WorkDetailsService {
 
         if(request.getActivityId()==43 && request.getStatus().trim().toLowerCase().equals("pending"))
         {
-            AssignedWork assignedWork = assignedWorkRepository.findById(request.getAssignedWorkId()).orElseThrow(()-> new RuntimeException("No assigned activity found"));
-            assignedWork.setStatus("SPECIAL-PENDING");
+            //AssignedWork assignedWork = assignedWorkRepository.findById(request.getAssignedWorkId()).orElseThrow(()-> new RuntimeException("No assigned activity found"));
+            as.setStatus("SPECIAL-PENDING");
         }
 
         return convertToResponse(workDetailsRepository.save(work));

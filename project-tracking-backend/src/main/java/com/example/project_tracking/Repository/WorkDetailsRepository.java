@@ -1,5 +1,6 @@
 package com.example.project_tracking.Repository;
 
+import com.example.project_tracking.Model.AssignedWork;
 import com.example.project_tracking.Model.WorkDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,6 +25,8 @@ public interface WorkDetailsRepository extends JpaRepository<WorkDetails,Long> {
 
         // Latest running work entry (endTime = null)
         Optional<WorkDetails> findTopByAssignedWorkId_Employee_EmpIdAndEndTimeIsNullOrderByIdDesc(Long employeeId);
+
+        Optional<WorkDetails> findTopByAssignedWorkIdOrderByIdDesc(AssignedWork assignedWorkId);
 
         // By employee and project
         @Query("""

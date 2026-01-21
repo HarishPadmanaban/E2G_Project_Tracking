@@ -434,46 +434,37 @@ const EmployeeWorkForm = () => {
         });
     } else {
       const now = new Date();
-      const end =
-        now.getHours().toString().padStart(2, "0") +
-        ":" +
-        now.getMinutes().toString().padStart(2, "0");
+  const end =
+    now.getHours().toString().padStart(2, "0") +
+    ":" +
+    now.getMinutes().toString().padStart(2, "0");
 
-      const [startH, startM] = formData.startTime.split(":").map(Number);
-      const [endH, endM] = end.split(":").map(Number);
-      let diffMinutes = endH * 60 + endM - (startH * 60 + startM);
-      if (diffMinutes < 0) diffMinutes += 24 * 60;
-      const diffHours = (diffMinutes / 60).toFixed(2);
-      console.log(end)
-      console.log(diffHours)
-      axiosInstance
-        .put(`/workdetails/stop/${employee.empId}`, null, {
-          params: {
-            endTime: end + ":00",
-            workHours: diffHours,
-          },
-        })
-        .then(() => {
-          setFormData((prev) => ({
-            ...prev,
-            endTime: end,
-            workHours: diffHours,
-          }));
-          setIsRunning(false);
-          setStopDisabled(true);
-          setStartDisabled(true);
-          setSubmitDisabled(false);
-        })
-        .catch((err) => {
-          
+  axiosInstance
+    .put(`/workdetails/stop/${employee.empId}`, null, {
+      params: {
+        endTime: end + ":00"   // ONLY endTime
+      },
+    })
+    .then((res) => {
+      setFormData((prev) => ({
+        ...prev,
+        endTime: res.data.endTime,
+        workHours: res.data.workHours, // FROM BACKEND
+      }));
 
-          // Extract backend error message safely
-          const backendMsg =
-            err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
-            console.log(backendMsg)
-          // Show the exact backend message to user
-          showToast(backendMsg,"error");
-        });
+      setIsRunning(false);
+      setStopDisabled(true);
+      setStartDisabled(true);
+      setSubmitDisabled(false);
+    })
+    .catch((err) => {
+      const backendMsg =
+        err.response?.data?.message ||
+        err.response?.data ||
+        "Something went wrong while stopping work!";
+
+      showToast(backendMsg, "error");
+    });
     }
   };
 
@@ -529,22 +520,13 @@ const EmployeeWorkForm = () => {
     }
 
     const payload = {
-      employeeId: employee.empId,
-      managerId: employee.reportingToId,
-      projectId: formData.projectId,
-      activityId: formData.activityId,
-      date: new Date().toISOString().split("T")[0],
-      workHours: parseFloat(formData.workHours).toFixed(2),
-      startTime: formData.startTime + ":00",
-      endTime: formData.endTime + ":00",
-      projectActivity: formData.projectActivity,
-      assignedWork: formData.assignedWork,
       assignedWorkId: formData.assignedWorkId,
+      activityId: formData.activityId, 
       status: formData.status,
       remarks: formData.remarks,
     };
 
-    
+    console.log(payload)
 
     axiosInstance
       .put(`/workdetails/savefinal`, payload, {
