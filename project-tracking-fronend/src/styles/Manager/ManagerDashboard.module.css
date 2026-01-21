@@ -104,7 +104,7 @@
   border-radius: 8px;
   table-layout: fixed;
   display: block;
-  max-height: 400px; /* enables scroll when needed */
+  max-height: 500px; /* enables scroll when needed */
   overflow-y: auto;
 }
 

@@ -12,6 +12,11 @@ body {
   margin-bottom: 20px;
 }
 
+.statusCompleted {
+  color: green;
+  font-weight: 600;
+}
+
 .tabBtn {
   background: #e5e7eb;
   border: none;

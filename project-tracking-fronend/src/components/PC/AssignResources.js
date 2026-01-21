@@ -17,14 +17,14 @@ const AssignActivityForm = () => {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [dateFilter, setDateFilter] = useState("All");
+  const [customRange, setCustomRange] = useState({ from: "", to: "" });
+  const [showCustomBox, setShowCustomBox] = useState(false);
+
   const itemsPerPage = 10;
 
-  const totalPages = Math.ceil(assignedWorks.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentAssignedWorks = assignedWorks.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
+  
+  
 
   useEffect(() => {
     setCurrentPage(1);
@@ -51,8 +51,8 @@ const AssignActivityForm = () => {
     axiosInstance
       .get(`/project/${idToUse}`) // Dummy API
       .then((res) => {
-        
-        
+
+
         setProjects(res.data);
       })
       .catch((err) => console.error(err));
@@ -65,12 +65,12 @@ const AssignActivityForm = () => {
       return;
     }
 
-    
+
 
     axiosInstance
       .get(`/project-assignment/employees/${formData.projectId}`)
       .then((res) => {
-        
+
         if (res.data.length === 0) {
           // If no employees assigned to this project, get all employees under manager
           axiosInstance
@@ -105,6 +105,10 @@ const AssignActivityForm = () => {
       .catch((err) => console.error("Error fetching assigned work:", err));
   }, [activeTab, idToUse]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter, searchTerm, dateFilter, customRange, assignedWorks]);
+
 
 
   const handleChange = (e) => {
@@ -125,6 +129,13 @@ const AssignActivityForm = () => {
       }));
     }
   };
+
+  const parseLocalDate = (dateStr) => {
+    if (!dateStr) return null;
+    const [y, m, d] = dateStr.split("-");
+    return new Date(y, m - 1, d);
+  };
+
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this assigned work?")) {
@@ -192,18 +203,65 @@ const AssignActivityForm = () => {
   };
 
   const filteredAssignedWorks = assignedWorks.filter((work) => {
+    const today = new Date();
+
+    // ✅ Status filter (Pending + Special Pending)
     const matchesStatus =
-      statusFilter === "ALL" || work.status === statusFilter;
+      statusFilter === "ALL"
+        ? true
+        : statusFilter === "PENDING"
+          ? work.status?.toUpperCase().includes("PENDING")
+          : work.status === statusFilter;
 
+    // ✅ Search filter
     const search = searchTerm.toLowerCase();
-
     const matchesSearch =
       work.projectName?.toLowerCase().includes(search) ||
       work.employeeName?.toLowerCase().includes(search) ||
       work.employeeId?.toString().includes(search);
 
-    return matchesStatus && matchesSearch;
+    // ✅ Date filter
+    let matchesDate = true;
+    const assignedDate = parseLocalDate(work.assignedDate);
+
+    if (dateFilter === "Today") {
+      matchesDate =
+        assignedDate?.toDateString() === today.toDateString();
+    } else if (dateFilter === "Yesterday") {
+      const yesterday = new Date();
+      yesterday.setDate(today.getDate() - 1);
+      matchesDate =
+        assignedDate?.toDateString() === yesterday.toDateString();
+    } else if (dateFilter === "Last 7 Days") {
+      const past7 = new Date();
+      past7.setDate(today.getDate() - 7);
+      matchesDate = assignedDate >= past7 && assignedDate <= today;
+    } else if (dateFilter === "Last 30 Days") {
+      const past30 = new Date();
+      past30.setDate(today.getDate() - 30);
+      matchesDate = assignedDate >= past30 && assignedDate <= today;
+    } else if (
+      dateFilter === "Custom" &&
+      customRange.from &&
+      customRange.to
+    ) {
+      const from = parseLocalDate(customRange.from);
+      const to = parseLocalDate(customRange.to);
+      matchesDate = assignedDate >= from && assignedDate <= to;
+    }
+
+    return matchesStatus && matchesSearch && matchesDate;
   });
+
+  const totalPages = Math.ceil(filteredAssignedWorks.length / itemsPerPage);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+
+  const currentAssignedWorks = filteredAssignedWorks.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
 
 
   return (
@@ -327,6 +385,23 @@ const AssignActivityForm = () => {
               className={styles.searchInput}
             />
 
+            <select
+              value={dateFilter}
+              onChange={(e) => {
+                const value = e.target.value;
+                setDateFilter(value);
+                setShowCustomBox(value === "Custom");
+              }}
+              className={styles.filterSelect}
+            >
+              <option value="All">All Dates</option>
+              <option value="Today">Today</option>
+              <option value="Yesterday">Yesterday</option>
+              <option value="Last 7 Days">Last 7 Days</option>
+              <option value="Last 30 Days">Last 30 Days</option>
+            </select>
+
+
             {/* Status Filter */}
             <div style={{ marginLeft: "auto", display: "flex", gap: "10px" }}>
               <select
@@ -336,8 +411,7 @@ const AssignActivityForm = () => {
               >
                 <option value="ALL">All Status</option>
                 <option value="PENDING">Pending</option>
-                <option value="IN_PROGRESS">In Progress</option>
-                <option value="COMPLETED">Completed</option>
+                <option value="Completed">Completed</option>
               </select>
 
               <button
@@ -369,14 +443,14 @@ const AssignActivityForm = () => {
             </thead>
 
             <tbody>
-              {filteredAssignedWorks.length === 0 ? (
+              {currentAssignedWorks.length === 0 ? (
                 <tr>
                   <td colSpan="8" className={styles.noData}>
                     No assigned work found.
                   </td>
                 </tr>
               ) : (
-                filteredAssignedWorks.map((work) => (
+                currentAssignedWorks.map((work) => (
                   <tr key={work.id}>
                     <td>{work.assignedDate}</td>
                     <td>{work.employeeName}</td>
@@ -384,11 +458,9 @@ const AssignActivityForm = () => {
                     <td>{work.assignedByName}</td>
                     <td>{work.activityName}</td>
                     <td>{work.description}</td>
-
-
                     <td
                       className={
-                        work.status === "COMPLETED"
+                        work.status === "Completed"
                           ? styles.statusCompleted
                           : styles.statusInProgress
                       }
@@ -397,15 +469,17 @@ const AssignActivityForm = () => {
                     </td>
                     <td>
                       <button
-
                         className={styles.actionBtn}
                         onClick={() => handleDelete(work.id)}
-                      >🗑️</button>
+                      >
+                        🗑️
+                      </button>
                     </td>
                   </tr>
                 ))
               )}
             </tbody>
+
           </table>
 
           {filteredAssignedWorks.length > itemsPerPage && (
