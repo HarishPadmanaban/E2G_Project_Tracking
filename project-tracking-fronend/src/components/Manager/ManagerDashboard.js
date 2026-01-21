@@ -595,6 +595,8 @@ const ManagerDashboard = () => {
                     </button>
                   </div>
 
+                  <div className={styles.resourcesTableWrapper}>
+
                   <table className={styles.resourcesTable}>
                     <thead>
                       <tr>
@@ -627,6 +629,7 @@ const ManagerDashboard = () => {
                       )}
                     </tbody>
                   </table>
+                 
 
                   {/* ✅ Numbered Pagination */}
                   {worklogs.length > itemsPerPage && (
@@ -686,6 +689,8 @@ const ManagerDashboard = () => {
                       </button>
                     </div>
                   )}
+
+                   </div>
 
                   <button
                     className={styles.closeBtn}

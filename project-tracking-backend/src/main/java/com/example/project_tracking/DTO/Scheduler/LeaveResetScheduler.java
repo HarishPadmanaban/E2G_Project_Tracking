@@ -44,7 +44,7 @@ public class LeaveResetScheduler {
         List<LeaveBalance> balances = leaveBalanceRepo.findAll();
 
         for (LeaveBalance lb : balances) {
-            lb.setPermissionBalance(2.0);
+            lb.setPermissionBalance(4.0);
         }
 
         leaveBalanceRepo.saveAll(balances);

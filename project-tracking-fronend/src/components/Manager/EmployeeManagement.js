@@ -177,6 +177,7 @@ const EmployeesUnderManager = () => {
 
                         {/* ✅ NEW: Worklogs section */}
                         <h3 style={{ marginTop: "20px" }}>Worklogs</h3>
+                        <div className={styles.memberTableWrapper}>
                         <table className={styles.memberTable}>
                             <thead>
                                 <tr>
@@ -211,7 +212,7 @@ const EmployeesUnderManager = () => {
                                 )}
                             </tbody>
                         </table>
-
+                                </div>
                         <button className={styles.closeBtn} onClick={() => setShowModal(false)}>
                             X   
                         </button>

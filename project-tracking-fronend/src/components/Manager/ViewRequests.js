@@ -18,24 +18,33 @@ const ViewRequests = () => {
   const { showToast } = useToast();
 
 
+  const parseLocalDate = (dateStr) => {
+    if (!dateStr) return null;
+    const [y, m, d] = dateStr.split("-");
+    return new Date(y, m - 1, d, 0, 0, 0, 0); // normalize time
+  };
+
+
 
   const applyFilters = (allRequests, statusFilter, search, dateFilter, customRange) => {
     let data = [...allRequests];
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    // Status filter
+
+    // Status
     if (statusFilter !== "All") {
       data = data.filter((r) => r.status === statusFilter);
     }
 
-    // Search filter
+    // Search
     if (search) {
       data = data.filter((r) =>
         r.employeeName?.toLowerCase().includes(search.toLowerCase())
       );
     }
 
-    // Date filters
+    // Date filter
     if (dateFilter === "Today") {
       data = data.filter(
         (r) =>
@@ -43,12 +52,12 @@ const ViewRequests = () => {
           today.toDateString()
       );
     } else if (dateFilter === "Yesterday") {
-      const yesterday = new Date();
-      yesterday.setDate(today.getDate() - 1);
+      const y = new Date();
+      y.setDate(today.getDate() - 1);
       data = data.filter(
         (r) =>
           parseLocalDate(r.appliedDate)?.toDateString() ===
-          yesterday.toDateString()
+          y.toDateString()
       );
     } else if (dateFilter === "Last 7 Days") {
       const past7 = new Date();
@@ -80,13 +89,6 @@ const ViewRequests = () => {
   };
 
 
-  const parseLocalDate = (dateStr) => {
-    if (!dateStr) return null;
-    const [y, m, d] = dateStr.split("-");
-    return new Date(y, m - 1, d);
-  };
-
-
   const fetchRequests = async () => {
     if (!employee?.empId) return;
 
@@ -106,7 +108,6 @@ const ViewRequests = () => {
         dateFilter,
         customRange
       );
-
       setFilteredRequests(filtered);
 
     } catch (err) {
@@ -145,8 +146,8 @@ const ViewRequests = () => {
       dateFilter,
       customRange
     );
-
     setFilteredRequests(filtered);
+
   };
 
   const clearSearch = () => {
@@ -240,7 +241,25 @@ const ViewRequests = () => {
           <option value="Last 30 Days">Last 30 Days</option>
           <option value="Custom">Custom Range</option>
         </select>
+
+        <button
+          className={styles.clearBtn}
+          onClick={() => {
+            setDateFilter("All");
+            setCustomRange({ from: "", to: "" });
+            setShowCustomBox(false);
+            setFilteredRequests(
+              applyFilters(requests, filter, searchText, "All", {
+                from: "",
+                to: "",
+              })
+            );
+          }}
+        >
+          Clear
+        </button>
       </div>
+
 
       {showCustomBox && (
         <div className={styles.dateRangeBox}>
@@ -253,15 +272,19 @@ const ViewRequests = () => {
                 const updated = { ...customRange, from: e.target.value };
                 setCustomRange(updated);
 
-                const filtered = applyFilters(
-                  requests,
-                  filter,
-                  searchText,
-                  dateFilter,
-                  updated
-                );
-                setFilteredRequests(filtered);
+                if (updated.from && updated.to) {
+                  const filtered = applyFilters(
+                    requests,
+                    filter,
+                    searchText,
+                    dateFilter,
+                    updated
+                  );
+                  setFilteredRequests(filtered);
+                  setShowCustomBox(false);
+                }
               }}
+
             />
           </label>
 
@@ -274,20 +297,23 @@ const ViewRequests = () => {
                 const updated = { ...customRange, to: e.target.value };
                 setCustomRange(updated);
 
-                const filtered = applyFilters(
-                  requests,
-                  filter,
-                  searchText,
-                  dateFilter,
-                  updated
-                );
-                setFilteredRequests(filtered);
+                if (updated.from && updated.to) {
+                  const filtered = applyFilters(
+                    requests,
+                    filter,
+                    searchText,
+                    dateFilter,
+                    updated
+                  );
+                  setFilteredRequests(filtered);
+                  setShowCustomBox(false);
+                }
               }}
+
             />
           </label>
         </div>
       )}
-
 
 
       <div className={styles.searchWrapper}>

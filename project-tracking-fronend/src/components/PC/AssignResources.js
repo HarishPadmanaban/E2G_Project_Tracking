@@ -23,8 +23,8 @@ const AssignActivityForm = () => {
 
   const itemsPerPage = 10;
 
-  
-  
+
+
 
   useEffect(() => {
     setCurrentPage(1);
@@ -109,6 +109,38 @@ const AssignActivityForm = () => {
     setCurrentPage(1);
   }, [statusFilter, searchTerm, dateFilter, customRange, assignedWorks]);
 
+
+  const handlePendingRowClick = async (work) => {
+    // ✔ Match any status that CONTAINS "PENDING"
+    if (!work.status || !work.status.toUpperCase().includes("PENDING")) return;
+
+    const confirm = window.confirm(
+      "Do you wish to reassign the work?"
+    );
+
+    if (!confirm) return;
+
+    try {
+      await axiosInstance.post(
+        "/notifications/create",
+        null,
+        {
+          params: {
+            senderId: idToUse,
+            receiverId: work.employeeId,
+            title: "Activity Reassign",
+            message: `Manager wants to reassign the activity "${work.activityName}" for project "${work.projectName}".`,
+            type: "REASSIGN_REQUEST",
+          },
+        }
+      );
+
+      showToast("📢 Reassign notification sent!", "success");
+    } catch (error) {
+      console.error(error);
+      showToast("❌ Failed to send notification", "error");
+    }
+  };
 
 
   const handleChange = (e) => {
@@ -399,6 +431,7 @@ const AssignActivityForm = () => {
               <option value="Yesterday">Yesterday</option>
               <option value="Last 7 Days">Last 7 Days</option>
               <option value="Last 30 Days">Last 30 Days</option>
+              <option value="Custom">Custom Range</option>
             </select>
 
 
@@ -419,12 +452,42 @@ const AssignActivityForm = () => {
                 onClick={() => {
                   setSearchTerm("");
                   setStatusFilter("ALL");
+                  setDateFilter("All");
+                  setShowCustomBox(false);
+                  setCustomRange("");
                 }}
               >
                 Clear
               </button>
             </div>
           </div>
+
+          {showCustomBox && (
+            <div className={styles.dateRangeBox}>
+              <label>
+                From:
+                <input
+                  type="date"
+                  value={customRange.from}
+                  onChange={(e) =>
+                    setCustomRange((prev) => ({ ...prev, from: e.target.value }))
+                  }
+                />
+              </label>
+
+              <label>
+                To:
+                <input
+                  type="date"
+                  value={customRange.to}
+                  onChange={(e) =>
+                    setCustomRange((prev) => ({ ...prev, to: e.target.value }))
+                  }
+                />
+              </label>
+            </div>
+          )}
+
 
 
           {/* Table */}
@@ -450,8 +513,17 @@ const AssignActivityForm = () => {
                   </td>
                 </tr>
               ) : (
-                currentAssignedWorks.map((work) => (
-                  <tr key={work.id}>
+                filteredAssignedWorks.map((work) => (
+                  <tr
+                    key={work.id}
+                    onClick={() => handlePendingRowClick(work)}
+                    className={
+                      work.status?.toUpperCase().includes("PENDING")
+                        ? styles.clickableRow
+                        : ""
+                    }
+                  >
+
                     <td>{work.assignedDate}</td>
                     <td>{work.employeeName}</td>
                     <td>{work.projectName}</td>
@@ -465,15 +537,19 @@ const AssignActivityForm = () => {
                           : styles.statusInProgress
                       }
                     >
-                      {work.status}
+                      {work.status.toUpperCase()}
                     </td>
                     <td>
                       <button
                         className={styles.actionBtn}
-                        onClick={() => handleDelete(work.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(work.id);
+                        }}
                       >
                         🗑️
                       </button>
+
                     </td>
                   </tr>
                 ))
