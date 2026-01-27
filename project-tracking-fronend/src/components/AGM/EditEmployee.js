@@ -236,8 +236,8 @@ const EditEmployee = () => {
         designationCategory: role,
         isManager: ["Project Manager", "Assistant General Manager"].includes(formData.designation.trim().trim().trim()),
         isTL: formData.designation.trim().trim().trim() === "Project Coordinator",
-        username: formData.username,
-        password: formData.password,
+        username: formData.username.trim(),
+        password: formData.password.trim(),
         reportingTo:
           formData.reportingTo === ""
             ? null
@@ -414,6 +414,26 @@ const EditEmployee = () => {
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div className={styles.formField}>
+              <label>Username</label>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className={styles.formField}>
+              <label>Password</label>
+              <input
+                type="text"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+              />
             </div>
 
 

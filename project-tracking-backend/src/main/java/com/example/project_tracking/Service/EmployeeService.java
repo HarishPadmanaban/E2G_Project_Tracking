@@ -117,6 +117,8 @@ public class EmployeeService {
         old.setIsTL(employee.getIsTL());
         old.setIsManager(employee.getIsManager());
         old.setReportingTo(employee.getReportingTo());
+        old.setUsername(employee.getUsername());
+        old.setPassword(employee.getPassword());
         employeeRepository.save(old);
         return old;
     }
