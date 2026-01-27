@@ -417,10 +417,10 @@ const EmployeeWorkForm = () => {
 
       if (!confirmStop) return;
       const now = new Date();
-      const end =
-        now.getHours().toString().padStart(2, "0") +
-        ":" +
-        now.getMinutes().toString().padStart(2, "0");
+  const end =
+    now.getHours().toString().padStart(2, "0") +
+    ":" +
+    now.getMinutes().toString().padStart(2, "0");
 
       const [startH, startM] = formData.startTime.split(":").map(Number);
       const [endH, endM] = end.split(":").map(Number);
@@ -512,21 +512,11 @@ const EmployeeWorkForm = () => {
     }
 
     const payload = {
-      employeeId: employee.empId,
-      managerId: employee.reportingToId,
-      projectId: formData.projectId,
-      activityId: formData.activityId,
-      date: new Date().toISOString().split("T")[0],
-      workHours: parseFloat(formData.workHours).toFixed(2),
-      startTime: formData.startTime + ":00",
-      endTime: formData.endTime + ":00",
-      projectActivity: formData.projectActivity,
-      assignedWork: formData.assignedWork,
       assignedWorkId: formData.assignedWorkId,
+      activityId: formData.activityId, 
       status: formData.status,
       remarks: formData.remarks,
     };
-
 
 
     axiosInstance

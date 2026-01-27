@@ -1,14 +1,10 @@
 package com.example.project_tracking.Controller;
-
 import com.example.project_tracking.DTO.WorkDetailsRequest;
 import com.example.project_tracking.DTO.WorkDetailsResponse;
-import com.example.project_tracking.Model.WorkDetails;
 import com.example.project_tracking.Service.WorkDetailsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
 @RestController
 @RequestMapping("/workdetails")
 @CrossOrigin(origins = "*")
@@ -91,15 +87,15 @@ public class WorkDetailsController {
         return ResponseEntity.ok(workDetailsService.getByProjectAndActivity(projId, actId));
     }
     @PutMapping("/stop/{employeeId}")
-    public ResponseEntity<?> stopWork(
-            @PathVariable Long employeeId,
-            @RequestParam String endTime,
-            @RequestParam String workHours) {
+    public ResponseEntity<WorkDetailsResponse> stopWork(
+            @PathVariable Long employeeId) {
 
-        System.out.println(employeeId+" "+endTime+" "+workHours);
-        WorkDetailsResponse updated = workDetailsService.stopWork(employeeId, endTime, workHours);
+        WorkDetailsResponse updated =
+                workDetailsService.stopWork(employeeId);
+
         return ResponseEntity.ok(updated);
     }
+
     @PutMapping("/savefinal")
     public ResponseEntity<WorkDetailsResponse> saveFinal(@RequestBody WorkDetailsRequest request , @RequestParam Long activeWorkId) {
         System.out.println(request.toString());
