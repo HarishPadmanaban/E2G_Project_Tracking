@@ -11,14 +11,13 @@ const EmployeeWorkForm = () => {
   const [activities, setActivities] = useState([]);
   const [filteredActivities, setFilteredActivities] = useState([]);
   const [startDisabled, setStartDisabled] = useState(false);
-  const [stopDisabled, setStopDisabled] = useState(true);
   const [submitDisabled, setSubmitDisabled] = useState(true);
   const [assignedActivities, setAssignedActivities] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const { work } = location.state || {};
 
-  const {showToast} = useToast();
+  const { showToast } = useToast();
   // manager view/edit if present
 
   const [activeWorkId, setActiveWorkId] = useState(() => {
@@ -61,17 +60,16 @@ const EmployeeWorkForm = () => {
 
     axiosInstance
       .get(`/project/${employee.reportingToId}`)
-      .then((res) =>
-        { 
-          //const filtered = res.data.filter(project => project.tlId!=null);
-          setProjects(res.data);
-        })
-      
+      .then((res) => {
+        //const filtered = res.data.filter(project => project.tlId!=null);
+        setProjects(res.data);
+      })
+
 
     axiosInstance
       .get("/activity/")
       .then((res) => setActivities(res.data))
-      
+
   }, [employee]);
 
   // Prevent back navigation on /employee routes (only while this component is mounted)
@@ -100,16 +98,6 @@ const EmployeeWorkForm = () => {
   useEffect(() => {
 
     // helper to enable stop button after remaining ms
-    const enableStopAfter = (remainingMs) => {
-      if (remainingMs <= 0) {
-        setStopDisabled(false);
-        return;
-      }
-      setStopDisabled(true);
-      setTimeout(() => {
-        setStopDisabled(false);
-      }, remainingMs);
-    };
 
 
     // CASE 1: If there's an activeWorkId (stopped-but-not-submitted), fetch by ID
@@ -118,7 +106,7 @@ const EmployeeWorkForm = () => {
         .get(`/workdetails/${activeWorkId}`)
         .then(async (res) => {
           const workData = res.data;
-          
+
           if (!workData) {
             // no work found by id -> fallback to check active
             checkActiveRunningWork();
@@ -162,18 +150,12 @@ const EmployeeWorkForm = () => {
             const [startH, startM] = (workData.startTime || "00:00").split(":").map(Number);
             const startDate = new Date();
             startDate.setHours(startH, startM, 0);
-            const diffMs = now - startDate; // elapsed ms since start
 
-            if (diffMs >= 2 * 60 * 1000) {
-              setStopDisabled(false);
-            } else {
-              enableStopAfter(2 * 60 * 1000 - diffMs);
-            }
           } else {
             // stopped work — ready to submit
             setIsRunning(false);
             setStartDisabled(true);
-            setStopDisabled(true);
+
             setSubmitDisabled(false);
           }
         })
@@ -183,7 +165,7 @@ const EmployeeWorkForm = () => {
         });
     } else {
       // CASE 2: No activeWorkId — check if there's a currently active running work for this employee
-      
+
       checkActiveRunningWork();
     }
 
@@ -193,7 +175,7 @@ const EmployeeWorkForm = () => {
         .get(`/workdetails/active/${employee.empId}`)
         .then((res) => {
           const active = res.data;
-          
+
           if (active && !active.endTime) {
             const selectedProject = projects.find(
               (proj) => proj.id.toString() === active.projectId?.toString()
@@ -206,7 +188,7 @@ const EmployeeWorkForm = () => {
 
             // Store running work ID locally so the stopped-but-not-submitted flow works
             setActiveWorkId(active.id);
-            
+
 
             // Autofill form for the running session
             setFormData({
@@ -234,18 +216,13 @@ const EmployeeWorkForm = () => {
             const [startH, startM] = (active.startTime || "00:00").split(":").map(Number);
             const startDate = new Date();
             startDate.setHours(startH, startM, 0);
-            const diffMs = now - startDate;
 
-            if (diffMs >= 2 * 60 * 1000) {
-              setStopDisabled(false);
-            } else {
-              enableStopAfter(2 * 60 * 1000 - diffMs);
-            }
+
           } else {
             // No active work found — reset to idle
             setIsRunning(false);
             setStartDisabled(false);
-            setStopDisabled(true);
+
             setSubmitDisabled(true);
           }
         })
@@ -253,7 +230,7 @@ const EmployeeWorkForm = () => {
           // In case of error, safely stay idle
           setIsRunning(false);
           setStartDisabled(false);
-          setStopDisabled(true);
+
           setSubmitDisabled(true);
         });
     }
@@ -265,10 +242,10 @@ const EmployeeWorkForm = () => {
       const response = await axiosInstance.get(
         `/assigned-work/project/${projectId}/employee/${employeeId}/active`
       );
-      
+
       setAssignedActivities(response.data);
     } catch (error) {
-    
+
       setAssignedActivities([]);
     }
   };
@@ -276,7 +253,7 @@ const EmployeeWorkForm = () => {
 
   const handleDiscard = () => {
     if (!activeWorkId) {
-      showToast("No active work to discard.","info");
+      showToast("No active work to discard.", "info");
       return;
     }
 
@@ -285,7 +262,7 @@ const EmployeeWorkForm = () => {
     axiosInstance
       .delete(`/workdetails/work/discard/${activeWorkId}`)
       .then(() => {
-        showToast("Work discarded successfully!","success");
+        showToast("Work discarded successfully!", "success");
 
         // Clear local storage
         localStorage.removeItem("activeWorkId");
@@ -312,12 +289,12 @@ const EmployeeWorkForm = () => {
         // Reset states
         setIsRunning(false);
         setStartDisabled(false);
-        setStopDisabled(true);
+
         setSubmitDisabled(true);
       })
       .catch((err) => {
-        
-        showToast("Failed to discard work.","error");
+
+        showToast("Failed to discard work.", "error");
       });
   };
 
@@ -359,7 +336,7 @@ const EmployeeWorkForm = () => {
 
   const handleProjectChange = (e) => {
     const selectedProject = projects.find((proj) => proj.id.toString() === e.target.value);
-    
+
     // Reset form data first
     setFormData((prev) => ({
       ...prev,
@@ -385,7 +362,7 @@ const EmployeeWorkForm = () => {
   const handleStartStop = () => {
     if (!isRunning) {
       if (!isFormValid(false)) {
-        showToast("Please fill in all required fields before starting.","warning");
+        showToast("Please fill in all required fields before starting.", "warning");
         return;
       }
 
@@ -409,62 +386,77 @@ const EmployeeWorkForm = () => {
         status: formData.status,
         remarks: formData.remarks,
       };
-      
+
 
       axiosInstance
         .post("/workdetails/save", payload)
         .then((res) => {
           const workId = res.data.id;
           setActiveWorkId(workId);
-          
+
           setFormData((prev) => ({
             ...prev,
             startTime: start, // only add start time
           }));
 
-          
+
           setIsRunning(true);
-          setStopDisabled(true);
+
           setSubmitDisabled(true);
-          setTimeout(() => setStopDisabled(false), 2 * 60 * 1000);
+
         })
         .catch((err) => {
-        
-          showToast("Could not start activity.","error");
+
+          showToast("Could not start activity.", "error");
         });
     } else {
+
+      const confirmStop = window.confirm(
+        "Are you sure you want to stop this activity?"
+      );
+
+      if (!confirmStop) return;
       const now = new Date();
   const end =
     now.getHours().toString().padStart(2, "0") +
     ":" +
     now.getMinutes().toString().padStart(2, "0");
 
-  axiosInstance
-    .put(`/workdetails/stop/${employee.empId}`, null, {
-      params: {
-        endTime: end + ":00"   // ONLY endTime
-      },
-    })
-    .then((res) => {
-      setFormData((prev) => ({
-        ...prev,
-        endTime: res.data.endTime,
-        workHours: res.data.workHours, // FROM BACKEND
-      }));
+      const [startH, startM] = formData.startTime.split(":").map(Number);
+      const [endH, endM] = end.split(":").map(Number);
+      let diffMinutes = endH * 60 + endM - (startH * 60 + startM);
+      if (diffMinutes < 0) diffMinutes += 24 * 60;
+      const diffHours = (diffMinutes / 60).toFixed(2);
+      console.log(end)
+      console.log(diffHours)
+      axiosInstance
+        .put(`/workdetails/stop/${employee.empId}`, null, {
+          params: {
+            endTime: end + ":00",
+            workHours: diffHours,
+          },
+        })
+        .then(() => {
+          setFormData((prev) => ({
+            ...prev,
+            endTime: end,
+            workHours: diffHours,
+          }));
+          setIsRunning(false);
 
-      setIsRunning(false);
-      setStopDisabled(true);
-      setStartDisabled(true);
-      setSubmitDisabled(false);
-    })
-    .catch((err) => {
-      const backendMsg =
-        err.response?.data?.message ||
-        err.response?.data ||
-        "Something went wrong while stopping work!";
+          setStartDisabled(true);
+          setSubmitDisabled(false);
+        })
+        .catch((err) => {
 
-      showToast(backendMsg, "error");
-    });
+
+          // Extract backend error message safely
+          const backendMsg =
+            err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
+          console.log(backendMsg)
+          // Show the exact backend message to user
+          showToast(backendMsg, "error");
+        });
     }
   };
 
@@ -515,7 +507,7 @@ const EmployeeWorkForm = () => {
 
     if (!employee) return;
     if (!isFormValid(true)) {
-      showToast("Please fill in all required fields before submitting.","warning");
+      showToast("Please fill in all required fields before submitting.", "warning");
       return;
     }
 
@@ -526,14 +518,13 @@ const EmployeeWorkForm = () => {
       remarks: formData.remarks,
     };
 
-    console.log(payload)
 
     axiosInstance
       .put(`/workdetails/savefinal`, payload, {
         params: { activeWorkId: activeWorkId },
       })
       .then(() => {
-        showToast("Work submitted successfully!","success");
+        showToast("Work submitted successfully!", "success");
         setFormData({
           projectId: "",
           clientName: "",
@@ -554,8 +545,8 @@ const EmployeeWorkForm = () => {
         setActiveWorkId(null);
       })
       .catch((err) => {
-        
-        showToast("Submission failed!","error");
+
+        showToast("Submission failed!", "error");
       });
   };
 
@@ -569,7 +560,7 @@ const EmployeeWorkForm = () => {
       assignedWork,
       status,
     } = formData;
-  
+
 
     const baseFieldsFilled =
       projectId &&
@@ -837,10 +828,9 @@ const EmployeeWorkForm = () => {
                   <button
                     type="button"
                     onClick={handleStartStop}
-                    className={`${styles.stopBtn} ${stopDisabled ? styles.buttonDisabled : ""}`}
-                    disabled={stopDisabled}
+                    className={styles.stopBtn}
                   >
-                    {stopDisabled ? "Stop (Wait 2 mins)" : "Stop"}
+                    Stop
                   </button>
                 )}
 
