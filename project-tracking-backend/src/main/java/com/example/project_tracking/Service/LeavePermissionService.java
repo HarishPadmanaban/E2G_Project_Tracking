@@ -27,6 +27,7 @@ public class LeavePermissionService {
 
     // Save leave/permission request (still uses entity)
     public void saveLeavePermission(LeavePermission leavePermission) {
+        System.out.println(leavePermission.toString());
         leavePermissionRepository.save(leavePermission);
     }
 
@@ -96,6 +97,7 @@ public class LeavePermissionService {
                 leaveBalance1.setPermissionBalance(leaveBalance1.getPermissionBalance()-req.getPermissionHours());
             }
             else{
+
                 if(req.getLeaveType().trim().equalsIgnoreCase("sl")){
                     if(leaveBalance1.getSickLeaves()< req.getLeaveDays()){
                         throw new RuntimeException("Insufficient Sick Leave Balance");

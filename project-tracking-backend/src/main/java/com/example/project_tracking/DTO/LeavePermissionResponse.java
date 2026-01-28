@@ -12,7 +12,7 @@ public class LeavePermissionResponse {
     private String leaveDuration;
     private LocalDate fromDate;
     private LocalDate toDate;
-    private Integer leaveDays;
+    private Double leaveDays;
     private String leaveType;
     private String reason;
     private LocalDate appliedDate;
@@ -25,7 +25,7 @@ public class LeavePermissionResponse {
     // Constructor
     public LeavePermissionResponse(Long id, String employeeName, String managerName,
                                    String type, String leaveDuration, LocalDate fromDate,
-                                   LocalDate toDate, Integer leaveDays, String leaveType,
+                                   LocalDate toDate, Double leaveDays, String leaveType,
                                    String reason,LocalDate appliedDate, LocalTime permissionInTime, LocalTime permissionOutTime,
                                    Double permissionHours, String status, boolean isActive) {
         this.id = id;
@@ -54,7 +54,7 @@ public class LeavePermissionResponse {
     public String getLeaveDuration() { return leaveDuration; }
     public LocalDate getFromDate() { return fromDate; }
     public LocalDate getToDate() { return toDate; }
-    public Integer getLeaveDays() { return leaveDays; }
+    public Double getLeaveDays() { return leaveDays; }
     public String getLeaveType() { return leaveType; }
     public String getReason() { return reason; }
     public LocalTime getPermissionInTime() { return permissionInTime; }

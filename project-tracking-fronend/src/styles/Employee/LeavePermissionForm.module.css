@@ -891,3 +891,34 @@ html, body {
 .clickableRow:hover {
   background-color: #e6e4e3;
 }
+
+.leaveBalanceContainer {
+  display: flex;
+  gap: 16px;
+}
+
+.leaveCard {
+  width: 160px;
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+/* 🎨 Different colors */
+.casual {
+  background-color: #DCFCE7; /* green */
+}
+
+.sick {
+  background-color: #DBEAFE; /* blue */
+}
+
+.marriage {
+  background-color: #FCE7F3; /* pink */
+}
+
+.maternity {
+  background-color: #FEF9C3; /* yellow */
+}
