@@ -27,7 +27,7 @@ public class LeavePermissionService {
 
     // Save leave/permission request (still uses entity)
     public void saveLeavePermission(LeavePermission leavePermission) {
-        leavePermissionRepository.save(leavePermission);
+               leavePermissionRepository.save(leavePermission);
     }
 
     // Get all requests as DTOs

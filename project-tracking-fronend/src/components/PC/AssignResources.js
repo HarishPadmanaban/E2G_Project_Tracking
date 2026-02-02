@@ -524,12 +524,12 @@ const AssignActivityForm = () => {
                     }
                   >
 
-                    <td>{work.assignedDate}</td>
-                    <td>{work.employeeName}</td>
-                    <td>{work.projectName}</td>
-                    <td>{work.assignedByName}</td>
-                    <td>{work.activityName}</td>
-                    <td>{work.description}</td>
+                    <td title={work.assignedDate}>{work.assignedDate}</td>
+                    <td title={work.employeeName}>{work.employeeName}</td>
+                    <td title={work.projectName}>{work.projectName}</td>
+                    <td title={work.assignedByName}>{work.assignedByName}</td>
+                    <td title={work.activityName}>{work.activityName}</td>
+                    <td title={work.description}>{work.description}</td>
                     <td
                       className={
                         work.status === "Completed"

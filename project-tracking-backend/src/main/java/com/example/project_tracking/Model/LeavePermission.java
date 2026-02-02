@@ -91,5 +91,28 @@ public class LeavePermission {
     public void setActive(boolean active) {
         isActive = active;
     }
+
+    @Override
+    public String toString() {
+        return "LeavePermission{" +
+                "id=" + id +
+                ", employee=" + employee +
+                ", manager=" + manager +
+                ", type='" + type + '\'' +
+                ", leaveDuration='" + leaveDuration + '\'' +
+                ", fromDate=" + fromDate +
+                ", toDate=" + toDate +
+                ", leaveDays=" + leaveDays +
+                ", leaveType='" + leaveType + '\'' +
+                ", reason='" + reason + '\'' +
+                ", permissionInTime=" + permissionInTime +
+                ", permissionOutTime=" + permissionOutTime +
+                ", permissionHours=" + permissionHours +
+                ", permissionMinutes=" + permissionMinutes +
+                ", appliedDate=" + appliedDate +
+                ", status='" + status + '\'' +
+                ", isActive=" + isActive +
+                '}';
+    }
 }
 

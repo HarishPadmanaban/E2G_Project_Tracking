@@ -32,7 +32,7 @@ public class LeaveBalance {
         marriageLeaves = 14;
         maternityLeaves = 14;
         year = LocalDate.now().getYear();
-        permissionBalance = 2.0;
+        permissionBalance = 4.0;
     }
 
     // Getters and Setters
