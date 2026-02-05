@@ -38,7 +38,7 @@ public class ProjectService {
 
         // Filter based on modellingHour being not null
         return projects.stream()
-                .filter(p -> p.getModellingHours() != null && !p.getSoftDelete())
+                .filter(p -> !p.getSoftDelete())
                 .collect(Collectors.toList());
     }
 

@@ -13,6 +13,7 @@ const LeavePermissionForm = () => {
     managerId: employee?.reportingToId || "",
     type: "", // Leave / Permission
     leaveDuration: "", // One Day / Multiple Days
+    leaveHalf: "",
     fromDate: "",
     toDate: "",
     leaveDays: "",
@@ -152,6 +153,9 @@ const LeavePermissionForm = () => {
         toDate: formData.toDate || null,
         leaveDays: formData.leaveDays || 0,
         leaveType: formData.leaveType || null,
+        leaveHalf: formData.leaveDuration === "Half Day"
+          ? formData.leaveHalf
+          : null, // 👈 NEW
         reason: formData.reason,
         permissionInTime: formData.permissionInTime || null,
         permissionOutTime: formData.permissionOutTime || null,
@@ -204,6 +208,14 @@ const LeavePermissionForm = () => {
     if (formData.type === "Leave") {
       if (!formData.leaveDuration) return { valid: false, msg: "Please select Leave Duration." };
 
+      if (formData.leaveDuration === "Half Day") {
+        if (!formData.fromDate)
+          return { valid: false, msg: "Please select Leave Date." };
+
+        if (!formData.leaveHalf)
+          return { valid: false, msg: "Please select FN or AN." };
+      }
+
       if (formData.leaveDuration === "One Day" && !formData.fromDate)
         return { valid: false, msg: "Please select Leave Date." };
 
@@ -241,6 +253,38 @@ const LeavePermissionForm = () => {
 
 
       <h2>Leave & Permission Portal</h2>
+
+      {/* Leave Balance Cards */}
+      {leaveBalance && activeTab == "apply" && (
+        <div className={styles.leaveBalanceContainer}>
+          <div className={`${styles.leaveCard} ${styles.casual}`}>
+            <span className={styles.leaveCount}>{leaveBalance.casualLeaves}</span>
+            <br/>
+            <span className={styles.leaveLabel}>Casual Leave</span>
+          </div>
+
+          <div className={`${styles.leaveCard} ${styles.sick}`}>
+            <span className={styles.leaveCount}>{leaveBalance.sickLeaves}</span>
+            <br/>
+            <span className={styles.leaveLabel}>Sick Leave</span>
+          </div>
+
+          <div className={`${styles.leaveCard} ${styles.marriage}`}>
+            <span className={styles.leaveCount}>{leaveBalance.marriageLeaves}</span>
+            <br/>
+            <span className={styles.leaveLabel}>Marriage Leave</span>
+          </div>
+
+          <div className={`${styles.leaveCard} ${styles.maternity}`}>
+            <span className={styles.leaveCount}>{leaveBalance.maternityLeaves}</span>
+            <br/>
+            <span className={styles.leaveLabel}>Maternity Leave</span>
+          </div>
+        </div>
+      )}
+
+
+
 
       {/* Toggle Buttons */}
       <div className={styles.filterButtons}>
@@ -325,10 +369,46 @@ const LeavePermissionForm = () => {
                   onChange={handleChange}
                 >
                   <option value="">Select Duration</option>
+                  <option value="Half Day">Half Day</option>
                   <option value="One Day">One Day</option>
                   <option value="Multiple Days">Multiple Days</option>
                 </select>
               </div>
+
+              {formData.leaveDuration === "Half Day" && (
+                <>
+                  <div className={styles.field}>
+                    <label>Leave Date</label>
+                    <input
+                      type="date"
+                      name="fromDate"
+                      value={formData.fromDate}
+                      min={today}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          fromDate: e.target.value,
+                          leaveDays: 0.5
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div className={styles.field}>
+                    <label>Half Day Type</label>
+                    <select
+                      name="leaveHalf"
+                      value={formData.leaveHalf}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select Half</option>
+                      <option value="FN">Forenoon (FN)</option>
+                      <option value="AN">Afternoon (AN)</option>
+                    </select>
+                  </div>
+                </>
+              )}
+
 
               {formData.leaveDuration === "One Day" && (
                 <>
@@ -387,7 +467,7 @@ const LeavePermissionForm = () => {
                       name="toDate"
                       value={formData.toDate}
                       min={
-                        formData.leaveType === "SL" || formData.leaveType === "Marriage Leave" || formData.leaveType === "Maternity Leave"  
+                        formData.leaveType === "SL" || formData.leaveType === "Marriage Leave" || formData.leaveType === "Maternity Leave"
                           ? formData.fromDate // no restriction
                           : formData.leaveType === "CL"
                             ? formData.fromDate // allow 1 week before today

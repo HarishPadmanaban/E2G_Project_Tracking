@@ -23,7 +23,7 @@ public class LeavePermission {
     private String leaveDuration;     // One Day / Multiple Days
     private LocalDate fromDate;
     private LocalDate toDate;
-    private Integer leaveDays;
+    private Double leaveDays;
     private String leaveType;         // CL / SL / LOP
     @Column(columnDefinition = "TEXT")
     private String reason;
@@ -34,6 +34,15 @@ public class LeavePermission {
     private LocalDate appliedDate;
     private String status = "Pending";
     private boolean isActive=true;// Default
+    private String leaveHalf;
+
+    public String getLeaveHalf() {
+        return leaveHalf;
+    }
+
+    public void setLeaveHalf(String leaveHalf) {
+        this.leaveHalf = leaveHalf;
+    }
 
     // Getters and Setters
     public Long getId() { return id; }
@@ -57,8 +66,8 @@ public class LeavePermission {
     public LocalDate getToDate() { return toDate; }
     public void setToDate(LocalDate toDate) { this.toDate = toDate; }
 
-    public Integer getLeaveDays() { return leaveDays; }
-    public void setLeaveDays(Integer leaveDays) { this.leaveDays = leaveDays; }
+    public Double getLeaveDays() { return leaveDays; }
+    public void setLeaveDays(Double leaveDays) { this.leaveDays = leaveDays; }
 
     public String getLeaveType() { return leaveType; }
     public void setLeaveType(String leaveType) { this.leaveType = leaveType; }
@@ -112,6 +121,7 @@ public class LeavePermission {
                 ", appliedDate=" + appliedDate +
                 ", status='" + status + '\'' +
                 ", isActive=" + isActive +
+                ", leaveHalf='" + leaveHalf + '\'' +
                 '}';
     }
 }

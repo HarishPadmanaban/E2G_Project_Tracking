@@ -28,6 +28,7 @@ public class WorkDetails {
     private String assignedWork;
     private String status;
     private String remarks;
+    private Boolean is_Deleted;
 
     public Long getId() {
         return id;
@@ -107,6 +108,14 @@ public class WorkDetails {
 
     public void setAssignedWorkId(AssignedWork assignedWorkId) {
         this.assignedWorkId = assignedWorkId;
+    }
+
+    public Boolean getIs_Deleted() {
+        return is_Deleted;
+    }
+
+    public void setIs_Deleted(Boolean is_Deleted) {
+        this.is_Deleted = is_Deleted;
     }
 
     @Override

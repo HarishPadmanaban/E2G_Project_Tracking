@@ -40,13 +40,13 @@ public class WorkDetailsService {
 
     public List<WorkDetailsResponse> getAll() {
         return workDetailsRepository.findAll()
-                .stream()
+                .stream().filter(workDetails -> workDetails.getIs_Deleted() == false)
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
 
     public List<WorkDetailsResponse> getAllLogsByProjectStatus() {
-        return new ArrayList<>(workDetailsRepository.findAllByActiveProjectStatus()).stream()
+        return new ArrayList<>(workDetailsRepository.findAllByActiveProjectStatus()).stream().filter(workDetails -> workDetails.getIs_Deleted() == false)
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -176,7 +176,7 @@ public class WorkDetailsService {
 
     public List<WorkDetailsResponse> getByEmployee(Long employeeId) {
         return workDetailsRepository.findByAssignedWorkId_Employee_EmpId(employeeId)
-                .stream()
+                .stream().filter(workDetails -> workDetails.getIs_Deleted() == false)
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -184,7 +184,7 @@ public class WorkDetailsService {
     // ✅ 4. Get all logs by manager ID
     public List<WorkDetailsResponse> getByManager(Long managerId) {
         return workDetailsRepository.findByAssignedWorkId_Manager_EmpId(managerId)
-                .stream()
+                .stream().filter(workDetails -> Boolean.FALSE.equals(workDetails.getIs_Deleted()))
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -192,7 +192,7 @@ public class WorkDetailsService {
     // ✅ 5. Get all logs by project ID
     public List<WorkDetailsResponse> getByProject(Long projectId) {
         return workDetailsRepository.findByAssignedWorkId_Project_Id(projectId)
-                .stream()
+                .stream().filter(workDetails -> workDetails.getIs_Deleted() == false)
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -208,7 +208,7 @@ public class WorkDetailsService {
     // ✅ 7. Get logs by employee & project
     public List<WorkDetailsResponse> getByEmployeeAndProject(Long empId, Long projId) {
         return workDetailsRepository.findByEmployeeAndProject(empId, projId)
-                .stream()
+                .stream().filter(workDetails -> workDetails.getIs_Deleted() == false)
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -224,7 +224,7 @@ public class WorkDetailsService {
     // ✅ 9. Get logs by project & activity
     public List<WorkDetailsResponse> getByProjectAndActivity(Long projId, Long actId) {
         return workDetailsRepository.findByProjectAndActivity(projId, actId)
-                .stream()
+                .stream().filter(workDetails -> workDetails.getIs_Deleted() == false)
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }

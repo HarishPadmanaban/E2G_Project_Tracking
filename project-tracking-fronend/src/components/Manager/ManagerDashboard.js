@@ -319,7 +319,7 @@ const ManagerDashboard = () => {
                 onClick={() => handleProjectClick(p)}
                 key={p.id}
                 className={`
-      ${p.modellingHours === 0 ? styles.highlightRow : ""}
+      ${p.modellingHours === 0 || p.modellingHours===null ? styles.highlightRow : ""}
       ${((p.assignedHours || 0) + (p.extraHours || 0) - p.workingHours) <= 10
                     ? styles.redAlertRow
                     : ""}
