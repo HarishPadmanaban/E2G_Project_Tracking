@@ -87,7 +87,7 @@ public class ProjectAssignmentController {
         List<Employee> employees =
                 projectAssignmentService.getEmployeesNotInProject(projectId,reportingToId);
 
-        List<DataTransfer> dto = employees.stream()
+        List<DataTransfer> dto = employees.stream().filter(e -> !e.getSoftDelete())
                 .map(this::localConversion2)
                 .toList();
         return ResponseEntity.ok(dto);

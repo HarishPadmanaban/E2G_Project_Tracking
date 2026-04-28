@@ -576,8 +576,23 @@ public class WorkDetailsService {
     public void discardWork(Long workId) {
         WorkDetails work = workDetailsRepository.findById(workId)
                 .orElseThrow(() -> new RuntimeException("Work entry not found for ID: " + workId));
-        //System.out.println(work.toString());
-        workDetailsRepository.delete(work);
+        System.out.println(work.toString());
+        if(work.getWorkHours() != null)
+        {
+            AssignedWork assignedWork = work.getAssignedWorkId();
+            Project project = assignedWork.getProject();
+            project.setWorkingHours(project.getWorkingHours().subtract(BigDecimal.valueOf(work.getWorkHours())));
+            Activity activity = assignedWork.getActivity();
+            switch (activity.getMainType().toLowerCase()) {
+                case "modeling": project.setModellingTime(project.getModellingTime().subtract(BigDecimal.valueOf(work.getWorkHours()))); break;
+                case "checking": project.setCheckingTime(project.getCheckingTime().subtract(BigDecimal.valueOf(work.getWorkHours()))); projectRepository.save(project); break;
+                case "detailing": project.setDetailingTime(project.getDetailingTime().subtract(BigDecimal.valueOf(work.getWorkHours()))); break;
+                case "studying": project.setStudyHoursTracking(project.getStudyHoursTracking().subtract(BigDecimal.valueOf(work.getWorkHours()))); break;
+            }
+            projectRepository.save(project);
+        }
+        work.setIs_Deleted(true);
+        workDetailsRepository.save(work);
     }
 
     private AssignedWork findOrCreateAssignedWork(Long employeeId, Long managerId, Long projectId, Long activityId) {
@@ -671,7 +686,7 @@ public class WorkDetailsService {
                 .filter(w -> w.getAssignedWorkId() != null)
                 .collect(Collectors.toList());
 
-        System.out.println(works);
+       // System.out.println(works);
 
         // 3️⃣ Recalculate hours from scratch
         for (WorkDetails work : works) {
