@@ -577,9 +577,9 @@ public class WorkDetailsService {
         WorkDetails work = workDetailsRepository.findById(workId)
                 .orElseThrow(() -> new RuntimeException("Work entry not found for ID: " + workId));
         System.out.println(work.toString());
+        AssignedWork assignedWork = work.getAssignedWorkId();
         if(work.getWorkHours() != null)
         {
-            AssignedWork assignedWork = work.getAssignedWorkId();
             Project project = assignedWork.getProject();
             project.setWorkingHours(project.getWorkingHours().subtract(BigDecimal.valueOf(work.getWorkHours())));
             Activity activity = assignedWork.getActivity();
@@ -591,8 +591,8 @@ public class WorkDetailsService {
             }
             projectRepository.save(project);
         }
-        work.setIs_Deleted(true);
-        workDetailsRepository.save(work);
+        workDetailsRepository.delete(work);
+        assignedWorkRepository.delete(assignedWork);
     }
 
     private AssignedWork findOrCreateAssignedWork(Long employeeId, Long managerId, Long projectId, Long activityId) {
