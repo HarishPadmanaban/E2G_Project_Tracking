@@ -165,6 +165,8 @@ const WorkPivotTable = () => {
           const projectInfo = projectMap.get(item.projectId) || {};
           const assigned = projectInfo.assignedHours || 0;
 
+          
+
           return {
             id: index,
             Employee: item.employeeName || "Unknown",
@@ -179,9 +181,10 @@ const WorkPivotTable = () => {
         });
 
         setData(pivotData);
+  console.log(pivotData);
+
       })
   }, [employee]);
-
 
   const exportPivotToExcel = () => {
     const table = document.querySelector(".pvtTable");

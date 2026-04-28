@@ -28,7 +28,7 @@ public class LeaveBalance {
     public LeaveBalance(Employee employee) {
         this.employee = employee;
         casualLeaves = 12;
-        sickLeaves = 8;
+        sickLeaves = 6;
         marriageLeaves = 14;
         maternityLeaves = 14;
         year = LocalDate.now().getYear();

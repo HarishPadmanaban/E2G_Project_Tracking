@@ -224,7 +224,7 @@ function App() {
         <Route path="/employee/leave" element={      <ProtectedRoute excludedRoles={["Assistant General Manager"]}>
 <LeavePermissionForm /></ProtectedRoute>} />
         <Route path="/manager/work" element={
-          <ProtectedRoute allowedRoles={["Assistant General Manager","Project Manager","Senior Project Manager", "Assistant IT Manager"]}>
+          <ProtectedRoute allowedRoles={["Assistant General Manager","Project Manager","Senior Project Manager", "Assistant IT Manager","Project Coordinator","Assistant Project Manager"]}>
             <ManagerDashboard />
           </ProtectedRoute>
         } />

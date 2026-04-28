@@ -331,7 +331,7 @@ const AssignActivityForm = () => {
           onChange={handleChange}
         >
           <option value="">Select Project</option>
-          {projects.map((p) => (
+          {projects.filter((p) => !p.modellingHours == 0 || !p.modellingHours==null).map((p) => (
             <option key={p.id} value={p.id}>
               {p.projectName}
             </option>

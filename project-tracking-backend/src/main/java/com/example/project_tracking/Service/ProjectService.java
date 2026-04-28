@@ -234,7 +234,12 @@ public class ProjectService {
 
     public ProjectResponse setExtra(Long id,BigDecimal extraHours) {
         Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project found with id "+id));
-        project.setExtraHours(extraHours);
+        if(project.getExtraHours() != null){
+            project.setExtraHours(project.getExtraHours().add(extraHours));
+        }
+        else{
+            project.setExtraHours(extraHours);
+        }
         //System.out.print(project.toString());
         return convertToResponse(projectRepository.save(project));
     }

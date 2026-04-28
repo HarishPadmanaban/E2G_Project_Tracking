@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useEmployee } from "../../context/EmployeeContext.js";
 import styles from "../../styles/Manager/ManagerDashboard.module.css";
 import axiosInstance from "../axiosConfig.js";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const ManagerDashboard = () => {
   const { employee } = useEmployee();
@@ -67,6 +69,7 @@ const ManagerDashboard = () => {
 
   useEffect(() => {
     if (!employee.empId) return;
+    
 
     //const managerIdToUse = employee.manager ? employee.id : employee.reportingToId;
     // ✅ Admin should have same access as AGM
@@ -108,7 +111,7 @@ const ManagerDashboard = () => {
   }, [employee]);
 
 
-
+console.log(projects);
 
 
   useEffect(() => {
@@ -185,6 +188,48 @@ const ManagerDashboard = () => {
     setSelectedManager("");
     applyFilter(projects, filter, "", "");
   };
+
+  const exportFilteredProjectsToExcel = () => {
+  if (!filteredProjects || filteredProjects.length === 0) {
+    alert("No projects to export");
+    return;
+  }
+
+  // Prepare Excel data
+  const excelData = filteredProjects.map((project, index) => ({
+    "Project ID": project.projectId,
+    "Project Name": project.projectName,
+    "Client Name": project.clientName || "",
+     "Manager Name": managers[project.managerId] || "Unknown",
+    "Project Coordinator": tl[project.id] || "Not Assigned",
+    "Project Activity Status":project.projectActivityStatus,
+    "Assigned Hours": project.assignedHours || 0,
+    "Extra Hours": project.extraHours || 0,
+    "Working Hours": project.workingHours || 0,
+    "Project Status": project.status?"Completed":"In Progress"
+  }));
+
+  // Create worksheet
+  const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+  // Auto-fit columns
+  const colWidths = Object.keys(excelData[0]).map((key) => ({
+    wch: Math.max(
+      key.length,
+      ...excelData.map((row) => String(row[key] || "").length)
+    ) + 3
+  }));
+
+  worksheet["!cols"] = colWidths;
+
+  // Create workbook
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Projects");
+
+  // Download
+  XLSX.writeFile(workbook,`"Projects_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
+};
+
 
   const handleProjectClick = async (project) => {
     try {
@@ -289,6 +334,24 @@ const ManagerDashboard = () => {
           </div>}
         </div>
       )}
+
+      <button
+  type="button"
+  onClick={exportFilteredProjectsToExcel}
+   style={{
+            marginBottom: "10px",
+            background: "#2563eb",
+            color: "#fff",
+            border: "none",
+            padding: "8px 16px",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontWeight: 500,
+          }}
+>
+  Export Projects
+</button>
+
 
       {/* ✅ Table Section */}
       <table className={styles.projectsTable}>

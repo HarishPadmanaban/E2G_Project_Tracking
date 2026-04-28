@@ -117,5 +117,21 @@ public class WorkDetailsController {
         return ResponseEntity.ok("Work entry discarded successfully");
     }
 
+    @PostMapping("/admin/rebuild-hours")
+    public String rebuild() {
+
+        workDetailsService.rebuildAllProjectHoursFromWorkDetails();
+
+        return "Rebuild completed";
+    }
+
+    @PostMapping("/admin/fix-negative")
+    public String fixNegative() {
+
+        workDetailsService.fixNegativeWorkHours();
+
+        return "Fixed!!!";
+    }
+
 }
 

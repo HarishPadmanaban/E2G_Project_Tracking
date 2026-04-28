@@ -30,7 +30,7 @@ public class LeaveResetScheduler {
 
         for (LeaveBalance lb : balances) {
             lb.setCasualLeaves(12);
-            lb.setSickLeaves(8);
+            lb.setSickLeaves(6);
             lb.setYear(nextYear);
             lb.setMaternityLeaves(14);
             lb.setMarriageLeaves(14);

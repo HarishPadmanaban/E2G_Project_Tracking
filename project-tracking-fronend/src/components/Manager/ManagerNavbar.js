@@ -111,7 +111,7 @@ const ManagerNavbar = () => {
 
               {isPC &&
                 <Link
-                  to="/employee/work"
+                  to="/manager/work"
                   className={styles.menuLink}
                   onClick={() => setMenuOpen(false)}
                 >
@@ -237,11 +237,20 @@ const ManagerNavbar = () => {
         <Notifications userId={employee.empId} userRole={employee.designation} />
 
         <div className={styles.navRight}>
+
+              {isNotAgm && (
+            <Link to="/employee/work" className={styles.navLink}>
+              Work
+            </Link>
+          )}
+
           {isNotAgm && (
             <Link to="/employee/leave" className={styles.navLink}>
               Leave
             </Link>
           )}
+
+
 
 
 

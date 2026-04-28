@@ -14,7 +14,9 @@ const Login = () => {
     navigate("/manager/work", { replace: true });
   } else if (
     employee.designation.trim() === "Assistant IT Manager" ||
-    employee.designation.trim() === "Assistant General Manager"
+    employee.designation.trim() === "Assistant General Manager" ||
+    employee.designation.trim() === "Project Coordinator" ||
+    employee.designation.trim() === "Assistant Project Manager"
   ) {
     navigate("/manager/work", { replace: true });
   } 

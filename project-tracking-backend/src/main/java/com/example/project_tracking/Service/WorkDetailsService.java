@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +42,13 @@ public class WorkDetailsService {
 
     public List<WorkDetailsResponse> getAll() {
         return workDetailsRepository.findAll()
-                .stream().filter(workDetails ->Boolean.FALSE.equals(workDetails.getIs_Deleted()))
+                .stream().filter(workDetails ->!Boolean.TRUE.equals(workDetails.getIs_Deleted()))
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
 
     public List<WorkDetailsResponse> getAllLogsByProjectStatus() {
-        return new ArrayList<>(workDetailsRepository.findAllByActiveProjectStatus()).stream().filter(workDetails ->Boolean.FALSE.equals(workDetails.getIs_Deleted()))
+        return new ArrayList<>(workDetailsRepository.findAllByActiveProjectStatus()).stream().filter(workDetails ->!Boolean.TRUE.equals(workDetails.getIs_Deleted()))
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -176,7 +178,7 @@ public class WorkDetailsService {
 
     public List<WorkDetailsResponse> getByEmployee(Long employeeId) {
         return workDetailsRepository.findByAssignedWorkId_Employee_EmpId(employeeId)
-                .stream().filter(workDetails ->Boolean.FALSE.equals(workDetails.getIs_Deleted()))
+                .stream().filter(workDetails ->!Boolean.TRUE.equals(workDetails.getIs_Deleted()))
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -184,15 +186,17 @@ public class WorkDetailsService {
     // ✅ 4. Get all logs by manager ID
     public List<WorkDetailsResponse> getByManager(Long managerId) {
         return workDetailsRepository.findByAssignedWorkId_Manager_EmpId(managerId)
-                .stream().filter(workDetails -> Boolean.FALSE.equals(workDetails.getIs_Deleted()))
+                .stream().filter(workDetails -> !Boolean.TRUE.equals(workDetails.getIs_Deleted()))
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
 
     // ✅ 5. Get all logs by project ID
     public List<WorkDetailsResponse> getByProject(Long projectId) {
+        System.out.println(projectId);
+        System.out.println(workDetailsRepository.findByAssignedWorkId_Project_Id(projectId));
         return workDetailsRepository.findByAssignedWorkId_Project_Id(projectId)
-                .stream().filter(workDetails ->Boolean.FALSE.equals(workDetails.getIs_Deleted()))
+                .stream().filter(workDetails ->!Boolean.TRUE.equals(workDetails.getIs_Deleted()))
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -208,7 +212,7 @@ public class WorkDetailsService {
     // ✅ 7. Get logs by employee & project
     public List<WorkDetailsResponse> getByEmployeeAndProject(Long empId, Long projId) {
         return workDetailsRepository.findByEmployeeAndProject(empId, projId)
-                .stream().filter(workDetails ->Boolean.FALSE.equals(workDetails.getIs_Deleted()))
+                .stream().filter(workDetails ->!Boolean.TRUE.equals(workDetails.getIs_Deleted()))
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -224,7 +228,7 @@ public class WorkDetailsService {
     // ✅ 9. Get logs by project & activity
     public List<WorkDetailsResponse> getByProjectAndActivity(Long projId, Long actId) {
         return workDetailsRepository.findByProjectAndActivity(projId, actId)
-                .stream().filter(workDetails ->Boolean.FALSE.equals(workDetails.getIs_Deleted()))
+                .stream().filter(workDetails ->!Boolean.TRUE.equals(workDetails.getIs_Deleted()))
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -265,18 +269,25 @@ public class WorkDetailsService {
                 .findTopByAssignedWorkId_Employee_EmpIdAndEndTimeIsNullOrderByIdDesc(employeeId)
                 .orElseThrow(() -> new RuntimeException("No active work found for employee"));
 
-        LocalTime startTime = work.getStartTime();
-        LocalTime endTime = LocalTime.now().withNano(0); // ✅ BACKEND TIME
+        // Use the work date from the DB
+        LocalDate workDate = work.getDate();
+        LocalDateTime startDateTime = LocalDateTime.of(workDate, work.getStartTime());
 
-        Duration duration;
+// Current backend time
+        LocalTime nowTime = LocalTime.now().withNano(0);
+        LocalDateTime endDateTime;
 
-        // Midnight-safe calculation
-        if (endTime.isBefore(startTime)) {
-            duration = Duration.between(startTime, LocalTime.MIDNIGHT)
-                    .plus(Duration.between(LocalTime.MIN, endTime));
+// Handle cross-midnight shift
+        if (nowTime.isBefore(work.getStartTime())) {
+            // Work ended after midnight → add 1 day
+            endDateTime = LocalDateTime.of(workDate.plusDays(1), nowTime);
         } else {
-            duration = Duration.between(startTime, endTime);
+            endDateTime = LocalDateTime.of(workDate, nowTime);
         }
+
+// Calculate duration in hours
+        Duration duration = Duration.between(startDateTime, endDateTime);
+
 
         double calculatedHours = duration.toMinutes() / 60.0;
         calculatedHours = Math.round(calculatedHours * 100.0) / 100.0;
@@ -291,8 +302,14 @@ public class WorkDetailsService {
                 true
         );
 
-        work.setEndTime(endTime);
+        work.setEndTime(endDateTime.toLocalTime());
         work.setWorkHours(calculatedHours);
+
+        updateProjectWorkingHours(
+                assignedWork.getProject(),
+                assignedWork.getActivity(),
+                calculatedHours
+        );
 
         return convertToResponse(workDetailsRepository.save(work));
     }
@@ -626,5 +643,102 @@ public class WorkDetailsService {
         //System.out.println(work.getAssignedWorkId().getId());
         return convertToResponse(work);
     }
+
+    @Transactional
+    public void rebuildAllProjectHoursFromWorkDetails() {
+
+        // 1️⃣ Reset all project tracking fields
+        List<Project> projects = projectRepository.findAll();
+
+        for (Project p : projects) {
+
+            p.setModellingTime(BigDecimal.ZERO);
+            p.setCheckingTime(BigDecimal.ZERO);
+            p.setDetailingTime(BigDecimal.ZERO);
+            p.setStudyHoursTracking(BigDecimal.ZERO);
+
+            p.setWorkingHours(BigDecimal.ZERO);
+            p.setExtraHoursTracking(BigDecimal.ZERO);
+
+            projectRepository.save(p);
+        }
+
+        // 2️⃣ Get all valid work logs
+        List<WorkDetails> works = workDetailsRepository.findAll()
+                .stream()
+                .filter(w -> !Boolean.TRUE.equals(w.getIs_Deleted()))
+                .filter(w -> w.getWorkHours() != null)
+                .filter(w -> w.getAssignedWorkId() != null)
+                .collect(Collectors.toList());
+
+        System.out.println(works);
+
+        // 3️⃣ Recalculate hours from scratch
+        for (WorkDetails work : works) {
+
+            AssignedWork aw = work.getAssignedWorkId();
+
+            if (aw.getProject() == null || aw.getActivity() == null)
+                continue;
+
+            System.out.println(work.toString());
+
+            updateProjectWorkingHours(
+                    aw.getProject(),
+                    aw.getActivity(),
+                    work.getWorkHours()
+            );
+        }
+
+        System.out.println("✅ Project hours rebuilt successfully from WorkDetails");
+    }
+
+    @Transactional
+    public void fixNegativeWorkHours() {
+        // Step 1: Fetch all faulty records
+        List<WorkDetails> faultyWorks = workDetailsRepository.findAll()
+                .stream()
+                .filter(w -> w.getWorkHours() != null && w.getWorkHours() < 0)
+                .collect(Collectors.toList());
+
+        System.out.println("Found " + faultyWorks.size() + " records with negative workHours.");
+
+        // Step 2: Recalculate workHours
+        for (WorkDetails work : faultyWorks) {
+            LocalDate workDate = work.getDate();
+            LocalTime startTime = work.getStartTime();
+            LocalTime endTime = work.getEndTime();
+
+            // Skip invalid rows
+            if (startTime == null || endTime == null || workDate == null) continue;
+
+            LocalDateTime startDateTime = LocalDateTime.of(workDate, startTime);
+            LocalDateTime endDateTime;
+
+            // Handle cross-midnight
+            if (endTime.isBefore(startTime)) {
+                endDateTime = LocalDateTime.of(workDate.plusDays(1), endTime);
+            } else {
+                endDateTime = LocalDateTime.of(workDate, endTime);
+            }
+
+            Duration duration = Duration.between(startDateTime, endDateTime);
+            double correctedHours = Math.round(duration.toMinutes() / 60.0 * 100.0) / 100.0;
+
+            // Log correction
+            System.out.println("id: " + work.getId()
+                    + ", Date: " + work.getDate()
+                    + ", Old Hours: " + work.getWorkHours()
+                    + ", Corrected Hours: " + correctedHours);
+
+            work.setWorkHours(correctedHours);
+
+            // Save corrected record
+            workDetailsRepository.save(work);
+        }
+
+        System.out.println("Negative workHours correction completed!");
+    }
+
 }
 
