@@ -57,6 +57,33 @@
         @Column(name = "remainder_sent_date")
         private LocalDate remainderSentDate;
 
+        @Column(name = "planned_start_date")
+        private LocalDate plannedStartDate;
+
+        @Column(name = "ifa_given_hours")
+        private BigDecimal ifaGivenHours;
+
+        @Column(name = "ifc_given_hours")
+        private BigDecimal ifcGivenHours;
+
+        @Column(name = "ifa_extra_hours")
+        private BigDecimal ifaExtraHours;
+
+        @Column(name = "ifc_extra_hours")
+        private BigDecimal ifcExtraHours;
+
+        @Column(name = "ifa_prod_hours")
+        private BigDecimal ifaProdHours = BigDecimal.ZERO;
+
+        @Column(name = "ifc_prod_hours")
+        private BigDecimal ifcProdHours = BigDecimal.ZERO;
+
+        @Column(name = "ifa_extra_prod_hours")
+        private BigDecimal ifaExtraProdHours = BigDecimal.ZERO;
+
+        @Column(name = "ifc_extra_prod_hours")
+        private BigDecimal ifcExtraProdHours = BigDecimal.ZERO;
+
         // Idle project flag
 
         public Project() {
@@ -90,6 +117,92 @@
             this.assignedDate = assignedDate;
             this.projectStatus = projectStatus;
             this.softDelete = softDelete;
+        }
+
+        public Project(
+                Long id,
+                String projectName,
+                String clientName,
+                Long managerId,
+                Long tlId,
+                BigDecimal assignedHours,
+                BigDecimal workingHours,
+                LocalDate assignedDate,
+                Boolean projectStatus,
+                Boolean softDelete,
+
+                BigDecimal modellingHours,
+                BigDecimal checkingHours,
+                BigDecimal detailingHours,
+
+                BigDecimal modellingTime,
+                BigDecimal checkingTime,
+                BigDecimal detailingTime,
+
+                LocalDate startDate,
+                LocalDate completedDate,
+                LocalDate plannedStartDate,
+
+                BigDecimal studyHours,
+                BigDecimal studyHoursTracking,
+
+                BigDecimal extraHours,
+                BigDecimal extraHoursTracking,
+
+                BigDecimal ifaGivenHours,
+                BigDecimal ifcGivenHours,
+                BigDecimal ifaExtraHours,
+                BigDecimal ifcExtraHours,
+
+                BigDecimal ifaProdHours,
+                BigDecimal ifcProdHours,
+                BigDecimal ifaExtraProdHours,
+                BigDecimal ifcExtraProdHours,
+
+                String projectActivityStatus,
+                LocalDate remainderSentDate
+        ) {
+            this.id = id;
+            this.projectName = projectName;
+            this.clientName = clientName;
+            this.managerId = managerId;
+            this.tlId = tlId;
+            this.assignedHours = assignedHours;
+            this.workingHours = workingHours;
+            this.assignedDate = assignedDate;
+            this.projectStatus = projectStatus;
+            this.softDelete = softDelete;
+
+            this.modellingHours = modellingHours;
+            this.checkingHours = checkingHours;
+            this.detailingHours = detailingHours;
+
+            this.modellingTime = modellingTime;
+            this.checkingTime = checkingTime;
+            this.detailingTime = detailingTime;
+
+            this.startDate = startDate;
+            this.completedDate = completedDate;
+            this.plannedStartDate = plannedStartDate;
+
+            this.studyHours = studyHours;
+            this.studyHoursTracking = studyHoursTracking;
+
+            this.extraHours = extraHours;
+            this.extraHoursTracking = extraHoursTracking;
+
+            this.ifaGivenHours = ifaGivenHours;
+            this.ifcGivenHours = ifcGivenHours;
+            this.ifaExtraHours = ifaExtraHours;
+            this.ifcExtraHours = ifcExtraHours;
+
+            this.ifaProdHours = ifaProdHours;
+            this.ifcProdHours = ifcProdHours;
+            this.ifaExtraProdHours = ifaExtraProdHours;
+            this.ifcExtraProdHours = ifcExtraProdHours;
+
+            this.projectActivityStatus = projectActivityStatus;
+            this.remainderSentDate = remainderSentDate;
         }
 
         public Long getTlId() {
@@ -284,6 +397,78 @@
             this.remainderSentDate = remainderSentDate;
         }
 
+        public LocalDate getPlannedStartDate() {
+            return plannedStartDate;
+        }
+
+        public void setPlannedStartDate(LocalDate plannedStartDate) {
+            this.plannedStartDate = plannedStartDate;
+        }
+
+        public BigDecimal getIfaGivenHours() {
+            return ifaGivenHours;
+        }
+
+        public void setIfaGivenHours(BigDecimal ifaGivenHours) {
+            this.ifaGivenHours = ifaGivenHours;
+        }
+
+        public BigDecimal getIfcGivenHours() {
+            return ifcGivenHours;
+        }
+
+        public void setIfcGivenHours(BigDecimal ifcGivenHours) {
+            this.ifcGivenHours = ifcGivenHours;
+        }
+
+        public BigDecimal getIfaExtraHours() {
+            return ifaExtraHours;
+        }
+
+        public void setIfaExtraHours(BigDecimal ifaExtraHours) {
+            this.ifaExtraHours = ifaExtraHours;
+        }
+
+        public BigDecimal getIfcExtraHours() {
+            return ifcExtraHours;
+        }
+
+        public void setIfcExtraHours(BigDecimal ifcExtraHours) {
+            this.ifcExtraHours = ifcExtraHours;
+        }
+
+        public BigDecimal getIfaProdHours() {
+            return ifaProdHours;
+        }
+
+        public void setIfaProdHours(BigDecimal ifaProdHours) {
+            this.ifaProdHours = ifaProdHours;
+        }
+
+        public BigDecimal getIfcProdHours() {
+            return ifcProdHours;
+        }
+
+        public void setIfcProdHours(BigDecimal ifcProdHours) {
+            this.ifcProdHours = ifcProdHours;
+        }
+
+        public BigDecimal getIfaExtraProdHours() {
+            return ifaExtraProdHours;
+        }
+
+        public void setIfaExtraProdHours(BigDecimal ifaExtraProdHours) {
+            this.ifaExtraProdHours = ifaExtraProdHours;
+        }
+
+        public BigDecimal getIfcExtraProdHours() {
+            return ifcExtraProdHours;
+        }
+
+        public void setIfcExtraProdHours(BigDecimal ifcExtraProdHours) {
+            this.ifcExtraProdHours = ifcExtraProdHours;
+        }
+
         @Override
         public String toString() {
             return "Project{" +
@@ -309,6 +494,15 @@
                     ", studyHoursTracking=" + studyHoursTracking +
                     ", extraHours=" + extraHours +
                     ", extraHoursTracking=" + extraHoursTracking +
+                    ", plannedStartDate=" + plannedStartDate +
+                    ", ifaGivenHours=" + ifaGivenHours +
+                    ", ifcGivenHours=" + ifcGivenHours +
+                    ", ifaExtraHours=" + ifaExtraHours +
+                    ", ifcExtraHours=" + ifcExtraHours +
+                    ", ifaProdHours=" + ifaProdHours +
+                    ", ifcProdHours=" + ifcProdHours +
+                    ", ifaExtraProdHours=" + ifaExtraProdHours +
+                    ", ifcExtraProdHours=" + ifcExtraProdHours +
                     '}';
         }
     }
