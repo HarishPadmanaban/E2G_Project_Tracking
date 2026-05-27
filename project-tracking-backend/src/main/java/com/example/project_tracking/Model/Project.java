@@ -84,6 +84,20 @@
         @Column(name = "ifc_extra_prod_hours")
         private BigDecimal ifcExtraProdHours = BigDecimal.ZERO;
 
+        @Column(name = "planned_ifa_date")
+        private LocalDate plannedIfaDate;
+
+        @Column(name = "actual_ifa_date")
+        private LocalDate actualIfaDate;
+
+        @Column(name = "planned_ifc_date")
+        private LocalDate plannedIfcDate;
+
+        @Column(name = "actual_ifc_date")
+        private LocalDate actualIfcDate;
+
+        @Column(name = "extra_hours_note")
+        private String extraHoursNote;
 
         public Project() {
         }
@@ -159,7 +173,12 @@
                 BigDecimal ifcExtraProdHours,
 
                 String projectActivityStatus,
-                LocalDate remainderSentDate
+                LocalDate remainderSentDate,
+                LocalDate plannedIfaDate,
+                LocalDate actualIfaDate,
+                LocalDate plannedIfcDate,
+                LocalDate actualIfcDate,
+                String extraHoursNote
         ) {
             this.id = id;
             this.projectName = projectName;
@@ -202,6 +221,11 @@
 
             this.projectActivityStatus = projectActivityStatus;
             this.remainderSentDate = remainderSentDate;
+            this.plannedIfaDate = plannedIfaDate;
+            this.actualIfaDate = actualIfaDate;
+            this.plannedIfcDate = plannedIfcDate;
+            this.actualIfcDate = actualIfcDate;
+            this.extraHoursNote = extraHoursNote;
         }
 
         public Long getTlId() {
@@ -466,6 +490,46 @@
 
         public void setIfcExtraProdHours(BigDecimal ifcExtraProdHours) {
             this.ifcExtraProdHours = ifcExtraProdHours;
+        }
+
+        public LocalDate getPlannedIfaDate() {
+            return plannedIfaDate;
+        }
+
+        public void setPlannedIfaDate(LocalDate plannedIfaDate) {
+            this.plannedIfaDate = plannedIfaDate;
+        }
+
+        public LocalDate getActualIfaDate() {
+            return actualIfaDate;
+        }
+
+        public void setActualIfaDate(LocalDate actualIfaDate) {
+            this.actualIfaDate = actualIfaDate;
+        }
+
+        public LocalDate getPlannedIfcDate() {
+            return plannedIfcDate;
+        }
+
+        public void setPlannedIfcDate(LocalDate plannedIfcDate) {
+            this.plannedIfcDate = plannedIfcDate;
+        }
+
+        public LocalDate getActualIfcDate() {
+            return actualIfcDate;
+        }
+
+        public void setActualIfcDate(LocalDate actualIfcDate) {
+            this.actualIfcDate = actualIfcDate;
+        }
+
+        public String getExtraHoursNote() {
+            return extraHoursNote;
+        }
+
+        public void setExtraHoursNote(String extraHoursNote) {
+            this.extraHoursNote = extraHoursNote;
         }
 
         @Override
