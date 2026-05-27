@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useEmployee } from "../../context/EmployeeContext.js";
 import styles from "../../styles/Manager/ManagerDashboard.module.css";
 import axiosInstance from "../axiosConfig.js";
-import * as XLSX from "xlsx";
+import * as XLSX from "xlsx-js-style";
 import { saveAs } from "file-saver";
 
 const ManagerDashboard = () => {
@@ -69,7 +69,7 @@ const ManagerDashboard = () => {
 
   useEffect(() => {
     if (!employee.empId) return;
-    
+
 
     //const managerIdToUse = employee.manager ? employee.id : employee.reportingToId;
     // ✅ Admin should have same access as AGM
@@ -111,7 +111,7 @@ const ManagerDashboard = () => {
   }, [employee]);
 
 
-console.log(projects);
+  console.log(projects);
 
 
   useEffect(() => {
@@ -190,45 +190,155 @@ console.log(projects);
   };
 
   const exportFilteredProjectsToExcel = () => {
-  if (!filteredProjects || filteredProjects.length === 0) {
-    alert("No projects to export");
-    return;
+    if (!filteredProjects || filteredProjects.length === 0) {
+      alert("No projects to export");
+      return;
+    }
+    console.log(filteredProjects);
+    // Prepare Excel data
+    const excelData = filteredProjects.map((project, index) => {
+
+  const row = {
+    "Project ID": project.id,
+    "Project Name": project.projectName,
+    "Client Name": project.clientName || "Unknown",
+  };
+
+  // Add Manager Name only for AGM
+  if (isAGM) {
+    row["Manager Name"] =
+      managers[project.managerId] || "Unknown";
   }
 
-  // Prepare Excel data
-  const excelData = filteredProjects.map((project, index) => ({
-    "Project ID": project.projectId,
-    "Project Name": project.projectName,
-    "Client Name": project.clientName || "",
-     "Manager Name": managers[project.managerId] || "Unknown",
-    "Project Coordinator": tl[project.id] || "Not Assigned",
-    "Project Activity Status":project.projectActivityStatus,
-    "Assigned Hours": project.assignedHours || 0,
-    "Extra Hours": project.extraHours || 0,
-    "Working Hours": project.workingHours || 0,
-    "Project Status": project.status?"Completed":"In Progress"
-  }));
+  // Remaining fields
+  row["Project Coordinator"] =
+    tl[project.id] || "Not Assigned";
 
-  // Create worksheet
-  const worksheet = XLSX.utils.json_to_sheet(excelData);
+  row["Awarded Date"] = project.assignedDate || "Not Assigned";
+  row["Planned Start Date"] = project.plannedStartDate || "Not Assigned";
+  row["Actual Start Date"] = project.startDate || "Not Assigned";
+  row["Completion Date"] = project.completedDate || "Not Assigned";
+  row["Project Activity Status"] =
+    project.projectActivityStatus || "Not Assigned";
 
-  // Auto-fit columns
-  const colWidths = Object.keys(excelData[0]).map((key) => ({
-    wch: Math.max(
-      key.length,
-      ...excelData.map((row) => String(row[key] || "").length)
-    ) + 3
-  }));
+  row["IFA Given Hours"] = project.ifaGivenHours || 0;
+  row["IFC Given Hours"] = project.ifcGivenHours|| 0;
 
-  worksheet["!cols"] = colWidths;
+  row["IFA Production Hours"] = project.ifaProdHours|| 0;
+  row["IFC Production Hours"] = project.ifcProdHours|| 0;
 
-  // Create workbook
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Projects");
+  row["IFA Extra Hours Requested"] =
+    project.ifaExtraHours|| 0;
 
-  // Download
-  XLSX.writeFile(workbook,`"Projects_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
-};
+  row["IFA Extra Hours Used"] =
+    project.ifaExtraProdHours|| 0;
+
+  row["IFC Extra Hours Requested"] =
+    project.ifcExtraHours|| 0;
+
+  row["IFC Extra Hours Used"] =
+    project.ifcExtraProdHours|| 0;
+
+  row["Total Working Hours"] =
+    project.workingHours || 0;
+
+  row["Modeling Hours Assigned"] =
+    project.modellingHours|| 0;
+
+  row["Modeling Hours Used"] =
+    project.modellingTime|| 0;
+
+  row["Checking Hours Assigned"] =
+    project.checkingHours|| 0;
+
+  row["Checking Hours Used"] =
+    project.checkingTime|| 0;
+
+  return row;
+});
+
+    // Create worksheet
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+   const range = XLSX.utils.decode_range(worksheet["!ref"]);
+
+for (let R = range.s.r; R <= range.e.r; ++R) {
+  for (let C = range.s.c; C <= range.e.c; ++C) {
+
+    const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+
+    if (!worksheet[cellAddress]) continue;
+
+    // Header Row
+    if (R === 0) {
+      worksheet[cellAddress].s = {
+        font: {
+          bold: true,
+          sz: 12,
+        },
+        alignment: {
+          horizontal: "center",
+          vertical: "center",
+          wrapText: true,
+        },
+        border: {
+          top: { style: "thin" },
+          bottom: { style: "thin" },
+          left: { style: "thin" },
+          right: { style: "thin" },
+        },
+      };
+    }
+
+    // Entire Table Styling
+    else {
+      worksheet[cellAddress].s = {
+        alignment: {
+          vertical: "center",
+          horizontal: "center",
+          wrapText: true,
+          indent: 1, // acts like left padding
+        },
+
+        border: {
+          top: { style: "thin" },
+          bottom: { style: "thin" },
+          left: { style: "thin" },
+          right: { style: "thin" },
+        },
+      };
+    }
+  }
+}
+    // Auto-fit columns
+    const colWidths = Object.keys(excelData[0]).map((key) => ({
+  wch: Math.max(
+    key.length + 8,
+    ...excelData.map((row) => String(row[key] || "").length + 5)
+  ),
+}));
+
+worksheet["!cols"] = colWidths;
+
+    worksheet["!cols"] = colWidths;
+
+    // Create workbook
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Projects");
+
+    // Download
+    const managerName =
+      isAGM && selectedManager
+        ? (managers[selectedManager] || "Manager")
+          .replace(/\s+/g, "_")
+        : "General";
+
+    const fileName = `Projects_Report_${managerName}_${new Date()
+      .toISOString()
+      .slice(0, 10)}.xlsx`;
+
+    XLSX.writeFile(workbook, fileName);
+  };
 
 
   const handleProjectClick = async (project) => {
@@ -336,21 +446,21 @@ console.log(projects);
       )}
 
       <button
-  type="button"
-  onClick={exportFilteredProjectsToExcel}
-   style={{
-            marginBottom: "10px",
-            background: "#2563eb",
-            color: "#fff",
-            border: "none",
-            padding: "8px 16px",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontWeight: 500,
-          }}
->
-  Export Projects
-</button>
+        type="button"
+        onClick={exportFilteredProjectsToExcel}
+        style={{
+          marginBottom: "10px",
+          background: "#2563eb",
+          color: "#fff",
+          border: "none",
+          padding: "8px 16px",
+          borderRadius: "6px",
+          cursor: "pointer",
+          fontWeight: 500,
+        }}
+      >
+        Export Projects
+      </button>
 
 
       {/* ✅ Table Section */}
@@ -382,7 +492,7 @@ console.log(projects);
                 onClick={() => handleProjectClick(p)}
                 key={p.id}
                 className={`
-      ${p.modellingHours === 0 || p.modellingHours===null ? styles.highlightRow : ""}
+      ${p.modellingHours === 0 || p.modellingHours === null ? styles.highlightRow : ""}
       ${((p.assignedHours || 0) + (p.extraHours || 0) - p.workingHours) <= 10
                     ? styles.redAlertRow
                     : ""}
@@ -492,14 +602,15 @@ console.log(projects);
                       </tr>
 
                       <tr>
-                        <th>Assigned Hours</th>
-                        <td>{selectedProject.assignedHours}</td>
-                        <th>Worked Hours</th>
-                        <td>{selectedProject.workingHours}</td>
+                        <th>IFA (Worked / Assigned)</th>
+                        <td>{selectedProject.ifaGivenHours || 0} / {selectedProject.ifaProdHours}</td>
+                        <th>IFC (Worked / Assigned)</th>
+                        <td>{selectedProject.ifcGivenHours || 0} / {selectedProject.ifcProdHours}</td>
                       </tr>
 
+
                       <tr>
-                        <th>Modelling Hours <br></br>(Worked / Assigned)</th>
+                        <th>Modeling Hours <br></br>(Worked / Assigned)</th>
                         <td>
                           {selectedProject.modellingTime || "0"} / {selectedProject.modellingHours || "0"}
                         </td>
@@ -534,14 +645,18 @@ console.log(projects);
                       <tr>
                         <th>Assigned Date</th>
                         <td>{selectedProject.assignedDate || "—"}</td>
-                        <th>Start Date</th>
-                        <td>{selectedProject.startDate || "—"}</td>
+                        <th>Completion Date</th>
+                        <td>{selectedProject.completedDate || "—"}</td>
 
                       </tr>
 
                       <tr>
-                        <th>Completed Date</th>
-                        <td>{selectedProject.completedDate || "—"}</td>
+                        <th>Planned Start Date</th>
+                        <td>{selectedProject.plannedStartDate || "—"}</td>
+                        <th>Actual Start Date</th>
+                        <td>{selectedProject.startDate || "—"}</td>
+                        </tr>
+                        <tr>
                         <th>Project Status</th>
                         <td colSpan="2">
                           {selectedProject.projectStatus
@@ -660,100 +775,100 @@ console.log(projects);
 
                   <div className={styles.resourcesTableWrapper}>
 
-                  <table className={styles.resourcesTable}>
-                    <thead>
-                      <tr>
-                        <th>Date</th>
-                        <th>Employee</th>
-                        <th>Assigned Work</th>
-                        <th>Activity Name</th>
-                        <th>Status</th>
-                        <th>Hours Worked</th>
-                        <th>Remarks</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {currentLogs.length === 0 ? (
+                    <table className={styles.resourcesTable}>
+                      <thead>
                         <tr>
-                          <td colSpan="6" className={styles.noData}>No worklogs found.</td>
+                          <th>Date</th>
+                          <th>Employee</th>
+                          <th>Assigned Work</th>
+                          <th>Activity Name</th>
+                          <th>Status</th>
+                          <th>Hours Worked</th>
+                          <th>Remarks</th>
                         </tr>
-                      ) : (
-                        currentLogs.map((log) => (
-                          <tr key={log.id}>
-                            <td>{log.date}</td>
-                            <td>{log.employeeName}</td>
-                            <td>{log.assignedWork}</td>
-                            <td>{log.activityName}</td>
-                            <td>{log.status}</td>
-                            <td>{log.workHours}</td>
-                            <td>{log.remarks}</td>
+                      </thead>
+                      <tbody>
+                        {currentLogs.length === 0 ? (
+                          <tr>
+                            <td colSpan="6" className={styles.noData}>No worklogs found.</td>
                           </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                 
+                        ) : (
+                          currentLogs.map((log) => (
+                            <tr key={log.id}>
+                              <td>{log.date}</td>
+                              <td>{log.employeeName}</td>
+                              <td>{log.assignedWork}</td>
+                              <td>{log.activityName}</td>
+                              <td>{log.status}</td>
+                              <td>{log.workHours}</td>
+                              <td>{log.remarks}</td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
 
-                  {/* ✅ Numbered Pagination */}
-                  {worklogs.length > itemsPerPage && (
-                    <div className={styles.paginationContainer}>
-                      <button
-                        className={styles.paginationBtn}
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                      >
-                        « Prev
-                      </button>
 
-                      {Array.from({ length: totalPages }, (_, i) => i + 1)
-                        .filter(
-                          (page) =>
-                            page === 1 ||
-                            page === totalPages ||
-                            (page >= currentPage - 2 && page <= currentPage + 2)
-                        )
-                        .map((page, idx, arr) => {
-                          // Add ellipsis between gaps
-                          if (idx > 0 && arr[idx - 1] !== page - 1) {
+                    {/* ✅ Numbered Pagination */}
+                    {worklogs.length > itemsPerPage && (
+                      <div className={styles.paginationContainer}>
+                        <button
+                          className={styles.paginationBtn}
+                          disabled={currentPage === 1}
+                          onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                        >
+                          « Prev
+                        </button>
+
+                        {Array.from({ length: totalPages }, (_, i) => i + 1)
+                          .filter(
+                            (page) =>
+                              page === 1 ||
+                              page === totalPages ||
+                              (page >= currentPage - 2 && page <= currentPage + 2)
+                          )
+                          .map((page, idx, arr) => {
+                            // Add ellipsis between gaps
+                            if (idx > 0 && arr[idx - 1] !== page - 1) {
+                              return (
+                                <React.Fragment key={`ellipsis-${page}`}>
+                                  <span className={styles.ellipsis}>...</span>
+                                  <button
+                                    key={page}
+                                    className={`${styles.pageNumber} ${currentPage === page ? styles.activePage : ""
+                                      }`}
+                                    onClick={() => setCurrentPage(page)}
+                                  >
+                                    {page}
+                                  </button>
+                                </React.Fragment>
+                              );
+                            }
                             return (
-                              <React.Fragment key={`ellipsis-${page}`}>
-                                <span className={styles.ellipsis}>...</span>
-                                <button
-                                  key={page}
-                                  className={`${styles.pageNumber} ${currentPage === page ? styles.activePage : ""
-                                    }`}
-                                  onClick={() => setCurrentPage(page)}
-                                >
-                                  {page}
-                                </button>
-                              </React.Fragment>
+                              <button
+                                key={page}
+                                className={`${styles.pageNumber} ${currentPage === page ? styles.activePage : ""
+                                  }`}
+                                onClick={() => setCurrentPage(page)}
+                              >
+                                {page}
+                              </button>
                             );
+                          })}
+
+                        <button
+                          className={styles.paginationBtn}
+                          disabled={currentPage === totalPages}
+                          onClick={() =>
+                            setCurrentPage((p) => Math.min(p + 1, totalPages))
                           }
-                          return (
-                            <button
-                              key={page}
-                              className={`${styles.pageNumber} ${currentPage === page ? styles.activePage : ""
-                                }`}
-                              onClick={() => setCurrentPage(page)}
-                            >
-                              {page}
-                            </button>
-                          );
-                        })}
+                        >
+                          Next »
+                        </button>
+                      </div>
+                    )}
 
-                      <button
-                        className={styles.paginationBtn}
-                        disabled={currentPage === totalPages}
-                        onClick={() =>
-                          setCurrentPage((p) => Math.min(p + 1, totalPages))
-                        }
-                      >
-                        Next »
-                      </button>
-                    </div>
-                  )}
-
-                   </div>
+                  </div>
 
                   <button
                     className={styles.closeBtn}

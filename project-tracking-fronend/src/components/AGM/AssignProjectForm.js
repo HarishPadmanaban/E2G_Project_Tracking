@@ -56,7 +56,7 @@ const AssignProjectForm = () => {
             agmId: employee.empId,
             totalHours: formData.totalHours,
             awardedDate: formData.awardedDate,
-            startDate: formData.startDate,
+            plannedStartDate: formData.startDate,
             completedDate: formData.completionDate
           },
         }
@@ -124,7 +124,7 @@ const AssignProjectForm = () => {
       </div>
 
       <div className={styles.fld}>
-        <label>Start Date</label>
+        <label>Planned Start Date</label>
         <input
           type="date"
           name="startDate"

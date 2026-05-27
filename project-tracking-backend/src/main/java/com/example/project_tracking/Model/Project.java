@@ -84,7 +84,6 @@
         @Column(name = "ifc_extra_prod_hours")
         private BigDecimal ifcExtraProdHours = BigDecimal.ZERO;
 
-        // Idle project flag
 
         public Project() {
         }

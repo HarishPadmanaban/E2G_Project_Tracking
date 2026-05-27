@@ -117,7 +117,7 @@ public class ProjectService {
         return response;
     }
 
-    public void createProject(String projectName,String clientName,Long pmId,Long agmId,BigDecimal totalHours,LocalDate awardedDate,LocalDate startDate,LocalDate completedDate) {
+    public void createProject(String projectName,String clientName,Long pmId,Long agmId,BigDecimal totalHours,LocalDate awardedDate,LocalDate plannedStartDate,LocalDate completedDate) {
         Project project=new Project();
 
         project.setProjectName(projectName);
@@ -125,7 +125,7 @@ public class ProjectService {
         project.setManagerId(pmId);
         project.setAssignedHours(totalHours);
         project.setAssignedDate(awardedDate);
-        project.setStartDate(startDate);
+        project.setPlannedStartDate(plannedStartDate);
         project.setCompletedDate(completedDate);
 
         if(project.getModellingHours()==null){
@@ -162,7 +162,7 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
-    public Project updateProjectHours(Long tlId,Long projectId, BigDecimal addModellingHours, BigDecimal addCheckingHours, BigDecimal addDetailingHours, BigDecimal addStudyHours,String projectActivity) {
+    public Project updateProjectHours(Long tlId,Long projectId, BigDecimal addModellingHours, BigDecimal addCheckingHours, BigDecimal addDetailingHours, BigDecimal addStudyHours,String projectActivity,LocalDate startDate) {
         Optional<Project> optionalProject = projectRepository.findById(projectId);
 
         if (optionalProject.isPresent()) {
@@ -190,6 +190,8 @@ public class ProjectService {
                 project.setTlId(tlId);
 
                 project.setProjectActivityStatus(projectActivity);
+
+                project.setStartDate(startDate);
 
                 // Save back to repo
                 return projectRepository.save(project);

@@ -237,6 +237,11 @@ const ProjectAssignmentForm = () => {
       return false;
     }
 
+     if (!formData.startDate) {
+      showToast("⚠️ Please choose Start Date.", "warning");
+      return false;
+    }
+
 
     if (!formData.projectActivity) {
       showToast("⚠️ Please select Project Activity", "warning");
@@ -292,7 +297,8 @@ const ProjectAssignmentForm = () => {
             checkingHours: formData.checkingHours,
             detailingHours: formData.detailingHours,
             studyHours: formData.studyHours,
-            projectActivity: formData.projectActivity
+            projectActivity: formData.projectActivity,
+            startDate:formData.startDate
           },
         }
       );
@@ -550,6 +556,17 @@ const ProjectAssignmentForm = () => {
               <option value="Internal Rework">Internal Rework</option>
             </select>
           </div>
+
+        <div className={styles.fld}>
+        <label>Actual Start Date</label>
+        <input
+          type="date"
+          name="startDate"
+          value={selectedProject.startDate}
+          onChange={handleChange}
+          min={new Date().toISOString().split("T")[0]}
+        />
+      </div>
 
           <div className={styles.fld}>
             <label style={{ "marginBottom": "8px" }}>Assigned Hours (Total)</label>
