@@ -297,14 +297,13 @@ const ProjectAssignmentForm = () => {
         }
       );
 
-
-
+      const empId = selectedResources.map(emp => emp.empId);
+      empId.push(formData.tl1);
       // ✅ STEP 2: Assign resources (separate endpoint)
-
 
       const payload = {
         project_id: formData.projectId,
-        employeeIds: selectedResources.map(emp => emp.empId),
+        employeeIds: empId,
       };
 
       const resourceResponse = await axiosInstance.post(

@@ -592,7 +592,7 @@ public class WorkDetailsService {
             projectRepository.save(project);
         }
         workDetailsRepository.delete(work);
-        assignedWorkRepository.delete(assignedWork);
+       // assignedWorkRepository.delete(assignedWork);
     }
 
     private AssignedWork findOrCreateAssignedWork(Long employeeId, Long managerId, Long projectId, Long activityId) {

@@ -73,6 +73,7 @@ const AssignActivityForm = () => {
 
         if (res.data.length === 0) {
           // If no employees assigned to this project, get all employees under manager
+          console.log(res.data);
           axiosInstance
             .get(`/employee/getbymgr?mgrid=${idToUse}`)
             .then((mgrRes) => setEmployees(mgrRes.data))
