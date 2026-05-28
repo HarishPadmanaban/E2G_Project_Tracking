@@ -99,6 +99,18 @@
         @Column(name = "extra_hours_note")
         private String extraHoursNote;
 
+        @Column(name = "planned_reifa_date")
+        private LocalDate plannedReifaDate;
+
+        @Column(name = "actual_reifa_date")
+        private LocalDate actualReifaDate;
+
+        @Column(name = "planned_reifc_date")
+        private LocalDate plannedReifcDate;
+
+        @Column(name = "actual_reifc_date")
+        private LocalDate actualReifcDate;
+
         public Project() {
         }
 
@@ -178,7 +190,12 @@
                 LocalDate actualIfaDate,
                 LocalDate plannedIfcDate,
                 LocalDate actualIfcDate,
-                String extraHoursNote
+                String extraHoursNote,
+
+                LocalDate plannedReifaDate,
+                LocalDate actualReifaDate,
+                LocalDate plannedReifcDate,
+                LocalDate actualReifcDate
         ) {
             this.id = id;
             this.projectName = projectName;
@@ -226,6 +243,11 @@
             this.plannedIfcDate = plannedIfcDate;
             this.actualIfcDate = actualIfcDate;
             this.extraHoursNote = extraHoursNote;
+
+            this.plannedReifaDate = plannedReifaDate;
+            this.actualReifaDate = actualReifaDate;
+            this.plannedReifcDate = plannedReifcDate;
+            this.actualReifcDate = actualReifcDate;
         }
 
         public Long getTlId() {
@@ -532,6 +554,38 @@
             this.extraHoursNote = extraHoursNote;
         }
 
+        public LocalDate getPlannedReifaDate() {
+            return plannedReifaDate;
+        }
+
+        public void setPlannedReifaDate(LocalDate plannedReifaDate) {
+            this.plannedReifaDate = plannedReifaDate;
+        }
+
+        public LocalDate getActualReifaDate() {
+            return actualReifaDate;
+        }
+
+        public void setActualReifaDate(LocalDate actualReifaDate) {
+            this.actualReifaDate = actualReifaDate;
+        }
+
+        public LocalDate getPlannedReifcDate() {
+            return plannedReifcDate;
+        }
+
+        public void setPlannedReifcDate(LocalDate plannedReifcDate) {
+            this.plannedReifcDate = plannedReifcDate;
+        }
+
+        public LocalDate getActualReifcDate() {
+            return actualReifcDate;
+        }
+
+        public void setActualReifcDate(LocalDate actualReifcDate) {
+            this.actualReifcDate = actualReifcDate;
+        }
+
         @Override
         public String toString() {
             return "Project{" +
@@ -566,6 +620,10 @@
                     ", ifcProdHours=" + ifcProdHours +
                     ", ifaExtraProdHours=" + ifaExtraProdHours +
                     ", ifcExtraProdHours=" + ifcExtraProdHours +
+                    ", plannedReifaDate=" + plannedReifaDate +
+                    ", actualReifaDate=" + actualReifaDate +
+                    ", plannedReifcDate=" + plannedReifcDate +
+                    ", actualReifcDate=" + actualReifcDate +
                     '}';
         }
     }
