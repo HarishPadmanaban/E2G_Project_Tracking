@@ -107,4 +107,16 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.softDelete(id));
     }
 
+    @PutMapping("ifa-date/{id}")
+    public ResponseEntity<?> updateIfaDate(@PathVariable Long id,@RequestParam LocalDate plannedIfaDate,@RequestParam LocalDate actualIfaDate)
+    {
+        return ResponseEntity.ok(projectService.updateIfaDate(id,plannedIfaDate,actualIfaDate));
+    }
+
+    @PutMapping("ifc-date/{id}")
+    public ResponseEntity<?> updateIfcDate(@PathVariable Long id,@RequestParam LocalDate plannedIfcDate,@RequestParam LocalDate actualIfcDate)
+    {
+        return ResponseEntity.ok(projectService.updateIfcDate(id,plannedIfcDate,actualIfcDate));
+    }
+
 }

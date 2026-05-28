@@ -18,6 +18,10 @@ const ManagerProjectActions = () => {
   const [loadingEmployees, setLoadingEmployees] = useState(false);
 
   const [newCompletionDate, setNewCompletionDate] = useState("");
+  const [plannedIfaDate,setPlannedIfaDate] = useState("");
+  const [actualIfaDate,setActualIfaDate] = useState("");
+  const [plannedIfcDate,setPlannedIfcDate] = useState("");
+  const [actualIfcDate,setActualIfcDate] = useState("");
 
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedActivity, setSelectedActivity] = useState("");
@@ -301,9 +305,61 @@ const ManagerProjectActions = () => {
                 <option value="EXTRA_HOURS">Extra Hours Request</option>
                 <option value="COMPLETION_EXTENSION">Completion Date Extension</option>
                 <option value="RESOURCE_ADDITION">Add Resources</option>
+                <option value="IFA_IFC_DATE">Enter IFA/IFC Date</option>
               </select>
             </div>
           )}
+
+          {selectedProject && requestType === "IFA_IFC_DATE" && (
+            <>
+              {selectedProject.projectActivityStatus === "IFA" && (
+                <>
+                <div className={styles.fld}>
+                <label>Planned IFA Date</label>
+                <input
+                  type="date"
+                  value={plannedIfaDate}
+                  onChange={(e) => setPlannedIfaDate(e.target.value)}
+                />
+              </div>
+
+              <div className={styles.fld}>
+                <label>Actual IFA Date</label>
+                <input
+                  type="date"
+                  value={actualIfaDate}
+                  onChange={(e) => setActualIfaDate(e.target.value)}
+                />
+              </div>
+                </>
+              )
+              }
+
+              {selectedProject.projectActivityStatus === "IFC" && (
+              <>
+                <div className={styles.fld}>
+                <label>Planned IFC Date</label>
+                <input
+                  type="date"
+                  value={plannedIfcDate}
+                  onChange={(e) => setPlannedIfcDate(e.target.value)}
+                />
+              </div>
+
+              <div className={styles.fld}>
+                <label>Actual IFC Date</label>
+                <input
+                  type="date"
+                  value={actualIfcDate}
+                  onChange={(e) => setActualIfcDate(e.target.value)}
+                />
+              </div>
+              </>  
+              )
+            }
+            </>
+          )
+          }
 
           {/* ✅ Show form ONLY if project selected + request type selected */}
           {selectedProject && requestType === "EXTRA_HOURS" && (

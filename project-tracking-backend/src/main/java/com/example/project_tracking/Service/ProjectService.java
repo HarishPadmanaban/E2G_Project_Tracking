@@ -269,5 +269,19 @@ public class ProjectService {
         project.setSoftDelete(true);
         return projectRepository.save(project);
     }
+
+    public Project updateIfaDate(Long id, LocalDate plannedIfaDate, LocalDate actualIfaDate) {
+        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project Found"));
+        project.setPlannedIfaDate(plannedIfaDate);
+        project.setActualIfaDate(actualIfaDate);
+        return projectRepository.save(project);
+    }
+
+    public Project updateIfcDate(Long id, LocalDate plannedIfcDate, LocalDate actualIfcDate) {
+        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project Found"));
+        project.setPlannedIfcDate(plannedIfcDate);
+        project.setActualIfcDate(actualIfcDate);
+        return projectRepository.save(project);
+    }
 }
 

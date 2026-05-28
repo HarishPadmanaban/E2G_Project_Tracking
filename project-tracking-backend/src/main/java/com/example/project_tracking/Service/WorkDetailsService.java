@@ -589,10 +589,31 @@ public class WorkDetailsService {
                 case "detailing": project.setDetailingTime(project.getDetailingTime().subtract(BigDecimal.valueOf(work.getWorkHours()))); break;
                 case "studying": project.setStudyHoursTracking(project.getStudyHoursTracking().subtract(BigDecimal.valueOf(work.getWorkHours()))); break;
             }
+//            BigDecimal extraTracking =
+//                    project.getExtraHoursTracking() == null
+//                            ? BigDecimal.ZERO
+//                            : project.getExtraHoursTracking();
+//
+//            if (extraTracking.compareTo(BigDecimal.ZERO) > 0) {
+//
+//                BigDecimal hoursToReduce =
+//                        BigDecimal.valueOf(work.getWorkHours());
+//
+//                // prevent negative values
+//                if (extraTracking.compareTo(hoursToReduce) >= 0) {
+//
+//                    project.setExtraHoursTracking(
+//                            extraTracking.subtract(hoursToReduce)
+//                    );
+//
+//                } else {
+//
+//                    project.setExtraHoursTracking(BigDecimal.ZERO);
+//                }
+//            }
             projectRepository.save(project);
         }
         workDetailsRepository.delete(work);
-        assignedWorkRepository.delete(assignedWork);
     }
 
     private AssignedWork findOrCreateAssignedWork(Long employeeId, Long managerId, Long projectId, Long activityId) {
