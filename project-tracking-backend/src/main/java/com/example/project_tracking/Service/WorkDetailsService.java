@@ -572,47 +572,158 @@ public class WorkDetailsService {
     }
 
 
-
     public void discardWork(Long workId) {
+
         WorkDetails work = workDetailsRepository.findById(workId)
-                .orElseThrow(() -> new RuntimeException("Work entry not found for ID: " + workId));
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Work entry not found for ID: " + workId
+                        ));
+
         System.out.println(work.toString());
+
         AssignedWork assignedWork = work.getAssignedWorkId();
-        if(work.getWorkHours() != null)
-        {
+
+        if (work.getWorkHours() != null) {
+
             Project project = assignedWork.getProject();
-            project.setWorkingHours(project.getWorkingHours().subtract(BigDecimal.valueOf(work.getWorkHours())));
             Activity activity = assignedWork.getActivity();
-            switch (activity.getMainType().toLowerCase()) {
-                case "modeling": project.setModellingTime(project.getModellingTime().subtract(BigDecimal.valueOf(work.getWorkHours()))); break;
-                case "checking": project.setCheckingTime(project.getCheckingTime().subtract(BigDecimal.valueOf(work.getWorkHours()))); projectRepository.save(project); break;
-                case "detailing": project.setDetailingTime(project.getDetailingTime().subtract(BigDecimal.valueOf(work.getWorkHours()))); break;
-                case "studying": project.setStudyHoursTracking(project.getStudyHoursTracking().subtract(BigDecimal.valueOf(work.getWorkHours()))); break;
+
+            BigDecimal removedHours =
+                    BigDecimal.valueOf(work.getWorkHours());
+
+            String mainType =
+                    activity.getMainType().toLowerCase();
+
+            BigDecimal targetHours;
+            BigDecimal currentTrackedTime;
+
+            // Get target + current tracked time
+            switch (mainType) {
+
+                case "modeling":
+                    targetHours =
+                            Optional.ofNullable(project.getModellingHours())
+                                    .orElse(BigDecimal.ZERO);
+
+                    currentTrackedTime =
+                            Optional.ofNullable(project.getModellingTime())
+                                    .orElse(BigDecimal.ZERO);
+                    break;
+
+                case "checking":
+                    targetHours =
+                            Optional.ofNullable(project.getCheckingHours())
+                                    .orElse(BigDecimal.ZERO);
+
+                    currentTrackedTime =
+                            Optional.ofNullable(project.getCheckingTime())
+                                    .orElse(BigDecimal.ZERO);
+                    break;
+
+                case "detailing":
+                    targetHours =
+                            Optional.ofNullable(project.getDetailingHours())
+                                    .orElse(BigDecimal.ZERO);
+
+                    currentTrackedTime =
+                            Optional.ofNullable(project.getDetailingTime())
+                                    .orElse(BigDecimal.ZERO);
+                    break;
+
+                case "studying":
+                    targetHours =
+                            Optional.ofNullable(project.getStudyHours())
+                                    .orElse(BigDecimal.ZERO);
+
+                    currentTrackedTime =
+                            Optional.ofNullable(project.getStudyHoursTracking())
+                                    .orElse(BigDecimal.ZERO);
+                    break;
+
+                default:
+                    throw new RuntimeException(
+                            "Unknown main_type: " + mainType
+                    );
             }
-//            BigDecimal extraTracking =
-//                    project.getExtraHoursTracking() == null
-//                            ? BigDecimal.ZERO
-//                            : project.getExtraHoursTracking();
-//
-//            if (extraTracking.compareTo(BigDecimal.ZERO) > 0) {
-//
-//                BigDecimal hoursToReduce =
-//                        BigDecimal.valueOf(work.getWorkHours());
-//
-//                // prevent negative values
-//                if (extraTracking.compareTo(hoursToReduce) >= 0) {
-//
-//                    project.setExtraHoursTracking(
-//                            extraTracking.subtract(hoursToReduce)
-//                    );
-//
-//                } else {
-//
-//                    project.setExtraHoursTracking(BigDecimal.ZERO);
-//                }
-//            }
+
+            // -----------------------------
+// Reduce extra hours first
+// -----------------------------
+            BigDecimal extraTracking =
+                    Optional.ofNullable(project.getExtraHoursTracking())
+                            .orElse(BigDecimal.ZERO);
+
+            BigDecimal remainingToRemove = removedHours;
+
+// First deduct from extra tracking
+            if (extraTracking.compareTo(BigDecimal.ZERO) > 0) {
+
+                BigDecimal extraDeduction =
+                        remainingToRemove.min(extraTracking);
+
+                extraTracking =
+                        extraTracking.subtract(extraDeduction);
+
+                remainingToRemove =
+                        remainingToRemove.subtract(extraDeduction);
+            }
+
+// -----------------------------
+// Reduce activity tracking only
+// if remaining hours exist
+// -----------------------------
+            BigDecimal newTrackedTime = currentTrackedTime;
+
+            if (remainingToRemove.compareTo(BigDecimal.ZERO) > 0) {
+
+                newTrackedTime =
+                        currentTrackedTime.subtract(remainingToRemove);
+
+                if (newTrackedTime.compareTo(BigDecimal.ZERO) < 0) {
+                    newTrackedTime = BigDecimal.ZERO;
+                }
+            }
+
+            project.setExtraHoursTracking(
+                    extraTracking.max(BigDecimal.ZERO)
+            );
+
+            // -----------------------------
+            // Reduce total working hours
+            // -----------------------------
+            project.setWorkingHours(
+                    Optional.ofNullable(project.getWorkingHours())
+                            .orElse(BigDecimal.ZERO)
+                            .subtract(removedHours)
+                            .max(BigDecimal.ZERO)
+            );
+
+            // -----------------------------
+            // Reduce activity tracking
+            // -----------------------------
+            switch (mainType) {
+
+                case "modeling":
+                    project.setModellingTime(newTrackedTime);
+                    break;
+
+                case "checking":
+                    project.setCheckingTime(newTrackedTime);
+                    break;
+
+                case "detailing":
+                    project.setDetailingTime(newTrackedTime);
+                    break;
+
+                case "studying":
+                    project.setStudyHoursTracking(newTrackedTime);
+                    break;
+            }
+
             projectRepository.save(project);
         }
+
         workDetailsRepository.delete(work);
     }
 
