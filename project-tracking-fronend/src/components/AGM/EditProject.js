@@ -119,10 +119,15 @@ const EditProject = () => {
       assignedHours: project.assignedHours,
       modellingHours: project.modellingHours,
       checkingHours: project.checkingHours,
-      studyHours:project.studyHours,
+      studyHours: project.studyHours,
       detailingHours: project.detailingHours,
       managerId: project.managerId,
       projectStatus: project.projectStatus ? "Pending" : "Completed",
+      projectActivityStatus: project.projectActivityStatus,
+      plannedIfaDate: project.plannedIfaDate,
+      actualIfaDate: project.actualIfaDate,
+      plannedIfcDate: project.plannedIfcDate,
+      actualIfcDate: project.actualIfcDate,
     });
   };
 
@@ -180,6 +185,10 @@ const EditProject = () => {
         studyHours: Number(formData.studyHours),
         managerId: Number(formData.managerId),
         projectStatus: formData.projectStatus === "Pending",
+        plannedIfaDate:formData.plannedIfaDate,
+        actualIfaDate:formData.actualIfaDate,
+        plannedIfcDate:formData.plannedIfcDate,
+        actualIfcDate:formData.actualIfcDate
       };
 
       console.log(updatedPayload);
@@ -281,23 +290,23 @@ const EditProject = () => {
                         ? styles.statusInProgress
                         : styles.statusCompleted
                     }>{proj.projectStatus ? "In-Progress" : "Completed"}</td>
-                    
-                      <td>
-                        <div style={{display:"flex"}}>
-                      <button
-                        className={`${styles.actionBtn}`}
-                        onClick={() => handleEdit(proj)}
-                      >
-                        ✏️Edit
-                      </button>
 
-                      <button
-                        className={`${styles.actionBtn}`}
-                        onClick={() => handleDelete(proj.id)}  
-                      >
-                        🗑️
-                      </button>
-                    </div>
+                    <td>
+                      <div style={{ display: "flex" }}>
+                        <button
+                          className={`${styles.actionBtn}`}
+                          onClick={() => handleEdit(proj)}
+                        >
+                          ✏️Edit
+                        </button>
+
+                        <button
+                          className={`${styles.actionBtn}`}
+                          onClick={() => handleDelete(proj.id)}
+                        >
+                          🗑️
+                        </button>
+                      </div>
                     </td>
 
                   </tr>
@@ -390,7 +399,80 @@ const EditProject = () => {
               />
             </div>
 
-            <br></br>
+            {
+              formData.projectActivityStatus === "IFA" && (
+                <>
+                <br></br>
+                  <div className={styles.formField}>
+                    <label>Planned IFA Date</label>
+                    <input
+                      type="date"
+                      name="plannedIfaDate"
+                      value={formData.plannedIfaDate}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className={styles.formField}>
+                    <label>Actual IFA Date</label>
+                    <input
+                      type="date"
+                      name="actualIfaDate"
+                      value={formData.actualIfaDate}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <br></br>
+                </>
+
+              )
+            }
+
+            {
+              formData.projectActivityStatus !== "IFA" && (
+                <>
+                <br></br>
+                  <div className={styles.formField}>
+                    <label>Planned IFA Date</label>
+                    <input
+                      type="date"
+                      name="plannedIfaDate"
+                      value={formData.plannedIfaDate}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className={styles.formField}>
+                    <label>Actual IFA Date</label>
+                    <input
+                      type="date"
+                      name="actualIfaDate"
+                      value={formData.actualIfaDate}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className={styles.formField}>
+                    <label>Planned IFC Date</label>
+                    <input
+                      type="date"
+                      name="plannedIfcDate"
+                      value={formData.plannedIfcDate}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className={styles.formField}>
+                    <label>Actual IFC Date</label>
+                    <input
+                      type="date"
+                      name="actualIfcDate"
+                      value={formData.actualIfcDate}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </>
+
+              )
+            }
+
+            
 
             <div className={styles.fld} >
               <label>Status :</label>

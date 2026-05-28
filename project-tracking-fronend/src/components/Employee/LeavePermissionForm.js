@@ -253,6 +253,7 @@ const LeavePermissionForm = () => {
 
 
       <h2>Leave & Permission Portal</h2>
+      {/*E2G Project*/}
 
       {/* Leave Balance Cards */}
       {leaveBalance && activeTab == "apply" && (

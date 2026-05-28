@@ -36,9 +36,9 @@ public class ProjectController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> createProject(@RequestParam String projectName,@RequestParam String clientName,@RequestParam Long pmId,@RequestParam Long agmId,@RequestParam BigDecimal totalHours,@RequestParam LocalDate awardedDate,@RequestParam LocalDate startDate,@RequestParam LocalDate completedDate)
+    public ResponseEntity<?> createProject(@RequestParam String projectName,@RequestParam String clientName,@RequestParam Long pmId,@RequestParam Long agmId,@RequestParam BigDecimal totalHours,@RequestParam LocalDate awardedDate,@RequestParam LocalDate plannedStartDate,@RequestParam LocalDate completedDate)
     {
-        projectService.createProject(projectName,clientName,pmId,agmId,totalHours,awardedDate,startDate,completedDate);
+        projectService.createProject(projectName,clientName,pmId,agmId,totalHours,awardedDate,plannedStartDate,completedDate);
         return ResponseEntity.ok("Saved Successfully");
     }
 
@@ -60,9 +60,10 @@ public class ProjectController {
             @RequestParam BigDecimal checkingHours,
             @RequestParam BigDecimal detailingHours,
             @RequestParam BigDecimal studyHours,
-            @RequestParam String projectActivity
+            @RequestParam String projectActivity,
+            @RequestParam LocalDate startDate
             ) {
-        return projectService.updateProjectHours(tlId,projectId, modellingHours, checkingHours, detailingHours,studyHours,projectActivity);
+        return projectService.updateProjectHours(tlId,projectId, modellingHours, checkingHours, detailingHours,studyHours,projectActivity,startDate);
     }
 
     @PutMapping("/editproject")
@@ -104,6 +105,19 @@ public class ProjectController {
     public ResponseEntity<?> softDelete(@PathVariable Long id)
     {
         return ResponseEntity.ok(projectService.softDelete(id));
+    }
+
+    @PutMapping("ifa-date/{id}")
+    public ResponseEntity<?> updateIfaDate(@PathVariable Long id,@RequestParam LocalDate plannedIfaDate,@RequestParam LocalDate actualIfaDate)
+    {
+        return ResponseEntity.ok(projectService.updateIfaDate(id,plannedIfaDate,actualIfaDate));
+    }
+
+    @PutMapping("ifc-date/{id}")
+    public ResponseEntity<?> updateIfcDate(@PathVariable Long id, @RequestParam LocalDate plannedIfcDate, @RequestParam LocalDate actualIfcDate)
+    {
+        //System.out.println(plannedIfcDate +"\n" + actualIfcDate);
+        return ResponseEntity.ok(projectService.updateIfcDate(id,plannedIfcDate,actualIfcDate));
     }
 
 }

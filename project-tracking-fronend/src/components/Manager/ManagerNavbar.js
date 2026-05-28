@@ -173,7 +173,7 @@ const ManagerNavbar = () => {
                 onClick={() => setMenuOpen(false)}
               >
                 <li>
-                  View Requests
+                  View Leave Requests
                   {pendingCount > 0 && (
                     <span className={styles.badge}>{pendingCount}</span>
                   )}
@@ -260,7 +260,7 @@ const ManagerNavbar = () => {
             onClick={() => setMenuOpen(false)}
           >
             <div>
-              View Requests
+               Leave Requests
               {pendingCount > 0 && (
                 <span className={styles.badge}>{pendingCount}</span>
               )}

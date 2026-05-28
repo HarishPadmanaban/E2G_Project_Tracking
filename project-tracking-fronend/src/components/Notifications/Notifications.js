@@ -185,7 +185,7 @@ const Notifications = () => {
             // 1) Perform project update depending on type
             if (selectedNotification.type === "EXTRA_HOURS") {
                 const hours = extractRequestedHours(msg);
-                if (!hours || hours <= 0) {
+                if (!hours) {
                     showToast("Invalid requested hours in notification message.","info");
                     setActionLoading(false);
                     return;
