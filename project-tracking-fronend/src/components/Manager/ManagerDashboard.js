@@ -681,6 +681,7 @@ const ManagerDashboard = () => {
                           </>
                         )
                         }
+                        
                         {selectedProject.projectActivityStatus !== ("IFA") && (
                           <>
                           <tr>
