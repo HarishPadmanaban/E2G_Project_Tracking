@@ -3,6 +3,7 @@ package com.example.project_tracking.DTO;
 import org.hibernate.id.BulkInsertionCapableIdentifierGenerator;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class ProjectRequest {
     private Long id;
@@ -15,11 +16,14 @@ public class ProjectRequest {
     private BigDecimal studyHours;
     private Long managerId;
     private boolean projectStatus;
-
+    private LocalDate plannedIfaDate;
+    private LocalDate actualIfaDate;
+    private LocalDate plannedIfcDate;
+    private LocalDate actualIfcDate;
     public ProjectRequest() {
     }
 
-    public ProjectRequest(Long id, String projectName, String clientName, BigDecimal assignedHours, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal studyHours, Long managerId, boolean projectStatus) {
+    public ProjectRequest(Long id, String projectName, String clientName, BigDecimal assignedHours, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal studyHours, Long managerId, boolean projectStatus, LocalDate plannedIfaDate, LocalDate actualIfaDate, LocalDate plannedIfcDate, LocalDate actualIfcDate) {
         this.id = id;
         this.projectName = projectName;
         this.clientName = clientName;
@@ -30,6 +34,10 @@ public class ProjectRequest {
         this.studyHours = studyHours;
         this.managerId = managerId;
         this.projectStatus = projectStatus;
+        this.plannedIfaDate = plannedIfaDate;
+        this.actualIfaDate = actualIfaDate;
+        this.plannedIfcDate = plannedIfcDate;
+        this.actualIfcDate = actualIfcDate;
     }
 
     public BigDecimal getStudyHours() {
@@ -102,6 +110,38 @@ public class ProjectRequest {
 
     public void setManagerId(Long managerId) {
         this.managerId = managerId;
+    }
+
+    public LocalDate getPlannedIfaDate() {
+        return plannedIfaDate;
+    }
+
+    public void setPlannedIfaDate(LocalDate plannedIfaDate) {
+        this.plannedIfaDate = plannedIfaDate;
+    }
+
+    public LocalDate getActualIfaDate() {
+        return actualIfaDate;
+    }
+
+    public void setActualIfaDate(LocalDate actualIfaDate) {
+        this.actualIfaDate = actualIfaDate;
+    }
+
+    public LocalDate getPlannedIfcDate() {
+        return plannedIfcDate;
+    }
+
+    public void setPlannedIfcDate(LocalDate plannedIfcDate) {
+        this.plannedIfcDate = plannedIfcDate;
+    }
+
+    public LocalDate getActualIfcDate() {
+        return actualIfcDate;
+    }
+
+    public void setActualIfcDate(LocalDate actualIfcDate) {
+        this.actualIfcDate = actualIfcDate;
     }
 
     public boolean isProjectStatus() {

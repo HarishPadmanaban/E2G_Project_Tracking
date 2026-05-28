@@ -223,6 +223,10 @@ public class ProjectService {
         old.setProjectName(projectRequest.getProjectName());
         old.setClientName(projectRequest.getClientName());
         old.setProjectStatus(projectRequest.isProjectStatus());
+        old.setPlannedIfaDate(projectRequest.getPlannedIfaDate());
+        old.setActualIfaDate(projectRequest.getActualIfaDate());
+        old.setPlannedIfcDate(projectRequest.getPlannedIfcDate());
+        old.setActualIfcDate(projectRequest.getActualIfcDate());
         projectRepository.save(old);
         return old;
     }

@@ -198,127 +198,127 @@ const ManagerDashboard = () => {
     // Prepare Excel data
     const excelData = filteredProjects.map((project, index) => {
 
-  const row = {
-    "Project ID": project.id,
-    "Project Name": project.projectName,
-    "Client Name": project.clientName || "Unknown",
-  };
+      const row = {
+        "Project ID": project.id,
+        "Project Name": project.projectName,
+        "Client Name": project.clientName || "Unknown",
+      };
 
-  // Add Manager Name only for AGM
-  if (isAGM) {
-    row["Manager Name"] =
-      managers[project.managerId] || "Unknown";
-  }
+      // Add Manager Name only for AGM
+      if (isAGM) {
+        row["Manager Name"] =
+          managers[project.managerId] || "Unknown";
+      }
 
-  // Remaining fields
-  row["Project Coordinator"] =
-    tl[project.id] || "Not Assigned";
+      // Remaining fields
+      row["Project Coordinator"] =
+        tl[project.id] || "Not Assigned";
 
-  row["Awarded Date"] = project.assignedDate || "Not Assigned";
-  row["Planned Start Date"] = project.plannedStartDate || "Not Assigned";
-  row["Actual Start Date"] = project.startDate || "Not Assigned";
-  row["Completion Date"] = project.completedDate || "Not Assigned";
-  row["Project Activity Status"] =
-    project.projectActivityStatus || "Not Assigned";
+      row["Awarded Date"] = project.assignedDate || "Not Assigned";
+      row["Planned Start Date"] = project.plannedStartDate || "Not Assigned";
+      row["Actual Start Date"] = project.startDate || "Not Assigned";
+      row["Completion Date"] = project.completedDate || "Not Assigned";
+      row["Project Activity Status"] =
+        project.projectActivityStatus || "Not Assigned";
 
-  row["IFA Given Hours"] = project.ifaGivenHours || 0;
-  row["IFC Given Hours"] = project.ifcGivenHours|| 0;
+      row["IFA Given Hours"] = project.ifaGivenHours || 0;
+      row["IFC Given Hours"] = project.ifcGivenHours || 0;
 
-  row["IFA Production Hours"] = project.ifaProdHours|| 0;
-  row["IFC Production Hours"] = project.ifcProdHours|| 0;
+      row["IFA Production Hours"] = project.ifaProdHours || 0;
+      row["IFC Production Hours"] = project.ifcProdHours || 0;
 
-  row["IFA Extra Hours Requested"] =
-    project.ifaExtraHours|| 0;
+      row["IFA Extra Hours Requested"] =
+        project.ifaExtraHours || 0;
 
-  row["IFA Extra Hours Used"] =
-    project.ifaExtraProdHours|| 0;
+      row["IFA Extra Hours Used"] =
+        project.ifaExtraProdHours || 0;
 
-  row["IFC Extra Hours Requested"] =
-    project.ifcExtraHours|| 0;
+      row["IFC Extra Hours Requested"] =
+        project.ifcExtraHours || 0;
 
-  row["IFC Extra Hours Used"] =
-    project.ifcExtraProdHours|| 0;
+      row["IFC Extra Hours Used"] =
+        project.ifcExtraProdHours || 0;
 
-  row["Total Working Hours"] =
-    project.workingHours || 0;
+      row["Total Working Hours"] =
+        project.workingHours || 0;
 
-  row["Modeling Hours Assigned"] =
-    project.modellingHours|| 0;
+      row["Modeling Hours Assigned"] =
+        project.modellingHours || 0;
 
-  row["Modeling Hours Used"] =
-    project.modellingTime|| 0;
+      row["Modeling Hours Used"] =
+        project.modellingTime || 0;
 
-  row["Checking Hours Assigned"] =
-    project.checkingHours|| 0;
+      row["Checking Hours Assigned"] =
+        project.checkingHours || 0;
 
-  row["Checking Hours Used"] =
-    project.checkingTime|| 0;
+      row["Checking Hours Used"] =
+        project.checkingTime || 0;
 
-  return row;
-});
+      return row;
+    });
 
     // Create worksheet
     const worksheet = XLSX.utils.json_to_sheet(excelData);
 
-   const range = XLSX.utils.decode_range(worksheet["!ref"]);
+    const range = XLSX.utils.decode_range(worksheet["!ref"]);
 
-for (let R = range.s.r; R <= range.e.r; ++R) {
-  for (let C = range.s.c; C <= range.e.c; ++C) {
+    for (let R = range.s.r; R <= range.e.r; ++R) {
+      for (let C = range.s.c; C <= range.e.c; ++C) {
 
-    const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+        const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
 
-    if (!worksheet[cellAddress]) continue;
+        if (!worksheet[cellAddress]) continue;
 
-    // Header Row
-    if (R === 0) {
-      worksheet[cellAddress].s = {
-        font: {
-          bold: true,
-          sz: 12,
-        },
-        alignment: {
-          horizontal: "center",
-          vertical: "center",
-          wrapText: true,
-        },
-        border: {
-          top: { style: "thin" },
-          bottom: { style: "thin" },
-          left: { style: "thin" },
-          right: { style: "thin" },
-        },
-      };
+        // Header Row
+        if (R === 0) {
+          worksheet[cellAddress].s = {
+            font: {
+              bold: true,
+              sz: 12,
+            },
+            alignment: {
+              horizontal: "center",
+              vertical: "center",
+              wrapText: true,
+            },
+            border: {
+              top: { style: "thin" },
+              bottom: { style: "thin" },
+              left: { style: "thin" },
+              right: { style: "thin" },
+            },
+          };
+        }
+
+        // Entire Table Styling
+        else {
+          worksheet[cellAddress].s = {
+            alignment: {
+              vertical: "center",
+              horizontal: "center",
+              wrapText: true,
+              indent: 1, // acts like left padding
+            },
+
+            border: {
+              top: { style: "thin" },
+              bottom: { style: "thin" },
+              left: { style: "thin" },
+              right: { style: "thin" },
+            },
+          };
+        }
+      }
     }
-
-    // Entire Table Styling
-    else {
-      worksheet[cellAddress].s = {
-        alignment: {
-          vertical: "center",
-          horizontal: "center",
-          wrapText: true,
-          indent: 1, // acts like left padding
-        },
-
-        border: {
-          top: { style: "thin" },
-          bottom: { style: "thin" },
-          left: { style: "thin" },
-          right: { style: "thin" },
-        },
-      };
-    }
-  }
-}
     // Auto-fit columns
     const colWidths = Object.keys(excelData[0]).map((key) => ({
-  wch: Math.max(
-    key.length + 8,
-    ...excelData.map((row) => String(row[key] || "").length + 5)
-  ),
-}));
+      wch: Math.max(
+        key.length + 8,
+        ...excelData.map((row) => String(row[key] || "").length + 5)
+      ),
+    }));
 
-worksheet["!cols"] = colWidths;
+    worksheet["!cols"] = colWidths;
 
     worksheet["!cols"] = colWidths;
 
@@ -602,10 +602,23 @@ worksheet["!cols"] = colWidths;
                       </tr>
 
                       <tr>
-                        <th>IFA (Worked / Assigned)</th>
-                        <td>{selectedProject.ifaGivenHours || 0} / {selectedProject.ifaProdHours}</td>
-                        <th>IFC (Worked / Assigned)</th>
+                        {selectedProject.projectActivityStatus === ("IFA") && (
+                          <>
+                            <th>IFA (Worked / Assigned)</th>
+                            <td>{selectedProject.ifaGivenHours || 0} / {selectedProject.ifaProdHours}</td>
+                          </>
+                        )
+                        }
+                        {selectedProject.projectActivityStatus !== ("IFA") && (
+                          <>
+                            <th>IFA (Worked / Assigned)</th>
+                            <td>{selectedProject.ifaGivenHours || 0} / {selectedProject.ifaProdHours}</td>
+                            <th>IFC (Worked / Assigned)</th>
                         <td>{selectedProject.ifcGivenHours || 0} / {selectedProject.ifcProdHours}</td>
+                          </>
+                        )
+                        }
+                        
                       </tr>
 
 
@@ -655,8 +668,38 @@ worksheet["!cols"] = colWidths;
                         <td>{selectedProject.plannedStartDate || "—"}</td>
                         <th>Actual Start Date</th>
                         <td>{selectedProject.startDate || "—"}</td>
-                        </tr>
-                        <tr>
+                      </tr>
+                    
+                        {selectedProject.projectActivityStatus === "IFA" && (
+                          <>
+                          <tr>
+                            <th>Planned IFA Date</th>
+                            <td>{selectedProject.plannedIfaDate || "Not Assigned"}</td>
+                            <th>Actual IFA Date</th>
+                            <td>{selectedProject.actualIfaDate || "Not Assigned"}</td>
+                            </tr>
+                          </>
+                        )
+                        }
+                        {selectedProject.projectActivityStatus !== ("IFA") && (
+                          <>
+                          <tr>
+                            <th>Planned IFA Date</th>
+                            <td>{selectedProject.plannedIfaDate || "Not Assigned"}</td>
+                            <th>Actual IFA Date</th>
+                            <td>{selectedProject.actualIfaDate || "Not Assigned"}</td>
+                            </tr>
+                            <tr>
+                              <th>Planned IFC Date</th>
+                            <td>{selectedProject.plannedIfcDate || "Not Assigned"}</td>
+                            <th>Actual IFC Date</th>
+                            <td>{selectedProject.actualIfcDate || "Not Assigned"}</td>
+                            </tr>
+                          </>
+                        )
+                        }
+                        
+                      <tr>
                         <th>Project Status</th>
                         <td colSpan="2">
                           {selectedProject.projectStatus
