@@ -18,10 +18,10 @@ const ManagerProjectActions = () => {
   const [loadingEmployees, setLoadingEmployees] = useState(false);
 
   const [newCompletionDate, setNewCompletionDate] = useState("");
-  const [plannedIfaDate,setPlannedIfaDate] = useState("");
-  const [actualIfaDate,setActualIfaDate] = useState("");
-  const [plannedIfcDate,setPlannedIfcDate] = useState("");
-  const [actualIfcDate,setActualIfcDate] = useState("");
+  const [plannedIfaDate, setPlannedIfaDate] = useState("");
+  const [actualIfaDate, setActualIfaDate] = useState("");
+  const [plannedIfcDate, setPlannedIfcDate] = useState("");
+  const [actualIfcDate, setActualIfcDate] = useState("");
 
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedActivity, setSelectedActivity] = useState("");
@@ -41,38 +41,38 @@ const ManagerProjectActions = () => {
   };
 
   const handleAddResources = async () => {
-  if (!selectedProject) {
-    showToast("Please select a project", "warning");
-    return;
-  }
+    if (!selectedProject) {
+      showToast("Please select a project", "warning");
+      return;
+    }
 
-  if (selectedResources.length === 0) {
-    showToast("Please select at least one resource", "warning");
-    return;
-  }
+    if (selectedResources.length === 0) {
+      showToast("Please select at least one resource", "warning");
+      return;
+    }
 
-  try {
-    const payload = {
-      project_id: selectedProject.id,
-      employeeIds: selectedResources,
-    };
+    try {
+      const payload = {
+        project_id: selectedProject.id,
+        employeeIds: selectedResources,
+      };
 
-    // 🚀 backend call (enable when endpoint is ready)
-    await axiosInstance.post("/project-assignment/assign", payload);
+      // 🚀 backend call (enable when endpoint is ready)
+      await axiosInstance.post("/project-assignment/assign", payload);
 
-    
 
-    showToast("✅ Resources added successfully", "success");
 
-    // reset states
-    setShowAddResourceModal(false);
-    setSelectedResources([]);
-    setRequestType("");
-  } catch (err) {
-    console.error(err);
-    showToast("❌ Failed to add resources", "error");
-  }
-};
+      showToast("✅ Resources added successfully", "success");
+
+      // reset states
+      setShowAddResourceModal(false);
+      setSelectedResources([]);
+      setRequestType("");
+    } catch (err) {
+      console.error(err);
+      showToast("❌ Failed to add resources", "error");
+    }
+  };
 
 
   const handleSubmitProjectUpdate = async () => {
@@ -187,6 +187,41 @@ const ManagerProjectActions = () => {
     }
   };
 
+  const handleSubmit = async () => {
+    if (selectedProject.projectActivityStatus === "IFA") {
+      try {
+        await axiosInstance.put(`project/ifa-date/${selectedProject.id}`, null,
+          {
+            params: {
+              plannedIfaDate: plannedIfaDate,
+              actualIfaDate: actualIfaDate
+            }
+          });
+        showToast("Submitted successfully ✅", "success");
+        setSelectedProject("");
+      } catch (error) {
+        showToast("Failed to submit ❌", "error");
+      }
+
+    }
+
+    else if (selectedProject.projectActivityStatus === "IFC") {
+      try {
+        await axiosInstance.put(`project/ifc-date/${selectedProject.id}`, null,
+          {
+            params: {
+              plannedIfcDate: plannedIfcDate,
+              actualIfcDate: actualIfcDate
+            }
+          });
+        showToast("Submitted successfully ✅", "success");
+        setSelectedProject("")
+      } catch (error) {
+        showToast("Failed to submit ❌", "error");
+      }
+    }
+  }
+
   const openAddResourceModal = async () => {
     if (!selectedProject) {
       showToast("Select a project first", "warning");
@@ -195,7 +230,7 @@ const ManagerProjectActions = () => {
 
     try {
       setLoadingEmployees(true);
-      
+
       const res = await axiosInstance.get(
         "/project-assignment/employees/not-in-project",
         {
@@ -305,58 +340,77 @@ const ManagerProjectActions = () => {
                 <option value="EXTRA_HOURS">Extra Hours Request</option>
                 <option value="COMPLETION_EXTENSION">Completion Date Extension</option>
                 <option value="RESOURCE_ADDITION">Add Resources</option>
-                <option value="IFA_IFC_DATE">Enter IFA/IFC Date</option>
+
+                {selectedProject.projectActivityStatus === "IFA" &&
+                  selectedProject.plannedIfaDate == null && (
+                    <option value="IFA_IFC_DATE">
+                      Enter IFA/IFC Date
+                    </option>
+                  )}
+                  {selectedProject.projectActivityStatus === "IFC" &&
+                  selectedProject.plannedIfcDate == null && (
+                    <option value="IFA_IFC_DATE">
+                      Enter IFA/IFC Date
+                    </option>
+                  )}
               </select>
             </div>
           )}
 
           {selectedProject && requestType === "IFA_IFC_DATE" && (
+
             <>
               {selectedProject.projectActivityStatus === "IFA" && (
                 <>
-                <div className={styles.fld}>
-                <label>Planned IFA Date</label>
-                <input
-                  type="date"
-                  value={plannedIfaDate}
-                  onChange={(e) => setPlannedIfaDate(e.target.value)}
-                />
-              </div>
+                  <div className={styles.fld}>
+                    <label>Planned IFA Date</label>
+                    <input
+                      type="date"
+                      value={plannedIfaDate}
+                      onChange={(e) => setPlannedIfaDate(e.target.value)}
+                    />
+                  </div>
 
-              <div className={styles.fld}>
-                <label>Actual IFA Date</label>
-                <input
-                  type="date"
-                  value={actualIfaDate}
-                  onChange={(e) => setActualIfaDate(e.target.value)}
-                />
-              </div>
+                  <div className={styles.fld}>
+                    <label>Actual IFA Date</label>
+                    <input
+                      type="date"
+                      value={actualIfaDate}
+                      onChange={(e) => setActualIfaDate(e.target.value)}
+                    />
+                  </div>
                 </>
               )
               }
 
               {selectedProject.projectActivityStatus === "IFC" && (
-              <>
-                <div className={styles.fld}>
-                <label>Planned IFC Date</label>
-                <input
-                  type="date"
-                  value={plannedIfcDate}
-                  onChange={(e) => setPlannedIfcDate(e.target.value)}
-                />
-              </div>
+                <>
+                  <div className={styles.fld}>
+                    <label>Planned IFC Date</label>
+                    <input
+                      type="date"
+                      value={plannedIfcDate}
+                      onChange={(e) => setPlannedIfcDate(e.target.value)}
+                    />
+                  </div>
 
-              <div className={styles.fld}>
-                <label>Actual IFC Date</label>
-                <input
-                  type="date"
-                  value={actualIfcDate}
-                  onChange={(e) => setActualIfcDate(e.target.value)}
-                />
-              </div>
-              </>  
+                  <div className={styles.fld}>
+                    <label>Actual IFC Date</label>
+                    <input
+                      type="date"
+                      value={actualIfcDate}
+                      onChange={(e) => setActualIfcDate(e.target.value)}
+                    />
+                  </div>
+
+
+                </>
               )
-            }
+
+              }
+              <button className={styles.submitBtn} onClick={handleSubmit}>
+                Submit
+              </button>
             </>
           )
           }

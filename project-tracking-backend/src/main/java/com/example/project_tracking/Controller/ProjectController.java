@@ -114,8 +114,9 @@ public class ProjectController {
     }
 
     @PutMapping("ifc-date/{id}")
-    public ResponseEntity<?> updateIfcDate(@PathVariable Long id,@RequestParam LocalDate plannedIfcDate,@RequestParam LocalDate actualIfcDate)
+    public ResponseEntity<?> updateIfcDate(@PathVariable Long id, @RequestParam LocalDate plannedIfcDate, @RequestParam LocalDate actualIfcDate)
     {
+        //System.out.println(plannedIfcDate +"\n" + actualIfcDate);
         return ResponseEntity.ok(projectService.updateIfcDate(id,plannedIfcDate,actualIfcDate));
     }
 
