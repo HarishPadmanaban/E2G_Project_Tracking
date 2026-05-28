@@ -103,16 +103,25 @@ public class ProjectAssignmentService {
 
         // ✅ Add TL separately (NO assignmentId → cannot be deleted)
         if (tl != null) {
-            result.add(0, new DataTransfer(
-                    null,                          // ❌ no assignment
-                    tl.getEmpId(),
-                    tl.getName(),
-                    tl.getDesignation(),
-                    tl.getManager(),
-                    true,
-                    tl.getReportingTo(),
-                    "TL"
-            ));
+
+            Employee finalTl = tl;
+            boolean tlAlreadyAssigned = assignments.stream()
+                    .anyMatch(pa -> pa.getEmployee()
+                            .getEmpId()
+                            .equals(finalTl.getEmpId()));
+
+            if (!tlAlreadyAssigned) {
+                result.add(0, new DataTransfer(
+                        null,
+                        tl.getEmpId(),
+                        tl.getName(),
+                        tl.getDesignation(),
+                        tl.getManager(),
+                        true,
+                        tl.getReportingTo(),
+                        "TL"
+                ));
+            }
         }
 
         return result;
