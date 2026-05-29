@@ -126,17 +126,12 @@ const EditProject = () => {
       projectActivityStatus: project.projectActivityStatus,
       plannedIfaDate: project.plannedIfaDate,
       actualIfaDate: project.actualIfaDate,
-<<<<<<< Updated upstream
-      plannedIfcDate: project.plannedIfcDate,
-      actualIfcDate: project.actualIfcDate,
-=======
       plannedReifaDate: project.plannedReifaDate,
       actualReifaDate: project.actualReifaDate,
       plannedIfcDate: project.plannedIfcDate,
       actualIfcDate: project.actualIfcDate,
       plannedReifcDate: project.plannedReifcDate,
       actualReifcDate: project.actualReifcDate,
->>>>>>> Stashed changes
     });
   };
 
@@ -194,12 +189,6 @@ const EditProject = () => {
         studyHours: Number(formData.studyHours),
         managerId: Number(formData.managerId),
         projectStatus: formData.projectStatus === "Pending",
-<<<<<<< Updated upstream
-        plannedIfaDate:formData.plannedIfaDate,
-        actualIfaDate:formData.actualIfaDate,
-        plannedIfcDate:formData.plannedIfcDate,
-        actualIfcDate:formData.actualIfcDate
-=======
         plannedIfaDate: formData.plannedIfaDate,
         actualIfaDate: formData.actualIfaDate,
         plannedIfcDate: formData.plannedIfcDate,
@@ -208,7 +197,6 @@ const EditProject = () => {
         actualReifaDate: formData.actualReifaDate,
         plannedReifcDate: formData.plannedReifcDate,
         actualReifcDate: formData.actualReifcDate,
->>>>>>> Stashed changes
       };
 
       console.log(updatedPayload);
