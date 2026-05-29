@@ -126,8 +126,17 @@ const EditProject = () => {
       projectActivityStatus: project.projectActivityStatus,
       plannedIfaDate: project.plannedIfaDate,
       actualIfaDate: project.actualIfaDate,
+<<<<<<< Updated upstream
       plannedIfcDate: project.plannedIfcDate,
       actualIfcDate: project.actualIfcDate,
+=======
+      plannedReifaDate: project.plannedReifaDate,
+      actualReifaDate: project.actualReifaDate,
+      plannedIfcDate: project.plannedIfcDate,
+      actualIfcDate: project.actualIfcDate,
+      plannedReifcDate: project.plannedReifcDate,
+      actualReifcDate: project.actualReifcDate,
+>>>>>>> Stashed changes
     });
   };
 
@@ -185,10 +194,21 @@ const EditProject = () => {
         studyHours: Number(formData.studyHours),
         managerId: Number(formData.managerId),
         projectStatus: formData.projectStatus === "Pending",
+<<<<<<< Updated upstream
         plannedIfaDate:formData.plannedIfaDate,
         actualIfaDate:formData.actualIfaDate,
         plannedIfcDate:formData.plannedIfcDate,
         actualIfcDate:formData.actualIfcDate
+=======
+        plannedIfaDate: formData.plannedIfaDate,
+        actualIfaDate: formData.actualIfaDate,
+        plannedIfcDate: formData.plannedIfcDate,
+        actualIfcDate: formData.actualIfcDate,
+        plannedReifaDate: formData.plannedReifaDate,
+        actualReifaDate: formData.actualReifaDate,
+        plannedReifcDate: formData.plannedReifcDate,
+        actualReifcDate: formData.actualReifcDate,
+>>>>>>> Stashed changes
       };
 
       console.log(updatedPayload);
@@ -473,6 +493,82 @@ const EditProject = () => {
             }
 
             
+
+            <div className={styles.formField}>
+              <label>Planned IFA Date</label>
+              <input
+                type="date"
+                name="plannedIfaDate"
+                value={formData.plannedIfaDate}
+                onChange={handleChange}
+              />
+            </div>
+            <div className={styles.formField}>
+              <label>Actual IFA Date</label>
+              <input
+                type="date"
+                name="actualIfaDate"
+                value={formData.actualIfaDate}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className={styles.formField}>
+              <label>Planned REIFA Date</label>
+              <input
+                type="date"
+                name="plannedReifaDate"
+                value={formData.plannedReifaDate}
+                onChange={handleChange}
+              />
+            </div>
+            <div className={styles.formField}>
+              <label>Actual REIFA Date</label>
+              <input
+                type="date"
+                name="actualReifaDate"
+                value={formData.actualReifaDate}
+                onChange={handleChange}
+              />
+            </div>
+            <div className={styles.formField}>
+              <label>Planned IFC Date</label>
+              <input
+                type="date"
+                name="plannedIfcDate"
+                value={formData.plannedIfcDate}
+                onChange={handleChange}
+              />
+            </div>
+            <div className={styles.formField}>
+              <label>Actual IFC Date</label>
+              <input
+                type="date"
+                name="actualIfcDate"
+                value={formData.actualIfcDate}
+                onChange={handleChange}
+              />
+            </div>
+            <div className={styles.formField}>
+              <label>Planned REIFC Date</label>
+              <input
+                type="date"
+                name="plannedReifcDate"
+                value={formData.plannedReifcDate}
+                onChange={handleChange}
+              />
+            </div>
+            <div className={styles.formField}>
+              <label>Actual REIFC Date</label>
+              <input
+                type="date"
+                name="actualReifcDate"
+                value={formData.actualReifcDate}
+                onChange={handleChange}
+              />
+            </div>
+
+          
 
             <div className={styles.fld} >
               <label>Status :</label>

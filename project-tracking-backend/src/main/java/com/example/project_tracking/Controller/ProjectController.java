@@ -108,6 +108,7 @@ public class ProjectController {
     }
 
     @PutMapping("ifa-date/{id}")
+<<<<<<< Updated upstream
     public ResponseEntity<?> updateIfaDate(@PathVariable Long id,@RequestParam LocalDate plannedIfaDate,@RequestParam LocalDate actualIfaDate)
     {
         return ResponseEntity.ok(projectService.updateIfaDate(id,plannedIfaDate,actualIfaDate));
@@ -118,6 +119,18 @@ public class ProjectController {
     {
         //System.out.println(plannedIfcDate +"\n" + actualIfcDate);
         return ResponseEntity.ok(projectService.updateIfcDate(id,plannedIfcDate,actualIfcDate));
+=======
+    public ResponseEntity<?> updateIfaDate(@PathVariable Long id,@RequestParam LocalDate plannedIfaDate,@RequestParam LocalDate actualIfaDate,@RequestParam String projectActivityStatus)
+    {
+        return ResponseEntity.ok(projectService.updateIfaDate(id,plannedIfaDate,actualIfaDate,projectActivityStatus));
+    }
+
+    @PutMapping("ifc-date/{id}")
+    public ResponseEntity<?> updateIfcDate(@PathVariable Long id, @RequestParam LocalDate plannedIfcDate, @RequestParam LocalDate actualIfcDate,@RequestParam String projectActivityStatus)
+    {
+        //System.out.println(plannedIfcDate +"\n" + actualIfcDate);
+        return ResponseEntity.ok(projectService.updateIfcDate(id,plannedIfcDate,actualIfcDate,projectActivityStatus));
+>>>>>>> Stashed changes
     }
 
 }

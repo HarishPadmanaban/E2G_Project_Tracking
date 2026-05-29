@@ -22,6 +22,13 @@ const ManagerProjectActions = () => {
   const [actualIfaDate, setActualIfaDate] = useState("");
   const [plannedIfcDate, setPlannedIfcDate] = useState("");
   const [actualIfcDate, setActualIfcDate] = useState("");
+<<<<<<< Updated upstream
+=======
+  const [plannedReifaDate, setPlannedReifaDate] = useState("");
+  const [actualReifaDate, setActualReifaDate] = useState("");
+  const [plannedReifcDate, setPlannedReifcDate] = useState("");
+  const [actualReifcDate, setActualReifcDate] = useState("");
+>>>>>>> Stashed changes
 
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedActivity, setSelectedActivity] = useState("");
@@ -188,13 +195,24 @@ const ManagerProjectActions = () => {
   };
 
   const handleSubmit = async () => {
+<<<<<<< Updated upstream
     if (selectedProject.projectActivityStatus === "IFA") {
+=======
+    if (selectedProject.projectActivityStatus.includes("IFA")) {
+      const projAct = selectedProject.projectActivityStatus;
+>>>>>>> Stashed changes
       try {
         await axiosInstance.put(`project/ifa-date/${selectedProject.id}`, null,
           {
             params: {
+<<<<<<< Updated upstream
               plannedIfaDate: plannedIfaDate,
               actualIfaDate: actualIfaDate
+=======
+              plannedIfaDate: (projAct === "IFA")? plannedIfaDate : plannedReifaDate,
+              actualIfaDate: (projAct === "IFA")? actualIfaDate : actualReifaDate,
+              projectActivityStatus:selectedProject.projectActivityStatus
+>>>>>>> Stashed changes
             }
           });
         showToast("Submitted successfully ✅", "success");
@@ -205,13 +223,24 @@ const ManagerProjectActions = () => {
 
     }
 
+<<<<<<< Updated upstream
     else if (selectedProject.projectActivityStatus === "IFC") {
+=======
+    else if (selectedProject.projectActivityStatus.includes("IFC")) {
+      const projAct = selectedProject.projectActivityStatus;
+>>>>>>> Stashed changes
       try {
         await axiosInstance.put(`project/ifc-date/${selectedProject.id}`, null,
           {
             params: {
+<<<<<<< Updated upstream
               plannedIfcDate: plannedIfcDate,
               actualIfcDate: actualIfcDate
+=======
+              plannedIfcDate:(projAct === "IFC")? plannedIfcDate:plannedReifcDate,
+              actualIfcDate: (projAct === "IFC")?actualIfcDate:actualReifcDate,
+              projectActivityStatus:selectedProject.projectActivityStatus
+>>>>>>> Stashed changes
             }
           });
         showToast("Submitted successfully ✅", "success");
@@ -353,6 +382,21 @@ const ManagerProjectActions = () => {
                       Enter IFA/IFC Date
                     </option>
                   )}
+<<<<<<< Updated upstream
+=======
+                {selectedProject.projectActivityStatus === "REIFA" &&
+                  selectedProject.plannedReifaDate == null && (
+                    <option value="IFA_IFC_DATE">
+                      Enter IFA/IFC Date
+                    </option>
+                  )}
+                  {selectedProject.projectActivityStatus === "REIFC" &&
+                  selectedProject.plannedReifcDate == null && (
+                    <option value="IFA_IFC_DATE">
+                      Enter IFA/IFC Date
+                    </option>
+                  )}
+>>>>>>> Stashed changes
               </select>
             </div>
           )}
@@ -382,6 +426,31 @@ const ManagerProjectActions = () => {
                 </>
               )
               }
+<<<<<<< Updated upstream
+=======
+              {selectedProject.projectActivityStatus === "REIFA" && (
+                <>
+                  <div className={styles.fld}>
+                    <label>Planned REIFA Date</label>
+                    <input
+                      type="date"
+                      value={plannedReifaDate}
+                      onChange={(e) => setPlannedReifaDate(e.target.value)}
+                    />
+                  </div>
+
+                  <div className={styles.fld}>
+                    <label>Actual REIFA Date</label>
+                    <input
+                      type="date"
+                      value={actualReifaDate}
+                      onChange={(e) => setActualReifaDate(e.target.value)}
+                    />
+                  </div>
+                </>
+              )
+              }
+>>>>>>> Stashed changes
 
               {selectedProject.projectActivityStatus === "IFC" && (
                 <>
@@ -402,8 +471,34 @@ const ManagerProjectActions = () => {
                       onChange={(e) => setActualIfcDate(e.target.value)}
                     />
                   </div>
+<<<<<<< Updated upstream
 
 
+=======
+                </>
+              )
+
+              }
+              {selectedProject.projectActivityStatus === "REIFC" && (
+                <>
+                  <div className={styles.fld}>
+                    <label>Planned REIFC Date</label>
+                    <input
+                      type="date"
+                      value={plannedReifcDate}
+                      onChange={(e) => setPlannedReifcDate(e.target.value)}
+                    />
+                  </div>
+
+                  <div className={styles.fld}>
+                    <label>Actual REIFC Date</label>
+                    <input
+                      type="date"
+                      value={actualReifcDate}
+                      onChange={(e) => setActualReifcDate(e.target.value)}
+                    />
+                  </div>
+>>>>>>> Stashed changes
                 </>
               )
 

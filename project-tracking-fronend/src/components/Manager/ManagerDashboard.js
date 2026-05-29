@@ -239,9 +239,42 @@ const ManagerDashboard = () => {
       row["IFC Extra Hours Used"] =
         project.ifcExtraProdHours || 0;
 
+<<<<<<< Updated upstream
       row["Total Working Hours"] =
         project.workingHours || 0;
 
+=======
+      row["Extra Hours Notes"] =
+        project.extraHoursNote || "No Notes";
+
+      row["Total Working Hours"] =
+        project.workingHours || 0;
+
+      row["Planned IFA Date"] =
+        project.plannedIfaDate || "Not Assigned";
+
+      row["Actual IFA Date"] =
+        project.actualIfaDate || "Not Assigned";
+
+      row["Planned REIFA Date"] =
+        project.plannedReifaDate || "Not Assigned";
+
+      row["Actual REIFA Date"] =
+        project.actualReifaDate || "Not Assigned";
+
+      row["Planned IFC Date"] =
+        project.plannedIfcDate || "Not Assigned";
+
+      row["Actual IFC Date"] =
+        project.actualIfcDate || "Not Assigned";
+
+      row["Planned REIFC Date"] =
+        project.plannedReifcDate || "Not Assigned";
+
+      row["Actual REIFC Date"] =
+        project.actualReifcDate || "Not Assigned";
+
+>>>>>>> Stashed changes
       row["Modeling Hours Assigned"] =
         project.modellingHours || 0;
 
@@ -254,6 +287,21 @@ const ManagerDashboard = () => {
       row["Checking Hours Used"] =
         project.checkingTime || 0;
 
+<<<<<<< Updated upstream
+=======
+      row["Detailing Hours Assigned"] =
+        project.detailingHours || 0;
+
+      row["Detailing Hours Used"] =
+        project.detailingTime || 0;
+
+      row["Study Hours Assigned"] =
+        project.studyHours || 0;
+
+      row["Study Hours Used"] =
+        project.studyHoursTracking || 0;
+
+>>>>>>> Stashed changes
       return row;
     });
 
@@ -614,11 +662,19 @@ const ManagerDashboard = () => {
                             <th>IFA (Worked / Assigned)</th>
                             <td>{selectedProject.ifaGivenHours || 0} / {selectedProject.ifaProdHours}</td>
                             <th>IFC (Worked / Assigned)</th>
+<<<<<<< Updated upstream
                         <td>{selectedProject.ifcGivenHours || 0} / {selectedProject.ifcProdHours}</td>
                           </>
                         )
                         }
                         
+=======
+                            <td>{selectedProject.ifcGivenHours || 0} / {selectedProject.ifcProdHours}</td>
+                          </>
+                        )
+                        }
+
+>>>>>>> Stashed changes
                       </tr>
 
 
@@ -669,6 +725,7 @@ const ManagerDashboard = () => {
                         <th>Actual Start Date</th>
                         <td>{selectedProject.startDate || "—"}</td>
                       </tr>
+<<<<<<< Updated upstream
                     
                         {selectedProject.projectActivityStatus === "IFA" && (
                           <>
@@ -700,6 +757,35 @@ const ManagerDashboard = () => {
                         )
                         }
                         
+=======
+                      <tr>
+                        <th>Planned IFA Date</th>
+                        <td>{selectedProject.plannedIfaDate || "Not Assigned"}</td>
+
+                        <th>Actual IFA Date</th>
+                        <td>{selectedProject.actualIfaDate || "Not Assigned"}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Planned REIFA Date</th>
+                        <td>{selectedProject.plannedReifaDate || "Not Assigned"}</td>
+                        <th>Actual REIFA Date</th>
+                        <td>{selectedProject.actualReifaDate || "Not Assigned"}</td>
+                      </tr>
+                      <tr>
+                        <th>Planned IFC Date</th>
+                        <td>{selectedProject.plannedIfcDate || "Not Assigned"}</td>
+                        <th>Actual IFC Date</th>
+                        <td>{selectedProject.actualIfcDate || "Not Assigned"}</td>
+                      </tr>
+                      <tr>
+                        <th>Planned REIFC Date</th>
+                        <td>{selectedProject.plannedReifcDate || "Not Assigned"}</td>
+                        <th>Actual REIFC Date</th>
+                        <td>{selectedProject.actualReifcDate || "Not Assigned"}</td>
+                      </tr>
+
+>>>>>>> Stashed changes
                       <tr>
                         <th>Project Status</th>
                         <td colSpan="2">
