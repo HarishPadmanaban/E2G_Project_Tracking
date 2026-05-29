@@ -115,6 +115,18 @@
         @Column(name = "extra_hours_note")
         private String extraHoursNote;
 
+        @Column(name = "planned_reifa_date")
+        private LocalDate plannedReifaDate;
+
+        @Column(name = "actual_reifa_date")
+        private LocalDate actualReifaDate;
+
+        @Column(name = "planned_reifc_date")
+        private LocalDate plannedReifcDate;
+
+        @Column(name = "actual_reifc_date")
+        private LocalDate actualReifcDate;
+
         public Project() {
         }
 
@@ -195,7 +207,12 @@
                 LocalDate actualIfaDate,
                 LocalDate plannedIfcDate,
                 LocalDate actualIfcDate,
-                String extraHoursNote
+                String extraHoursNote,
+
+                LocalDate plannedReifaDate,
+                LocalDate actualReifaDate,
+                LocalDate plannedReifcDate,
+                LocalDate actualReifcDate
         ) {
 =======
         public Project(Long id, String projectName, String clientName, Long managerId, Long tlId, BigDecimal assignedHours, BigDecimal workingHours, LocalDate assignedDate, Boolean projectStatus, Boolean softDelete, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal modellingTime, BigDecimal checkingTime, BigDecimal detailingTime, LocalDate startDate, LocalDate completedDate, BigDecimal studyHours, BigDecimal studyHoursTracking, BigDecimal extraHours, BigDecimal extraHoursTracking, String projectActivityStatus, LocalDate remainderSentDate, LocalDate plannedStartDate, BigDecimal ifaGivenHours, BigDecimal ifcGivenHours, BigDecimal ifaExtraHours, BigDecimal ifcExtraHours, BigDecimal ifaProdHours, BigDecimal ifcProdHours, BigDecimal ifaExtraProdHours, BigDecimal ifcExtraProdHours, LocalDate plannedIfaDate, LocalDate actualIfaDate, LocalDate plannedIfcDate, LocalDate actualIfcDate, LocalDate plannedReifaDate, LocalDate actualReifaDate, LocalDate plannedReifcDate, LocalDate actualReifcDate, String extraHoursNote) {
@@ -251,6 +268,11 @@
             this.actualReifcDate = actualReifcDate;
 >>>>>>> Stashed changes
             this.extraHoursNote = extraHoursNote;
+
+            this.plannedReifaDate = plannedReifaDate;
+            this.actualReifaDate = actualReifaDate;
+            this.plannedReifcDate = plannedReifcDate;
+            this.actualReifcDate = actualReifcDate;
         }
 
         public Long getTlId() {
@@ -589,6 +611,38 @@
             this.extraHoursNote = extraHoursNote;
         }
 
+        public LocalDate getPlannedReifaDate() {
+            return plannedReifaDate;
+        }
+
+        public void setPlannedReifaDate(LocalDate plannedReifaDate) {
+            this.plannedReifaDate = plannedReifaDate;
+        }
+
+        public LocalDate getActualReifaDate() {
+            return actualReifaDate;
+        }
+
+        public void setActualReifaDate(LocalDate actualReifaDate) {
+            this.actualReifaDate = actualReifaDate;
+        }
+
+        public LocalDate getPlannedReifcDate() {
+            return plannedReifcDate;
+        }
+
+        public void setPlannedReifcDate(LocalDate plannedReifcDate) {
+            this.plannedReifcDate = plannedReifcDate;
+        }
+
+        public LocalDate getActualReifcDate() {
+            return actualReifcDate;
+        }
+
+        public void setActualReifcDate(LocalDate actualReifcDate) {
+            this.actualReifcDate = actualReifcDate;
+        }
+
         @Override
         public String toString() {
             return "Project{" +
@@ -623,6 +677,10 @@
                     ", ifcProdHours=" + ifcProdHours +
                     ", ifaExtraProdHours=" + ifaExtraProdHours +
                     ", ifcExtraProdHours=" + ifcExtraProdHours +
+                    ", plannedReifaDate=" + plannedReifaDate +
+                    ", actualReifaDate=" + actualReifaDate +
+                    ", plannedReifcDate=" + plannedReifcDate +
+                    ", actualReifcDate=" + actualReifcDate +
                     '}';
         }
     }
