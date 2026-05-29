@@ -20,12 +20,6 @@ public class ProjectRequest {
     private LocalDate actualIfaDate;
     private LocalDate plannedIfcDate;
     private LocalDate actualIfcDate;
-<<<<<<< Updated upstream
-    public ProjectRequest() {
-    }
-
-    public ProjectRequest(Long id, String projectName, String clientName, BigDecimal assignedHours, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal studyHours, Long managerId, boolean projectStatus, LocalDate plannedIfaDate, LocalDate actualIfaDate, LocalDate plannedIfcDate, LocalDate actualIfcDate) {
-=======
     private LocalDate plannedReifaDate;
     private LocalDate actualReifaDate;
     private LocalDate plannedReifcDate;
@@ -34,7 +28,6 @@ public class ProjectRequest {
     }
 
     public ProjectRequest(Long id, String projectName, String clientName, BigDecimal assignedHours, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal studyHours, Long managerId, boolean projectStatus, LocalDate plannedIfaDate, LocalDate actualIfaDate, LocalDate plannedIfcDate, LocalDate actualIfcDate, LocalDate plannedReifaDate, LocalDate actualReifaDate, LocalDate plannedReifcDate, LocalDate actualReifcDate) {
->>>>>>> Stashed changes
         this.id = id;
         this.projectName = projectName;
         this.clientName = clientName;
@@ -49,13 +42,10 @@ public class ProjectRequest {
         this.actualIfaDate = actualIfaDate;
         this.plannedIfcDate = plannedIfcDate;
         this.actualIfcDate = actualIfcDate;
-<<<<<<< Updated upstream
-=======
         this.plannedReifaDate = plannedReifaDate;
         this.actualReifaDate = actualReifaDate;
         this.plannedReifcDate = plannedReifcDate;
         this.actualReifcDate = actualReifcDate;
->>>>>>> Stashed changes
     }
 
     public BigDecimal getStudyHours() {
@@ -162,8 +152,6 @@ public class ProjectRequest {
         this.actualIfcDate = actualIfcDate;
     }
 
-<<<<<<< Updated upstream
-=======
     public LocalDate getPlannedReifaDate() {
         return plannedReifaDate;
     }
@@ -196,7 +184,6 @@ public class ProjectRequest {
         this.actualReifcDate = actualReifcDate;
     }
 
->>>>>>> Stashed changes
     public boolean isProjectStatus() {
         return projectStatus;
     }

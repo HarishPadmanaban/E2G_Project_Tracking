@@ -274,19 +274,6 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-<<<<<<< Updated upstream
-    public Project updateIfaDate(Long id, LocalDate plannedIfaDate, LocalDate actualIfaDate) {
-        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project Found"));
-        project.setPlannedIfaDate(plannedIfaDate);
-        project.setActualIfaDate(actualIfaDate);
-        return projectRepository.save(project);
-    }
-
-    public Project updateIfcDate(Long id, LocalDate plannedIfcDate, LocalDate actualIfcDate) {
-        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project Found"));
-        project.setPlannedIfcDate(plannedIfcDate);
-        project.setActualIfcDate(actualIfcDate);
-=======
     public Project updateIfaDate(Long id, LocalDate plannedIfaDate, LocalDate actualIfaDate,String projectActivityStatus) {
         Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project Found"));
         if(projectActivityStatus.equals("IFA")) {
@@ -308,7 +295,6 @@ public class ProjectService {
             project.setPlannedReifcDate(plannedIfcDate);
             project.setActualReifcDate(actualIfcDate);
         }
->>>>>>> Stashed changes
         return projectRepository.save(project);
     }
 }
