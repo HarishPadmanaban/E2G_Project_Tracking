@@ -266,31 +266,39 @@
 
 // export default WorkPivotTable;
 
+/**
+ * WorkPivotTable.js  — REFACTORED (Task 1)
+ *
+ * All data processing has been moved to the backend (PivotService).
+ * This component is now display-only:
+ *   • Call ONE endpoint  →  receive display-ready rows
+ *   • Apply manager filter client-side (UI state only, no data transformation)
+ *   • Render PivotTableUI
+ */
+
 import React, { useEffect, useState } from "react";
 import PivotTableUI from "react-pivottable/PivotTableUI";
 import "react-pivottable/pivottable.css";
 import axiosInstance from "../axiosConfig";
 import * as XLSX from "xlsx";
 import "../../styles/Manager/PivotTableCustom.css";
-import PivotTable from "react-pivottable/PivotTable";
 import { useToast } from "../../context/ToastContext";
-import { Link } from "react-router-dom";
 import { useEmployee } from "../../context/EmployeeContext";
 
+// ── FilterBox patch (UI only — unchanged) ────────────────────────────────────
 const patchPivotFilterBox = () => {
   const Pivot = require("react-pivottable/PivotTableUI");
   const originalFilterBox = Pivot.FilterBox || PivotTableUI.FilterBox;
-  if (!originalFilterBox) return;
-  if (originalFilterBox.__patched) return;
+  if (!originalFilterBox || originalFilterBox.__patched) return;
 
   const PatchedFilterBox = function PatchedFilterBox(props) {
     const { attribute, values, valueFilter, onChange } = props;
-    const allValues = Array.from(values);
+    const allValues     = Array.from(values);
     const selectedValues = allValues.filter((v) => !valueFilter[v]);
-    const allSelected = selectedValues.length === allValues.length;
-    const noneSelected = selectedValues.length === 0;
+    const allSelected    = selectedValues.length === allValues.length;
+    const noneSelected   = selectedValues.length === 0;
     const singleSelected = selectedValues.length === 1;
-    const showSelectAll = noneSelected || singleSelected;
+    const showSelectAll  = noneSelected || singleSelected;
 
     const toggleAll = (selectAll) => {
       const newFilter = {};
@@ -336,27 +344,27 @@ const patchPivotFilterBox = () => {
   PivotTableUI.FilterBox = PatchedFilterBox;
 };
 
-
+// ── Component ─────────────────────────────────────────────────────────────────
 const WorkPivotTable = () => {
-  const [data, setData] = useState([]);
-  const [selectedManager, setSelectedManager] = useState(""); // ✅ new
-  const [managerList, setManagerList] = useState([]);         // ✅ new
-  const [isAGM, setIsAGM] = useState(false);                 // ✅ new
-  const [pivotState, setPivotState] = useState({
-    rows: ["Employee"],
-    cols: ["Activity"],
+  // rows: PivotRowDTO[]  →  flat, display-ready, no transformation needed
+  const [rows,            setRows]            = useState([]);
+  const [managerList,     setManagerList]     = useState([]);
+  const [selectedManager, setSelectedManager] = useState("");
+  const [isAGM,           setIsAGM]           = useState(false);
+  const [pivotState,      setPivotState]      = useState({
+    rows:           ["Employee"],
+    cols:           ["Activity"],
     aggregatorName: "Sum",
-    vals: ["Work Hours"],
-    rendererName: "Table",
+    vals:           ["Work Hours"],
+    rendererName:   "Table",
   });
 
   const { showToast } = useToast();
-   const { employee } = useEmployee();
+  const { employee }  = useEmployee();
 
-  useEffect(() => {
-    patchPivotFilterBox();
-  }, []);
+  useEffect(() => { patchPivotFilterBox(); }, []);
 
+  // ── data fetch (single API call, no transformation) ──────────────────────
   useEffect(() => {
     if (!employee) return;
 
@@ -366,77 +374,54 @@ const WorkPivotTable = () => {
 
     setIsAGM(agm);
 
+    // ✅ One endpoint replaces the previous two-API pattern
     const endpoint = agm
-      ? `/workdetails/all`
-      : `/workdetails/manager/${employee.empId}`;
+      ? "/workdetails/pivot/agm"
+      : `/workdetails/pivot/manager/${employee.empId}`;
 
-    Promise.all([
-      axiosInstance.get(endpoint),
-      axiosInstance.get("/project/"),
-    ])
-      .then(([workRes, projectRes]) => {
-        const workDetails = workRes.data || [];
-        const allProjects = projectRes.data || [];
+    axiosInstance.get(endpoint).then((res) => {
+      const { rows: pivotRows, managerList: mgrs } = res.data;
+      const formattedRows = (pivotRows || []).map((row) => ({
+    Id: row.id,
+    Employee: row.employee,
+    Manager: row.manager,
+    Project: row.project,
+    Activity: row.activity,
+    Status: row.status,
+    "Work Hours": row.workHours,
+    Date: row.date,
+    "Assigned Work": row.assignedWork,
+  }));
 
-        const projectMap = new Map(
-          allProjects.map((p) => [p.id, { name: p.projectName, assignedHours: p.assignedHours || 0 }])
-        );
-
-        const pivotData = workDetails.map((item, index) => {
-          const projectInfo = projectMap.get(item.projectId) || {};
-          const assigned = projectInfo.assignedHours || 0;
-          return {
-            id: index,
-            Employee: item.employeeName || "Unknown",
-            Manager: item.managerName || "Unknown",   // ✅ keep Manager in raw data
-            Project: `${item.projectName || "Unassigned"} (${assigned} hrs)`,
-            Activity: item.activityName || "No Activity",
-            Status: item.status || "Unknown",
-            "Work Hours": Number(item.workHours) || 0,
-            Date: item.date || "",
-            "Assigned Work": item.assignedWork || "",
-          };
-        });
-
-        setData(pivotData);
-
-        // ✅ Build unique sorted manager list from the data
-        if (agm) {
-          const managers = [...new Set(workDetails.map((item) => item.managerName).filter(Boolean))].sort();
-          setManagerList(managers);
-        }
-      });
+      setRows(formattedRows);
+      setManagerList(mgrs  || []);
+    });
   }, [employee]);
 
-
-  // ✅ Apply manager filter before passing to pivot table
+  // ── UI-only filter (no data transformation — just array filter by field) ──
   const filteredData = selectedManager
-    ? data.filter((row) => row.Manager === selectedManager)
-    : data;
+    ? rows.filter((row) => row.Manager === selectedManager)
+    : rows;
 
-
+  // ── Excel export (unchanged) ──────────────────────────────────────────────
   const exportPivotToExcel = () => {
     const table = document.querySelector(".pvtTable");
-    if (!table) {
-      showToast("No table to export!", "info");
-      return;
-    }
+    if (!table) { showToast("No table to export!", "info"); return; }
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.table_to_sheet(table);
     XLSX.utils.book_append_sheet(wb, ws, "Work Analysis");
-    const fileName = `Work_Details_${new Date().toISOString().slice(0, 10)}.xlsx`;
-    XLSX.writeFile(wb, fileName);
+    XLSX.writeFile(wb, `Work_Details_${new Date().toISOString().slice(0, 10)}.xlsx`);
   };
 
   const hasValidData = filteredData.length > 0;
 
+  // ── render ────────────────────────────────────────────────────────────────
   return (
     <div style={{ width: "100%", minHeight: "100vh", padding: "20px", boxSizing: "border-box", background: "#f8fafc" }}>
       <h2 style={{ fontWeight: 600, marginBottom: "20px" }}>Work Analysis Pivot Table</h2>
 
       <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "12px", flexWrap: "wrap" }}>
-        
-        {/* ✅ Manager filter — only shown for AGM */}
+
         {isAGM && managerList.length > 0 && (
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <label style={{ fontWeight: 500, fontSize: "14px" }}>Filter by Manager:</label>
@@ -444,7 +429,6 @@ const WorkPivotTable = () => {
               value={selectedManager}
               onChange={(e) => {
                 setSelectedManager(e.target.value);
-                // Reset pivot filters when manager changes to avoid stale filter state
                 setPivotState((prev) => ({ ...prev, valueFilter: {} }));
               }}
               style={{ padding: "6px 12px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "14px", background: "#fff", cursor: "pointer" }}
@@ -456,10 +440,7 @@ const WorkPivotTable = () => {
             </select>
             {selectedManager && (
               <button
-                onClick={() => {
-                  setSelectedManager("");
-                  setPivotState((prev) => ({ ...prev, valueFilter: {} }));
-                }}
+                onClick={() => { setSelectedManager(""); setPivotState((prev) => ({ ...prev, valueFilter: {} })); }}
                 style={{ background: "#ef4444", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 10px", fontSize: "13px", cursor: "pointer" }}
               >
                 ✕ Clear
@@ -478,15 +459,14 @@ const WorkPivotTable = () => {
         )}
       </div>
 
-
       <div style={{ width: "100%", overflowX: "auto", background: "#fff", borderRadius: "10px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)", padding: "10px" }}>
         {hasValidData ? (
           <PivotTableUI
-            data={filteredData}              // ✅ filtered data passed here
+            data={filteredData}
             onChange={setPivotState}
             {...pivotState}
             unusedOrientationCutoff={Infinity}
-            hiddenAttributes={["Work Hours", "Manager"]}  // ✅ hide Manager from pivot UI fields
+            hiddenAttributes={["Work Hours", "Manager"]}
           />
         ) : (
           <div style={{ textAlign: "center", padding: "20px", color: "#666" }}>

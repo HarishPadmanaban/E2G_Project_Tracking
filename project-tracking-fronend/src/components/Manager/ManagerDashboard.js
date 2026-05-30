@@ -239,11 +239,6 @@ const ManagerDashboard = () => {
       row["IFC Extra Hours Used"] =
         project.ifcExtraProdHours || 0;
 
-<<<<<<< Updated upstream
-      row["Total Working Hours"] =
-        project.workingHours || 0;
-
-=======
       row["Extra Hours Notes"] =
         project.extraHoursNote || "No Notes";
 
@@ -274,7 +269,6 @@ const ManagerDashboard = () => {
       row["Actual REIFC Date"] =
         project.actualReifcDate || "Not Assigned";
 
->>>>>>> Stashed changes
       row["Modeling Hours Assigned"] =
         project.modellingHours || 0;
 
@@ -287,8 +281,6 @@ const ManagerDashboard = () => {
       row["Checking Hours Used"] =
         project.checkingTime || 0;
 
-<<<<<<< Updated upstream
-=======
       row["Detailing Hours Assigned"] =
         project.detailingHours || 0;
 
@@ -301,7 +293,6 @@ const ManagerDashboard = () => {
       row["Study Hours Used"] =
         project.studyHoursTracking || 0;
 
->>>>>>> Stashed changes
       return row;
     });
 
@@ -662,19 +653,11 @@ const ManagerDashboard = () => {
                             <th>IFA (Worked / Assigned)</th>
                             <td>{selectedProject.ifaGivenHours || 0} / {selectedProject.ifaProdHours}</td>
                             <th>IFC (Worked / Assigned)</th>
-<<<<<<< Updated upstream
-                        <td>{selectedProject.ifcGivenHours || 0} / {selectedProject.ifcProdHours}</td>
-                          </>
-                        )
-                        }
-                        
-=======
                             <td>{selectedProject.ifcGivenHours || 0} / {selectedProject.ifcProdHours}</td>
                           </>
                         )
                         }
 
->>>>>>> Stashed changes
                       </tr>
 
 
@@ -725,39 +708,6 @@ const ManagerDashboard = () => {
                         <th>Actual Start Date</th>
                         <td>{selectedProject.startDate || "—"}</td>
                       </tr>
-<<<<<<< Updated upstream
-                    
-                        {selectedProject.projectActivityStatus === "IFA" && (
-                          <>
-                          <tr>
-                            <th>Planned IFA Date</th>
-                            <td>{selectedProject.plannedIfaDate || "Not Assigned"}</td>
-                            <th>Actual IFA Date</th>
-                            <td>{selectedProject.actualIfaDate || "Not Assigned"}</td>
-                            </tr>
-                          </>
-                        )
-                        }
-                        
-                        {selectedProject.projectActivityStatus !== ("IFA") && (
-                          <>
-                          <tr>
-                            <th>Planned IFA Date</th>
-                            <td>{selectedProject.plannedIfaDate || "Not Assigned"}</td>
-                            <th>Actual IFA Date</th>
-                            <td>{selectedProject.actualIfaDate || "Not Assigned"}</td>
-                            </tr>
-                            <tr>
-                              <th>Planned IFC Date</th>
-                            <td>{selectedProject.plannedIfcDate || "Not Assigned"}</td>
-                            <th>Actual IFC Date</th>
-                            <td>{selectedProject.actualIfcDate || "Not Assigned"}</td>
-                            </tr>
-                          </>
-                        )
-                        }
-                        
-=======
                       <tr>
                         <th>Planned IFA Date</th>
                         <td>{selectedProject.plannedIfaDate || "Not Assigned"}</td>
@@ -785,7 +735,6 @@ const ManagerDashboard = () => {
                         <td>{selectedProject.actualReifcDate || "Not Assigned"}</td>
                       </tr>
 
->>>>>>> Stashed changes
                       <tr>
                         <th>Project Status</th>
                         <td colSpan="2">
