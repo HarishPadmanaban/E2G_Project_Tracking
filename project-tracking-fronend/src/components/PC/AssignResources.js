@@ -92,6 +92,7 @@ const AssignActivityForm = () => {
       .get("/activity/")
       .then((res) => {
         setActivities(res.data);
+        console.log(res.data);
         setFilteredActivities(res.data); // default
       })
       .catch((err) => console.error("Error fetching activities:", err));

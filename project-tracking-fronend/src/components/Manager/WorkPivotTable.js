@@ -375,9 +375,10 @@ const WorkPivotTable = () => {
       axiosInstance.get("/project/"),
     ])
       .then(([workRes, projectRes]) => {
+
         const workDetails = workRes.data || [];
         const allProjects = projectRes.data || [];
-
+        console.log(workDetails[0]);
         const projectMap = new Map(
           allProjects.map((p) => [p.id, { name: p.projectName, assignedHours: p.assignedHours || 0 }])
         );
