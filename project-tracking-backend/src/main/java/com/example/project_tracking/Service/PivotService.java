@@ -17,14 +17,11 @@ import java.util.stream.Collectors;
 /**
  * Builds the display-ready pivot payload.
  *
- * Processing that previously lived in WorkPivotTable.js:
- *   ① Parallel fetch of workDetails + projects  →  now a single service call
- *   ② projectMap lookup to inject assignedHours into the project label
- *   ③ Flat-row construction  (Employee, Manager, Project, Activity …)
- *   ④ Manager list extraction (for AGM dropdown)
- *   ⑤ isAGM routing logic (all-work vs manager-scoped)
- *
- * The frontend now only renders the pre-built {@link PivotResponseDTO}.
+ * Change from previous version:
+ *   PivotRowDTO constructor call gains one argument — activity.getMainType().
+ *   capitalizeMainType() normalises the raw DB value ("modeling" → "Modeling")
+ *   so it matches the filter labels shown in the frontend dropdown exactly.
+ *   No other logic is changed.
  */
 @Service
 public class PivotService {
@@ -40,19 +37,11 @@ public class PivotService {
 
     // ── public API ────────────────────────────────────────────────────────────
 
-    /**
-     * Returns pivot data for an AGM (all active-project work logs).
-     * Manager list is populated so the dropdown can be rendered.
-     */
     public PivotResponseDTO getPivotForAGM() {
         List<WorkDetails> works = workDetailsRepository.findAllByActiveProjectStatus();
         return buildResponse(works, true);
     }
 
-    /**
-     * Returns pivot data scoped to a single manager's work logs.
-     * Manager list is empty (not needed for non-AGM users).
-     */
     public PivotResponseDTO getPivotForManager(Long managerId) {
         List<WorkDetails> works = workDetailsRepository
                 .findByAssignedWorkId_Manager_EmpId(managerId);
@@ -63,10 +52,8 @@ public class PivotService {
 
     private PivotResponseDTO buildResponse(List<WorkDetails> works, boolean includeManagerList) {
 
-        // ① Build projectId → assignedHours lookup (replaces frontend projectMap)
         Map<Long, String> projectLabelMap = buildProjectLabelMap();
 
-        // ② Map each WorkDetails to a flat PivotRowDTO
         List<PivotRowDTO> rows = new ArrayList<>();
         int idx = 0;
         for (WorkDetails w : works) {
@@ -84,12 +71,18 @@ public class PivotService {
                     ? projectLabelMap.getOrDefault(project.getId(), project.getProjectName())
                     : "Unassigned";
 
+            // ── NEW: read mainType from Activity, normalise capitalisation ──
+            String mainType = activity != null && activity.getMainType() != null
+                    ? capitalizeMainType(activity.getMainType())
+                    : "Unknown";
+
             PivotRowDTO row = new PivotRowDTO(
                     idx++,
                     emp      != null ? emp.getName()              : "Unknown",
                     mgr      != null ? mgr.getName()              : "Unknown",
                     projectLabel,
                     activity != null ? activity.getActivityName() : "No Activity",
+                    mainType,                                        // ← NEW
                     w.getStatus()       != null ? w.getStatus()       : "Unknown",
                     w.getWorkHours()    != null ? w.getWorkHours()    : 0.0,
                     w.getDate()         != null ? w.getDate().toString() : "",
@@ -98,7 +91,6 @@ public class PivotService {
             rows.add(row);
         }
 
-        // ③ Build sorted manager list (AGM only)
         List<String> managerList = Collections.emptyList();
         if (includeManagerList) {
             managerList = rows.stream()
@@ -112,11 +104,19 @@ public class PivotService {
         return new PivotResponseDTO(rows, managerList);
     }
 
+    // ── helpers ───────────────────────────────────────────────────────────────
+
     /**
-     * Creates a map from projectId → "ProjectName (N hrs)" label
-     * exactly matching the frontend's string template:
-     *   `${item.projectName || "Unassigned"} (${assigned} hrs)`
+     * Normalises Activity.mainType to title-case so it matches the
+     * frontend dropdown labels: "Modeling" / "Checking" / "Detailing" / "Studying".
+     * Handles DB values stored as all-lowercase ("modeling") or mixed case.
      */
+    private String capitalizeMainType(String raw) {
+        if (raw == null || raw.isBlank()) return "Unknown";
+        String trimmed = raw.trim();
+        return Character.toUpperCase(trimmed.charAt(0)) + trimmed.substring(1).toLowerCase();
+    }
+
     private Map<Long, String> buildProjectLabelMap() {
         return projectRepository.findAll().stream()
                 .collect(Collectors.toMap(
@@ -127,7 +127,7 @@ public class PivotService {
                                     : "0";
                             return p.getProjectName() + " (" + hrs + " hrs)";
                         },
-                        (a, b) -> a   // keep first on key collision (shouldn't happen)
+                        (a, b) -> a
                 ));
     }
 }

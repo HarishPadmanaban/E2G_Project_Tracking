@@ -3,6 +3,12 @@ package com.example.project_tracking.DTO;
 /**
  * One flat row emitted by the backend for the Work Analysis Pivot Table.
  * The frontend only needs to render these rows; zero transformation required.
+ *
+ * Change from previous version:
+ *   Added `mainType` field — sourced from Activity.mainType (Modeling / Checking / Detailing).
+ *   Carried here so the frontend can filter by it without any string manipulation.
+ *   The constructor gains one extra parameter; the field is added to hiddenAttributes
+ *   in the frontend so it doesn't appear as a pivot dimension unless the user drags it in.
  */
 public class PivotRowDTO {
 
@@ -12,6 +18,8 @@ public class PivotRowDTO {
     /** Format: "ProjectName (N hrs)" — assigned hours already embedded */
     private String project;
     private String activity;
+    /** Activity.mainType — e.g. "Modeling", "Checking", "Detailing", "Studying" */
+    private String mainType;
     private String status;
     private double workHours;
     private String date;
@@ -22,13 +30,14 @@ public class PivotRowDTO {
     public PivotRowDTO() {}
 
     public PivotRowDTO(int id, String employee, String manager, String project,
-                       String activity, String status, double workHours,
-                       String date, String assignedWork) {
+                       String activity, String mainType, String status,
+                       double workHours, String date, String assignedWork) {
         this.id           = id;
         this.employee     = employee;
         this.manager      = manager;
         this.project      = project;
         this.activity     = activity;
+        this.mainType     = mainType;
         this.status       = status;
         this.workHours    = workHours;
         this.date         = date;
@@ -51,6 +60,9 @@ public class PivotRowDTO {
 
     public String getActivity()             { return activity; }
     public void setActivity(String a)       { this.activity = a; }
+
+    public String getMainType()             { return mainType; }
+    public void setMainType(String t)       { this.mainType = t; }
 
     public String getStatus()               { return status; }
     public void setStatus(String s)         { this.status = s; }

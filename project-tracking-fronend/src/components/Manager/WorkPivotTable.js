@@ -275,6 +275,34 @@
  *   • Apply manager filter client-side (UI state only, no data transformation)
  *   • Render PivotTableUI
  */
+/**
+ * WorkPivotTable.js
+ *
+ * Changes from previous version (Main Type filter addition):
+ *
+ *   1. Added `selectedMainType` state — mirrors `selectedManager` in shape,
+ *      initial value, reset behaviour, and clear-button pattern.
+ *
+ *   2. Added `MAIN_TYPES` constant — static list ["Modeling","Checking","Detailing"].
+ *      No API call needed; these values never change at runtime.
+ *
+ *   3. `filteredData` rewritten from a single ternary into a `.filter()` chain
+ *      that checks both active filters independently. Each condition is only
+ *      evaluated when its state is non-empty, so all four combinations work:
+ *        ""  + ""   → all rows
+ *        mgr + ""   → manager only
+ *        ""  + type → mainType only
+ *        mgr + type → both applied together
+ *
+ *   4. Main Type `<select>` added to the filter bar using identical markup and
+ *      inline styles as the Manager filter so visual consistency is preserved.
+ *      It is shown for ALL roles (not AGM-only) because any manager may want
+ *      to scope to a single work category.
+ *
+ *   5. "Main Type" added to `hiddenAttributes` so the field doesn't appear as
+ *      a draggable pivot dimension by default (same treatment as "Manager").
+ *      Users can still drag it into rows/cols manually if they want.
+ */
 
 import React, { useEffect, useState } from "react";
 import PivotTableUI from "react-pivottable/PivotTableUI";
@@ -285,6 +313,9 @@ import "../../styles/Manager/PivotTableCustom.css";
 import { useToast } from "../../context/ToastContext";
 import { useEmployee } from "../../context/EmployeeContext";
 
+// ── Static filter options ────────────────────────────────────────────────────
+const MAIN_TYPES = ["Modeling", "Checking", "Detailing"];
+
 // ── FilterBox patch (UI only — unchanged) ────────────────────────────────────
 const patchPivotFilterBox = () => {
   const Pivot = require("react-pivottable/PivotTableUI");
@@ -293,7 +324,7 @@ const patchPivotFilterBox = () => {
 
   const PatchedFilterBox = function PatchedFilterBox(props) {
     const { attribute, values, valueFilter, onChange } = props;
-    const allValues     = Array.from(values);
+    const allValues      = Array.from(values);
     const selectedValues = allValues.filter((v) => !valueFilter[v]);
     const allSelected    = selectedValues.length === allValues.length;
     const noneSelected   = selectedValues.length === 0;
@@ -346,12 +377,12 @@ const patchPivotFilterBox = () => {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 const WorkPivotTable = () => {
-  // rows: PivotRowDTO[]  →  flat, display-ready, no transformation needed
-  const [rows,            setRows]            = useState([]);
-  const [managerList,     setManagerList]     = useState([]);
-  const [selectedManager, setSelectedManager] = useState("");
-  const [isAGM,           setIsAGM]           = useState(false);
-  const [pivotState,      setPivotState]      = useState({
+  const [rows,             setRows]             = useState([]);
+  const [managerList,      setManagerList]      = useState([]);
+  const [selectedManager,  setSelectedManager]  = useState("");
+  const [selectedMainType, setSelectedMainType] = useState(""); // ← NEW
+  const [isAGM,            setIsAGM]            = useState(false);
+  const [pivotState,       setPivotState]       = useState({
     rows:           ["Employee"],
     cols:           ["Activity"],
     aggregatorName: "Sum",
@@ -364,7 +395,7 @@ const WorkPivotTable = () => {
 
   useEffect(() => { patchPivotFilterBox(); }, []);
 
-  // ── data fetch (single API call, no transformation) ──────────────────────
+  // ── data fetch (single API call, no transformation) ───────────────────────
   useEffect(() => {
     if (!employee) return;
 
@@ -374,34 +405,39 @@ const WorkPivotTable = () => {
 
     setIsAGM(agm);
 
-    // ✅ One endpoint replaces the previous two-API pattern
-    const endpoint = agm
-      ? "/workdetails/pivot/agm"
-      : `/workdetails/pivot/manager/${employee.empId}`;
+const endpoint = agm
+  ? "/workdetails/pivot/agm"
+  : `/workdetails/pivot/manager/${employee.empId}`;
 
     axiosInstance.get(endpoint).then((res) => {
       const { rows: pivotRows, managerList: mgrs } = res.data;
-      const formattedRows = (pivotRows || []).map((row) => ({
-    Id: row.id,
-    Employee: row.employee,
-    Manager: row.manager,
-    Project: row.project,
-    Activity: row.activity,
-    Status: row.status,
-    "Work Hours": row.workHours,
-    Date: row.date,
-    "Assigned Work": row.assignedWork,
-  }));
 
-      setRows(formattedRows);
+      const formattedRows = (pivotRows || []).map((row) => ({
+  Id: row.id,
+  Employee: row.employee,
+  Manager: row.manager,
+  Project: row.project,
+  Activity: row.activity,
+  "Main Type": row.mainType,
+  Status: row.status,
+  "Work Hours": row.workHours,
+  Date: row.date,
+  "Assigned Work": row.assignedWork,
+}));
+
+setRows(formattedRows);
       setManagerList(mgrs  || []);
     });
   }, [employee]);
 
-  // ── UI-only filter (no data transformation — just array filter by field) ──
-  const filteredData = selectedManager
-    ? rows.filter((row) => row.Manager === selectedManager)
-    : rows;
+  // ── Combined filter — both conditions composed, each optional ─────────────
+  // Previous: const filteredData = selectedManager ? rows.filter(...) : rows;
+  // Now: chain both filters; a filter is skipped when its state value is "".
+  const filteredData = rows.filter((row) => {
+    const managerMatch  = !selectedManager  || row.Manager  === selectedManager;
+    const mainTypeMatch = !selectedMainType || row["Main Type"] === selectedMainType;
+    return managerMatch && mainTypeMatch;
+  });
 
   // ── Excel export (unchanged) ──────────────────────────────────────────────
   const exportPivotToExcel = () => {
@@ -413,6 +449,10 @@ const WorkPivotTable = () => {
     XLSX.writeFile(wb, `Work_Details_${new Date().toISOString().slice(0, 10)}.xlsx`);
   };
 
+  // ── shared clear helper — resets pivot value filters on any filter change ─
+  const resetPivotFilters = () =>
+    setPivotState((prev) => ({ ...prev, valueFilter: {} }));
+
   const hasValidData = filteredData.length > 0;
 
   // ── render ────────────────────────────────────────────────────────────────
@@ -422,15 +462,13 @@ const WorkPivotTable = () => {
 
       <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "12px", flexWrap: "wrap" }}>
 
+        {/* ── Manager filter — AGM only (unchanged behaviour) ─────────────── */}
         {isAGM && managerList.length > 0 && (
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <label style={{ fontWeight: 500, fontSize: "14px" }}>Filter by Manager:</label>
             <select
               value={selectedManager}
-              onChange={(e) => {
-                setSelectedManager(e.target.value);
-                setPivotState((prev) => ({ ...prev, valueFilter: {} }));
-              }}
+              onChange={(e) => { setSelectedManager(e.target.value); resetPivotFilters(); }}
               style={{ padding: "6px 12px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "14px", background: "#fff", cursor: "pointer" }}
             >
               <option value="">All Managers</option>
@@ -440,7 +478,7 @@ const WorkPivotTable = () => {
             </select>
             {selectedManager && (
               <button
-                onClick={() => { setSelectedManager(""); setPivotState((prev) => ({ ...prev, valueFilter: {} })); }}
+                onClick={() => { setSelectedManager(""); resetPivotFilters(); }}
                 style={{ background: "#ef4444", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 10px", fontSize: "13px", cursor: "pointer" }}
               >
                 ✕ Clear
@@ -448,6 +486,29 @@ const WorkPivotTable = () => {
             )}
           </div>
         )}
+
+        {/* ── Main Type filter — all roles ─────────────────────────────────── */}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <label style={{ fontWeight: 500, fontSize: "14px" }}>Filter by Main Type:</label>
+          <select
+            value={selectedMainType}
+            onChange={(e) => { setSelectedMainType(e.target.value); resetPivotFilters(); }}
+            style={{ padding: "6px 12px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "14px", background: "#fff", cursor: "pointer" }}
+          >
+            <option value="">All Types</option>
+            {MAIN_TYPES.map((type) => (
+              <option key={type} value={type}>{type}</option>
+            ))}
+          </select>
+          {selectedMainType && (
+            <button
+              onClick={() => { setSelectedMainType(""); resetPivotFilters(); }}
+              style={{ background: "#ef4444", color: "#fff", border: "none", borderRadius: "6px", padding: "6px 10px", fontSize: "13px", cursor: "pointer" }}
+            >
+              ✕ Clear
+            </button>
+          )}
+        </div>
 
         {hasValidData && (
           <button
@@ -466,7 +527,7 @@ const WorkPivotTable = () => {
             onChange={setPivotState}
             {...pivotState}
             unusedOrientationCutoff={Infinity}
-            hiddenAttributes={["Work Hours", "Manager"]}
+            hiddenAttributes={["Work Hours", "Manager", "Main Type"]}
           />
         ) : (
           <div style={{ textAlign: "center", padding: "20px", color: "#666" }}>
