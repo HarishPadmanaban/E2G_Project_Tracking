@@ -316,6 +316,7 @@ public class WorkDetailsService {
 
 
 
+
     public WorkDetailsResponse saveFinalWork(WorkDetailsRequest request, Long activeWorkId) {
         AssignedWork as = assignedWorkRepository.findById(request.getAssignedWorkId()).orElseThrow(()-> new RuntimeException("No Assigned work found"));
         WorkDetails work = workDetailsRepository
@@ -327,27 +328,28 @@ public class WorkDetailsService {
         work.setRemarks(request.getRemarks());
 
         if(request.getStatus().trim().toLowerCase().equals("completed")){
-            //AssignedWork assignedWork = assignedWorkRepository.findById(request.getAssignedWorkId()).orElseThrow(()-> new RuntimeException("No assigned activity found"));
             as.setStatus(request.getStatus().trim());
         }
 
         Project project = as.getProject();
-
         Activity activity = as.getActivity();
 
-        if (request.getWorkHours() != null) {
-            updateProjectWorkingHours(project, activity, request.getWorkHours());
+        // ✅ EXISTING TRACKING — unchanged
+        if (work.getWorkHours() != null) {
+            updateProjectWorkingHours(project, activity, work.getWorkHours());
+            // ── ADDITIVE PHASE TRACKING (Task 2) ─────────────────────────
+            PhaseHoursTracker.track(project, work.getWorkHours());
+            projectRepository.save(project);
+            // ─────────────────────────────────────────────────────────────
         }
 
         if(request.getActivityId()==43 && request.getStatus().trim().toLowerCase().equals("pending"))
         {
-            //AssignedWork assignedWork = assignedWorkRepository.findById(request.getAssignedWorkId()).orElseThrow(()-> new RuntimeException("No assigned activity found"));
             as.setStatus("SPECIAL-PENDING");
         }
 
         return convertToResponse(workDetailsRepository.save(work));
     }
-
 
     public WorkDetailsResponse getActiveWorkByEmployee(Long employeeId) {
         Optional<WorkDetails> workOpt = workDetailsRepository

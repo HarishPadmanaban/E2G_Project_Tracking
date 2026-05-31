@@ -238,13 +238,65 @@ public class ProjectService {
         return convertToResponse(projectRepository.save(project));
     }
 
-    public ProjectResponse setExtra(Long id,BigDecimal extraHours) {
+    public ProjectResponse setExtra(Long id,BigDecimal extraHours,String extraHoursNote) {
         Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project found with id "+id));
         if(project.getExtraHours() != null){
             project.setExtraHours(project.getExtraHours().add(extraHours));
+            String projectStatus = project.getProjectActivityStatus();
+            switch (projectStatus)
+            {
+                case "IFA": {
+                    project.setIfaExtraHours(project.getIfaExtraHours().add(extraHours));
+                    project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+                    break;
+                }
+                case "IFC": {
+                    project.setIfcExtraHours(project.getIfcExtraHours().add(extraHours));
+                    project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+                    break;
+                }
+
+                case "REIFA": {
+                    project.setReifaExtraHours(project.getReifaExtraHours().add(extraHours));
+                    project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+                    break;
+                }
+                case "REIFC": {
+                    project.setReifcExtraHours(project.getReifcExtraHours().add(extraHours));
+                    project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+                    break;
+                }
+
+            }
         }
         else{
             project.setExtraHours(extraHours);
+            String projectStatus = project.getProjectActivityStatus();
+            switch (projectStatus)
+            {
+                case "IFA": {
+                    project.setIfaExtraHours(extraHours);
+                    project.setExtraHoursNote(extraHoursNote);
+                    break;
+                }
+                case "IFC": {
+                    project.setIfcExtraHours(extraHours);
+                    project.setExtraHoursNote(extraHoursNote);
+                    break;
+                }
+
+                case "REIFA": {
+                    project.setReifaExtraHours(extraHours);
+                    project.setExtraHoursNote(extraHoursNote);
+                    break;
+                }
+                case "REIFC": {
+                    project.setReifcExtraHours(extraHours);
+                    project.setExtraHoursNote(extraHoursNote);
+                    break;
+                }
+
+            }
         }
         //System.out.print(project.toString());
         return convertToResponse(projectRepository.save(project));

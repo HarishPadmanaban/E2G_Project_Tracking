@@ -641,22 +641,19 @@ const ManagerDashboard = () => {
                       </tr>
 
                       <tr>
-                        {selectedProject.projectActivityStatus === ("IFA") && (
-                          <>
+                          
                             <th>IFA (Worked / Assigned)</th>
-                            <td>{selectedProject.ifaGivenHours || 0} / {selectedProject.ifaProdHours}</td>
-                          </>
-                        )
-                        }
-                        {selectedProject.projectActivityStatus !== ("IFA") && (
-                          <>
-                            <th>IFA (Worked / Assigned)</th>
-                            <td>{selectedProject.ifaGivenHours || 0} / {selectedProject.ifaProdHours}</td>
+                            <td>{selectedProject.ifaProdHours || 0} / {selectedProject.ifaGivenHours || 0} </td>
                             <th>IFC (Worked / Assigned)</th>
-                            <td>{selectedProject.ifcGivenHours || 0} / {selectedProject.ifcProdHours}</td>
-                          </>
-                        )
-                        }
+                            <td>{selectedProject.ifcProdHours || 0} / {selectedProject.ifcGivenHours || 0}</td>
+
+                      </tr>
+                      <tr>
+                          
+                            <th>REIFA<br></br> (Worked / Assigned)</th>
+                            <td>{selectedProject.reifaProdHours || 0} / {selectedProject.reifaGivenHours || 0}</td>
+                            <th>REIFC <br></br>(Worked / Assigned)</th>
+                            <td>{selectedProject.reifcProdHours || 0} / {selectedProject.reifcGivenHours || 0} </td>
 
                       </tr>
 
@@ -691,6 +688,27 @@ const ManagerDashboard = () => {
                         <th>Extra Hours <br></br>(Worked / Assigned)</th>
                         <td>
                           {selectedProject.extraHoursTracking || "0"} / {selectedProject.extraHours || "0"}
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th>IFA Extra Hours <br></br>(Worked / Assigned)</th>
+                        <td>
+                          {selectedProject.ifaExtraProdHours || "0"} / {selectedProject.ifaExtraHours || "0"} 
+                        </td>
+                        <th>IFC Extra Hours <br></br>(Worked / Assigned)</th>
+                        <td>
+                          {selectedProject.ifcExtraProdHours || "0"} / {selectedProject.ifcExtraHours || "0"} 
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>REIFA Extra Hours <br></br>(Worked / Assigned)</th>
+                        <td>
+                           {selectedProject.reifaExtraProdHours || "0"}/ {selectedProject.reifaExtraHours || "0"}
+                        </td>
+                        <th>REIFC Extra Hours <br></br>(Worked / Assigned)</th>
+                        <td>
+                          {selectedProject.reifcExtraProdHours || "0"} / {selectedProject.reifcExtraHours || "0"}
                         </td>
                       </tr>
 

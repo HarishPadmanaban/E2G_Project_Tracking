@@ -78,9 +78,9 @@ public class ProjectController {
     }
 
     @PutMapping("/set-extra-hours/{id}")
-    public ResponseEntity<ProjectResponse> setExtraHours(@PathVariable Long id,@RequestParam BigDecimal extraHours){
+    public ResponseEntity<ProjectResponse> setExtraHours(@PathVariable Long id,@RequestParam BigDecimal extraHours,@RequestParam String extraHoursNote){
         //System.out.println(id+"\n"+extraHours);
-        return ResponseEntity.ok(projectService.setExtra(id,extraHours));
+        return ResponseEntity.ok(projectService.setExtra(id,extraHours,extraHoursNote));
     }
 
     @PutMapping("/extend/{id}")
