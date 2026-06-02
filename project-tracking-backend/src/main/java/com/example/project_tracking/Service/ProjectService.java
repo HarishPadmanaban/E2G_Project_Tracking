@@ -117,7 +117,7 @@ public class ProjectService {
         return response;
     }
 
-    public void createProject(String projectName,String clientName,Long pmId,Long agmId,BigDecimal totalHours,LocalDate awardedDate,LocalDate plannedStartDate,LocalDate completedDate) {
+    public void createProject(String projectName,String clientName,Long pmId,Long agmId,BigDecimal totalHours,LocalDate awardedDate,LocalDate plannedStartDate,LocalDate completedDate,BigDecimal ifaGivenHours,BigDecimal ifcGivenHours) {
         Project project=new Project();
 
         project.setProjectName(projectName);
@@ -143,6 +143,8 @@ public class ProjectService {
         project.setCheckingTime(BigDecimal.ZERO);
         project.setDetailingTime(BigDecimal.ZERO);
         project.setWorkingHours(BigDecimal.ZERO);
+        project.setIfaGivenHours(ifaGivenHours);
+        project.setIfcGivenHours(ifcGivenHours);
         projectRepository.save(project);
         notificationService.createNotification(
                 agmId,   // sender: AGM
@@ -257,12 +259,12 @@ public class ProjectService {
                 }
 
                 case "REIFA": {
-                    project.setReifaExtraHours(project.getReifaExtraHours().add(extraHours));
+                    project.setIfaExtraHours(project.getIfaExtraHours().add(extraHours));
                     project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
                     break;
                 }
                 case "REIFC": {
-                    project.setReifcExtraHours(project.getReifcExtraHours().add(extraHours));
+                    project.setIfcExtraHours(project.getIfcExtraHours().add(extraHours));
                     project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
                     break;
                 }
@@ -286,12 +288,12 @@ public class ProjectService {
                 }
 
                 case "REIFA": {
-                    project.setReifaExtraHours(extraHours);
+                    project.setIfaExtraHours(extraHours);
                     project.setExtraHoursNote(extraHoursNote);
                     break;
                 }
                 case "REIFC": {
-                    project.setReifcExtraHours(extraHours);
+                    project.setIfcExtraHours(extraHours);
                     project.setExtraHoursNote(extraHoursNote);
                     break;
                 }

@@ -336,7 +336,7 @@ public class WorkDetailsService {
 
         // ✅ EXISTING TRACKING — unchanged
         if (work.getWorkHours() != null) {
-            updateProjectWorkingHours(project, activity, work.getWorkHours());
+            //updateProjectWorkingHours(project, activity, work.getWorkHours());
             // ── ADDITIVE PHASE TRACKING (Task 2) ─────────────────────────
             PhaseHoursTracker.track(project, work.getWorkHours());
             projectRepository.save(project);

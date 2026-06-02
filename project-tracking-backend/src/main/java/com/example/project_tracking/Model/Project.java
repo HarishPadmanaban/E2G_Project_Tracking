@@ -111,30 +111,6 @@
         @Column(name = "actual_reifc_date")
         private LocalDate actualReifcDate;
 
-        @Column(name = "reifa_given_hours")
-        private BigDecimal reifaGivenHours;
-
-        @Column(name = "reifa_extra_hours")
-        private BigDecimal reifaExtraHours;
-
-        @Column(name = "reifa_prod_hours")
-        private BigDecimal reifaProdHours = BigDecimal.ZERO;
-
-        @Column(name = "reifa_extra_prod_hours")
-        private BigDecimal reifaExtraProdHours = BigDecimal.ZERO;
-
-        @Column(name = "reifc_given_hours")
-        private BigDecimal reifcGivenHours;
-
-        @Column(name = "reifc_extra_hours")
-        private BigDecimal reifcExtraHours;
-
-        @Column(name = "reifc_prod_hours")
-        private BigDecimal reifcProdHours = BigDecimal.ZERO;
-
-        @Column(name = "reifc_extra_prod_hours")
-        private BigDecimal reifcExtraProdHours = BigDecimal.ZERO;
-
         public Project() {
         }
 
@@ -169,15 +145,7 @@
         }
 
 
-        public Project(Long id, String projectName, String clientName, Long managerId, Long tlId, BigDecimal assignedHours, BigDecimal workingHours, LocalDate assignedDate, Boolean projectStatus, Boolean softDelete, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal modellingTime, BigDecimal checkingTime, BigDecimal detailingTime, LocalDate startDate, LocalDate completedDate, BigDecimal studyHours, BigDecimal studyHoursTracking, BigDecimal extraHours, BigDecimal extraHoursTracking, String projectActivityStatus, LocalDate remainderSentDate, LocalDate plannedStartDate, BigDecimal ifaGivenHours, BigDecimal ifcGivenHours, BigDecimal ifaExtraHours, BigDecimal ifcExtraHours, BigDecimal ifaProdHours, BigDecimal ifcProdHours, BigDecimal ifaExtraProdHours, BigDecimal ifcExtraProdHours, LocalDate plannedIfaDate, LocalDate actualIfaDate, LocalDate plannedIfcDate, LocalDate actualIfcDate, LocalDate plannedReifaDate, LocalDate actualReifaDate, LocalDate plannedReifcDate, LocalDate actualReifcDate, String extraHoursNote,BigDecimal reifaGivenHours,
-                       BigDecimal reifaExtraHours,
-                       BigDecimal reifaProdHours,
-                       BigDecimal reifaExtraProdHours,
-
-                       BigDecimal reifcGivenHours,
-                       BigDecimal reifcExtraHours,
-                       BigDecimal reifcProdHours,
-                       BigDecimal reifcExtraProdHours) {
+        public Project(Long id, String projectName, String clientName, Long managerId, Long tlId, BigDecimal assignedHours, BigDecimal workingHours, LocalDate assignedDate, Boolean projectStatus, Boolean softDelete, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal modellingTime, BigDecimal checkingTime, BigDecimal detailingTime, LocalDate startDate, LocalDate completedDate, BigDecimal studyHours, BigDecimal studyHoursTracking, BigDecimal extraHours, BigDecimal extraHoursTracking, String projectActivityStatus, LocalDate remainderSentDate, LocalDate plannedStartDate, BigDecimal ifaGivenHours, BigDecimal ifcGivenHours, BigDecimal ifaExtraHours, BigDecimal ifcExtraHours, BigDecimal ifaProdHours, BigDecimal ifcProdHours, BigDecimal ifaExtraProdHours, BigDecimal ifcExtraProdHours, LocalDate plannedIfaDate, LocalDate actualIfaDate, LocalDate plannedIfcDate, LocalDate actualIfcDate, LocalDate plannedReifaDate, LocalDate actualReifaDate, LocalDate plannedReifcDate, LocalDate actualReifcDate, String extraHoursNote) {
             this.id = id;
             this.projectName = projectName;
             this.clientName = clientName;
@@ -221,16 +189,6 @@
             this.actualReifaDate = actualReifaDate;
             this.plannedReifcDate = plannedReifcDate;
             this.actualReifcDate = actualReifcDate;
-
-            this.reifaGivenHours = reifaGivenHours;
-            this.reifaExtraHours = reifaExtraHours;
-            this.reifaProdHours = reifaProdHours;
-            this.reifaExtraProdHours = reifaExtraProdHours;
-
-            this.reifcGivenHours = reifcGivenHours;
-            this.reifcExtraHours = reifcExtraHours;
-            this.reifcProdHours = reifcProdHours;
-            this.reifcExtraProdHours = reifcExtraProdHours;
         }
 
         public Long getId() {
@@ -569,69 +527,6 @@
             this.actualReifcDate = actualReifcDate;
         }
 
-        public BigDecimal getReifaGivenHours() {
-            return reifaGivenHours;
-        }
-
-        public void setReifaGivenHours(BigDecimal reifaGivenHours) {
-            this.reifaGivenHours = reifaGivenHours;
-        }
-
-        public BigDecimal getReifaExtraHours() {
-            return reifaExtraHours;
-        }
-
-        public void setReifaExtraHours(BigDecimal reifaExtraHours) {
-            this.reifaExtraHours = reifaExtraHours;
-        }
-
-        public BigDecimal getReifaProdHours() {
-            return reifaProdHours;
-        }
-
-        public void setReifaProdHours(BigDecimal reifaProdHours) {
-            this.reifaProdHours = reifaProdHours;
-        }
-
-        public BigDecimal getReifaExtraProdHours() {
-            return reifaExtraProdHours;
-        }
-
-        public void setReifaExtraProdHours(BigDecimal reifaExtraProdHours) {
-            this.reifaExtraProdHours = reifaExtraProdHours;
-        }
-
-        public BigDecimal getReifcGivenHours() {
-            return reifcGivenHours;
-        }
-
-        public void setReifcGivenHours(BigDecimal reifcGivenHours) {
-            this.reifcGivenHours = reifcGivenHours;
-        }
-
-        public BigDecimal getReifcExtraHours() {
-            return reifcExtraHours;
-        }
-
-        public void setReifcExtraHours(BigDecimal reifcExtraHours) {
-            this.reifcExtraHours = reifcExtraHours;
-        }
-
-        public BigDecimal getReifcProdHours() {
-            return reifcProdHours;
-        }
-
-        public void setReifcProdHours(BigDecimal reifcProdHours) {
-            this.reifcProdHours = reifcProdHours;
-        }
-
-        public BigDecimal getReifcExtraProdHours() {
-            return reifcExtraProdHours;
-        }
-
-        public void setReifcExtraProdHours(BigDecimal reifcExtraProdHours) {
-            this.reifcExtraProdHours = reifcExtraProdHours;
-        }
 
         @Override
         public String toString() {
@@ -671,14 +566,6 @@
                     ", actualReifaDate=" + actualReifaDate +
                     ", plannedReifcDate=" + plannedReifcDate +
                     ", actualReifcDate=" + actualReifcDate +
-                    ", reifaGivenHours=" + reifaGivenHours +
-                    ", reifaExtraHours=" + reifaExtraHours +
-                    ", reifaProdHours=" + reifaProdHours +
-                    ", reifaExtraProdHours=" + reifaExtraProdHours +
-                    ", reifcGivenHours=" + reifcGivenHours +
-                    ", reifcExtraHours=" + reifcExtraHours +
-                    ", reifcProdHours=" + reifcProdHours +
-                    ", reifcExtraProdHours=" + reifcExtraProdHours +
                     '}';
         }
     }

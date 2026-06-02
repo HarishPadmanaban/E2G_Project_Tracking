@@ -122,23 +122,23 @@ public final class PhaseHoursTracker {
             case "REIFA":
                 return new PhaseAccessor(
                         "REIFA",
-                        Project::getReifaGivenHours,
-                        Project::getReifaExtraHours,
-                        Project::getReifaProdHours,
-                        Project::setReifaProdHours,
-                        Project::getReifaExtraProdHours,
-                        Project::setReifaExtraProdHours
+                        Project::getIfaGivenHours,
+                        Project::getIfaExtraHours,
+                        Project::getIfaProdHours,
+                        Project::setIfaProdHours,
+                        Project::getIfaExtraProdHours,
+                        Project::setIfaExtraProdHours
                 );
 
             case "REIFC":
                 return new PhaseAccessor(
                         "REIFC",
-                        Project::getReifcGivenHours,
-                        Project::getReifcExtraHours,
-                        Project::getReifcProdHours,
-                        Project::setReifcProdHours,
-                        Project::getReifcExtraProdHours,
-                        Project::setReifcExtraProdHours
+                        Project::getIfcGivenHours,
+                        Project::getIfcExtraHours,
+                        Project::getIfcProdHours,
+                        Project::setIfcProdHours,
+                        Project::getIfcExtraProdHours,
+                        Project::setIfcExtraProdHours
                 );
 
             default:

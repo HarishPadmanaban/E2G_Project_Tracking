@@ -42,7 +42,12 @@ const AssignProjectForm = () => {
     if (!formData.completionDate) return showToast("⚠️ Enter Completion Date","warning");
     if (!formData.totalHours || Number(formData.totalHours) <= 0)
       return showToast("⚠️ Enter total hours > 0","warning");
-
+    if (!formData.ifaHours || Number(formData.ifaHours) <= 0)
+      return showToast("⚠️ Enter IFA hours > 0","warning");
+    if (!formData.ifcHours || Number(formData.ifcHours) <= 0)
+      return showToast("⚠️ Enter IFC hours > 0","warning");
+    if(Number(formData.ifaHours)+Number(formData.ifcHours) !== Number(formData.totalHours))
+      return showToast("⚠️ IFA and IFC Hours should equal Total Hours","warning");
 
     try {
       await axiosInstance.post(
@@ -57,18 +62,20 @@ const AssignProjectForm = () => {
             totalHours: formData.totalHours,
             awardedDate: formData.awardedDate,
             plannedStartDate: formData.startDate,
-            completedDate: formData.completionDate
+            completedDate: formData.completionDate,
+            ifaGivenHours: formData.ifaHours,
+            ifcGivenHours: formData.ifcHours
           },
         }
       );
       showToast("✅ Project assigned successfully!","success");
       setFormData({
-        projectName: "", clientName: "", pmId: "", totalHours: "", awardedDate: "", startDate: "",completionDate: ""
+        projectName: "", clientName: "", pmId: "", totalHours: "", awardedDate: "", startDate: "",completionDate: "",ifaHours:"",ifcHours:""
       });
     } catch (error) {
   
       setFormData({
-        projectName: "", clientName: "", pmId: "", totalHours: "", awardedDate: "", startDate: "",completionDate: ""
+        projectName: "", clientName: "", pmId: "", totalHours: "", awardedDate: "", startDate: "",completionDate: "",ifaHours:"",ifcHours:""
       });
       showToast("❌ Failed to assign project","error");
     }
@@ -152,6 +159,26 @@ const AssignProjectForm = () => {
           type="number"
           name="totalHours"
           value={formData.totalHours}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className={styles.fld}>
+        <label>IFA Hours</label>
+        <input
+          type="number"
+          name="ifaHours"
+          value={formData.ifaHours}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className={styles.fld}>
+        <label>IFC Hours</label>
+        <input
+          type="number"
+          name="ifcHours"
+          value={formData.ifcHours}
           onChange={handleChange}
         />
       </div>
