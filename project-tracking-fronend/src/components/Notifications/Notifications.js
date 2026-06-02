@@ -74,6 +74,9 @@ const Notifications = () => {
     const extractProjectName = (msg) =>
         msg.match(/Project:\s*([^|]+)/)?.[1]?.trim();
 
+    const extractReason = (msg) =>
+    msg.match(/Reason:\s*(.*?)(?:\||$)/)?.[1]?.trim();
+
     // fetch notifications from backend
     const fetchNotifications = async () => {
         if (!userId) return;
@@ -173,6 +176,7 @@ const Notifications = () => {
         const notificationId = selectedNotification.id;
         const projectId = extractProjectId(msg);
         const projectName = extractProjectName(msg) || "Project";
+        const extraHoursNote = extractReason(msg) || "Not Specified"
         const senderOfRequest = selectedNotification.senderId; // expected to exist
 
         if (!projectId) {
@@ -193,7 +197,7 @@ const Notifications = () => {
 
                 // Call your existing extra-hours endpoint (you used this earlier)
                 await axiosInstance.put(
-                    `/project/set-extra-hours/${projectId}?extraHours=${hours}`
+                    `/project/set-extra-hours/${projectId}?extraHours=${hours}&extraHoursNote=${extraHoursNote}`
                 );
             } else if (selectedNotification.type === "COMPLETION_EXTENSION") {
                 const projectId = extractProjectId(selectedNotification.message);

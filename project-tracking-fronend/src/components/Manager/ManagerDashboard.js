@@ -239,8 +239,35 @@ const ManagerDashboard = () => {
       row["IFC Extra Hours Used"] =
         project.ifcExtraProdHours || 0;
 
+      row["Extra Hours Notes"] =
+        project.extraHoursNote || "No Notes";
+
       row["Total Working Hours"] =
         project.workingHours || 0;
+
+      row["Planned IFA Date"] =
+        project.plannedIfaDate || "Not Assigned";
+
+      row["Actual IFA Date"] =
+        project.actualIfaDate || "Not Assigned";
+
+      row["Planned REIFA Date"] =
+        project.plannedReifaDate || "Not Assigned";
+
+      row["Actual REIFA Date"] =
+        project.actualReifaDate || "Not Assigned";
+
+      row["Planned IFC Date"] =
+        project.plannedIfcDate || "Not Assigned";
+
+      row["Actual IFC Date"] =
+        project.actualIfcDate || "Not Assigned";
+
+      row["Planned REIFC Date"] =
+        project.plannedReifcDate || "Not Assigned";
+
+      row["Actual REIFC Date"] =
+        project.actualReifcDate || "Not Assigned";
 
       row["Modeling Hours Assigned"] =
         project.modellingHours || 0;
@@ -253,6 +280,18 @@ const ManagerDashboard = () => {
 
       row["Checking Hours Used"] =
         project.checkingTime || 0;
+
+      row["Detailing Hours Assigned"] =
+        project.detailingHours || 0;
+
+      row["Detailing Hours Used"] =
+        project.detailingTime || 0;
+
+      row["Study Hours Assigned"] =
+        project.studyHours || 0;
+
+      row["Study Hours Used"] =
+        project.studyHoursTracking || 0;
 
       return row;
     });
@@ -602,23 +641,20 @@ const ManagerDashboard = () => {
                       </tr>
 
                       <tr>
-                        {selectedProject.projectActivityStatus === ("IFA") && (
-                          <>
+                          
                             <th>IFA (Worked / Assigned)</th>
-                            <td>{selectedProject.ifaGivenHours || 0} / {selectedProject.ifaProdHours}</td>
-                          </>
-                        )
-                        }
-                        {selectedProject.projectActivityStatus !== ("IFA") && (
-                          <>
-                            <th>IFA (Worked / Assigned)</th>
-                            <td>{selectedProject.ifaGivenHours || 0} / {selectedProject.ifaProdHours}</td>
+                            <td>{selectedProject.ifaProdHours || 0} / {selectedProject.ifaGivenHours || 0} </td>
                             <th>IFC (Worked / Assigned)</th>
-                        <td>{selectedProject.ifcGivenHours || 0} / {selectedProject.ifcProdHours}</td>
-                          </>
-                        )
-                        }
-                        
+                            <td>{selectedProject.ifcProdHours || 0} / {selectedProject.ifcGivenHours || 0}</td>
+
+                      </tr>
+                      <tr>
+                          
+                            <th>REIFA<br></br> (Worked / Assigned)</th>
+                            <td>{selectedProject.reifaProdHours || 0} / {selectedProject.reifaGivenHours || 0}</td>
+                            <th>REIFC <br></br>(Worked / Assigned)</th>
+                            <td>{selectedProject.reifcProdHours || 0} / {selectedProject.reifcGivenHours || 0} </td>
+
                       </tr>
 
 
@@ -656,6 +692,27 @@ const ManagerDashboard = () => {
                       </tr>
 
                       <tr>
+                        <th>IFA Extra Hours <br></br>(Worked / Assigned)</th>
+                        <td>
+                          {selectedProject.ifaExtraProdHours || "0"} / {selectedProject.ifaExtraHours || "0"} 
+                        </td>
+                        <th>IFC Extra Hours <br></br>(Worked / Assigned)</th>
+                        <td>
+                          {selectedProject.ifcExtraProdHours || "0"} / {selectedProject.ifcExtraHours || "0"} 
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>REIFA Extra Hours <br></br>(Worked / Assigned)</th>
+                        <td>
+                           {selectedProject.reifaExtraProdHours || "0"}/ {selectedProject.reifaExtraHours || "0"}
+                        </td>
+                        <th>REIFC Extra Hours <br></br>(Worked / Assigned)</th>
+                        <td>
+                          {selectedProject.reifcExtraProdHours || "0"} / {selectedProject.reifcExtraHours || "0"}
+                        </td>
+                      </tr>
+
+                      <tr>
                         <th>Assigned Date</th>
                         <td>{selectedProject.assignedDate || "—"}</td>
                         <th>Completion Date</th>
@@ -669,37 +726,33 @@ const ManagerDashboard = () => {
                         <th>Actual Start Date</th>
                         <td>{selectedProject.startDate || "—"}</td>
                       </tr>
-                    
-                        {selectedProject.projectActivityStatus === "IFA" && (
-                          <>
-                          <tr>
-                            <th>Planned IFA Date</th>
-                            <td>{selectedProject.plannedIfaDate || "Not Assigned"}</td>
-                            <th>Actual IFA Date</th>
-                            <td>{selectedProject.actualIfaDate || "Not Assigned"}</td>
-                            </tr>
-                          </>
-                        )
-                        }
-                        
-                        {selectedProject.projectActivityStatus !== ("IFA") && (
-                          <>
-                          <tr>
-                            <th>Planned IFA Date</th>
-                            <td>{selectedProject.plannedIfaDate || "Not Assigned"}</td>
-                            <th>Actual IFA Date</th>
-                            <td>{selectedProject.actualIfaDate || "Not Assigned"}</td>
-                            </tr>
-                            <tr>
-                              <th>Planned IFC Date</th>
-                            <td>{selectedProject.plannedIfcDate || "Not Assigned"}</td>
-                            <th>Actual IFC Date</th>
-                            <td>{selectedProject.actualIfcDate || "Not Assigned"}</td>
-                            </tr>
-                          </>
-                        )
-                        }
-                        
+                      <tr>
+                        <th>Planned IFA Date</th>
+                        <td>{selectedProject.plannedIfaDate || "Not Assigned"}</td>
+
+                        <th>Actual IFA Date</th>
+                        <td>{selectedProject.actualIfaDate || "Not Assigned"}</td>
+                      </tr>
+
+                      <tr>
+                        <th>Planned REIFA Date</th>
+                        <td>{selectedProject.plannedReifaDate || "Not Assigned"}</td>
+                        <th>Actual REIFA Date</th>
+                        <td>{selectedProject.actualReifaDate || "Not Assigned"}</td>
+                      </tr>
+                      <tr>
+                        <th>Planned IFC Date</th>
+                        <td>{selectedProject.plannedIfcDate || "Not Assigned"}</td>
+                        <th>Actual IFC Date</th>
+                        <td>{selectedProject.actualIfcDate || "Not Assigned"}</td>
+                      </tr>
+                      <tr>
+                        <th>Planned REIFC Date</th>
+                        <td>{selectedProject.plannedReifcDate || "Not Assigned"}</td>
+                        <th>Actual REIFC Date</th>
+                        <td>{selectedProject.actualReifcDate || "Not Assigned"}</td>
+                      </tr>
+
                       <tr>
                         <th>Project Status</th>
                         <td colSpan="2">

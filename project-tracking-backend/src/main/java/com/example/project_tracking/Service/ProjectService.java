@@ -117,7 +117,7 @@ public class ProjectService {
         return response;
     }
 
-    public void createProject(String projectName,String clientName,Long pmId,Long agmId,BigDecimal totalHours,LocalDate awardedDate,LocalDate plannedStartDate,LocalDate completedDate) {
+    public void createProject(String projectName,String clientName,Long pmId,Long agmId,BigDecimal totalHours,LocalDate awardedDate,LocalDate plannedStartDate,LocalDate completedDate,BigDecimal ifaGivenHours,BigDecimal ifcGivenHours) {
         Project project=new Project();
 
         project.setProjectName(projectName);
@@ -143,6 +143,8 @@ public class ProjectService {
         project.setCheckingTime(BigDecimal.ZERO);
         project.setDetailingTime(BigDecimal.ZERO);
         project.setWorkingHours(BigDecimal.ZERO);
+        project.setIfaGivenHours(ifaGivenHours);
+        project.setIfcGivenHours(ifcGivenHours);
         projectRepository.save(project);
         notificationService.createNotification(
                 agmId,   // sender: AGM
@@ -238,13 +240,65 @@ public class ProjectService {
         return convertToResponse(projectRepository.save(project));
     }
 
-    public ProjectResponse setExtra(Long id,BigDecimal extraHours) {
+    public ProjectResponse setExtra(Long id,BigDecimal extraHours,String extraHoursNote) {
         Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project found with id "+id));
         if(project.getExtraHours() != null){
             project.setExtraHours(project.getExtraHours().add(extraHours));
+            String projectStatus = project.getProjectActivityStatus();
+            switch (projectStatus)
+            {
+                case "IFA": {
+                    project.setIfaExtraHours(project.getIfaExtraHours().add(extraHours));
+                    project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+                    break;
+                }
+                case "IFC": {
+                    project.setIfcExtraHours(project.getIfcExtraHours().add(extraHours));
+                    project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+                    break;
+                }
+
+                case "REIFA": {
+                    project.setIfaExtraHours(project.getIfaExtraHours().add(extraHours));
+                    project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+                    break;
+                }
+                case "REIFC": {
+                    project.setIfcExtraHours(project.getIfcExtraHours().add(extraHours));
+                    project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+                    break;
+                }
+
+            }
         }
         else{
             project.setExtraHours(extraHours);
+            String projectStatus = project.getProjectActivityStatus();
+            switch (projectStatus)
+            {
+                case "IFA": {
+                    project.setIfaExtraHours(extraHours);
+                    project.setExtraHoursNote(extraHoursNote);
+                    break;
+                }
+                case "IFC": {
+                    project.setIfcExtraHours(extraHours);
+                    project.setExtraHoursNote(extraHoursNote);
+                    break;
+                }
+
+                case "REIFA": {
+                    project.setIfaExtraHours(extraHours);
+                    project.setExtraHoursNote(extraHoursNote);
+                    break;
+                }
+                case "REIFC": {
+                    project.setIfcExtraHours(extraHours);
+                    project.setExtraHoursNote(extraHoursNote);
+                    break;
+                }
+
+            }
         }
         //System.out.print(project.toString());
         return convertToResponse(projectRepository.save(project));
@@ -274,17 +328,27 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public Project updateIfaDate(Long id, LocalDate plannedIfaDate, LocalDate actualIfaDate) {
+    public Project updateIfaDate(Long id, LocalDate plannedIfaDate, LocalDate actualIfaDate,String projectActivityStatus) {
         Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project Found"));
-        project.setPlannedIfaDate(plannedIfaDate);
-        project.setActualIfaDate(actualIfaDate);
+        if(projectActivityStatus.equals("IFA")) {
+            project.setPlannedIfaDate(plannedIfaDate);
+            project.setActualIfaDate(actualIfaDate);
+        } else if (projectActivityStatus.equals("REIFA")) {
+            project.setPlannedReifaDate(plannedIfaDate);
+            project.setActualReifaDate(actualIfaDate);
+        }
         return projectRepository.save(project);
     }
 
-    public Project updateIfcDate(Long id, LocalDate plannedIfcDate, LocalDate actualIfcDate) {
+    public Project updateIfcDate(Long id, LocalDate plannedIfcDate, LocalDate actualIfcDate,String projectActivityStatus) {
         Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project Found"));
-        project.setPlannedIfcDate(plannedIfcDate);
-        project.setActualIfcDate(actualIfcDate);
+        if(projectActivityStatus.equals("IFC")) {
+            project.setPlannedIfcDate(plannedIfcDate);
+            project.setActualIfcDate(actualIfcDate);
+        } else if (projectActivityStatus.equals("REIFC")) {
+            project.setPlannedReifcDate(plannedIfcDate);
+            project.setActualReifcDate(actualIfcDate);
+        }
         return projectRepository.save(project);
     }
 }

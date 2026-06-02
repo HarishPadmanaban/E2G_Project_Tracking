@@ -1,6 +1,7 @@
 package com.example.project_tracking.Controller;
 import com.example.project_tracking.DTO.WorkDetailsRequest;
 import com.example.project_tracking.DTO.WorkDetailsResponse;
+import com.example.project_tracking.Service.PivotService;
 import com.example.project_tracking.Service.WorkDetailsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,15 +12,29 @@ import java.util.List;
 public class WorkDetailsController {
 
     private final WorkDetailsService workDetailsService;
+    private final PivotService pivotService;
 
-    public WorkDetailsController(WorkDetailsService workDetailsService) {
+    public WorkDetailsController(WorkDetailsService workDetailsService,PivotService pivotService) {
         this.workDetailsService = workDetailsService;
+        this.pivotService = pivotService;
     }
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllLogsByprojectStatus()
     {
         return ResponseEntity.ok(workDetailsService.getAllLogsByProjectStatus());
+    }
+
+    @GetMapping("/pivot/agm")
+    public ResponseEntity<?> getAllLogsByprojectStatusPivot()
+    {
+        return ResponseEntity.ok(pivotService.getPivotForAGM());
+    }
+
+    @GetMapping("/pivot/manager/{managerId}")
+    public ResponseEntity<?> getAllLogsByprojectStatusPivotForManager(@PathVariable Long managerId)
+    {
+        return ResponseEntity.ok(pivotService.getPivotForManager(managerId));
     }
 
     @GetMapping("/")

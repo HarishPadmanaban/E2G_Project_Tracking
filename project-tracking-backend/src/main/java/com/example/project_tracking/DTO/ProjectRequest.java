@@ -20,10 +20,14 @@ public class ProjectRequest {
     private LocalDate actualIfaDate;
     private LocalDate plannedIfcDate;
     private LocalDate actualIfcDate;
+    private LocalDate plannedReifaDate;
+    private LocalDate actualReifaDate;
+    private LocalDate plannedReifcDate;
+    private LocalDate actualReifcDate;
     public ProjectRequest() {
     }
 
-    public ProjectRequest(Long id, String projectName, String clientName, BigDecimal assignedHours, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal studyHours, Long managerId, boolean projectStatus, LocalDate plannedIfaDate, LocalDate actualIfaDate, LocalDate plannedIfcDate, LocalDate actualIfcDate) {
+    public ProjectRequest(Long id, String projectName, String clientName, BigDecimal assignedHours, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal studyHours, Long managerId, boolean projectStatus, LocalDate plannedIfaDate, LocalDate actualIfaDate, LocalDate plannedIfcDate, LocalDate actualIfcDate, LocalDate plannedReifaDate, LocalDate actualReifaDate, LocalDate plannedReifcDate, LocalDate actualReifcDate) {
         this.id = id;
         this.projectName = projectName;
         this.clientName = clientName;
@@ -38,6 +42,10 @@ public class ProjectRequest {
         this.actualIfaDate = actualIfaDate;
         this.plannedIfcDate = plannedIfcDate;
         this.actualIfcDate = actualIfcDate;
+        this.plannedReifaDate = plannedReifaDate;
+        this.actualReifaDate = actualReifaDate;
+        this.plannedReifcDate = plannedReifcDate;
+        this.actualReifcDate = actualReifcDate;
     }
 
     public BigDecimal getStudyHours() {
@@ -142,6 +150,38 @@ public class ProjectRequest {
 
     public void setActualIfcDate(LocalDate actualIfcDate) {
         this.actualIfcDate = actualIfcDate;
+    }
+
+    public LocalDate getPlannedReifaDate() {
+        return plannedReifaDate;
+    }
+
+    public void setPlannedReifaDate(LocalDate plannedReifaDate) {
+        this.plannedReifaDate = plannedReifaDate;
+    }
+
+    public LocalDate getactualReifaDate() {
+        return actualReifaDate;
+    }
+
+    public void setactualReifaDate(LocalDate actualReifaDate) {
+        this.actualReifaDate = actualReifaDate;
+    }
+
+    public LocalDate getPlannedReifcDate() {
+        return plannedReifcDate;
+    }
+
+    public void setPlannedReifcDate(LocalDate plannedReifcDate) {
+        this.plannedReifcDate = plannedReifcDate;
+    }
+
+    public LocalDate getactualReifcDate() {
+        return actualReifcDate;
+    }
+
+    public void setactualReifcDate(LocalDate actualReifcDate) {
+        this.actualReifcDate = actualReifcDate;
     }
 
     public boolean isProjectStatus() {

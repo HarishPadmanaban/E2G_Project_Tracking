@@ -99,6 +99,18 @@
         @Column(name = "extra_hours_note")
         private String extraHoursNote;
 
+        @Column(name = "planned_reifa_date")
+        private LocalDate plannedReifaDate;
+
+        @Column(name = "actual_reifa_date")
+        private LocalDate actualReifaDate;
+
+        @Column(name = "planned_reifc_date")
+        private LocalDate plannedReifcDate;
+
+        @Column(name = "actual_reifc_date")
+        private LocalDate actualReifcDate;
+
         public Project() {
         }
 
@@ -132,54 +144,8 @@
             this.softDelete = softDelete;
         }
 
-        public Project(
-                Long id,
-                String projectName,
-                String clientName,
-                Long managerId,
-                Long tlId,
-                BigDecimal assignedHours,
-                BigDecimal workingHours,
-                LocalDate assignedDate,
-                Boolean projectStatus,
-                Boolean softDelete,
 
-                BigDecimal modellingHours,
-                BigDecimal checkingHours,
-                BigDecimal detailingHours,
-
-                BigDecimal modellingTime,
-                BigDecimal checkingTime,
-                BigDecimal detailingTime,
-
-                LocalDate startDate,
-                LocalDate completedDate,
-                LocalDate plannedStartDate,
-
-                BigDecimal studyHours,
-                BigDecimal studyHoursTracking,
-
-                BigDecimal extraHours,
-                BigDecimal extraHoursTracking,
-
-                BigDecimal ifaGivenHours,
-                BigDecimal ifcGivenHours,
-                BigDecimal ifaExtraHours,
-                BigDecimal ifcExtraHours,
-
-                BigDecimal ifaProdHours,
-                BigDecimal ifcProdHours,
-                BigDecimal ifaExtraProdHours,
-                BigDecimal ifcExtraProdHours,
-
-                String projectActivityStatus,
-                LocalDate remainderSentDate,
-                LocalDate plannedIfaDate,
-                LocalDate actualIfaDate,
-                LocalDate plannedIfcDate,
-                LocalDate actualIfcDate,
-                String extraHoursNote
-        ) {
+        public Project(Long id, String projectName, String clientName, Long managerId, Long tlId, BigDecimal assignedHours, BigDecimal workingHours, LocalDate assignedDate, Boolean projectStatus, Boolean softDelete, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal modellingTime, BigDecimal checkingTime, BigDecimal detailingTime, LocalDate startDate, LocalDate completedDate, BigDecimal studyHours, BigDecimal studyHoursTracking, BigDecimal extraHours, BigDecimal extraHoursTracking, String projectActivityStatus, LocalDate remainderSentDate, LocalDate plannedStartDate, BigDecimal ifaGivenHours, BigDecimal ifcGivenHours, BigDecimal ifaExtraHours, BigDecimal ifcExtraHours, BigDecimal ifaProdHours, BigDecimal ifcProdHours, BigDecimal ifaExtraProdHours, BigDecimal ifcExtraProdHours, LocalDate plannedIfaDate, LocalDate actualIfaDate, LocalDate plannedIfcDate, LocalDate actualIfcDate, LocalDate plannedReifaDate, LocalDate actualReifaDate, LocalDate plannedReifcDate, LocalDate actualReifcDate, String extraHoursNote) {
             this.id = id;
             this.projectName = projectName;
             this.clientName = clientName;
@@ -190,50 +156,39 @@
             this.assignedDate = assignedDate;
             this.projectStatus = projectStatus;
             this.softDelete = softDelete;
-
             this.modellingHours = modellingHours;
             this.checkingHours = checkingHours;
             this.detailingHours = detailingHours;
-
             this.modellingTime = modellingTime;
             this.checkingTime = checkingTime;
             this.detailingTime = detailingTime;
-
             this.startDate = startDate;
             this.completedDate = completedDate;
-            this.plannedStartDate = plannedStartDate;
-
             this.studyHours = studyHours;
             this.studyHoursTracking = studyHoursTracking;
-
             this.extraHours = extraHours;
             this.extraHoursTracking = extraHoursTracking;
-
+            this.projectActivityStatus = projectActivityStatus;
+            this.remainderSentDate = remainderSentDate;
+            this.plannedStartDate = plannedStartDate;
             this.ifaGivenHours = ifaGivenHours;
             this.ifcGivenHours = ifcGivenHours;
             this.ifaExtraHours = ifaExtraHours;
             this.ifcExtraHours = ifcExtraHours;
-
             this.ifaProdHours = ifaProdHours;
             this.ifcProdHours = ifcProdHours;
             this.ifaExtraProdHours = ifaExtraProdHours;
             this.ifcExtraProdHours = ifcExtraProdHours;
-
-            this.projectActivityStatus = projectActivityStatus;
-            this.remainderSentDate = remainderSentDate;
             this.plannedIfaDate = plannedIfaDate;
             this.actualIfaDate = actualIfaDate;
             this.plannedIfcDate = plannedIfcDate;
             this.actualIfcDate = actualIfcDate;
             this.extraHoursNote = extraHoursNote;
-        }
 
-        public Long getTlId() {
-            return tlId;
-        }
-
-        public void setTlId(Long tlId) {
-            this.tlId = tlId;
+            this.plannedReifaDate = plannedReifaDate;
+            this.actualReifaDate = actualReifaDate;
+            this.plannedReifcDate = plannedReifcDate;
+            this.actualReifcDate = actualReifcDate;
         }
 
         public Long getId() {
@@ -266,6 +221,14 @@
 
         public void setManagerId(Long managerId) {
             this.managerId = managerId;
+        }
+
+        public Long getTlId() {
+            return tlId;
+        }
+
+        public void setTlId(Long tlId) {
+            this.tlId = tlId;
         }
 
         public BigDecimal getAssignedHours() {
@@ -532,6 +495,39 @@
             this.extraHoursNote = extraHoursNote;
         }
 
+        public LocalDate getPlannedReifaDate() {
+            return plannedReifaDate;
+        }
+
+        public void setPlannedReifaDate(LocalDate plannedReifaDate) {
+            this.plannedReifaDate = plannedReifaDate;
+        }
+
+        public LocalDate getActualReifaDate() {
+            return actualReifaDate;
+        }
+
+        public void setActualReifaDate(LocalDate actualReifaDate) {
+            this.actualReifaDate = actualReifaDate;
+        }
+
+        public LocalDate getPlannedReifcDate() {
+            return plannedReifcDate;
+        }
+
+        public void setPlannedReifcDate(LocalDate plannedReifcDate) {
+            this.plannedReifcDate = plannedReifcDate;
+        }
+
+        public LocalDate getActualReifcDate() {
+            return actualReifcDate;
+        }
+
+        public void setActualReifcDate(LocalDate actualReifcDate) {
+            this.actualReifcDate = actualReifcDate;
+        }
+
+
         @Override
         public String toString() {
             return "Project{" +
@@ -566,6 +562,10 @@
                     ", ifcProdHours=" + ifcProdHours +
                     ", ifaExtraProdHours=" + ifaExtraProdHours +
                     ", ifcExtraProdHours=" + ifcExtraProdHours +
+                    ", plannedReifaDate=" + plannedReifaDate +
+                    ", actualReifaDate=" + actualReifaDate +
+                    ", plannedReifcDate=" + plannedReifcDate +
+                    ", actualReifcDate=" + actualReifcDate +
                     '}';
         }
     }
