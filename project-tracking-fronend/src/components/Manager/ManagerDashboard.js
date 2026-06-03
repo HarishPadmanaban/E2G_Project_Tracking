@@ -35,6 +35,9 @@ const ManagerDashboard = () => {
   const [filteredLogs, setFilteredLogs] = useState([]);
   const totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
   const currentLogs = filteredLogs.slice(startIndex, startIndex + itemsPerPage);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [selectedProjectIds, setSelectedProjectIds] = useState([]);
+  const [lastSelectedIndex, setLastSelectedIndex] = useState(null);
 
   useEffect(() => {
     let filtered = worklogs;
@@ -141,6 +144,23 @@ const ManagerDashboard = () => {
     });
   }, [projects]);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.key.toLowerCase() === "a") {
+        e.preventDefault();
+
+        setSelectedProjectIds(
+          filteredProjects.map((p) => p.id)
+        );
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () =>
+      window.removeEventListener("keydown", handleKeyDown);
+  }, [filteredProjects]);
+
   const applyFilter = (projList, category, searchText, managerId) => {
     let result = projList;
 
@@ -189,14 +209,18 @@ const ManagerDashboard = () => {
     applyFilter(projects, filter, "", "");
   };
 
-  const exportFilteredProjectsToExcel = () => {
-    if (!filteredProjects || filteredProjects.length === 0) {
-      alert("No projects to export");
+  const exportSelectedProjects = () => {
+    const projectsToExport = filteredProjects.filter((p) =>
+      selectedProjectIds.includes(p.id)
+    );
+
+    if (projectsToExport.length === 0) {
+      alert("Please select at least one project.");
       return;
     }
     console.log(filteredProjects);
     // Prepare Excel data
-    const excelData = filteredProjects.map((project, index) => {
+    const excelData = projectsToExport.map((project, index) => {
 
       const row = {
         "Project ID": project.id,
@@ -428,7 +452,50 @@ const ManagerDashboard = () => {
     }
   };
 
+  const handleProjectSelection = (index, e) => {
+    const projectId = filteredProjects[index].id;
 
+    // SHIFT selection
+    if (e.shiftKey && lastSelectedIndex !== null) {
+      const start = Math.min(lastSelectedIndex, index);
+      const end = Math.max(lastSelectedIndex, index);
+
+      const rangeIds = filteredProjects
+        .slice(start, end + 1)
+        .map((p) => p.id);
+
+      if (e.ctrlKey) {
+        setSelectedProjectIds((prev) => [
+          ...new Set([...prev, ...rangeIds]),
+        ]);
+      } else {
+        setSelectedProjectIds(rangeIds);
+      }
+
+      return;
+    }
+
+    // CTRL selection
+    if (e.ctrlKey) {
+      setSelectedProjectIds((prev) =>
+        prev.includes(projectId)
+          ? prev.filter((id) => id !== projectId)
+          : [...prev, projectId]
+      );
+
+      setLastSelectedIndex(index);
+      return;
+    }
+
+    // Normal click
+    setSelectedProjectIds((prev) =>
+      prev.includes(projectId)
+        ? prev.filter((id) => id !== projectId)
+        : [...prev, projectId]
+    );
+
+    setLastSelectedIndex(index);
+  };
 
 
   return (
@@ -486,7 +553,7 @@ const ManagerDashboard = () => {
 
       <button
         type="button"
-        onClick={exportFilteredProjectsToExcel}
+        onClick={() => setShowExportModal(true)}
         style={{
           marginBottom: "10px",
           background: "#2563eb",
@@ -641,19 +708,19 @@ const ManagerDashboard = () => {
                       </tr>
 
                       <tr>
-                          
-                            <th>IFA (Worked / Assigned)</th>
-                            <td>{selectedProject.ifaProdHours || 0} / {selectedProject.ifaGivenHours || 0} </td>
-                            <th>IFC (Worked / Assigned)</th>
-                            <td>{selectedProject.ifcProdHours || 0} / {selectedProject.ifcGivenHours || 0}</td>
+
+                        <th>IFA (Worked / Assigned)</th>
+                        <td>{selectedProject.ifaProdHours || 0} / {selectedProject.ifaGivenHours || 0} </td>
+                        <th>IFC (Worked / Assigned)</th>
+                        <td>{selectedProject.ifcProdHours || 0} / {selectedProject.ifcGivenHours || 0}</td>
 
                       </tr>
                       <tr>
-                          
-                            <th>REIFA<br></br> (Worked / Assigned)</th>
-                            <td>{selectedProject.reifaProdHours || 0} / {selectedProject.reifaGivenHours || 0}</td>
-                            <th>REIFC <br></br>(Worked / Assigned)</th>
-                            <td>{selectedProject.reifcProdHours || 0} / {selectedProject.reifcGivenHours || 0} </td>
+
+                        <th>REIFA<br></br> (Worked / Assigned)</th>
+                        <td>{selectedProject.reifaProdHours || 0} / {selectedProject.reifaGivenHours || 0}</td>
+                        <th>REIFC <br></br>(Worked / Assigned)</th>
+                        <td>{selectedProject.reifcProdHours || 0} / {selectedProject.reifcGivenHours || 0} </td>
 
                       </tr>
 
@@ -694,17 +761,17 @@ const ManagerDashboard = () => {
                       <tr>
                         <th>IFA Extra Hours <br></br>(Worked / Assigned)</th>
                         <td>
-                          {selectedProject.ifaExtraProdHours || "0"} / {selectedProject.ifaExtraHours || "0"} 
+                          {selectedProject.ifaExtraProdHours || "0"} / {selectedProject.ifaExtraHours || "0"}
                         </td>
                         <th>IFC Extra Hours <br></br>(Worked / Assigned)</th>
                         <td>
-                          {selectedProject.ifcExtraProdHours || "0"} / {selectedProject.ifcExtraHours || "0"} 
+                          {selectedProject.ifcExtraProdHours || "0"} / {selectedProject.ifcExtraHours || "0"}
                         </td>
                       </tr>
                       <tr>
                         <th>REIFA Extra Hours <br></br>(Worked / Assigned)</th>
                         <td>
-                           {selectedProject.reifaExtraProdHours || "0"}/ {selectedProject.reifaExtraHours || "0"}
+                          {selectedProject.reifaExtraProdHours || "0"}/ {selectedProject.reifaExtraHours || "0"}
                         </td>
                         <th>REIFC Extra Hours <br></br>(Worked / Assigned)</th>
                         <td>
@@ -1036,10 +1103,138 @@ const ManagerDashboard = () => {
         </div>
       )}
 
+      {showExportModal && (
+        <div className={styles.overlay}>
+          <div className={styles.modal}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "10px",
+              }}
+            >
+              <h3 style={{ margin: 0 }}>Select Projects to Export</h3>
 
+              <button
+                onClick={() => setShowExportModal(false)}
+                
+                style={{
+                  border: "none",
+                  background: "transparent",
+                  fontSize: "24px",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                  lineHeight: 1,
+                  
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <p>
+              Shift + Click = Range Select
+            </p>
+
+            <div
+              style={{
+                maxHeight: "500px",
+                overflowY: "auto",
+                border: "1px solid #ddd",
+              }}
+            >
+              <table className={styles.projectsTable}>
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Project ID</th>
+                    <th>Project Name</th>
+                    <th>Client</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {filteredProjects.map((project, index) => (
+                    <tr
+                      key={project.id}
+                      onClick={(e) =>
+                        handleProjectSelection(index, e)
+                      }
+                      style={{
+                        cursor: "pointer",
+                        background: selectedProjectIds.includes(project.id)
+                          ? "#dbeafe"
+                          : "",
+                      }}
+                    >
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={selectedProjectIds.includes(
+                            project.id
+                          )}
+                          readOnly
+                        />
+                      </td>
+
+                      <td>{project.id}</td>
+                      <td>{project.projectName}</td>
+                      <td>{project.clientName}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div
+              style={{
+                marginTop: "15px",
+                display: "flex",
+                gap: "10px",
+              }}
+            >
+              <button
+                className={styles.actionBtn}
+                onClick={() => {
+                  exportSelectedProjects();
+                  setShowExportModal(false);
+                }}
+              >
+                Export Selected
+              </button>
+
+              <button
+                className={styles.actionBtn}
+                onClick={() => {
+                  setSelectedProjectIds(
+                    filteredProjects.map((p) => p.id)
+                  );
+                }}
+              >
+                Select All
+              </button>
+
+              <button
+                className={styles.clearBtn}
+                onClick={() => {
+                  setSelectedProjectIds([]);
+                }}
+              >
+                Clear
+              </button>
+
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
+
+
   );
+
+
 };
 
 export default ManagerDashboard;
