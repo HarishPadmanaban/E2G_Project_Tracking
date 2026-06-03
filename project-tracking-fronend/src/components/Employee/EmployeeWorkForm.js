@@ -545,8 +545,11 @@ const EmployeeWorkForm = () => {
         setActiveWorkId(null);
       })
       .catch((err) => {
-
-        showToast("Submission failed!", "error");
+         const backendMsg =
+            err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
+          console.log(backendMsg)
+          // Show the exact backend message to user
+          showToast(backendMsg, "error");
       });
   };
 

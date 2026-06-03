@@ -245,7 +245,7 @@ const EditProject = () => {
               className={styles.filterSelect}
             >
               <option value="All">All Managers</option>
-              {managerList.map((m) => (
+              {managerList.filter((pm) => pm.empId!==1004 && pm.empId!==1196).map((m) => (
                 <option key={m} value={m}>
                   {m}
                 </option>

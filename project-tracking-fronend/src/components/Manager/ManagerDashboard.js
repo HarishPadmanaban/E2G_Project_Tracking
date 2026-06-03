@@ -537,11 +537,13 @@ const ManagerDashboard = () => {
               className={styles.filterSelect}
             >
               <option value="">Select Manager</option>
-              {Object.entries(managers).map(([id, name]) => (
-                <option key={id} value={id}>
-                  {name}
-                </option>
-              ))}
+              {Object.entries(managers)
+                .filter(([id]) => Number(id) !== 1004 && Number(id) !== 1196)
+                .map(([id, name]) => (
+                  <option key={id} value={id}>
+                    {name}
+                  </option>
+                ))}
             </select>
 
             <button onClick={clearFilters} className={styles.clearBtn}>
@@ -715,14 +717,6 @@ const ManagerDashboard = () => {
                         <td>{selectedProject.ifcProdHours || 0} / {selectedProject.ifcGivenHours || 0}</td>
 
                       </tr>
-                      <tr>
-
-                        <th>REIFA<br></br> (Worked / Assigned)</th>
-                        <td>{selectedProject.reifaProdHours || 0} / {selectedProject.reifaGivenHours || 0}</td>
-                        <th>REIFC <br></br>(Worked / Assigned)</th>
-                        <td>{selectedProject.reifcProdHours || 0} / {selectedProject.reifcGivenHours || 0} </td>
-
-                      </tr>
 
 
                       <tr>
@@ -768,16 +762,7 @@ const ManagerDashboard = () => {
                           {selectedProject.ifcExtraProdHours || "0"} / {selectedProject.ifcExtraHours || "0"}
                         </td>
                       </tr>
-                      <tr>
-                        <th>REIFA Extra Hours <br></br>(Worked / Assigned)</th>
-                        <td>
-                          {selectedProject.reifaExtraProdHours || "0"}/ {selectedProject.reifaExtraHours || "0"}
-                        </td>
-                        <th>REIFC Extra Hours <br></br>(Worked / Assigned)</th>
-                        <td>
-                          {selectedProject.reifcExtraProdHours || "0"} / {selectedProject.reifcExtraHours || "0"}
-                        </td>
-                      </tr>
+ 
 
                       <tr>
                         <th>Assigned Date</th>

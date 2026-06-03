@@ -185,9 +185,8 @@ public final class PhaseHoursTracker {
         BigDecimal approvedExtra = a.extraHours.get(project);
         if (approvedExtra == null) {
             throw new RuntimeException(
-                    "Phase " + a.label + " budget exceeded. " +
-                    "AGM approval (extra hours allocation) is required before " +
-                    "additional hours can be logged against this phase."
+                    "Phase " + (( a.label.contains("IFA"))?"IFA":"IFC" )+ " budget exceeded. " +
+                    "AGM approval is required"
             );
         }
 
@@ -196,10 +195,7 @@ public final class PhaseHoursTracker {
         BigDecimal newExtra     = currentExtra.add(overflow);
         if (newExtra.compareTo(approvedExtra) > 0) {
             throw new RuntimeException(
-                    "Phase " + a.label + " extra-hours budget also exceeded. " +
-                    "Approved extra budget: " + approvedExtra + " hrs, " +
-                    "already used: " + currentExtra + " hrs, " +
-                    "attempted overflow: " + overflow + " hrs. " +
+                    "Phase " + (( a.label.contains("IFA"))?"IFA":"IFC" ) + " extra-hours budget also exceeded. " +
                     "Please request additional AGM approval."
             );
         }

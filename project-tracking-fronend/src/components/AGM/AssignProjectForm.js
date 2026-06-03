@@ -112,7 +112,8 @@ const AssignProjectForm = () => {
         <label>Choose PM</label>
         <select name="pmId" value={formData.pmId} onChange={handleChange}>
           <option value="">Select PM</option>
-          {pms.map((pm) => (
+          {pms.filter((pm) => pm.empId!==1004 && pm.empId!==1196)
+          .map((pm) => (
             <option key={pm.empId} value={pm.empId}>
               {pm.name}
             </option>
