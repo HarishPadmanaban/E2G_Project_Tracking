@@ -11,6 +11,7 @@ import com.example.project_tracking.Repository.WorkDetailsRepository;
 import com.example.project_tracking.Repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,14 +38,19 @@ public class PivotService {
 
     // ── public API ────────────────────────────────────────────────────────────
 
-    public PivotResponseDTO getPivotForAGM() {
-        List<WorkDetails> works = workDetailsRepository.findAllByActiveProjectStatus();
+    public PivotResponseDTO getPivotForAGM(LocalDate from, LocalDate to) {
+        List<WorkDetails> works = (from != null && to != null)
+                ? workDetailsRepository.findAllByActiveProjectStatusAndDateBetween(from, to)
+                : workDetailsRepository.findAllByActiveProjectStatus();
+
         return buildResponse(works, true);
     }
 
-    public PivotResponseDTO getPivotForManager(Long managerId) {
-        List<WorkDetails> works = workDetailsRepository
-                .findByAssignedWorkId_Manager_EmpId(managerId);
+    public PivotResponseDTO getPivotForManager(Long managerId, LocalDate from, LocalDate to) {
+        List<WorkDetails> works = (from != null && to != null)
+                ? workDetailsRepository.findByManagerAndDateBetween(managerId, from, to)
+                : workDetailsRepository.findByAssignedWorkId_Manager_EmpId(managerId);
+
         return buildResponse(works, false);
     }
 
