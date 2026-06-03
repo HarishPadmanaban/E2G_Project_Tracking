@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +16,12 @@ public interface WorkDetailsRepository extends JpaRepository<WorkDetails,Long> {
         List<WorkDetails> findByAssignedWorkId_Employee_EmpId(Long employeeId);
 
         // Fetch all work details by manager ID
-        List<WorkDetails> findByAssignedWorkId_Manager_EmpId(Long managerId);
+        @Query("""
+       SELECT w FROM WorkDetails w
+       WHERE w.assignedWorkId.manager.empId = :managerId
+         AND w.assignedWorkId.project.projectStatus = true
+       """)
+        List<WorkDetails> findByAssignedWorkId_Manager_EmpId(@Param("managerId") Long managerId);
 
         // Fetch all work details by project ID
         List<WorkDetails> findByAssignedWorkId_Project_Id(Long projectId);
@@ -79,5 +85,29 @@ public interface WorkDetailsRepository extends JpaRepository<WorkDetails,Long> {
     ORDER BY w.id DESC
     """)
     Optional<WorkDetails> findTopByEmployeeEmpIdAndEndTimeIsNullOrderByIdDesc(@Param("employeeId") Long employeeId);
+
+        @Query("""
+       SELECT w FROM WorkDetails w
+       WHERE w.assignedWorkId.project.projectStatus = true
+         AND (w.is_Deleted IS NULL OR w.is_Deleted = false)
+         AND w.date >= :from
+         AND w.date <= :to
+       """)
+        List<WorkDetails> findAllByActiveProjectStatusAndDateBetween(
+                @Param("from") LocalDate from,
+                @Param("to")   LocalDate to);
+
+        @Query("""
+       SELECT w FROM WorkDetails w
+       WHERE w.assignedWorkId.manager.empId = :managerId
+         AND w.assignedWorkId.project.projectStatus = true
+         AND (w.is_Deleted IS NULL OR w.is_Deleted = false)
+         AND w.date >= :from
+         AND w.date <= :to
+       """)
+        List<WorkDetails> findByManagerAndDateBetween(
+                @Param("managerId") Long managerId,
+                @Param("from")      LocalDate from,
+                @Param("to")        LocalDate to);
 
 }
