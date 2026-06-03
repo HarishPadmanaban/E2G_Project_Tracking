@@ -35,8 +35,14 @@ public class EmployeeService {
 
     public DataTransfer userLogin(String username, String password) {
         //String hashed = PasswordUtil.hashPassword(password);
-        Employee employee = employeeRepository.findByUsernameAndPassword(username, password)
+        Employee employee = employeeRepository.findByUsername(username)
                 .orElse(null);
+
+        if(employee==null) return null;
+
+        if (!employee.getPassword().equals(password)) {
+            return null;
+        }
 
         if (employee != null) {
             // Map Employee entity to DataTransfer DTO

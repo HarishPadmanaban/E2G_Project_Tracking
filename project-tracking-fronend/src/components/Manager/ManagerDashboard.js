@@ -1162,7 +1162,6 @@ const ManagerDashboard = () => {
                           readOnly
                         />
                       </td>
-
                       <td>{project.id}</td>
                       <td>{project.projectName}</td>
                       <td>{project.clientName}</td>

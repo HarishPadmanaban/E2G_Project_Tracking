@@ -12,6 +12,7 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
 
     // Fetch by username and password (for login verification)
     Optional<Employee> findByUsernameAndPassword(String username, String password);
+    //Optional<Employee> findByUsername(String username);
 
     // You can also fetch manager or TL specific employees
     List<Employee> findByReportingTo(Employee e);
