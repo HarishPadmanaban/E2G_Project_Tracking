@@ -1,10 +1,14 @@
 package com.example.project_tracking.Controller;
+import com.example.project_tracking.DTO.PivotResponseDTO;
 import com.example.project_tracking.DTO.WorkDetailsRequest;
 import com.example.project_tracking.DTO.WorkDetailsResponse;
 import com.example.project_tracking.Service.PivotService;
 import com.example.project_tracking.Service.WorkDetailsService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.List;
 @RestController
 @RequestMapping("/workdetails")
@@ -26,15 +30,27 @@ public class WorkDetailsController {
     }
 
     @GetMapping("/pivot/agm")
-    public ResponseEntity<?> getAllLogsByprojectStatusPivot()
-    {
-        return ResponseEntity.ok(pivotService.getPivotForAGM());
+    public ResponseEntity<PivotResponseDTO> getPivotForAGM(
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+
+        return ResponseEntity.ok(pivotService.getPivotForAGM(from, to));
     }
 
     @GetMapping("/pivot/manager/{managerId}")
-    public ResponseEntity<?> getAllLogsByprojectStatusPivotForManager(@PathVariable Long managerId)
-    {
-        return ResponseEntity.ok(pivotService.getPivotForManager(managerId));
+    public ResponseEntity<PivotResponseDTO> getPivotForManager(
+            @PathVariable Long managerId,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+
+        return ResponseEntity.ok(pivotService.getPivotForManager(managerId, from, to));
     }
 
     @GetMapping("/")
