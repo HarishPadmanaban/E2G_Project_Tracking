@@ -138,7 +138,6 @@ const AssignProjectForm = () => {
           name="startDate"
           value={formData.startDate}
           onChange={handleChange}
-          min={new Date().toISOString().split("T")[0]}
         />
       </div>
 

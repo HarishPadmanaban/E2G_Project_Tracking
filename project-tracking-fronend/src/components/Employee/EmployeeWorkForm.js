@@ -20,9 +20,7 @@ const EmployeeWorkForm = () => {
   const { showToast } = useToast();
   // manager view/edit if present
 
-  const [activeWorkId, setActiveWorkId] = useState(() => {
-    return localStorage.getItem("activeWorkId") || null;
-  });
+  const [activeWorkId, setActiveWorkId] = useState(null);
 
   const [formData, setFormData] = useState({
     projectId: "",
@@ -45,14 +43,6 @@ const EmployeeWorkForm = () => {
   const [isViewMode, setIsViewMode] = useState(!!work);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // persist activeWorkId to localStorage
-  useEffect(() => {
-    if (activeWorkId) {
-      localStorage.setItem("activeWorkId", activeWorkId);
-    } else {
-      localStorage.removeItem("activeWorkId");
-    }
-  }, [activeWorkId]);
 
   // Fetch projects and activities
   useEffect(() => {
@@ -96,78 +86,80 @@ const EmployeeWorkForm = () => {
 
   // Resume or restore logic — ONLY run for employee mode (skip when manager view is present)
   useEffect(() => {
-
-    // helper to enable stop button after remaining ms
-
-
     // CASE 1: If there's an activeWorkId (stopped-but-not-submitted), fetch by ID
-    if (activeWorkId) {
-      axiosInstance
-        .get(`/workdetails/${activeWorkId}`)
-        .then(async (res) => {
-          const workData = res.data;
+      console.log("[resume-effect] fired", {
+    employee: employee?.empId,
+    projectsLen: projects.length,
+    activitiesLen: activities.length,
+    activeWorkId,
+  });
 
-          if (!workData) {
-            // no work found by id -> fallback to check active
-            checkActiveRunningWork();
-            return;
-          }
+  if (!employee || projects.length === 0 || activities.length === 0) {
+    console.log("[resume-effect] guarded — waiting on employee/projects/activities");
+    return;
+  }
 
-          await fetchAssignedActivities(workData.projectId, employee.empId);
+  console.log("[resume-effect] calling /workdetails/active/", employee.empId);
+    axiosInstance
+      .get(`/workdetails/active/${employee.empId}`)
+      .then(async (res) => {
+         console.log("[resume-effect] response:", res.data);
 
-          const selectedProject = projects.find(
-            (proj) => proj.id.toString() === workData.projectId?.toString()
-          );
-          const selectedActivity = activities.find(
-            (act) => act.id.toString() === workData.activityId?.toString()
-          );
+        const active = res.data;
 
-          // Autofill form for stopped or stopped-but-not-submitted work
-          setFormData({
-            projectId: workData.projectId?.toString() || "",
-            clientName: selectedProject ? selectedProject.clientName : "",
-            projectActivityType: selectedActivity ? selectedActivity.mainType : "",
-            activityId: workData.activityId?.toString() || "",
-            activityName: selectedActivity?.activityName?.toString() || "",
-            category: selectedActivity ? selectedActivity.category : "",
-            startTime: workData.startTime ? workData.startTime.substring(0, 5) : "",
-            endTime: workData.endTime ? workData.endTime.substring(0, 5) : "",
-            workHours: workData.workHours || "",
-            projectActivity: workData.projectActivity || "",
-            assignedWork: workData.assignedWork || "",
-            assignedWorkId: workData.assignedWorkId || "",
-            status: workData.status || "Pending",
-            remarks: workData.remarks || "",
-          });
+        if (!active) {
+            console.log("[resume-effect] no active work — resetting to idle");
+          setIsRunning(false);
+          setStartDisabled(false);
+          setSubmitDisabled(true);
+          return;
+        }
 
-          // If it's still running (no endTime) — set running state and compute wait time for stop button
-          if (!workData.endTime) {
-            setIsRunning(true);
-            setStartDisabled(true);
-            setSubmitDisabled(true);
+        setActiveWorkId(active.id);
 
-            const now = new Date();
-            const [startH, startM] = (workData.startTime || "00:00").split(":").map(Number);
-            const startDate = new Date();
-            startDate.setHours(startH, startM, 0);
+        await fetchAssignedActivities(active.projectId, employee.empId);
 
-          } else {
-            // stopped work — ready to submit
-            setIsRunning(false);
-            setStartDisabled(true);
+        const selectedProject = projects.find(
+          (proj) => proj.id.toString() === active.projectId?.toString()
+        );
 
-            setSubmitDisabled(false);
-          }
-        })
-        .catch((err) => {
-          // If fetching by ID fails, fall back to checking active running work
-          checkActiveRunningWork();
+        const selectedActivity = activities.find(
+          (act) => act.id.toString() === active.activityId?.toString()
+        );
+
+        setFormData({
+          projectId: active.projectId?.toString() || "",
+          clientName: selectedProject?.clientName || "",
+          projectActivityType: selectedActivity?.mainType || "",
+          activityId: active.activityId?.toString() || "",
+          activityName: selectedActivity?.activityName || "",
+          category: selectedActivity?.category || "",
+          startTime: active.startTime?.substring(0, 5) || "",
+          endTime: active.endTime?.substring(0, 5) || "",
+          workHours: active.workHours || "",
+          projectActivity: active.projectActivity || "",
+          assignedWork: active.assignedWork || "",
+          assignedWorkId: active.assignedWorkId || "",
+          status: active.status || "Pending",
+          remarks: active.remarks || "",
         });
-    } else {
-      // CASE 2: No activeWorkId — check if there's a currently active running work for this employee
 
-      checkActiveRunningWork();
-    }
+        if (active.endTime) {
+          setIsRunning(false);
+          setStartDisabled(true);
+          setSubmitDisabled(false);
+        } else {
+          setIsRunning(true);
+          setStartDisabled(true);
+          setSubmitDisabled(true);
+        }
+
+      })
+      .catch(() => {
+        console.log("[resume-effect] ERROR:");
+        setStartDisabled(false);
+        setSubmitDisabled(true);
+      });
 
 
     function checkActiveRunningWork() {
@@ -264,8 +256,6 @@ const EmployeeWorkForm = () => {
       .then(() => {
         showToast("Work discarded successfully!", "success");
 
-        // Clear local storage
-        localStorage.removeItem("activeWorkId");
         setActiveWorkId(null);
 
         // Reset form data to initial
@@ -417,10 +407,10 @@ const EmployeeWorkForm = () => {
 
       if (!confirmStop) return;
       const now = new Date();
-  const end =
-    now.getHours().toString().padStart(2, "0") +
-    ":" +
-    now.getMinutes().toString().padStart(2, "0");
+      const end =
+        now.getHours().toString().padStart(2, "0") +
+        ":" +
+        now.getMinutes().toString().padStart(2, "0");
 
       const [startH, startM] = formData.startTime.split(":").map(Number);
       const [endH, endM] = end.split(":").map(Number);
@@ -513,7 +503,7 @@ const EmployeeWorkForm = () => {
 
     const payload = {
       assignedWorkId: formData.assignedWorkId,
-      activityId: formData.activityId, 
+      activityId: formData.activityId,
       status: formData.status,
       remarks: formData.remarks,
     };
@@ -545,11 +535,8 @@ const EmployeeWorkForm = () => {
         setActiveWorkId(null);
       })
       .catch((err) => {
-         const backendMsg =
-            err.response?.data?.message || err.response?.data || "Something went wrong while stopping work!";
-          console.log(backendMsg)
-          // Show the exact backend message to user
-          showToast(backendMsg, "error");
+
+        showToast("Submission failed!", "error");
       });
   };
 
@@ -653,7 +640,6 @@ const EmployeeWorkForm = () => {
 
                 ))}
                 <option value="Special Work">Special Work</option>
-                <option value="Idle">Idle</option>
               </select>
 
             </div>
@@ -776,8 +762,6 @@ const EmployeeWorkForm = () => {
                 placeholder="Project Activity"
               />
             </div>
-
-
 
             <div className={styles.field}>
               <label>Date</label>

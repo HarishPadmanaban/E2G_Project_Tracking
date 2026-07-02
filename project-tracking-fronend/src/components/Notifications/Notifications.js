@@ -75,7 +75,7 @@ const Notifications = () => {
         msg.match(/Project:\s*([^|]+)/)?.[1]?.trim();
 
     const extractReason = (msg) =>
-    msg.match(/Reason:\s*(.*?)(?:\||$)/)?.[1]?.trim();
+        msg.match(/Reason:\s*(.*?)(?:\||$)/)?.[1]?.trim();
 
     // fetch notifications from backend
     const fetchNotifications = async () => {
@@ -86,19 +86,19 @@ const Notifications = () => {
                 (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
             );
             setNotifications(sorted);
-           
+
 
             // initialize visible notifications for page 1
             // Filter out cleared notifications
             const filtered = sorted.filter((n) => !clearedIds.includes(n.id));
-             
+
             // initialize visible notifications for page 1
             setVisibleNotifications(filtered.slice(0, LIMIT));
             setHasMore(filtered.length > LIMIT);
 
             setPage(1);
         } catch (err) {
-            
+
         }
     };
 
@@ -135,7 +135,7 @@ const Notifications = () => {
                         prev.map((item) => (item.id === n.id ? { ...item, readStatus: true } : item))
                     );
                 } catch (err) {
-                    
+
                 }
             }
         }
@@ -162,7 +162,7 @@ const Notifications = () => {
                 `&type=${encodeURIComponent(type)}`;
             await axiosInstance.post(url);
         } catch (err) {
-            
+
             throw err;
         }
     };
@@ -180,7 +180,7 @@ const Notifications = () => {
         const senderOfRequest = selectedNotification.senderId; // expected to exist
 
         if (!projectId) {
-            showToast("Cannot find projectId in notification message. Approval aborted.","error");
+            showToast("Cannot find projectId in notification message. Approval aborted.", "error");
             setActionLoading(false);
             return;
         }
@@ -190,7 +190,7 @@ const Notifications = () => {
             if (selectedNotification.type === "EXTRA_HOURS") {
                 const hours = extractRequestedHours(msg);
                 if (!hours) {
-                    showToast("Invalid requested hours in notification message.","info");
+                    showToast("Invalid requested hours in notification message.", "info");
                     setActionLoading(false);
                     return;
                 }
@@ -204,7 +204,7 @@ const Notifications = () => {
                 const requestedDate = extractRequestedDate(selectedNotification.message);
 
                 if (!requestedDate) {
-                    showToast("Invalid requested completion date in the notification.","info");
+                    showToast("Invalid requested completion date in the notification.", "info");
                     setActionLoading(false);
                     return;
                 }
@@ -213,7 +213,7 @@ const Notifications = () => {
                     `/project/extend/${projectId}?completedDate=${requestedDate}`
                 );
 
-                showToast("Project completion date updated successfully ✅","success");
+                showToast("Project completion date updated successfully ✅", "success");
             }
 
             // 2) Mark notification as approved on server
@@ -223,8 +223,8 @@ const Notifications = () => {
             // 3) Send a reply notification back to requester (PM) that it's approved
             if (!senderOfRequest) {
                 // if senderId not returned from backend, inform to add it in response
-                
-                showToast("Approved locally, but couldn't send reply to requester because senderId is missing on notification. Please include senderId in notification GET response.","info");
+
+                showToast("Approved locally, but couldn't send reply to requester because senderId is missing on notification. Please include senderId in notification GET response.", "info");
             } else {
                 const replyTitle = `${selectedNotification.type === "EXTRA_HOURS" ? "Extra Hours Approved" : "Extension Approved"}`;
                 const replyMessage = `Project: ${projectName} | projectId=${projectId} | Your request has been APPROVED by ${employee.name || "AGM"}.`;
@@ -252,11 +252,12 @@ const Notifications = () => {
 
             // reload fresh data from server
             await fetchNotifications();
-            showToast("Request approved and project updated ✅","success");
+            showToast("Request approved and project updated ✅", "success");
 
         } catch (err) {
-            
-            showToast("Failed to complete approval. Check console for details.","error");
+            const backendMsg =
+                err.response?.data?.message || err.response?.data || "Failed to complete approval. Check console for details."
+            showToast(backendMsg, "error");
         } finally {
             setActionLoading(false);
             closeDetails();
@@ -280,8 +281,8 @@ const Notifications = () => {
 
             // Send a reply notification back to requester (PM) that it's rejected
             if (!senderOfRequest) {
-                
-                showToast("Rejected locally, but couldn't send reply to requester because senderId is missing on notification. Please include senderId in notification GET response.","info");
+
+                showToast("Rejected locally, but couldn't send reply to requester because senderId is missing on notification. Please include senderId in notification GET response.", "info");
             } else {
                 const replyTitle = `${selectedNotification.type === "EXTRA_HOURS" ? "Extra Hours Rejected" : "Extension Rejected"}`;
                 const replyMessage = `Project: ${projectName} | projectId=${projectId} | Your request has been REJECTED by ${employee.name || "AGM"}. Reason: ${selectedNotification.type === "EXTRA_HOURS" ? "Extra hours not approved" : "Extension not approved"}`;
@@ -308,16 +309,16 @@ const Notifications = () => {
 
 
             await fetchNotifications();
-            showToast("Request rejected and requester notified ❌","info");
+            showToast("Request rejected and requester notified ❌", "info");
         } catch (err) {
-            
-            showToast("Failed to complete rejection. Check console for details.","error");
+
+            showToast("Failed to complete rejection. Check console for details.", "error");
         } finally {
             setActionLoading(false);
             closeDetails();
         }
     };
-    
+
 
     return (
         <>
@@ -341,7 +342,7 @@ const Notifications = () => {
                         </button>}
 
                         <ul className="notification-list">
-                            {visibleNotifications.length === 0 && <p style={{ color: "#555",backgroundColor: "#f3f4f6", padding: "15px 20px",borderRadius: "8px",textAlign: "center",fontSize: "16px",fontWeight: "500",boxShadow: "0 2px 6px rgba(0,0,0,0.1)",margin: "10px auto",width: "fit-content", }}>No Notifications</p>}
+                            {visibleNotifications.length === 0 && <p style={{ color: "#555", backgroundColor: "#f3f4f6", padding: "15px 20px", borderRadius: "8px", textAlign: "center", fontSize: "16px", fontWeight: "500", boxShadow: "0 2px 6px rgba(0,0,0,0.1)", margin: "10px auto", width: "fit-content", }}>No Notifications</p>}
                             {visibleNotifications.map((n) => (
                                 <li
                                     key={n.id}

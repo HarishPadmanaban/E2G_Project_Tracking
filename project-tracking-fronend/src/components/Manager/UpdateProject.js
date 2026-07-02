@@ -576,9 +576,9 @@ const ManagerProjectActions = () => {
                   <option value="IFC">IFC</option>
                   <option value="REIFC">REIFC</option>
                   <option value="BFA">BFA</option>
-                  <option value="Field Measurement">Field Measurement</option>
+                  {/* <option value="Field Measurement">Field Measurement</option>
                   <option value="Client Rework">Client Rework</option>
-                  <option value="Internal Rework">Internal Rework</option>
+                  <option value="Internal Rework">Internal Rework</option> */}
                 </select>
               </div>
 

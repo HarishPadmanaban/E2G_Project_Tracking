@@ -29,6 +29,15 @@ public class WorkDetails {
     private String status;
     private String remarks;
     private Boolean is_Deleted;
+    private Boolean submitted = false;
+
+    public Boolean getSubmitted() {
+        return submitted;
+    }
+
+    public void setSubmitted(Boolean submitted) {
+        this.submitted = submitted;
+    }
 
     public Long getId() {
         return id;

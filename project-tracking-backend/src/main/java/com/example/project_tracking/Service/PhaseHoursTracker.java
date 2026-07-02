@@ -162,11 +162,15 @@ public final class PhaseHoursTracker {
         // Unknown / null phase → existing tracking already ran; nothing more to do.
         if (a == null) return;
 
+        if(a.givenHours == null) return;
+
         BigDecimal hrs        = BigDecimal.valueOf(submitted);
         BigDecimal given      = safe(a.givenHours.get(project));
         BigDecimal currentProd = safe(a.prodHours.get(project));
 
         // ── Case 1: within phase budget ───────────────────────────────────
+
+
         if (currentProd.add(hrs).compareTo(given) <= 0) {
             a.setProdHours.set(project, currentProd.add(hrs));
             return;

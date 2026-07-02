@@ -24,7 +24,7 @@ public class EmployeeController {
     {
         //System.out.println(request.getUsername()+" "+request.getPassword());
         DataTransfer emp = employeeService.userLogin(request.getUsername(),request.getPassword());
-        if(emp==null){
+        if(emp==null ){
             return new ResponseEntity<String>(HttpStatus.UNAUTHORIZED);
         }
         System.out.println(emp.toString());

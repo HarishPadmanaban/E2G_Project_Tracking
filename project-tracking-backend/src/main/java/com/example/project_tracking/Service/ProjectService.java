@@ -245,59 +245,55 @@ public class ProjectService {
         if(project.getExtraHours() != null){
             project.setExtraHours(project.getExtraHours().add(extraHours));
             String projectStatus = project.getProjectActivityStatus();
-            switch (projectStatus)
-            {
-                case "IFA": {
-                    project.setIfaExtraHours(project.getIfaExtraHours().add(extraHours));
-                    project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
-                    break;
-                }
-                case "IFC": {
-                    project.setIfcExtraHours(project.getIfcExtraHours().add(extraHours));
-                    project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
-                    break;
-                }
+            if(projectStatus == null){
+                project.setExtraHours(project.getExtraHours().add(extraHours));
+                project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+            }
+            else{
+                switch (projectStatus)
+                {
+                    case "IFA", "REIFA": {
+                        if(project.getIfaExtraHours() == null) project.setIfaExtraHours(extraHours);
 
-                case "REIFA": {
-                    project.setIfaExtraHours(project.getIfaExtraHours().add(extraHours));
-                    project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
-                    break;
-                }
-                case "REIFC": {
-                    project.setIfcExtraHours(project.getIfcExtraHours().add(extraHours));
-                    project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
-                    break;
-                }
+                        else  project.setIfaExtraHours(project.getIfaExtraHours().add(extraHours));
 
+                        project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+                        break;
+                    }
+                    case "IFC", "REIFC": {
+                        if(project.getIfcExtraHours() == null) project.setIfcExtraHours(extraHours);
+
+                        else  project.setIfcExtraHours(project.getIfcExtraHours().add(extraHours));
+
+                        project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+                        break;
+                    }
+                }
             }
         }
         else{
             project.setExtraHours(extraHours);
             String projectStatus = project.getProjectActivityStatus();
-            switch (projectStatus)
+            if(projectStatus == null)
             {
-                case "IFA": {
-                    project.setIfaExtraHours(extraHours);
-                    project.setExtraHoursNote(extraHoursNote);
-                    break;
-                }
-                case "IFC": {
-                    project.setIfcExtraHours(extraHours);
-                    project.setExtraHoursNote(extraHoursNote);
-                    break;
-                }
+                project.setExtraHours(extraHours);
+                project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+            }
+            else {
+                switch (projectStatus)
+                {
+                    case "IFA", "REIFA": {
+                        project.setIfaExtraHours(extraHours);
+                        project.setExtraHoursNote(extraHoursNote);
+                        break;
+                    }
+                    case "IFC", "REIFC": {
+                        project.setIfcExtraHours(extraHours);
+                        project.setExtraHoursNote(extraHoursNote);
+                        break;
+                    }
 
-                case "REIFA": {
-                    project.setIfaExtraHours(extraHours);
-                    project.setExtraHoursNote(extraHoursNote);
-                    break;
                 }
-                case "REIFC": {
-                    project.setIfcExtraHours(extraHours);
-                    project.setExtraHoursNote(extraHoursNote);
-                    break;
-                }
-
             }
         }
         //System.out.print(project.toString());

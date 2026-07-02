@@ -89,6 +89,8 @@ public class ProjectAssignmentService {
         for (ProjectAssignment pa : assignments) {
             Employee e = pa.getEmployee();
 
+            if (Boolean.TRUE.equals(e.getSoftDelete())) continue;
+
             result.add(new DataTransfer(
                     pa.getAssignmentId(),          // ✅ IMPORTANT
                     e.getEmpId(),
@@ -102,7 +104,7 @@ public class ProjectAssignmentService {
         }
 
         // ✅ Add TL separately (NO assignmentId → cannot be deleted)
-        if (tl != null) {
+        if (tl != null && !Boolean.TRUE.equals(tl.getSoftDelete())) {
 
             Employee finalTl = tl;
             boolean tlAlreadyAssigned = assignments.stream()

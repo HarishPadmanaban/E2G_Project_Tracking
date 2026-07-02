@@ -384,7 +384,7 @@ const LeavePermissionForm = () => {
                       type="date"
                       name="fromDate"
                       value={formData.fromDate}
-                      min={today}
+                     
                       onChange={(e) =>
                         setFormData({
                           ...formData,
@@ -510,8 +510,6 @@ const LeavePermissionForm = () => {
                 <input
                   type="date"
                   name="fromDate"
-                  min={formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1))}
-                  max={formatDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0))}
                   value={formData.fromDate}
                   onChange={handleChange}
                 />

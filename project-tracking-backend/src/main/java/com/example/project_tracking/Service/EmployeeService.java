@@ -38,7 +38,8 @@ public class EmployeeService {
         Employee employee = employeeRepository.findByUsername(username)
                 .orElse(null);
 
-        if(employee==null) return null;
+        if(employee==null || employee.getSoftDelete()) return null;
+
 
         if (!employee.getPassword().equals(password)) {
             return null;

@@ -326,6 +326,7 @@ public class WorkDetailsService {
         if(work==null) return null;
         work.setStatus(request.getStatus());
         work.setRemarks(request.getRemarks());
+        work.setSubmitted(true);
 
         if(request.getStatus().trim().toLowerCase().equals("completed")){
             as.setStatus(request.getStatus().trim());
@@ -335,10 +336,22 @@ public class WorkDetailsService {
         Activity activity = as.getActivity();
 
         // ✅ EXISTING TRACKING — unchanged
-        if (work.getWorkHours() != null) {
+        if (work.getWorkHours() != null && project.getProjectActivityStatus()!=null) {
             //updateProjectWorkingHours(project, activity, work.getWorkHours());
             // ── ADDITIVE PHASE TRACKING (Task 2) ─────────────────────────
-            PhaseHoursTracker.track(project, work.getWorkHours());
+            switch(project.getProjectActivityStatus())
+            {
+                case "IFA", "REIFA":
+                    if (project.getIfaGivenHours() != null) PhaseHoursTracker.track(project, work.getWorkHours());
+                    break;
+
+                case "IFC", "REIFC":
+                    if (project.getIfcGivenHours() != null) PhaseHoursTracker.track(project, work.getWorkHours());
+                    break;
+                default:
+                    break;
+            }
+
             projectRepository.save(project);
             // ─────────────────────────────────────────────────────────────
         }
@@ -353,7 +366,7 @@ public class WorkDetailsService {
 
     public WorkDetailsResponse getActiveWorkByEmployee(Long employeeId) {
         Optional<WorkDetails> workOpt = workDetailsRepository
-                .findTopByEmployeeEmpIdAndEndTimeIsNullOrderByIdDesc(employeeId);
+                .findTopUnfinishedByEmployeeEmpId(employeeId);
 
         if (workOpt.isEmpty()) return null;
 
@@ -796,21 +809,21 @@ public class WorkDetailsService {
     @Transactional
     public void rebuildAllProjectHoursFromWorkDetails() {
 
-        // 1️⃣ Reset all project tracking fields
+        // 1️⃣ Reset all project tracking fields (including IFA/IFC prod hours)
         List<Project> projects = projectRepository.findAll();
-
         for (Project p : projects) {
-
             p.setModellingTime(BigDecimal.ZERO);
             p.setCheckingTime(BigDecimal.ZERO);
             p.setDetailingTime(BigDecimal.ZERO);
             p.setStudyHoursTracking(BigDecimal.ZERO);
-
             p.setWorkingHours(BigDecimal.ZERO);
             p.setExtraHoursTracking(BigDecimal.ZERO);
-
-            projectRepository.save(p);
+            p.setIfaProdHours(BigDecimal.ZERO);
+            p.setIfcProdHours(BigDecimal.ZERO);
+            p.setIfaExtraProdHours(BigDecimal.ZERO);
+            p.setIfcExtraProdHours(BigDecimal.ZERO);
         }
+        projectRepository.saveAll(projects); // single batch save
 
         // 2️⃣ Get all valid work logs
         List<WorkDetails> works = workDetailsRepository.findAll()
@@ -820,26 +833,139 @@ public class WorkDetailsService {
                 .filter(w -> w.getAssignedWorkId() != null)
                 .collect(Collectors.toList());
 
-       // System.out.println(works);
-
         // 3️⃣ Recalculate hours from scratch
         for (WorkDetails work : works) {
-
             AssignedWork aw = work.getAssignedWorkId();
 
-            if (aw.getProject() == null || aw.getActivity() == null)
+            if (aw == null || aw.getProject() == null || aw.getActivity() == null)
                 continue;
 
-            System.out.println(work.toString());
+            Project project = aw.getProject();
+            Activity activity = aw.getActivity();
+            Double workHours = work.getWorkHours();
 
-            updateProjectWorkingHours(
-                    aw.getProject(),
-                    aw.getActivity(),
-                    work.getWorkHours()
-            );
+            // ── Step A: Rebuild modelling/checking/detailing/studying + extraHoursTracking ──
+            rebuildActivityHours(project, activity, workHours);
+
+            // ── Step B: Rebuild IFA/IFC prod hours based on projectActivityStatus ──
+            rebuildPhaseHours(project, workHours);
         }
 
+        // 4️⃣ Batch save all projects once at the end
+        projectRepository.saveAll(projects);
+
         System.out.println("✅ Project hours rebuilt successfully from WorkDetails");
+    }
+
+    /**
+     * Rebuilds modelling/checking/detailing/studying tracking + extraHoursTracking.
+     * Mirror of updateProjectWorkingHours() but WITHOUT throwing exceptions —
+     * just clamps at target and puts overflow into extraHoursTracking.
+     */
+    private void rebuildActivityHours(Project project, Activity activity, Double workHours) {
+        if (activity.getMainType() == null) return;
+
+        String mainType = activity.getMainType().toLowerCase();
+        BigDecimal hrs = BigDecimal.valueOf(workHours);
+
+        BigDecimal targetHours;
+        BigDecimal currentTime;
+
+        switch (mainType) {
+            case "modeling":
+                targetHours  = safe(project.getModellingHours());
+                currentTime  = safe(project.getModellingTime());
+                break;
+            case "checking":
+                targetHours  = safe(project.getCheckingHours());
+                currentTime  = safe(project.getCheckingTime());
+                break;
+            case "detailing":
+                targetHours  = safe(project.getDetailingHours());
+                currentTime  = safe(project.getDetailingTime());
+                break;
+            case "studying":
+                targetHours  = safe(project.getStudyHours());
+                currentTime  = safe(project.getStudyHoursTracking());
+                break;
+            default:
+                System.out.println("⚠️ Unknown mainType: " + mainType + " — skipping.");
+                return;
+        }
+
+        BigDecimal extraUsed  = safe(project.getExtraHoursTracking());
+
+        if (currentTime.add(hrs).compareTo(targetHours) <= 0) {
+            // Within budget — add directly
+            setActivityTime(project, mainType, currentTime.add(hrs));
+        } else {
+            // Exceeds budget — fill to target, rest goes to extraHoursTracking
+            BigDecimal overflow = currentTime.add(hrs).subtract(targetHours);
+            setActivityTime(project, mainType, targetHours);
+            project.setExtraHoursTracking(extraUsed.add(overflow));
+        }
+
+        // Always update total working hours
+        project.setWorkingHours(safe(project.getWorkingHours()).add(hrs));
+    }
+
+    /**
+     * Rebuilds IFA/IFC prod hours + extra prod hours based on projectActivityStatus.
+     * Mirrors PhaseHoursTracker.track() but without throwing exceptions —
+     * overflow beyond extraHours budget just accumulates into extraProdHours.
+     */
+    private void rebuildPhaseHours(Project project, Double workHours) {
+        String status = project.getProjectActivityStatus();
+        if (status == null || status.isBlank()) return;
+
+        BigDecimal hrs = BigDecimal.valueOf(workHours);
+
+        switch (status.trim().toUpperCase()) {
+
+            case "IFA":
+            case "REIFA": {
+                if (project.getIfaGivenHours() == null) return;
+                BigDecimal given       = safe(project.getIfaGivenHours());
+                BigDecimal currentProd = safe(project.getIfaProdHours());
+                BigDecimal currentExtra = safe(project.getIfaExtraProdHours());
+
+                if (currentProd.add(hrs).compareTo(given) <= 0) {
+                    project.setIfaProdHours(currentProd.add(hrs));
+                } else {
+                    BigDecimal normalConsumed = given.subtract(currentProd).max(BigDecimal.ZERO);
+                    BigDecimal overflow       = hrs.subtract(normalConsumed);
+                    project.setIfaProdHours(given);
+                    project.setIfaExtraProdHours(currentExtra.add(overflow));
+                }
+                break;
+            }
+
+            case "IFC":
+            case "REIFC": {
+                if (project.getIfcGivenHours() == null) return;
+                BigDecimal given       = safe(project.getIfcGivenHours());
+                BigDecimal currentProd = safe(project.getIfcProdHours());
+                BigDecimal currentExtra = safe(project.getIfcExtraProdHours());
+
+                if (currentProd.add(hrs).compareTo(given) <= 0) {
+                    project.setIfcProdHours(currentProd.add(hrs));
+                } else {
+                    BigDecimal normalConsumed = given.subtract(currentProd).max(BigDecimal.ZERO);
+                    BigDecimal overflow       = hrs.subtract(normalConsumed);
+                    project.setIfcProdHours(given);
+                    project.setIfcExtraProdHours(currentExtra.add(overflow));
+                }
+                break;
+            }
+
+            default:
+                // Unknown status — skip phase tracking silently
+                break;
+        }
+    }
+
+    private BigDecimal safe(BigDecimal v) {
+        return Optional.ofNullable(v).orElse(BigDecimal.ZERO);
     }
 
     @Transactional

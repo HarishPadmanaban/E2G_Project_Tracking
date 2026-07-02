@@ -19,7 +19,6 @@ public interface WorkDetailsRepository extends JpaRepository<WorkDetails,Long> {
         @Query("""
        SELECT w FROM WorkDetails w
        WHERE w.assignedWorkId.manager.empId = :managerId
-         AND w.assignedWorkId.project.projectStatus = true
        """)
         List<WorkDetails> findByAssignedWorkId_Manager_EmpId(@Param("managerId") Long managerId);
 
@@ -64,7 +63,6 @@ public interface WorkDetailsRepository extends JpaRepository<WorkDetails,Long> {
         // Only work under active projects
         @Query("""
            SELECT w FROM WorkDetails w
-           WHERE w.assignedWorkId.project.projectStatus = true
            """)
         List<WorkDetails> findAllByActiveProjectStatus();
 
@@ -88,8 +86,7 @@ public interface WorkDetailsRepository extends JpaRepository<WorkDetails,Long> {
 
         @Query("""
        SELECT w FROM WorkDetails w
-       WHERE w.assignedWorkId.project.projectStatus = true
-         AND (w.is_Deleted IS NULL OR w.is_Deleted = false)
+       WHERE (w.is_Deleted IS NULL OR w.is_Deleted = false)
          AND w.date >= :from
          AND w.date <= :to
        """)
@@ -100,7 +97,6 @@ public interface WorkDetailsRepository extends JpaRepository<WorkDetails,Long> {
         @Query("""
        SELECT w FROM WorkDetails w
        WHERE w.assignedWorkId.manager.empId = :managerId
-         AND w.assignedWorkId.project.projectStatus = true
          AND (w.is_Deleted IS NULL OR w.is_Deleted = false)
          AND w.date >= :from
          AND w.date <= :to
@@ -109,5 +105,14 @@ public interface WorkDetailsRepository extends JpaRepository<WorkDetails,Long> {
                 @Param("managerId") Long managerId,
                 @Param("from")      LocalDate from,
                 @Param("to")        LocalDate to);
+
+    @Query("""
+    SELECT w FROM WorkDetails w
+    WHERE w.assignedWorkId.employee.empId = :employeeId
+      AND (w.is_Deleted IS NULL OR w.is_Deleted = false)
+      AND (w.endTime IS NULL OR w.submitted IS NULL OR w.submitted = false)
+    ORDER BY w.id DESC
+    """)
+    Optional<WorkDetails> findTopUnfinishedByEmployeeEmpId(@Param("employeeId") Long employeeId);
 
 }
