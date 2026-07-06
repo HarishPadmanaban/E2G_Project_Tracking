@@ -2,11 +2,13 @@ package com.example.project_tracking.Controller;
 
 import com.example.project_tracking.DTO.DataTransfer;
 import com.example.project_tracking.DTO.LoginRequest;
+import com.example.project_tracking.DataLoader.SecurityMigrationRunner;
 import com.example.project_tracking.Service.EmployeeService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,9 +24,17 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
     @Autowired
-    private EmployeeService employeeService;
+    private final EmployeeService employeeService;
+    @Autowired
+    private final SecurityMigrationRunner migrationService;
+
+    public AuthController(AuthenticationManager authenticationManager, EmployeeService employeeService, SecurityMigrationRunner migrationService) {
+        this.authenticationManager = authenticationManager;
+        this.employeeService = employeeService;
+        this.migrationService = migrationService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest,
@@ -81,5 +91,14 @@ public class AuthController {
     public String testing()
     {
         return "Testing Endpoint";
+    }
+
+    @PreAuthorize("permitAll()")
+    @PostMapping("/security")
+    public ResponseEntity<String> migrateSecurity() {
+
+        migrationService.migrate();
+
+        return ResponseEntity.ok("Security migration completed successfully.");
     }
 }

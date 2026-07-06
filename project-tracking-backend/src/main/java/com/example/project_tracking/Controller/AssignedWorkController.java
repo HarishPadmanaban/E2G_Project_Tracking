@@ -16,8 +16,12 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class AssignedWorkController {
 
-    @Autowired
-    private AssignedWorkService assignedWorkService;
+
+    private final AssignedWorkService assignedWorkService;
+
+    public AssignedWorkController(AssignedWorkService assignedWorkService) {
+        this.assignedWorkService = assignedWorkService;
+    }
 
     // ✅ Create new assigned work
     @PreAuthorize("hasAnyRole('PROJECT_COORDINATOR','MANAGER')")
