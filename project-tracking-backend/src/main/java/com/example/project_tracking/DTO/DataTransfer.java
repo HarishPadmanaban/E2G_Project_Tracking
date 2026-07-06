@@ -11,6 +11,7 @@ public class DataTransfer {
     private Boolean isTL = false;
     private Long reportingToId;// Only send the manager's ID
     private String role;
+    private String authority;
 
 
     public DataTransfer( Long assignmentId,Long empId, String name, String designation,
@@ -110,5 +111,13 @@ public class DataTransfer {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getAuthority() {
+        return authority;
+    }
+
+    public void setAuthority(String authority) {
+        this.authority = authority;
     }
 }

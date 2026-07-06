@@ -2,11 +2,10 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../axiosConfig";
 import styles from "../../styles/AGM/EditProject.module.css";
-import { useEmployee } from "../../context/EmployeeContext";
 import ViewWorkDetails from "./ViewWorkDetails"; // ✅ import your ViewWorkForm component
 
 const EditWorkDetails = () => {
-  const { employee, loading } = useEmployee();
+  const employee = JSON.parse(sessionStorage.getItem("employee"));
 
   const [workDetails, setWorkDetails] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -140,7 +139,7 @@ const EditWorkDetails = () => {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+
 
   // ✅ If a record is selected, show ViewWorkForm
   if (selectedWork) {

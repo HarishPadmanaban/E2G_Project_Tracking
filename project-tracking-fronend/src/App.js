@@ -5,7 +5,6 @@ import EmployeeWorkForm from './components/Employee/EmployeeWorkForm.js'
 import LeavePermissionForm from './components/Employee/LeavePermissionForm.js';
 import ProtectedRoute from './pages/ProtectedRoute.js';
 import EmployeeNavbar from './components/Employee/EmployeeNavbar.js';
-import { useEmployee } from './context/EmployeeContext.js';
 import ManagerDashboard from './components/Manager/ManagerDashboard.js';
 import ManagerNavbar from './components/Manager/ManagerNavbar.js';
 import WorkPivotTable from './components/Manager/WorkPivotTable.js';
@@ -22,6 +21,7 @@ import AssignProjectForm from './components/AGM/AssignProjectForm.js';
 import EditWorkDetails from './components/AGM/EditWorkDetails.js';
 import AssignResources from './components/PC/AssignResources.js';
 
+
   const Unauthorized = () => (
   <div style={{ textAlign: "center", marginTop: "50px" }}>
     <h1>Access Denied 🚫</h1>
@@ -31,69 +31,21 @@ import AssignResources from './components/PC/AssignResources.js';
 
 function App() {
 
-  const { employee, loading } = useEmployee();
-
-  if (loading) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100vh",
-          backgroundColor: "#f9fafb",
-        }}
-      >
-        <div
-          style={{
-            border: "6px solid #e2e8f0",
-            borderTop: "6px solid #2563eb",
-            borderRadius: "50%",
-            width: "60px",
-            height: "60px",
-            animation: "spin 1s linear infinite",
-            marginBottom: "20px",
-          }}
-        />
-        <p
-          style={{
-            fontSize: "18px",
-            color: "#2d3748",
-            fontWeight: 500,
-            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-          }}
-        >
-          Loading... Please wait
-        </p>
-
-        {/* Add the animation keyframes inline using a <style> tag */}
-        <style>
-          {`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}
-        </style>
-      </div>
-    );
-  }
-
+  const employee = JSON.parse(sessionStorage.getItem("employee"));
 
   return (
     <div className="App">
-      {employee && !employee.manager && !employee.tl &&employee.designation !== "Assistant General Manager" && <EmployeeNavbar />}
-{employee && employee.manager && employee.designation !== "Assistant General Manager" && <ManagerNavbar />}
-{employee && employee.designation === "Assistant General Manager" && <ManagerNavbar />}
-{employee && employee.tl && !employee.manager && employee.designation !== "Assistant General Manager" &&<ManagerNavbar />}
+      {employee && !employee.manager && !employee.tl &&employee?.designation !== "Assistant General Manager" && <EmployeeNavbar />}
+{employee && employee.manager && employee?.designation !== "Assistant General Manager" && <ManagerNavbar />}
+{employee && employee?.designation === "Assistant General Manager" && <ManagerNavbar />}
+{employee && employee.tl && !employee.manager && employee?.designation !== "Assistant General Manager" &&<ManagerNavbar />}
 
       <Routes>
         <Route path="/" element={<Login />} />        
         <Route
   path="/manager/assign-project"
   element={
-    <ProtectedRoute allowedRoles={["Assistant General Manager", "Assistant IT Manager"]}>
+    <ProtectedRoute allowedRoles={["ROLE_ADMIN" ]}>
       <EmployeeManagementPage />
     </ProtectedRoute>
   }
@@ -108,6 +60,10 @@ function App() {
   }
 />
 
+
+
+
+
 <Route
   path="/pc/assign"
   element={
@@ -120,7 +76,7 @@ function App() {
 <Route
   path="/manager/edit-workdetails"
   element={
-    <ProtectedRoute allowedRoles={["Assistant General Manager", "Assistant IT Manager"]}>
+    <ProtectedRoute allowedRoles={["ROLE_ADMIN" ]}>
       <EditWorkDetails/>
     </ProtectedRoute>
   }
@@ -130,7 +86,7 @@ function App() {
 <Route
   path="/manager/view-approved-request"
   element={
-    <ProtectedRoute allowedRoles={["Assistant General Manager","Project Manager","Senior Project Manager", "Assistant IT Manager","HR Manager"]}>
+    <ProtectedRoute allowedRoles={["ROLE_ADMIN","ROLE_MANAGER"]}>
       <ViewApprovedRequests />
     </ProtectedRoute>
   }
@@ -139,7 +95,7 @@ function App() {
 <Route
   path="/manager/analysis"
   element={
-    <ProtectedRoute allowedRoles={["Project Manager","Senior Project Manager", "Assistant IT Manager", "Assistant General Manager"]}>
+    <ProtectedRoute allowedRoles={["ROLE_MANAGER",  "ROLE_ADMIN"]}>
       <WorkPivotTable />
     </ProtectedRoute>
   }
@@ -148,7 +104,7 @@ function App() {
 <Route
     path="/manager/assign-tl"
     element={
-      <ProtectedRoute allowedRoles={["Project Manager"]}>
+      <ProtectedRoute allowedRoles={["ROLE_MANAGER"]}>
         <ProjectAssignmentForm />
       </ProtectedRoute>
     }
@@ -157,7 +113,7 @@ function App() {
 <Route
   path="/manager/view-requests"
   element={
-    <ProtectedRoute allowedRoles={["Project Manager","Senior Project Manager", "Assistant General Manager"]}>
+    <ProtectedRoute allowedRoles={["ROLE_MANAGER", "ROLE_ADMIN"]}>
       <ViewRequests />
     </ProtectedRoute>
   }
@@ -166,7 +122,7 @@ function App() {
 <Route
   path="/manager/add-employee"
   element={
-    <ProtectedRoute allowedRoles={["Assistant General Manager","Assistant IT Manager"]}>
+    <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
       <AddEmployeeForm />
     </ProtectedRoute>
   }
@@ -175,7 +131,7 @@ function App() {
 <Route
   path="/manager/add-project"
   element={
-    <ProtectedRoute allowedRoles={["Assistant General Manager","Assistant IT Manager"]}>
+    <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
       <AssignProjectForm />
     </ProtectedRoute>
   }
@@ -184,7 +140,7 @@ function App() {
 <Route
   path="/manager/add-activity"
   element={
-    <ProtectedRoute allowedRoles={["Assistant General Manager","Assistant IT Manager"]}>
+    <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
       <AddActivityForm />
     </ProtectedRoute>
   }
@@ -211,20 +167,20 @@ function App() {
 <Route
   path="/manager/edit-all"
   element={
-    <ProtectedRoute allowedRoles={["Assistant IT Manager", "Assistant General Manager"]}>
+    <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
       <EditManagementPage />
     </ProtectedRoute>
   }
 />
 
         <Route path="/employee/work" element={
-      <ProtectedRoute excludedRoles={["Project Manager","Senior Project Manager", "Assistant IT Manager", "Assistant General Manager"]}>
+      <ProtectedRoute excludedRoles={["ROLE_MANAGER", "ROLE_ADMIN"]}>
             <EmployeeWorkForm />
           </ProtectedRoute>} />
-        <Route path="/employee/leave" element={      <ProtectedRoute excludedRoles={["Assistant General Manager"]}>
+        <Route path="/employee/leave" element={      <ProtectedRoute excludedRoles={["ROLE_ADMIN"]}>
 <LeavePermissionForm /></ProtectedRoute>} />
         <Route path="/manager/work" element={
-          <ProtectedRoute allowedRoles={["Assistant General Manager","Project Manager","Senior Project Manager", "Assistant IT Manager","Project Coordinator","Assistant Project Manager"]}>
+          <ProtectedRoute allowedRoles={["ROLE_ADMIN","ROLE_MANAGER" ]}>
             <ManagerDashboard />
           </ProtectedRoute>
         } />

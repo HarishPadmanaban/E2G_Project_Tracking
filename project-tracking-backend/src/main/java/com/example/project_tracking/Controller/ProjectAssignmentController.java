@@ -11,6 +11,7 @@ import com.example.project_tracking.Service.EmployeeService;
 import com.example.project_tracking.Service.ProjectAssignmentService;
 import com.example.project_tracking.Service.ProjectService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,6 +49,7 @@ public class ProjectAssignmentController {
         return employeeService.convertToResponse(employee);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/projects/{employeeId}")
     public ResponseEntity<List<ProjectResponse>> getProjectsByEmployee(@PathVariable Long employeeId) {
         List<Project> projects = projectAssignmentService.getProjectsByEmployee(employeeId);
@@ -58,6 +60,7 @@ public class ProjectAssignmentController {
         return ResponseEntity.ok(projectDTOs);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/employees/{projectId}")
     public ResponseEntity<List<DataTransfer>> getEmployeesByProject(
             @PathVariable Long projectId) {
@@ -67,7 +70,7 @@ public class ProjectAssignmentController {
         );
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/resource-delete")
     public ResponseEntity<String> bulkDeleteWorkDetails(
             @RequestBody ResourcesDeletion request) {
@@ -79,6 +82,7 @@ public class ProjectAssignmentController {
         return ResponseEntity.ok("Work logs deleted successfully");
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/employees/not-in-project")
     public ResponseEntity<List<DataTransfer>> getEmployeesNotInProject(
             @RequestParam Long projectId,

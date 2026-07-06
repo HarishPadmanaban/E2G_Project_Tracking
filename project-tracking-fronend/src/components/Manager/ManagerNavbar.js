@@ -1,36 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "../../styles/Employee/EmployeeNavbar.module.css";
-import { useEmployee } from "../../context/EmployeeContext";
 import Notifications from "../Notifications/Notifications"; // adjust path as needed
 import axiosInstance from "../axiosConfig";
 
 const ManagerNavbar = () => {
   const navigate = useNavigate();
-  const { employee, logout } = useEmployee();
+  const employee = JSON.parse(sessionStorage.getItem("employee"));
   const [menuOpen, setMenuOpen] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
 
 
+const authority = employee?.authority?.trim();
 
-  const isAGM =
-    employee?.designation.trim() === "Assistant IT Manager" ||
-    employee?.designation.trim() === "Assistant General Manager"
-
-  const isPC = employee?.designation.trim() === "Project Coordinator" || employee?.designation.trim() === "Assistant Project Manager";
-  console.log(isPC);
-
-  const isNotAgm = employee?.designation.trim() !== "Assistant General Manager"
+const isAdmin = authority === "ROLE_ADMIN";
+const isManager = authority === "ROLE_MANAGER";
+const isPC = authority === "ROLE_PROJECT_COORDINATOR";
+const isEmployee = authority === "ROLE_EMPLOYEE";
+const isNotAgm = employee?.designation.trim() !== "Assistant General Manager";
+const homePath = isPC ? "/employee/work" : "/manager/work";
 
   const handleBack = () => {
     if (window.location.pathname === "/manager/work") return;
     navigate(-1);
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate("/", { replace: true });
-  };
+const handleLogout = () => {
+  sessionStorage.removeItem("employee");
+  navigate("/", { replace: true });
+};
 
   useEffect(() => {
     if (!employee?.empId) return;
@@ -101,23 +99,13 @@ const ManagerNavbar = () => {
             className={`${styles.sidebarMenu} ${menuOpen ? styles.open : ""}`}
           >
             <ul>
-              {!isPC && <Link
-                to="/manager/work"
-                className={styles.menuLink}
-                onClick={() => setMenuOpen(false)}
-              >
-                <li>Home</li>
-              </Link>}
-
-              {isPC &&
-                <Link
-                  to="/manager/work"
-                  className={styles.menuLink}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  <li>Home</li>
-                </Link>
-              }
+              <Link
+  to={homePath}
+  className={styles.menuLink}
+  onClick={() => setMenuOpen(false)}
+>
+  <li>Home</li>
+</Link>
 
 
 
@@ -129,7 +117,7 @@ const ManagerNavbar = () => {
                 <li>Analysis</li>
               </Link>}
 
-              {!isAGM && !isPC && (
+              {isManager && (
                 <Link
                   to="/manager/assign-tl"
                   className={styles.menuLink}
@@ -139,7 +127,7 @@ const ManagerNavbar = () => {
                 </Link>
               )}
 
-              {(isPC || !isAGM) && <Link
+              {(isPC || isManager) && <Link
                 to="/pc/assign"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
@@ -147,7 +135,7 @@ const ManagerNavbar = () => {
                 <li>Assign Activity</li>
               </Link>}
 
-              {/* {isAGM && (
+              {/* {isAdmin && (
                 <Link
                   to="/manager/assign-project"
                   className={styles.menuLink}
@@ -157,7 +145,7 @@ const ManagerNavbar = () => {
                 </Link>
               )} */}
 
-              {!isAGM && !isPC && (<Link
+              {!isAdmin && !isPC && (<Link
                 to="/manager/view-employee"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
@@ -167,7 +155,7 @@ const ManagerNavbar = () => {
                 </li>
               </Link>)}
 
-              {!isAGM && !isPC && (<Link
+              {!isAdmin && !isPC && (<Link
                 to="/manager/view-requests"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
@@ -181,7 +169,7 @@ const ManagerNavbar = () => {
               </Link>)}
 
 
-              {!isAGM && !isPC && (
+              {!isAdmin && !isPC && (
                 <Link
                   to="/manager/update-project"
                   className={styles.menuLink}
@@ -191,7 +179,7 @@ const ManagerNavbar = () => {
                 </Link>
               )}
 
-              {isAGM && !isPC && (
+              {isAdmin && !isPC && (
                 <Link
                   to="/manager/view-approved-request"
                   className={styles.menuLink}
@@ -201,7 +189,7 @@ const ManagerNavbar = () => {
                 </Link>
               )}
 
-              {isAGM && !isPC && (<Link
+              {isAdmin && !isPC && (<Link
                 to="/manager/edit-all"
                 className={styles.menuLink}
                 onClick={() => setMenuOpen(false)}
@@ -211,7 +199,7 @@ const ManagerNavbar = () => {
                 </li>
               </Link>)}
 
-              {isAGM && !isPC && (
+              {isAdmin && !isPC && (
                 <Link
                   to="/manager/edit-workdetails"
                   className={styles.menuLink}
@@ -238,7 +226,7 @@ const ManagerNavbar = () => {
 
         <div className={styles.navRight}>
 
-              {isNotAgm && (
+              { (isPC || isEmployee)  && (
             <Link to="/employee/work" className={styles.navLink}>
               Work
             </Link>
@@ -254,7 +242,7 @@ const ManagerNavbar = () => {
 
 
 
-          {!isNotAgm && <Link
+          {!isPC && <Link
             to="/manager/view-requests"
             className={styles.menuLink}
             onClick={() => setMenuOpen(false)}

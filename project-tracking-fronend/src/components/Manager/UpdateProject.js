@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useEmployee } from "../../context/EmployeeContext";
 import styles from "../../styles/Employee/LeavePermissionForm.module.css";
 import { useToast } from "../../context/ToastContext";
 import axiosInstance from "../axiosConfig";
 
 const ManagerProjectActions = () => {
-  const { employee, loading } = useEmployee();
+  const employee = JSON.parse(sessionStorage.getItem("employee"));
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [extraHours, setExtraHours] = useState("");
@@ -283,7 +282,6 @@ const ManagerProjectActions = () => {
     setNewCompletionDate("");
   };
 
-  if (loading) return <div>Loading...</div>;
 
   return (
     <div className={styles.container}>

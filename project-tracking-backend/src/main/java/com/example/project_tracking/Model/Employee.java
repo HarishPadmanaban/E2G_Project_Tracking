@@ -1,6 +1,10 @@
 package com.example.project_tracking.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "employee")
@@ -25,6 +29,11 @@ public class Employee {
     @ManyToOne
     @JoinColumn(name = "reporting_to")
     private Employee reportingTo; // Self-reference for manager
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<UserRole> userRoles = new HashSet<>();
+
 
     @Column(name = "username", unique = true, nullable = false)
     private String username;
@@ -121,6 +130,14 @@ public class Employee {
 
     public void setTL(Boolean TL) {
         isTL = TL;
+    }
+
+    public Set<UserRole> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(Set<UserRole> userRoles) {
+        this.userRoles = userRoles;
     }
 
     public String getDesignationCategory() {

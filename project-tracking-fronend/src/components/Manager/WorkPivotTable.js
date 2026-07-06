@@ -36,7 +36,7 @@ import axiosInstance from "../axiosConfig";
 import XLSX from "xlsx-js-style";
 import "../../styles/Manager/PivotTableCustom.css";
 import { useToast } from "../../context/ToastContext";
-import { useEmployee } from "../../context/EmployeeContext";
+
 
 // ── Static filter options ────────────────────────────────────────────────────
 const MAIN_TYPES = ["Modeling", "Checking", "Detailing"];
@@ -142,7 +142,7 @@ const WorkPivotTable = () => {
   });
 
   const { showToast } = useToast();
-  const { employee }  = useEmployee();
+  const employee = JSON.parse(sessionStorage.getItem("employee"));
 
   useEffect(() => { patchPivotFilterBox(); }, []);
 

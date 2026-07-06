@@ -3,6 +3,7 @@ package com.example.project_tracking.Controller;
 import com.example.project_tracking.Service.LeaveBalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ public class LeaveBalanceController {
         this.leaveBalanceService = leaveBalanceService;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/employee/{empid}")
     public ResponseEntity<?> getByEmployee(@PathVariable Long empid)
     {

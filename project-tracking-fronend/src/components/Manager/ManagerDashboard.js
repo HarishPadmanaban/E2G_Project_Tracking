@@ -1,13 +1,12 @@
 
 import React, { useEffect, useState } from "react";
-import { useEmployee } from "../../context/EmployeeContext.js";
 import styles from "../../styles/Manager/ManagerDashboard.module.css";
 import axiosInstance from "../axiosConfig.js";
 import * as XLSX from "xlsx-js-style";
 import { saveAs } from "file-saver";
 
 const ManagerDashboard = () => {
-  const { employee } = useEmployee();
+  const employee = JSON.parse(sessionStorage.getItem("employee"));
   const [projects, setProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [filter, setFilter] = useState("In Progress");
@@ -39,6 +38,10 @@ const ManagerDashboard = () => {
   const [selectedProjectIds, setSelectedProjectIds] = useState([]);
   const [lastSelectedIndex, setLastSelectedIndex] = useState(null);
 
+    const isAGM =
+  employee?.designation?.trim() === "Assistant IT Manager" ||
+  employee?.designation?.trim() === "Assistant General Manager";
+
   useEffect(() => {
     let filtered = worklogs;
 
@@ -61,60 +64,46 @@ const ManagerDashboard = () => {
   }, [filterFromDate, filterToDate, filterEmployee, filterStatus, worklogs]);
 
 
-
-  useEffect(() => {
-    if (showWorklogs) setCurrentPage(1);
-  }, [showWorklogs]);
+useEffect(() => {
+  if (!employee?.empId) return;
 
   const isAGM =
-    employee?.designation.trim() === "Assistant General Manager" ||
-    employee?.designation.trim() === "Assistant IT Manager";
+    employee.designation.trim() === "Assistant IT Manager" ||
+    employee.designation.trim() === "Assistant General Manager";
 
-  useEffect(() => {
-    if (!employee.empId) return;
+  const managerIdToUse = employee.manager
+    ? employee.empId
+    : employee.reportingToId;
 
+  const endpoint = isAGM
+    ? `/project/`
+    : `/project/${managerIdToUse}`;
 
-    //const managerIdToUse = employee.manager ? employee.id : employee.reportingToId;
-    // ✅ Admin should have same access as AGM
-    const isAGM =
-      employee.designation.trim() === "Assistant IT Manager" ||
-      employee.designation.trim() === "Assistant General Manager"
+  axiosInstance.get(endpoint).then((res) => {
+    const data = Array.isArray(res.data) ? res.data : [];
 
-    // Use appropriate ID depending on role
-    const managerIdToUse = employee.manager ? employee.empId : employee.reportingToId;
-
-
-    const endpoint = isAGM
-      ? `/project/`
-      : `/project/${managerIdToUse}`;
-
-    axiosInstance
-      .get(endpoint)
-      .then((res) => {
-        setProjects(res.data);
-
-        const inProgress = res.data.filter((p) => p.projectStatus === true);
-        setFilteredProjects(inProgress);
-        setFilter("In Progress");
-
-        if (isAGM) {
-          axiosInstance
-            .get("/employee/getallmanagers")
-            .then((res) => {
-              const mgrMap = {};
-              res.data.forEach((m) => {
-                mgrMap[m.empId] = m.name;
-              });
-              setManagers(mgrMap);
-            })
-
-        }
-      })
-
-  }, [employee]);
+    setProjects(data);
+    setFilteredProjects(data.filter((p) => p.projectStatus));
+  });
+}, [employee?.empId]);
 
 
-  console.log(projects);
+useEffect(() => {
+  axiosInstance.get("/employee/getallmanagers")
+    .then((res) => {
+      const mgrMap = {};
+      const managersData = Array.isArray(res.data) ? res.data : [];
+
+      managersData.forEach((m) => {
+        mgrMap[m.empId] = m.name;
+      });
+
+      setManagers(mgrMap);
+    })
+    .catch((err) => {
+      console.error("Error fetching managers:", err);
+    });
+}, []);
 
 
   useEffect(() => {

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosConfig";
 import styles from "../../styles/Employee/EmployeeWorkForm.module.css";
-import { useEmployee } from "../../context/EmployeeContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "../../context/ToastContext";
 
 const EmployeeWorkForm = () => {
-  const { employee, loading } = useEmployee();
+  const [employee] = useState(() =>
+  JSON.parse(sessionStorage.getItem("employee"))
+);
   const [projects, setProjects] = useState([]);
   const [activities, setActivities] = useState([]);
   const [filteredActivities, setFilteredActivities] = useState([]);
@@ -16,7 +17,6 @@ const EmployeeWorkForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { work } = location.state || {};
-
   const { showToast } = useToast();
   // manager view/edit if present
 
@@ -108,7 +108,7 @@ const EmployeeWorkForm = () => {
         const active = res.data;
 
         if (!active) {
-            console.log("[resume-effect] no active work — resetting to idle");
+          console.log("[resume-effect] no active work — resetting to idle");
           setIsRunning(false);
           setStartDisabled(false);
           setSubmitDisabled(true);
@@ -160,72 +160,6 @@ const EmployeeWorkForm = () => {
         setStartDisabled(false);
         setSubmitDisabled(true);
       });
-
-
-    function checkActiveRunningWork() {
-      axiosInstance
-        .get(`/workdetails/active/${employee.empId}`)
-        .then((res) => {
-          const active = res.data;
-
-          if (active && !active.endTime) {
-            const selectedProject = projects.find(
-              (proj) => proj.id.toString() === active.projectId?.toString()
-            );
-            const selectedActivity = activities.find(
-              (act) => act.id.toString() === active.activityId?.toString()
-            );
-
-            //const assigned = assignedActivities.find((a) => a.id.toString()===active.)
-
-            // Store running work ID locally so the stopped-but-not-submitted flow works
-            setActiveWorkId(active.id);
-
-
-            // Autofill form for the running session
-            setFormData({
-              projectId: active.projectId?.toString() || "",
-              clientName: selectedProject ? selectedProject.clientName : "",
-              projectActivityType: selectedActivity ? selectedActivity.mainType : "",
-              activityId: active.activityId?.toString() || "",
-              category: selectedActivity ? selectedActivity.category : "",
-              startTime: active.startTime ? active.startTime.substring(0, 5) : "",
-              endTime: "",
-              workHours: "",
-              assignedWork: active.assignedWork || "",
-              assignedWorkId: active.assignedWorkId || "",
-              projectActivity: active.projectActivity || "",
-              status: active.status || "Pending",
-              remarks: active.remarks || "",
-            });
-
-            // maintain button states
-            setIsRunning(true);
-            setStartDisabled(true);
-            setSubmitDisabled(true);
-
-            const now = new Date();
-            const [startH, startM] = (active.startTime || "00:00").split(":").map(Number);
-            const startDate = new Date();
-            startDate.setHours(startH, startM, 0);
-
-
-          } else {
-            // No active work found — reset to idle
-            setIsRunning(false);
-            setStartDisabled(false);
-
-            setSubmitDisabled(true);
-          }
-        })
-        .catch((err) => {
-          // In case of error, safely stay idle
-          setIsRunning(false);
-          setStartDisabled(false);
-
-          setSubmitDisabled(true);
-        });
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employee, projects, activities, activeWorkId]);
 
@@ -575,7 +509,7 @@ const EmployeeWorkForm = () => {
     ].includes(field);
   };
 
-  if (loading) return <p>Loading employee details...</p>;
+
 
   return (
     <div>
