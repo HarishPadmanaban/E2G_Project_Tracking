@@ -42,39 +42,17 @@ public class AuthController {
 
         try {
 
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getUsername(),
-                            loginRequest.getPassword()
-                    )
-            );
-
-            SecurityContext context = SecurityContextHolder.createEmptyContext();
-            context.setAuthentication(authentication);
-            SecurityContextHolder.setContext(context);
-
-            request.getSession(true).setAttribute(
-                    HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-                    context
-            );
-
             // 🔥 Fetch employee details (empId = username)
+            String token = employeeService.verify(loginRequest);
             Long empId = Long.parseLong(loginRequest.getUsername());
 
             DataTransfer emp = employeeService.getEmployeeById(empId);
 
+            emp.setToken(token);
+
             if (emp == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
             }
-
-            // 🔥 Get authority
-            String authority = authentication.getAuthorities()
-                    .iterator()
-                    .next()
-                    .getAuthority();
-
-            // 🔥 Attach authority
-            emp.setAuthority(authority);
 
             return ResponseEntity.ok(emp);
 

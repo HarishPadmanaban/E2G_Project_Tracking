@@ -20,19 +20,6 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    @PreAuthorize("permitAll()")
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request)
-    {
-        //System.out.println(request.getUsername()+" "+request.getPassword());
-        DataTransfer emp = employeeService.userLogin(request.getUsername(),request.getPassword());
-        if(emp==null ){
-            return new ResponseEntity<String>(HttpStatus.UNAUTHORIZED);
-        }
-        System.out.println(emp.toString());
-        return ResponseEntity.ok(emp);
-    }
-
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/addemployee")
     public ResponseEntity<?> addEmployee(@RequestBody Employee employee)
@@ -46,7 +33,7 @@ public class EmployeeController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getEmployeeById(@PathVariable Long id)
     {
-        return ResponseEntity.ok(employeeService.findEmployeeById(id));
+        return ResponseEntity.ok(employeeService.convertToResponse(employeeService.findEmployeeById(id)));
     }
 
     @PreAuthorize("isAuthenticated()")

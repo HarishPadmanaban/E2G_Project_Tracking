@@ -17,7 +17,7 @@ const EmployeeNavbar = () => {
 
 
  const handleLogout = () => {
-  sessionStorage.removeItem("employee");
+  sessionStorage.clear();
   navigate("/", { replace: true });
 };
 

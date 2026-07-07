@@ -12,6 +12,7 @@ public class DataTransfer {
     private Long reportingToId;// Only send the manager's ID
     private String role;
     private String authority;
+    private String token;
 
 
     public DataTransfer( Long assignmentId,Long empId, String name, String designation,
@@ -47,6 +48,14 @@ public class DataTransfer {
         } else {
             this.reportingToId = null;
         }
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public Long getAssignmentId() {

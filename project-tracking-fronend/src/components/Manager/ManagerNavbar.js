@@ -26,7 +26,7 @@ const homePath = isPC ? "/employee/work" : "/manager/work";
   };
 
 const handleLogout = () => {
-  sessionStorage.removeItem("employee");
+  sessionStorage.clear();
   navigate("/", { replace: true });
 };
 

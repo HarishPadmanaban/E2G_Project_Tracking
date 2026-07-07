@@ -19,8 +19,7 @@ const LoginForm = () => {
     try {
       const response = await axiosInstance.post(
         "/auth/login",
-        { username, password },
-        { withCredentials: true }
+        { username, password }
       );
 
       const employeeData = response.data;
@@ -32,6 +31,10 @@ const LoginForm = () => {
 
       // 💾 Store in sessionStorage
       sessionStorage.setItem("employee", JSON.stringify(employeeData));
+      sessionStorage.setItem(
+    "token",
+    employeeData.token
+);
 
       // 🔄 Force re-render/navigation trigger
       window.location.href = "/";

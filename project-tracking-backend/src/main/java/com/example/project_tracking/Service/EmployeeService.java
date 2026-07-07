@@ -2,21 +2,19 @@ package com.example.project_tracking.Service;
 
 import com.example.project_tracking.DTO.DataTransfer;
 import com.example.project_tracking.DTO.LoginRequest;
-import com.example.project_tracking.DTO.ProjectRequest;
-import com.example.project_tracking.DTO.WorkDetailsResponse;
 import com.example.project_tracking.Model.Employee;
 import com.example.project_tracking.Model.LeaveBalance;
-import com.example.project_tracking.Model.Project;
-import com.example.project_tracking.Model.WorkDetails;
 import com.example.project_tracking.Repository.EmployeeRepository;
 import com.example.project_tracking.Repository.LeaveBalanceRepository;
+import com.example.project_tracking.Service.JWT.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,57 +25,44 @@ public class EmployeeService {
     private JavaMailSender mailSender;
     @Autowired
     private LeaveBalanceRepository leaveBalanceRepository;
+    @Autowired
+    private final AuthenticationManager authenticationManager;
+    @Autowired
+    private final JWTService jwtService;
 
 
-    public EmployeeService(EmployeeRepository employeeRepository) {
+    public EmployeeService(EmployeeRepository employeeRepository, AuthenticationManager authenticationManager, JWTService jwtService) {
         this.employeeRepository = employeeRepository;
-    }
-
-    public DataTransfer userLogin(String username, String password) {
-        //String hashed = PasswordUtil.hashPassword(password);
-        Employee employee = employeeRepository.findByUsername(username)
-                .orElse(null);
-
-        if(employee==null || employee.getSoftDelete()) return null;
-
-
-        if (!employee.getPassword().equals(password)) {
-            return null;
-        }
-
-        if (employee != null) {
-            // Map Employee entity to DataTransfer DTO
-            return new DataTransfer(
-                    employee.getEmpId(),
-                    employee.getName(),
-                    employee.getDesignation(),
-                    employee.getIsManager(),  // isManager
-                    employee.getIsTL(),       // isTL
-                    employee.getReportingTo() ,
-                    employee.getDesignationCategory()
-            );
-        } else {
-            return null; // Will trigger 401 in controller
-        }
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     public DataTransfer getEmployeeById(long id)
     {
         Employee employee = employeeRepository.findById(id).orElse(null);
-        if (employee != null) {
-            // Map Employee entity to DataTransfer DTO
-            return new DataTransfer(
-                    employee.getEmpId(),
-                    employee.getName(),
-                    employee.getDesignation(),
-                    employee.getIsManager(),  // isManager
-                    employee.getIsTL(),       // isTL
-                    employee.getReportingTo(),
-                    employee.getDesignationCategory()
-            );
-        } else {
-            return null; // Will trigger 401 in controller
+        if (employee == null) {
+            return null;
         }
+
+        DataTransfer dto = new DataTransfer(
+                employee.getEmpId(),
+                employee.getName(),
+                employee.getDesignation(),
+                employee.getIsManager(),
+                employee.getIsTL(),
+                employee.getReportingTo(),
+                employee.getDesignationCategory()
+        );
+
+        String authority = employee.getUserRoles()
+                .stream()
+                .findFirst()
+                .map(userRole -> userRole.getRole().getName())
+                .orElse(null);
+
+        dto.setAuthority(authority);
+
+        return dto;
     }
 
     public List<Employee> getTLsUnderManager(Long managerId) {
@@ -155,6 +140,17 @@ public class EmployeeService {
         emp.setSoftDelete(true); // or emp.setStatus("INACTIVE");
         employeeRepository.save(emp);
         return "Employee soft deleted successfully!";
+    }
+
+    public String verify(LoginRequest userRequest) //LoginRequest
+    {
+        Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userRequest.getUsername(),userRequest.getPassword()));
+
+        if(auth.isAuthenticated())
+        {
+            return jwtService.generateToken(userRequest.getUsername());
+        }
+        throw new RuntimeException("Invalid Credentials");
     }
 
 }
