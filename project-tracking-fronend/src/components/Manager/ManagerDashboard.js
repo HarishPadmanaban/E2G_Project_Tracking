@@ -32,39 +32,53 @@ const ManagerDashboard = () => {
   const [filterToDate, setFilterToDate] = useState("");
   const [filterEmployee, setFilterEmployee] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
-  const [filteredLogs, setFilteredLogs] = useState([]);
-  const totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
-  const currentLogs = filteredLogs.slice(startIndex, startIndex + itemsPerPage);
   const [showExportModal, setShowExportModal] = useState(false);
   const [selectedProjectIds, setSelectedProjectIds] = useState([]);
   const [lastSelectedIndex, setLastSelectedIndex] = useState(null);
-
-  useEffect(() => {
-    let filtered = worklogs;
-
-    if (filterFromDate)
-      filtered = filtered.filter((log) => new Date(log.date) >= new Date(filterFromDate));
-
-    if (filterToDate)
-      filtered = filtered.filter((log) => new Date(log.date) <= new Date(filterToDate));
-
-
-    if (filterEmployee.trim())
-      filtered = filtered.filter((log) =>
-        log.employeeName.toLowerCase().includes(filterEmployee.toLowerCase())
-      );
-
-    if (filterStatus)
-      filtered = filtered.filter((log) => log.status === filterStatus);
-
-    setFilteredLogs(filtered);
-  }, [filterFromDate, filterToDate, filterEmployee, filterStatus, worklogs]);
-
+  const [worklogPage, setWorklogPage] = useState(0);        // zero-indexed, matches Spring's Pageable
+  const [worklogTotalPages, setWorklogTotalPages] = useState(0);
 
 
   useEffect(() => {
-    if (showWorklogs) setCurrentPage(1);
+    if (showWorklogs) setCurrentPage(0);
   }, [showWorklogs]);
+
+  const fetchWorklogs = async (projectId, pageNum) => {
+    try {
+      const res = await axiosInstance.get(`/workdetails/project/${projectId}/paged`, {
+        params: {
+          page: pageNum,
+          size: itemsPerPage,
+          status: filterStatus || undefined,
+          employeeName: filterEmployee || undefined,
+          from: filterFromDate || undefined,
+          to: filterToDate || undefined,
+          sortBy: "date",
+          sortDir: "desc",
+        },
+      });
+      setWorklogs(res.data.content);
+      setWorklogTotalPages(res.data.totalPages);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Refetch whenever the modal is open and page/filters change
+  useEffect(() => {
+    if (!showWorklogs || !selectedProject) return;
+
+    const timer = setTimeout(() => {
+      fetchWorklogs(selectedProject.id, worklogPage);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [showWorklogs, selectedProject, worklogPage, filterStatus, filterEmployee, filterFromDate, filterToDate]);
+
+  // Reset to page 0 whenever a filter changes (otherwise you might land on a page that no longer exists)
+  useEffect(() => {
+    setWorklogPage(0);
+  }, [filterStatus, filterEmployee, filterFromDate, filterToDate]);
 
   const isAGM =
     employee?.designation.trim() === "Assistant General Manager" ||
@@ -84,65 +98,46 @@ const ManagerDashboard = () => {
     const managerIdToUse = employee.manager ? employee.empId : employee.reportingToId;
 
 
-    const endpoint = isAGM
-      ? `/project/`
-      : `/project/${managerIdToUse}`;
+    // const endpoint = isAGM
+    //   ? `/project/all?projectStatus=${"pending"}`
+    //   : `/project/all/${managerIdToUse}?projectStatus=${"pending"}`;
 
+    // axiosInstance
+    //   .get(endpoint)
+    //   .then((res) => {
+    //     setProjects(res.data);
+    //     setFilteredProjects(res.data);
+    //     setFilter("In Progress");
+
+    //     if (isAGM) {
     axiosInstance
-      .get(endpoint)
+      .get("/employee/getallmanagers")
       .then((res) => {
-        setProjects(res.data);
-
-        const inProgress = res.data.filter((p) => p.projectStatus === true);
-        setFilteredProjects(inProgress);
-        setFilter("In Progress");
-
-        if (isAGM) {
-          axiosInstance
-            .get("/employee/getallmanagers")
-            .then((res) => {
-              const mgrMap = {};
-              res.data.forEach((m) => {
-                mgrMap[m.empId] = m.name;
-              });
-              setManagers(mgrMap);
-            })
-
-        }
+        const mgrMap = {};
+        res.data.forEach((m) => {
+          mgrMap[m.empId] = m.name;
+        });
+        setManagers(mgrMap);
       })
+
+    //   }
+    // })
 
   }, [employee]);
 
 
   console.log(projects);
 
-
   useEffect(() => {
-    if (!projects.length) return;
+    if (!employee.empId) return;
 
-    projects.forEach(async (p) => {
-      try {
-        const res = await axiosInstance.get(
-          `/employee/gettls?mgrid=${p.managerId}`
-        );
-        const tlMap = {};
-        res.data.forEach((tl) => {
-          tlMap[tl.empId] = tl.name;
-        });
+    const timer = setTimeout(() => {
+      fetchProjects(filter, searchTerm, selectedManager);
+    }, 300); // debounce ALL filter changes, not just search
 
-        setTl((prev) => ({
-          ...prev,
-          [p.id]: tlMap[p.tlId] || "Not Assigned", // map project id → TL name
-        }));
-      } catch (err) {
+    return () => clearTimeout(timer);
+  }, [filter, searchTerm, selectedManager, employee.empId]);
 
-        setTl((prev) => ({
-          ...prev,
-          [p.id]: "Not Assigned",
-        }));
-      }
-    });
-  }, [projects]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -164,12 +159,6 @@ const ManagerDashboard = () => {
   const applyFilter = (projList, category, searchText, managerId) => {
     let result = projList;
 
-    if (category !== "All") {
-      result = result.filter((p) =>
-        category === "Completed" ? !p.projectStatus : p.projectStatus
-      );
-    }
-
     if (searchText.trim() !== "") {
       const term = searchText.toLowerCase();
       result = result.filter(
@@ -186,21 +175,66 @@ const ManagerDashboard = () => {
     setFilteredProjects(result);
   };
 
-  const handleFilter = (category) => {
+  const fetchProjects = async (
+    status = filter,
+    search = searchTerm,
+    manager = selectedManager
+  ) => {
+    try {
+      const params = {};
+
+      // Status
+      if (status !== "All") {
+        params.projectStatus =
+          status === "In Progress" ? "Pending" : "Completed";
+      }
+
+      // Search
+      if (search.trim()) {
+        params.query = search;
+      }
+
+      let endpoint =
+        status === "All"
+          ? (isAGM
+            ? "/project/"
+            : `/project/${employee.manager ? employee.empId : employee.reportingToId}`)
+          : (isAGM
+            ? "/project/all"
+            : `/project/all/${employee.manager ? employee.empId : employee.reportingToId}`);
+
+
+      if (manager) {
+        endpoint = status === "All" ?
+          `/project/${manager}`
+          :
+          `/project/all/${manager}`;
+      }
+
+      const res = await axiosInstance.get(endpoint, { params });
+      console.log("number 1")
+      setProjects(res.data);
+      setFilteredProjects(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleFilter = async (category) => {
     setFilter(category);
-    applyFilter(projects, category, searchTerm, selectedManager);
+    //await fetchProjectsByStatus(category);
   };
 
   const handleSearch = (e) => {
     const text = e.target.value;
     setSearchTerm(text);
-    applyFilter(projects, filter, text, selectedManager);
+    //applyFilter(projects, filter, text, selectedManager);
   };
 
   const handleManagerFilter = (e) => {
     const id = e.target.value;
     setSelectedManager(id);
-    applyFilter(projects, filter, searchTerm, id);
+    //applyFilter(projects, filter, searchTerm, id);
   };
 
   const clearFilters = () => {
@@ -231,12 +265,12 @@ const ManagerDashboard = () => {
       // Add Manager Name only for AGM
       if (isAGM) {
         row["Manager Name"] =
-          managers[project.managerId] || "Unknown";
+          project.managerName || "Unknown";
       }
 
       // Remaining fields
       row["Project Coordinator"] =
-        tl[project.id] || "Not Assigned";
+        project.tlName || "Not Assigned";
 
       row["Awarded Date"] = project.assignedDate || "Not Assigned";
       row["Planned Start Date"] = project.plannedStartDate || "Not Assigned";
@@ -430,18 +464,7 @@ const ManagerDashboard = () => {
       setSelectedProjectMembers(membersWithWork);
 
       // 🔹 Get Project Coordinator (TL)
-      if (project.tlId) {
-        try {
-          const tlsRes = await axiosInstance.get(`/employee/gettls?mgrid=${project.managerId}`);
-          const matchedTl = tlsRes.data.find(tl => tl.empId === project.tlId);
-          setSelectedCoordinator(matchedTl ? matchedTl.name : "TL Not Found");
-        } catch (err) {
-
-          setSelectedCoordinator("Error loading coordinator");
-        }
-      } else {
-        setSelectedCoordinator("Not Assigned");
-      }
+    
 
       setShowModal(true);
       setShowResources(false);
@@ -611,9 +634,9 @@ const ManagerDashboard = () => {
 
                 {(employee.designation.trim() === "Assistant General Manager" ||
                   employee.designation === "Assistant IT Manager") && (
-                    <td>{managers[p.managerId] || "Unknown"}</td>
+                    <td>{p.managerName || "Unknown"}</td>
                   )}
-                <td>{tl[p.id] || "Not assigned"}</td>
+                <td>{p.tlName || "Not assigned"}</td>
                 <td>{p.assignedHours}</td>
                 <td>{p.extraHours || "--"}</td>
                 <td>{p.workingHours}</td>
@@ -695,14 +718,14 @@ const ManagerDashboard = () => {
                         {isAGM ? (
                           <>
                             <th>Manager Name</th>
-                            <td>{managers[selectedProject.managerId] || "Unknown"}</td>
+                            <td>{selectedProject.managerName || "Unknown"}</td>
                             <th>TL Name</th>
-                            <td colSpan="3">{selectedCoordinator}</td>
+                            <td colSpan="3">{selectedProject.tlName}</td>
                           </>
                         ) : (
                           <>
                             <th>TL Name</th>
-                            <td>{selectedCoordinator}</td>
+                            <td>{selectedProject.tlName}</td>
                           </>
                         )}
                       </tr>
@@ -845,16 +868,9 @@ const ManagerDashboard = () => {
 
                     <button
                       className={styles.actionBtn}
-                      onClick={async () => {
-                        try {
-                          // 🔹 Temporary Dummy Worklog Data for Pagination Test
-                          const res = await axiosInstance.get(`/workdetails/project/${selectedProject.id} `);
-                          setWorklogs(res.data);
-
-                          setShowWorklogs(true);
-                        } catch (err) {
-
-                        }
+                      onClick={() => {
+                        setWorklogPage(0);
+                        setShowWorklogs(true);
                       }}
                     >
                       View Worklogs
@@ -952,12 +968,12 @@ const ManagerDashboard = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {currentLogs.length === 0 ? (
+                        {worklogs.length === 0 ? (
                           <tr>
                             <td colSpan="6" className={styles.noData}>No worklogs found.</td>
                           </tr>
                         ) : (
-                          currentLogs.map((log) => (
+                          worklogs.map((log) => (
                             <tr key={log.id}>
                               <td>{log.date}</td>
                               <td>{log.employeeName}</td>
@@ -974,58 +990,52 @@ const ManagerDashboard = () => {
 
 
                     {/* ✅ Numbered Pagination */}
-                    {worklogs.length > itemsPerPage && (
+                    {worklogTotalPages > 1 && (
                       <div className={styles.paginationContainer}>
                         <button
                           className={styles.paginationBtn}
-                          disabled={currentPage === 1}
-                          onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                          disabled={worklogPage === 0}
+                          onClick={() => setWorklogPage((p) => Math.max(p - 1, 0))}
                         >
                           « Prev
                         </button>
 
-                        {Array.from({ length: totalPages }, (_, i) => i + 1)
+                        {Array.from({ length: worklogTotalPages }, (_, i) => i)
                           .filter(
-                            (page) =>
-                              page === 1 ||
-                              page === totalPages ||
-                              (page >= currentPage - 2 && page <= currentPage + 2)
+                            (p) =>
+                              p === 0 ||
+                              p === worklogTotalPages - 1 ||
+                              (p >= worklogPage - 2 && p <= worklogPage + 2)
                           )
-                          .map((page, idx, arr) => {
-                            // Add ellipsis between gaps
-                            if (idx > 0 && arr[idx - 1] !== page - 1) {
+                          .map((p, idx, arr) => {
+                            if (idx > 0 && arr[idx - 1] !== p - 1) {
                               return (
-                                <React.Fragment key={`ellipsis-${page}`}>
+                                <React.Fragment key={`ellipsis-${p}`}>
                                   <span className={styles.ellipsis}>...</span>
                                   <button
-                                    key={page}
-                                    className={`${styles.pageNumber} ${currentPage === page ? styles.activePage : ""
-                                      }`}
-                                    onClick={() => setCurrentPage(page)}
+                                    className={`${styles.pageNumber} ${worklogPage === p ? styles.activePage : ""}`}
+                                    onClick={() => setWorklogPage(p)}
                                   >
-                                    {page}
+                                    {p + 1}
                                   </button>
                                 </React.Fragment>
                               );
                             }
                             return (
                               <button
-                                key={page}
-                                className={`${styles.pageNumber} ${currentPage === page ? styles.activePage : ""
-                                  }`}
-                                onClick={() => setCurrentPage(page)}
+                                key={p}
+                                className={`${styles.pageNumber} ${worklogPage === p ? styles.activePage : ""}`}
+                                onClick={() => setWorklogPage(p)}
                               >
-                                {page}
+                                {p + 1}
                               </button>
                             );
                           })}
 
                         <button
                           className={styles.paginationBtn}
-                          disabled={currentPage === totalPages}
-                          onClick={() =>
-                            setCurrentPage((p) => Math.min(p + 1, totalPages))
-                          }
+                          disabled={worklogPage === worklogTotalPages - 1}
+                          onClick={() => setWorklogPage((p) => Math.min(p + 1, worklogTotalPages - 1))}
                         >
                           Next »
                         </button>
@@ -1118,7 +1128,7 @@ const ManagerDashboard = () => {
 
               <button
                 onClick={() => setShowExportModal(false)}
-                
+
                 style={{
                   border: "none",
                   background: "transparent",
@@ -1126,7 +1136,7 @@ const ManagerDashboard = () => {
                   cursor: "pointer",
                   fontWeight: "bold",
                   lineHeight: 1,
-                  
+
                 }}
               >
                 ✕

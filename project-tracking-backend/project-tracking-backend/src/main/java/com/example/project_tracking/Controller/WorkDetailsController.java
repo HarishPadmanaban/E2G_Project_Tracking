@@ -1,0 +1,202 @@
+package com.example.project_tracking.Controller;
+import com.example.project_tracking.DTO.PivotResponseDTO;
+import com.example.project_tracking.DTO.WorkDetailsRequest;
+import com.example.project_tracking.DTO.WorkDetailsResponse;
+import com.example.project_tracking.Service.PivotService;
+import com.example.project_tracking.Service.WorkDetailsService;
+import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+@RestController
+@RequestMapping("/workdetails")
+@CrossOrigin(origins = "*")
+public class WorkDetailsController {
+
+    private final WorkDetailsService workDetailsService;
+    private final PivotService pivotService;
+
+    public WorkDetailsController(WorkDetailsService workDetailsService,PivotService pivotService) {
+        this.workDetailsService = workDetailsService;
+        this.pivotService = pivotService;
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllLogsByprojectStatus()
+    {
+        return ResponseEntity.ok(workDetailsService.getAllLogsByProjectStatus());
+    }
+
+    @GetMapping("/pivot/agm")
+    public ResponseEntity<PivotResponseDTO> getPivotForAGM(
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+
+        return ResponseEntity.ok(pivotService.getPivotForAGM(from, to));
+    }
+
+    @GetMapping("/pivot/manager/{managerId}")
+    public ResponseEntity<PivotResponseDTO> getPivotForManager(
+            @PathVariable Long managerId,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+
+        return ResponseEntity.ok(pivotService.getPivotForManager(managerId, from, to));
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<?> getAllLogs()
+    {
+        return ResponseEntity.ok(workDetailsService.getAll());
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<?> saveWorkDetails(@RequestBody WorkDetailsRequest workDetails) {
+        System.out.println(workDetails.toString());
+        WorkDetailsResponse saved = workDetailsService.saveWorkDetails(workDetails);
+        return ResponseEntity.ok(saved);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getDetails(@PathVariable Long id)
+    {
+        return ResponseEntity.ok(workDetailsService.getByDetailsId(id));
+    }
+    @GetMapping("/active/{employeeId}")
+    public ResponseEntity<WorkDetailsResponse> getActiveWork(@PathVariable Long employeeId) {
+        WorkDetailsResponse activeWork = workDetailsService.getActiveWorkByEmployee(employeeId);
+        return ResponseEntity.ok(activeWork);
+    }
+
+    @GetMapping("/assigned-work/{id}")
+    public ResponseEntity<?> getAssigned(@PathVariable Long id)
+    {
+        return ResponseEntity.ok(workDetailsService.getAssignedWork(id));
+    }
+
+    @GetMapping("/employee/{id}")
+    public ResponseEntity<List<WorkDetailsResponse>> getByEmployee(@PathVariable Long id) {
+        return ResponseEntity.ok(workDetailsService.getByEmployee(id));
+    }
+
+    @GetMapping("/manager/{id}")
+    public ResponseEntity<List<WorkDetailsResponse>> getByManager(@PathVariable Long id) {
+        return ResponseEntity.ok(workDetailsService.getByManager(id));
+    }
+
+    @GetMapping("/project/{id}")
+    public ResponseEntity<List<WorkDetailsResponse>> getByProject(@PathVariable Long id) {
+        return ResponseEntity.ok(workDetailsService.getByProject(id));
+    }
+
+    @GetMapping("/activity/{id}")
+    public ResponseEntity<List<WorkDetailsResponse>> getByActivity(@PathVariable Long id) {
+        return ResponseEntity.ok(workDetailsService.getByActivity(id));
+    }
+
+    @GetMapping("/employee/{empId}/project/{projId}")
+    public ResponseEntity<List<WorkDetailsResponse>> getByEmployeeAndProject(@PathVariable Long empId, @PathVariable Long projId) {
+        return ResponseEntity.ok(workDetailsService.getByEmployeeAndProject(empId, projId));
+    }
+
+    @GetMapping("/manager/{mgrId}/project/{projId}")
+    public ResponseEntity<List<WorkDetailsResponse>> getByManagerAndProject(@PathVariable Long mgrId, @PathVariable Long projId) {
+        return ResponseEntity.ok(workDetailsService.getByManagerAndProject(mgrId, projId));
+    }
+
+    @GetMapping("/project/{projId}/activity/{actId}")
+    public ResponseEntity<List<WorkDetailsResponse>> getByProjectAndActivity(@PathVariable Long projId, @PathVariable Long actId) {
+        return ResponseEntity.ok(workDetailsService.getByProjectAndActivity(projId, actId));
+    }
+    @PutMapping("/stop/{employeeId}")
+    public ResponseEntity<WorkDetailsResponse> stopWork(
+            @PathVariable Long employeeId) {
+
+        WorkDetailsResponse updated =
+                workDetailsService.stopWork(employeeId);
+
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping("/savefinal")
+    public ResponseEntity<WorkDetailsResponse> saveFinal(@RequestBody WorkDetailsRequest request , @RequestParam Long activeWorkId) {
+        System.out.println(request.toString());
+        System.out.println(activeWorkId);
+        WorkDetailsResponse saved = workDetailsService.saveFinalWork(request,activeWorkId);
+        return ResponseEntity.ok(saved);
+    }
+
+    @PutMapping("/edit-log/{id}")
+    public ResponseEntity<?> editWorkLog(@PathVariable long id,@RequestBody WorkDetailsRequest workDetails)
+    {
+        return ResponseEntity.ok(workDetailsService.editWorkDetail(id,workDetails));
+    }
+
+    @DeleteMapping("/work/discard/{id}")
+    public ResponseEntity<String> discardWork(@PathVariable Long id) {
+        System.out.println(id);
+        workDetailsService.discardWork(id);
+        return ResponseEntity.ok("Work entry discarded successfully");
+    }
+
+    @PostMapping("/admin/rebuild-hours")
+    public String rebuild() {
+
+        workDetailsService.rebuildAllProjectHoursFromWorkDetails();
+
+        return "Rebuild completed";
+    }
+
+    @PostMapping("/admin/fix-negative")
+    public String fixNegative() {
+
+        workDetailsService.fixNegativeWorkHours();
+
+        return "Fixed!!!";
+    }
+
+    @GetMapping("/project/{id}/paged")
+    public ResponseEntity<Page<WorkDetailsResponse>> getByProjectPaged(
+            @PathVariable Long id,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String employeeName,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(
+                workDetailsService.getByProjectPaged(id, status, employeeName, from, to, page, size)
+        );
+    }
+
+    @GetMapping("/filtered")
+    public ResponseEntity<Page<WorkDetailsResponse>> getFilteredWorkDetails(
+            @RequestParam(required = false) Long managerId,
+            @RequestParam(required = false) Long projectId,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        return ResponseEntity.ok(
+                workDetailsService.getFilteredWorkDetails(managerId, projectId, from, to, search, page, size)
+        );
+    }
+
+}
+

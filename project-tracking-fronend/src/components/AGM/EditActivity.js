@@ -10,7 +10,6 @@ const EditActivity = () => {
   const { employee, loading } = useEmployee();
   const navigate = useNavigate();
   const [activities, setActivities] = useState([]);
-  const [filteredActivities, setFilteredActivities] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -34,47 +33,35 @@ const EditActivity = () => {
   }, [employee, loading, navigate]);
 
   // Fetch activities
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axiosInstance.get("/activity/");
-        setActivities(res.data);
-        setFilteredActivities(res.data);
-      } catch (err) {
-      }
-    };
-    fetchData();
-  }, []);
 
-  // Apply filters
-  useEffect(() => {
-    let data = [...activities];
+const fetchActivities = async () => {
+  try {
+    const res = await axiosInstance.get("/activity/all", {
+      params: {
+        category: selectedCategory !== "All" ? selectedCategory : undefined,
+        type: selectedType !== "All" ? selectedType : undefined,
+        query: searchTerm || undefined,
+      },
+    });
+    setActivities(res.data);
+  } catch (err) {
+    console.error(err);
+  }
+};
 
-    if (selectedCategory !== "All") {
-      data = data.filter((a) => a.category === selectedCategory);
-    }
+useEffect(() => {
+  const timer = setTimeout(() => {
+    fetchActivities();
+  }, 300);
+  return () => clearTimeout(timer);
+}, [selectedCategory, searchTerm, selectedType]);
 
-    if (selectedType !== "All") {
-      data = data.filter((a) => a.mainType === selectedType);
-    }
-
-    if (searchTerm.trim() !== "") {
-      const term = searchTerm.toLowerCase();
-      data = data.filter((a) =>
-        a.activityName?.toLowerCase().includes(term)
-      );
-    }
-
-    data.sort((a, b) => a.id - b.id);
-    setFilteredActivities(data);
-  }, [searchTerm, selectedCategory, selectedType, activities]);
 
   // Clear filters
   const clearFilters = () => {
     setSearchTerm("");
     setSelectedCategory("All");
     setSelectedType("All");
-    setFilteredActivities(activities);
   };
 
   // Handle edit click
@@ -115,10 +102,7 @@ const EditActivity = () => {
 
       showToast("✅ Activity updated successfully!","success");
       setSelectedActivity(null);
-
-      // Refresh list
-      const refreshed = await axiosInstance.get("/activity/");
-      setActivities(refreshed.data);
+      await fetchActivities();
     } catch (err) {
       showToast("Error updating activity!","error");
     }
@@ -132,8 +116,7 @@ const EditActivity = () => {
 
         // Remove deleted activity from the table
         const updated = activities.filter((e) => e.id !== id);
-        setActivities(updated);
-        setFilteredActivities(updated);
+        await fetchActivities();
       } catch (error) {
         showToast("Error deleting activity!", "error");
       }
@@ -208,14 +191,14 @@ const EditActivity = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredActivities.length === 0 ? (
+              {activities.length === 0 ? (
                 <tr>
                   <td colSpan="6" className={styles.noData}>
                     No activities found.
                   </td>
                 </tr>
               ) : (
-                filteredActivities.map((act) => (
+                activities.map((act) => (
                   <tr key={act.id}>
                     <td>{act.id}</td>
                     <td>{act.activityName}</td>

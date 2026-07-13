@@ -1,169 +1,114 @@
-
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../axiosConfig";
 import styles from "../../styles/AGM/EditProject.module.css";
 import { useEmployee } from "../../context/EmployeeContext";
-import ViewWorkDetails from "./ViewWorkDetails"; // ✅ import your ViewWorkForm component
+import ViewWorkDetails from "./ViewWorkDetails";
 
 const EditWorkDetails = () => {
   const { employee, loading } = useEmployee();
 
-  const [workDetails, setWorkDetails] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const [managerList, setManagerList] = useState([]);
-  const [projectList, setProjectList] = useState([]);
+  const [workDetails, setWorkDetails] = useState([]); // current page's rows
+  const [managers, setManagers] = useState({}); // { empId: name }
+  const [projects, setProjects] = useState([]); // [{ id, projectName }]
+
   const [filters, setFilters] = useState({
-    manager: "All",
-    project: "All",
+    managerId: "",
+    projectId: "",
     dateFrom: "",
     dateTo: "",
     search: "",
   });
 
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0); // zero-indexed
+  const [totalPages, setTotalPages] = useState(0);
   const recordsPerPage = 20;
 
-  // ✅ For showing ViewWorkForm
   const [selectedWork, setSelectedWork] = useState(null);
 
+  // Fetch manager list once
   useEffect(() => {
-    const fetchWorkDetails = async () => {
-      try {
-        const response = await axiosInstance.get("/workdetails/all");
-        const data = response.data;
-        const sorted = data.sort((a, b) => new Date(b.date) - new Date(a.date));
-        setWorkDetails(sorted);
-        setFilteredData(sorted);
-
-        const managers = [...new Set(sorted.map((w) => w.managerName))];
-        const projects = [...new Set(sorted.map((w) => w.projectName))];
-        setManagerList(managers);
-        setProjectList(projects);
-      } catch (error) {
-        
-      }
-    };
-
-    fetchWorkDetails();
+    axiosInstance.get("/employee/getallmanagers").then((res) => {
+      const mgrMap = {};
+      res.data.forEach((m) => (mgrMap[m.empId] = m.name));
+      setManagers(mgrMap);
+    });
   }, []);
 
+  // Fetch project list, scoped to selected manager
   useEffect(() => {
-  if (filters.manager === "All") {
-    // Show ALL projects if no manager selected
-    const allProjects = [...new Set(workDetails.map((w) => w.projectName))];
-    setProjectList(allProjects);
-  } else {
-    // Show only projects belonging to selected manager
-    const filteredProjects = [
-      ...new Set(
-        workDetails
-          .filter((w) => w.managerName === filters.manager)
-          .map((w) => w.projectName)
-      ),
-    ];
-    setProjectList(filteredProjects);
+    const endpoint = filters.managerId
+      ? `/project/all/${filters.managerId}`
+      : `/project/all`;
 
-    // If current selected project is not valid anymore → reset to All
-    if (!filteredProjects.includes(filters.project)) {
-      setFilters((prev) => ({ ...prev, project: "All" }));
-    }
-  }
-}, [filters.manager, workDetails]);
+    axiosInstance.get(endpoint).then((res) => {
+      setProjects(res.data);
+      // reset project filter if it's no longer valid for this manager
+      if (filters.projectId && !res.data.some((p) => p.id === Number(filters.projectId))) {
+        setFilters((prev) => ({ ...prev, projectId: "" }));
+      }
+    });
+  }, [filters.managerId]);
 
-
-  useEffect(() => {
-    let data = [...workDetails];
-
-    if (filters.manager !== "All") {
-      data = data.filter((w) => w.managerName === filters.manager);
-    }
-
-    if (filters.project !== "All") {
-      data = data.filter((w) => w.projectName === filters.project);
-    }
-
-    if (filters.dateFrom && filters.dateTo) {
-      const from = new Date(filters.dateFrom);
-      const to = new Date(filters.dateTo);
-      data = data.filter((w) => {
-        const workDate = new Date(w.date);
-        return workDate >= from && workDate <= to;
+  const fetchWorkDetails = async () => {
+    try {
+      const res = await axiosInstance.get("/workdetails/filtered", {
+        params: {
+          managerId: filters.managerId || undefined,
+          projectId: filters.projectId || undefined,
+          from: filters.dateFrom || undefined,
+          to: filters.dateTo || undefined,
+          search: filters.search || undefined,
+          page: currentPage,
+          size: recordsPerPage,
+        },
       });
-    } else if (filters.dateFrom) {
-      const from = new Date(filters.dateFrom);
-      data = data.filter((w) => new Date(w.date) >= from);
-    } else if (filters.dateTo) {
-      const to = new Date(filters.dateTo);
-      data = data.filter((w) => new Date(w.date) <= to);
+      setWorkDetails(res.data.content);
+      setTotalPages(res.data.totalPages);
+    } catch (err) {
+      console.error(err);
     }
+  };
 
-    if (filters.search.trim() !== "") {
-      const term = filters.search.toLowerCase();
-      data = data.filter(
-        (w) =>
-          w.employeeName.toLowerCase().includes(term) ||
-          w.projectName.toLowerCase().includes(term) ||
-          w.managerName.toLowerCase().includes(term)
-      );
-    }
+  // Debounced fetch on any filter/page change
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchWorkDetails();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [filters, currentPage]);
 
-    data.sort((a, b) => new Date(b.date) - new Date(a.date));
-    setFilteredData(data);
-    setCurrentPage(1);
-  }, [filters, workDetails]);
+  // Reset to page 0 whenever a filter changes
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [filters.managerId, filters.projectId, filters.dateFrom, filters.dateTo, filters.search]);
 
   const clearFilters = () => {
-    setFilters({
-      manager: "All",
-      project: "All",
-      dateFrom: "",
-      dateTo: "",
-      search: "",
-    });
-    setFilteredData(workDetails);
-    setCurrentPage(1);
+    setFilters({ managerId: "", projectId: "", dateFrom: "", dateTo: "", search: "" });
   };
 
-  // ✅ When clicking "View/Edit", render ViewWorkForm
-  const handleViewDetails = (work) => {
-    setSelectedWork(work);
-  };
-
-  const totalPages = Math.ceil(filteredData.length / recordsPerPage);
-  const startIndex = (currentPage - 1) * recordsPerPage;
-  const currentRecords = filteredData.slice(startIndex, startIndex + recordsPerPage);
+  const handleViewDetails = (work) => setSelectedWork(work);
 
   const handlePageChange = (pageNum) => {
-    if (pageNum >= 1 && pageNum <= totalPages) {
-      setCurrentPage(pageNum);
-    }
+    if (pageNum >= 0 && pageNum < totalPages) setCurrentPage(pageNum);
   };
 
   if (loading) return <p>Loading...</p>;
 
-  // ✅ If a record is selected, show ViewWorkForm
   if (selectedWork) {
     const handleWorkUpdated = (updatedWork) => {
-  setWorkDetails((prev) =>
-    prev.map((w) => (w.id === updatedWork.id ? { ...w, ...updatedWork } : w))
-  );
-  setFilteredData((prev) =>
-    prev.map((w) => (w.id === updatedWork.id ? { ...w, ...updatedWork } : w))
-  );
-
-  // ✅ Also update selectedWork in case you go back immediately
-  setSelectedWork(updatedWork);
-};
+      setWorkDetails((prev) =>
+        prev.map((w) => (w.id === updatedWork.id ? { ...w, ...updatedWork } : w))
+      );
+      setSelectedWork(updatedWork);
+    };
 
     return (
-  <ViewWorkDetails
-    work={selectedWork}
-    onBack={() => setSelectedWork(null)}
-    onUpdate={(updatedWork) => handleWorkUpdated(updatedWork)} // ✅ new prop
-  />
-);
-
+      <ViewWorkDetails
+        work={selectedWork}
+        onBack={() => setSelectedWork(null)}
+        onUpdate={handleWorkUpdated}
+      />
+    );
   }
 
   return (
@@ -176,36 +121,30 @@ const EditWorkDetails = () => {
             type="text"
             placeholder="Search employee, project, or manager..."
             value={filters.search}
-            onChange={(e) =>
-              setFilters({ ...filters, search: e.target.value })
-            }
+            onChange={(e) => setFilters({ ...filters, search: e.target.value })}
             className={styles.searchInput}
           />
         </div>
 
         <select
-          value={filters.manager}
-          onChange={(e) => setFilters({ ...filters, manager: e.target.value })}
+          value={filters.managerId}
+          onChange={(e) => setFilters({ ...filters, managerId: e.target.value })}
           className={styles.filterSelect}
         >
-          <option value="All">All Managers</option>
-          {managerList.map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
+          <option value="">All Managers</option>
+          {Object.entries(managers).map(([id, name]) => (
+            <option key={id} value={id}>{name}</option>
           ))}
         </select>
 
         <select
-          value={filters.project}
-          onChange={(e) => setFilters({ ...filters, project: e.target.value })}
+          value={filters.projectId}
+          onChange={(e) => setFilters({ ...filters, projectId: e.target.value })}
           className={styles.filterSelect}
         >
-          <option value="All">All Projects</option>
-          {projectList.map((p) => (
-            <option key={p} value={p}>
-              {p}
-            </option>
+          <option value="">All Projects</option>
+          {projects.map((p) => (
+            <option key={p.id} value={p.id}>{p.projectName}</option>
           ))}
         </select>
 
@@ -214,18 +153,14 @@ const EditWorkDetails = () => {
           <input
             type="date"
             value={filters.dateFrom}
-            onChange={(e) =>
-              setFilters({ ...filters, dateFrom: e.target.value })
-            }
+            onChange={(e) => setFilters({ ...filters, dateFrom: e.target.value })}
             className={styles.filterSelect}
           />
           <label>To: </label>
           <input
             type="date"
             value={filters.dateTo}
-            onChange={(e) =>
-              setFilters({ ...filters, dateTo: e.target.value })
-            }
+            onChange={(e) => setFilters({ ...filters, dateTo: e.target.value })}
             className={styles.filterSelect}
           />
         </div>
@@ -235,7 +170,6 @@ const EditWorkDetails = () => {
         </button>
       </div>
 
-      {/* ✅ Work Table */}
       <table className={styles.detailsTable}>
         <thead>
           <tr>
@@ -248,14 +182,10 @@ const EditWorkDetails = () => {
           </tr>
         </thead>
         <tbody>
-          {currentRecords.length === 0 ? (
-            <tr>
-              <td colSpan="6" className={styles.noData}>
-                No records found.
-              </td>
-            </tr>
+          {workDetails.length === 0 ? (
+            <tr><td colSpan="6" className={styles.noData}>No records found.</td></tr>
           ) : (
-            currentRecords.map((w) => (
+            workDetails.map((w) => (
               <tr key={w.id}>
                 <td>{w.date}</td>
                 <td>{w.employeeName}</td>
@@ -263,10 +193,7 @@ const EditWorkDetails = () => {
                 <td>{w.managerName}</td>
                 <td>{w.workHours}</td>
                 <td>
-                  <button
-                    className={styles.actionBtn}
-                    onClick={() => handleViewDetails(w)}
-                  >
+                  <button className={styles.actionBtn} onClick={() => handleViewDetails(w)}>
                     View / Edit
                   </button>
                 </td>
@@ -276,12 +203,11 @@ const EditWorkDetails = () => {
         </tbody>
       </table>
 
-      {/* ✅ Pagination */}
       <div className={styles.paginationContainer}>
         <button
           className={styles.pageBtn}
           onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
+          disabled={currentPage === 0}
         >
           Previous
         </button>
@@ -289,33 +215,26 @@ const EditWorkDetails = () => {
         {(() => {
           const pages = [];
           const maxVisible = 2;
-
-          for (let i = 1; i <= totalPages; i++) {
+          for (let i = 0; i < totalPages; i++) {
             if (
-              i === 1 ||
-              i === totalPages ||
+              i === 0 ||
+              i === totalPages - 1 ||
               (i >= currentPage - maxVisible && i <= currentPage + maxVisible)
             ) {
               pages.push(
                 <button
                   key={i}
                   onClick={() => handlePageChange(i)}
-                  className={`${styles.pageBtn} ${
-                    currentPage === i ? styles.activePage : ""
-                  }`}
+                  className={`${styles.pageBtn} ${currentPage === i ? styles.activePage : ""}`}
                 >
-                  {i}
+                  {i + 1}
                 </button>
               );
             } else if (
-              (i === currentPage - maxVisible - 1 && i > 1) ||
-              (i === currentPage + maxVisible + 1 && i < totalPages)
+              (i === currentPage - maxVisible - 1 && i > 0) ||
+              (i === currentPage + maxVisible + 1 && i < totalPages - 1)
             ) {
-              pages.push(
-                <span key={`dots-${i}`} className={styles.ellipsis}>
-                  …
-                </span>
-              );
+              pages.push(<span key={`dots-${i}`} className={styles.ellipsis}>…</span>);
             }
           }
           return pages;
@@ -324,13 +243,13 @@ const EditWorkDetails = () => {
         <button
           className={styles.pageBtn}
           onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
+          disabled={currentPage >= totalPages - 1}
         >
           Next
         </button>
 
         <span className={styles.pageInfo}>
-          Page {currentPage} of {totalPages}
+          Page {currentPage + 1} of {totalPages}
         </span>
       </div>
     </div>

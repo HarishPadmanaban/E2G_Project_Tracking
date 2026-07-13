@@ -1,0 +1,347 @@
+package com.example.project_tracking.Service;
+
+import com.example.project_tracking.DTO.ProjectRequest;
+import com.example.project_tracking.DTO.ProjectResponse;
+import com.example.project_tracking.Model.Employee;
+import com.example.project_tracking.Model.Notification;
+import com.example.project_tracking.Model.Project;
+import com.example.project_tracking.Repository.EmployeeRepository;
+import com.example.project_tracking.Repository.NotificationRepository;
+import com.example.project_tracking.Repository.ProjectRepository;
+import com.example.project_tracking.Specification.ProjectSpecification;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+public class ProjectService {
+
+    private final ProjectRepository projectRepository;
+    private final EmployeeRepository employeeRepository;
+    private final NotificationService notificationService;
+    private final NotificationRepository notificationRepo;
+
+    public ProjectService(ProjectRepository projectRepository, EmployeeRepository employeeRepository, NotificationService notificationService, NotificationRepository notificationRepo) {
+        this.projectRepository = projectRepository;
+        this.employeeRepository = employeeRepository;
+        this.notificationService = notificationService;
+        this.notificationRepo = notificationRepo;
+    }
+
+    public List<Project> getProjectsByManager(Long managerId) {
+
+        List<Project> projects = projectRepository.findByManagerId(managerId);
+
+        // Filter based on modellingHour being not null
+        return projects.stream()
+                .filter(p -> !p.getSoftDelete())
+                .collect(Collectors.toList());
+    }
+
+    public List<ProjectResponse> getAll(Long managerId,String query){
+        Specification<Project> projectSpecification = Specification.allOf(ProjectSpecification.notDeleted())
+                .and(ProjectSpecification.hasManagerId(managerId)).and(ProjectSpecification.searchTerm(query));;
+        List<Project> projectList = projectRepository.findAll();
+        return projectRepository.findAll(projectSpecification).stream().map(this::convertToResponse).toList();
+    }
+
+    public List<ProjectResponse> getProjectsByProjectStatus(String projectStatus,Long managerId,String query){
+
+        Boolean projectStats = projectStatus == null ? null : projectStatus.equalsIgnoreCase("pending");
+
+        Specification<Project> projectSpecification = Specification.allOf(ProjectSpecification.notDeleted()).and(ProjectSpecification.hasManagerId(managerId))
+                .and(ProjectSpecification.hasStatus(projectStats)).and(ProjectSpecification.searchTerm(query));
+
+        return projectRepository.findAll(projectSpecification).stream().map(this::convertToResponse).toList();
+    }
+
+    public ProjectResponse convertToResponse(Project project) {
+
+        Employee manager = employeeRepository.findById(project.getManagerId()).orElse(null);
+        Employee tl = project.getTlId() != null
+                ? employeeRepository.findById(project.getTlId()).orElse(null)
+                : null;
+
+        return new ProjectResponse(
+                project.getId(),
+                project.getProjectName(),
+                project.getClientName(),
+                project.getManagerId(),
+                manager != null ? manager.getName() : null,
+                tl != null ? tl.getEmpId() : null,
+                tl != null ? tl.getName() : null,
+                project.getAssignedHours(),
+                project.getWorkingHours(),
+                project.getAssignedDate(),
+                project.getProjectStatus(),
+                project.getSoftDelete(),
+                project.getModellingHours(),
+                project.getCheckingHours(),
+                project.getDetailingHours(),
+                project.getModellingTime(),
+                project.getCheckingTime(),
+                project.getDetailingTime(),
+                project.getStartDate(),
+                project.getCompletedDate(),
+                project.getStudyHours(),
+                project.getStudyHoursTracking(),
+                project.getExtraHours(),
+                project.getExtraHoursTracking(),
+                project.getProjectActivityStatus(),
+
+                // Newly added fields
+                project.getPlannedStartDate(),
+                project.getIfaGivenHours(),
+                project.getIfcGivenHours(),
+                project.getIfaExtraHours(),
+                project.getIfcExtraHours(),
+                project.getIfaProdHours(),
+                project.getIfcProdHours(),
+                project.getIfaExtraProdHours(),
+                project.getIfcExtraProdHours(),
+                project.getPlannedIfaDate(),
+                project.getActualIfaDate(),
+                project.getPlannedIfcDate(),
+                project.getActualIfcDate(),
+                project.getExtraHoursNote(),
+                project.getPlannedReifaDate(),
+                project.getActualReifaDate(),
+                project.getPlannedReifcDate(),
+                project.getActualReifcDate()
+        );
+    }
+
+    public void createProject(String projectName,String clientName,Long pmId,Long agmId,BigDecimal totalHours,LocalDate awardedDate,LocalDate plannedStartDate,LocalDate completedDate,BigDecimal ifaGivenHours,BigDecimal ifcGivenHours) {
+        Project project=new Project();
+
+        project.setProjectName(projectName);
+        project.setClientName(clientName);
+        project.setManagerId(pmId);
+        project.setAssignedHours(totalHours);
+        project.setAssignedDate(awardedDate);
+        project.setPlannedStartDate(plannedStartDate);
+        project.setCompletedDate(completedDate);
+
+        if(project.getModellingHours()==null){
+            project.setModellingHours(BigDecimal.ZERO);
+        }
+
+        if(project.getCheckingHours()==null){
+            project.setCheckingHours(BigDecimal.ZERO);
+        }
+
+        if(project.getDetailingHours()==null){
+            project.setDetailingHours(BigDecimal.ZERO);
+        }
+        project.setModellingTime(BigDecimal.ZERO);
+        project.setCheckingTime(BigDecimal.ZERO);
+        project.setDetailingTime(BigDecimal.ZERO);
+        project.setWorkingHours(BigDecimal.ZERO);
+        project.setIfaGivenHours(ifaGivenHours);
+        project.setIfcGivenHours(ifcGivenHours);
+        projectRepository.save(project);
+        notificationService.createNotification(
+                agmId,   // sender: AGM
+                pmId,    // receiver: PM
+                "New Project Assigned",
+                "AGM has assigned you a new project: " + projectName,
+                "PROJECT_ASSIGNMENT"
+        );
+    }
+    public List<Project> getActiveProjectsByManager(Long managerId) {
+        return projectRepository.findByManagerIdAndProjectStatusTrue(managerId).stream()
+                .filter(p -> !p.getSoftDelete())
+                .collect(Collectors.toList());
+    }
+
+    public Project updateProjectHours(Long tlId,Long projectId, BigDecimal addModellingHours, BigDecimal addCheckingHours, BigDecimal addDetailingHours, BigDecimal addStudyHours,String projectActivity,LocalDate startDate) {
+        Optional<Project> optionalProject = projectRepository.findById(projectId);
+
+        if (optionalProject.isPresent()) {
+            Project project = optionalProject.get();
+                project.setModellingHours(
+                        project.getModellingHours() == null ? addModellingHours :
+                                project.getModellingHours().add(addModellingHours)
+                );
+
+                project.setCheckingHours(
+                        project.getCheckingHours() == null ? addCheckingHours :
+                                project.getCheckingHours().add(addCheckingHours)
+                );
+
+                project.setDetailingHours(
+                        project.getDetailingHours() == null ? addDetailingHours :
+                                project.getDetailingHours().add(addDetailingHours)
+                );
+
+            project.setStudyHours(
+                    project.getStudyHours() == null ? addStudyHours :
+                            project.getStudyHours().add(addStudyHours)
+            );
+
+                project.setTlId(tlId);
+
+                project.setProjectActivityStatus(projectActivity);
+
+                project.setStartDate(startDate);
+
+                // Save back to repo
+                return projectRepository.save(project);
+        } else {
+            throw new RuntimeException("Project not found with ID: " + projectId);
+        }
+    }
+
+
+    public List<Project> getProjectsByManagerNotAssigned(Long managerId) {
+
+        List<Project> projects = projectRepository.findByManagerId(managerId);
+
+        // Filter based on modellingHour being not null
+        return projects.stream()
+                .filter(p -> p.getModellingHours() == null && !p.getSoftDelete())
+                .collect(Collectors.toList());
+    }
+
+    public Project editProject(ProjectRequest projectRequest)
+    {
+        Project old = projectRepository.findById(projectRequest.getId()).orElse(null);
+        old.setAssignedHours(projectRequest.getAssignedHours());
+        old.setModellingHours(projectRequest.getModellingHours());
+        old.setCheckingHours(projectRequest.getCheckingHours());
+        old.setDetailingHours(projectRequest.getDetailingHours());
+        old.setStudyHours(projectRequest.getStudyHours());
+        old.setManagerId(projectRequest.getManagerId());
+        old.setProjectName(projectRequest.getProjectName());
+        old.setClientName(projectRequest.getClientName());
+        old.setProjectStatus(projectRequest.isProjectStatus());
+        old.setPlannedIfaDate(projectRequest.getPlannedIfaDate());
+        old.setActualIfaDate(projectRequest.getActualIfaDate());
+        old.setPlannedIfcDate(projectRequest.getPlannedIfcDate());
+        old.setActualIfcDate(projectRequest.getActualIfcDate());
+        projectRepository.save(old);
+        return old;
+    }
+
+    public ProjectResponse toggleStatus(Long id) {
+        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project found with id "+id));
+        project.setProjectStatus(false);
+        project.setCompletedDate(LocalDate.now());
+        return convertToResponse(projectRepository.save(project));
+    }
+
+    public ProjectResponse setExtra(Long id,BigDecimal extraHours,String extraHoursNote) {
+        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project found with id "+id));
+        if(project.getExtraHours() != null){
+            project.setExtraHours(project.getExtraHours().add(extraHours));
+            String projectStatus = project.getProjectActivityStatus();
+            if(projectStatus == null){
+                project.setExtraHours(project.getExtraHours().add(extraHours));
+                project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+            }
+            else{
+                switch (projectStatus)
+                {
+                    case "IFA", "REIFA": {
+                        if(project.getIfaExtraHours() == null) project.setIfaExtraHours(extraHours);
+
+                        else  project.setIfaExtraHours(project.getIfaExtraHours().add(extraHours));
+
+                        project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+                        break;
+                    }
+                    case "IFC", "REIFC": {
+                        if(project.getIfcExtraHours() == null) project.setIfcExtraHours(extraHours);
+
+                        else  project.setIfcExtraHours(project.getIfcExtraHours().add(extraHours));
+
+                        project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+                        break;
+                    }
+                }
+            }
+        }
+        else{
+            project.setExtraHours(extraHours);
+            String projectStatus = project.getProjectActivityStatus();
+            if(projectStatus == null)
+            {
+                project.setExtraHours(extraHours);
+                project.setExtraHoursNote(project.getExtraHoursNote()+", "+extraHoursNote);
+            }
+            else {
+                switch (projectStatus)
+                {
+                    case "IFA", "REIFA": {
+                        project.setIfaExtraHours(extraHours);
+                        project.setExtraHoursNote(extraHoursNote);
+                        break;
+                    }
+                    case "IFC", "REIFC": {
+                        project.setIfcExtraHours(extraHours);
+                        project.setExtraHoursNote(extraHoursNote);
+                        break;
+                    }
+
+                }
+            }
+        }
+        //System.out.print(project.toString());
+        return convertToResponse(projectRepository.save(project));
+    }
+
+    public ProjectResponse extendCompletedDate(Long id,LocalDate completedDate) {
+        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project found with id "+id));
+        project.setCompletedDate(completedDate);
+        //System.out.print(project.toString());
+        return convertToResponse(projectRepository.save(project));
+    }
+
+    public List<ProjectResponse> getProjectsByTl(Long tlId)
+    {
+        return projectRepository.findByTlId(tlId).stream().filter(p -> !p.getSoftDelete()).map(this::convertToResponse).toList();
+    }
+
+    public ProjectResponse setActivity(Long id,String activity) {
+        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project Found"));
+        project.setProjectActivityStatus(activity);
+        return convertToResponse(projectRepository.save(project));
+    }
+
+    public Project softDelete(Long id) {
+        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project Found"));
+        project.setSoftDelete(true);
+        return projectRepository.save(project);
+    }
+
+    public Project updateIfaDate(Long id, LocalDate plannedIfaDate, LocalDate actualIfaDate,String projectActivityStatus) {
+        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project Found"));
+        if(projectActivityStatus.equals("IFA")) {
+            project.setPlannedIfaDate(plannedIfaDate);
+            project.setActualIfaDate(actualIfaDate);
+        } else if (projectActivityStatus.equals("REIFA")) {
+            project.setPlannedReifaDate(plannedIfaDate);
+            project.setActualReifaDate(actualIfaDate);
+        }
+        return projectRepository.save(project);
+    }
+
+    public Project updateIfcDate(Long id, LocalDate plannedIfcDate, LocalDate actualIfcDate,String projectActivityStatus) {
+        Project project = projectRepository.findById(id).orElseThrow(()-> new RuntimeException("No project Found"));
+        if(projectActivityStatus.equals("IFC")) {
+            project.setPlannedIfcDate(plannedIfcDate);
+            project.setActualIfcDate(actualIfcDate);
+        } else if (projectActivityStatus.equals("REIFC")) {
+            project.setPlannedReifcDate(plannedIfcDate);
+            project.setActualReifcDate(actualIfcDate);
+        }
+        return projectRepository.save(project);
+    }
+}
+
