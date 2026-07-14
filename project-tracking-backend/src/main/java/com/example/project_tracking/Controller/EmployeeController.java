@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/employee")
 @CrossOrigin(origins="*")
@@ -83,6 +85,15 @@ public class EmployeeController {
     @PutMapping("/soft-delete/{id}")
     public ResponseEntity<?> softDeleteEmployee(@PathVariable Long id) {
         return ResponseEntity.ok(employeeService.softDelete(id));
+    }
+
+    @GetMapping("/filtered")
+    public ResponseEntity<List<Employee>> getFilteredEmployees(
+            @RequestParam(required = false) String designation,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Long managerId
+    ) {
+        return ResponseEntity.ok(employeeService.getFilteredEmployees(designation, search, managerId));
     }
 
 }

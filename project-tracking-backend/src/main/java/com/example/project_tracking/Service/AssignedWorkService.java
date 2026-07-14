@@ -11,9 +11,12 @@ import com.example.project_tracking.Repository.ActivityRepository;
 import com.example.project_tracking.Repository.AssignedWorkRepository;
 import com.example.project_tracking.Repository.EmployeeRepository;
 import com.example.project_tracking.Repository.ProjectRepository;
+import com.example.project_tracking.Specification.AssignedWorkSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -121,8 +124,17 @@ public class AssignedWorkService {
                 assignedWork.getProject().getProjectActivityStatus());
     }
 
-    public List<AssignedWorkResponse> getAssignedWorksByManager(Long managerId) {
-        return assignedWorkRepository.findByManager_EmpId(managerId).stream().map(this::convertToResponse).toList();
+    public List<AssignedWorkResponse> getAssignedWorksByManager(Long managerId, String query, String status, LocalDate from,LocalDate to) {
+        Specification<AssignedWork> spec = Specification.allOf(
+                AssignedWorkSpecification.notDeleted(),
+                AssignedWorkSpecification.hasManagerId(managerId),
+                AssignedWorkSpecification.dateFrom(from),
+                AssignedWorkSpecification.dateTo(to),
+                AssignedWorkSpecification.employeeNameContains(query),
+                AssignedWorkSpecification.hasStatus(status)
+        );
+
+        return assignedWorkRepository.findAll(spec).stream().map(this::convertToResponse).toList();
     }
 
 }

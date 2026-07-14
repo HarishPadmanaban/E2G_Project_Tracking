@@ -7,7 +7,11 @@ import com.example.project_tracking.Model.LeaveBalance;
 import com.example.project_tracking.Repository.EmployeeRepository;
 import com.example.project_tracking.Repository.LeaveBalanceRepository;
 import com.example.project_tracking.Service.JWT.JWTService;
+import com.example.project_tracking.Specification.EmployeeSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,6 +37,33 @@ public class EmployeeService {
 
     public EmployeeService(EmployeeRepository employeeRepository, AuthenticationManager authenticationManager, JWTService jwtService) {
         this.employeeRepository = employeeRepository;
+    }
+
+    public DataTransfer userLogin(String username, String password) {
+        //String hashed = PasswordUtil.hashPassword(password);
+        Employee employee = employeeRepository.findByUsername(username)
+                .orElse(null);
+
+        if(employee==null) return null;
+
+        if (!employee.getPassword().equals(password)) {
+            return null;
+        }
+
+        if (employee != null) {
+            // Map Employee entity to DataTransfer DTO
+            return new DataTransfer(
+                    employee.getEmpId(),
+                    employee.getName(),
+                    employee.getDesignation(),
+                    employee.getIsManager(),  // isManager
+                    employee.getIsTL(),       // isTL
+                    employee.getReportingTo() ,
+                    employee.getDesignationCategory()
+            );
+        } else {
+            return null; // Will trigger 401 in controller
+        }
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
     }
@@ -151,6 +182,21 @@ public class EmployeeService {
             return jwtService.generateToken(userRequest.getUsername());
         }
         throw new RuntimeException("Invalid Credentials");
+    }
+
+    public List<Employee> getFilteredEmployees(String designation, String search, Long managerId) {
+
+        Specification<Employee> spec = Specification.allOf(
+                EmployeeSpecification.notDeleted(),
+                EmployeeSpecification.hasDesignation(designation),
+                EmployeeSpecification.searchTerm(search),
+                EmployeeSpecification.hasManagerId(managerId)
+        );
+
+        Sort sort = Sort.by("empId").ascending();
+
+        return employeeRepository.findAll(spec, sort).stream()// reuse whatever mapper backs /getallemployees
+                .toList();
     }
 
 }

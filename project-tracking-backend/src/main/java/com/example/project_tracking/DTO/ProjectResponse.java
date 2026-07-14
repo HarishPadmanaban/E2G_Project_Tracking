@@ -1,5 +1,7 @@
 package com.example.project_tracking.DTO;
 
+import jakarta.persistence.Column;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -38,6 +40,193 @@ public class ProjectResponse {
 
     private String projectActivityStatus;
 
+    private LocalDate plannedStartDate;
+
+    private BigDecimal ifaGivenHours;
+
+    private BigDecimal ifcGivenHours;
+
+    private BigDecimal ifaExtraHours;
+
+    private BigDecimal ifcExtraHours;
+
+    private BigDecimal ifaProdHours ;
+
+    private BigDecimal ifcProdHours ;
+
+    private BigDecimal ifaExtraProdHours ;
+
+    private BigDecimal ifcExtraProdHours ;
+
+    private LocalDate plannedIfaDate;
+
+    private LocalDate actualIfaDate;
+
+    private LocalDate plannedIfcDate;
+
+    private LocalDate actualIfcDate;
+
+    private String extraHoursNote;
+
+    private LocalDate plannedReifaDate;
+
+    private LocalDate actualReifaDate;
+
+    private LocalDate plannedReifcDate;
+
+    private LocalDate actualReifcDate;
+
+    public String getProjectActivityStatus() {
+        return projectActivityStatus;
+    }
+
+    public void setProjectActivityStatus(String projectActivityStatus) {
+        this.projectActivityStatus = projectActivityStatus;
+    }
+
+    public LocalDate getPlannedStartDate() {
+        return plannedStartDate;
+    }
+
+    public void setPlannedStartDate(LocalDate plannedStartDate) {
+        this.plannedStartDate = plannedStartDate;
+    }
+
+    public BigDecimal getIfaGivenHours() {
+        return ifaGivenHours;
+    }
+
+    public void setIfaGivenHours(BigDecimal ifaGivenHours) {
+        this.ifaGivenHours = ifaGivenHours;
+    }
+
+    public BigDecimal getIfcGivenHours() {
+        return ifcGivenHours;
+    }
+
+    public void setIfcGivenHours(BigDecimal ifcGivenHours) {
+        this.ifcGivenHours = ifcGivenHours;
+    }
+
+    public BigDecimal getIfaExtraHours() {
+        return ifaExtraHours;
+    }
+
+    public void setIfaExtraHours(BigDecimal ifaExtraHours) {
+        this.ifaExtraHours = ifaExtraHours;
+    }
+
+    public BigDecimal getIfcExtraHours() {
+        return ifcExtraHours;
+    }
+
+    public void setIfcExtraHours(BigDecimal ifcExtraHours) {
+        this.ifcExtraHours = ifcExtraHours;
+    }
+
+    public BigDecimal getIfaProdHours() {
+        return ifaProdHours;
+    }
+
+    public void setIfaProdHours(BigDecimal ifaProdHours) {
+        this.ifaProdHours = ifaProdHours;
+    }
+
+    public BigDecimal getIfcProdHours() {
+        return ifcProdHours;
+    }
+
+    public void setIfcProdHours(BigDecimal ifcProdHours) {
+        this.ifcProdHours = ifcProdHours;
+    }
+
+    public BigDecimal getIfaExtraProdHours() {
+        return ifaExtraProdHours;
+    }
+
+    public void setIfaExtraProdHours(BigDecimal ifaExtraProdHours) {
+        this.ifaExtraProdHours = ifaExtraProdHours;
+    }
+
+    public BigDecimal getIfcExtraProdHours() {
+        return ifcExtraProdHours;
+    }
+
+    public void setIfcExtraProdHours(BigDecimal ifcExtraProdHours) {
+        this.ifcExtraProdHours = ifcExtraProdHours;
+    }
+
+    public LocalDate getPlannedIfaDate() {
+        return plannedIfaDate;
+    }
+
+    public void setPlannedIfaDate(LocalDate plannedIfaDate) {
+        this.plannedIfaDate = plannedIfaDate;
+    }
+
+    public LocalDate getActualIfaDate() {
+        return actualIfaDate;
+    }
+
+    public void setActualIfaDate(LocalDate actualIfaDate) {
+        this.actualIfaDate = actualIfaDate;
+    }
+
+    public LocalDate getPlannedIfcDate() {
+        return plannedIfcDate;
+    }
+
+    public void setPlannedIfcDate(LocalDate plannedIfcDate) {
+        this.plannedIfcDate = plannedIfcDate;
+    }
+
+    public LocalDate getActualIfcDate() {
+        return actualIfcDate;
+    }
+
+    public void setActualIfcDate(LocalDate actualIfcDate) {
+        this.actualIfcDate = actualIfcDate;
+    }
+
+    public String getExtraHoursNote() {
+        return extraHoursNote;
+    }
+
+    public void setExtraHoursNote(String extraHoursNote) {
+        this.extraHoursNote = extraHoursNote;
+    }
+
+    public LocalDate getPlannedReifaDate() {
+        return plannedReifaDate;
+    }
+
+    public void setPlannedReifaDate(LocalDate plannedReifaDate) {
+        this.plannedReifaDate = plannedReifaDate;
+    }
+
+    public LocalDate getActualReifaDate() {
+        return actualReifaDate;
+    }
+
+    public void setActualReifaDate(LocalDate actualReifaDate) {
+        this.actualReifaDate = actualReifaDate;
+    }
+
+    public LocalDate getPlannedReifcDate() {
+        return plannedReifcDate;
+    }
+
+    public void setPlannedReifcDate(LocalDate plannedReifcDate) {
+        this.plannedReifcDate = plannedReifcDate;
+    }
+
+    public LocalDate getActualReifcDate() {
+        return actualReifcDate;
+    }
+
+    public void setActualReifcDate(LocalDate actualReifcDate) {
+        this.actualReifcDate = actualReifcDate;
+    }
 
     public ProjectResponse() {
     }
@@ -118,6 +307,52 @@ public class ProjectResponse {
         this.extraHours = extraHours;
         this.extraHoursTracking = extraHoursTracking;
         this.projectActivityStatus = projectActivityStatus;
+    }
+
+    public ProjectResponse(Long id, String projectName, String clientName, Long managerId, String managerName, Long tlId, String tlName, BigDecimal assignedHours, BigDecimal workingHours, LocalDate assignedDate, Boolean projectStatus, Boolean softDelete, BigDecimal modellingHours, BigDecimal checkingHours, BigDecimal detailingHours, BigDecimal modellingTime, BigDecimal checkingTime, BigDecimal detailingTime, LocalDate startDate, LocalDate completedDate, BigDecimal studyHours, BigDecimal studyHoursTracking, BigDecimal extraHours, BigDecimal extraHoursTracking, String projectActivityStatus, LocalDate plannedStartDate, BigDecimal ifaGivenHours, BigDecimal ifcGivenHours, BigDecimal ifaExtraHours, BigDecimal ifcExtraHours, BigDecimal ifaProdHours, BigDecimal ifcProdHours, BigDecimal ifaExtraProdHours, BigDecimal ifcExtraProdHours, LocalDate plannedIfaDate, LocalDate actualIfaDate, LocalDate plannedIfcDate, LocalDate actualIfcDate, String extraHoursNote, LocalDate plannedReifaDate, LocalDate actualReifaDate, LocalDate plannedReifcDate, LocalDate actualReifcDate) {
+        this.id = id;
+        this.projectName = projectName;
+        this.clientName = clientName;
+        this.managerId = managerId;
+        this.managerName = managerName;
+        this.tlId = tlId;
+        this.tlName = tlName;
+        this.assignedHours = assignedHours;
+        this.workingHours = workingHours;
+        this.assignedDate = assignedDate;
+        this.projectStatus = projectStatus;
+        this.softDelete = softDelete;
+        this.modellingHours = modellingHours;
+        this.checkingHours = checkingHours;
+        this.detailingHours = detailingHours;
+        this.modellingTime = modellingTime;
+        this.checkingTime = checkingTime;
+        this.detailingTime = detailingTime;
+        this.startDate = startDate;
+        this.completedDate = completedDate;
+        this.studyHours = studyHours;
+        this.studyHoursTracking = studyHoursTracking;
+        this.extraHours = extraHours;
+        this.extraHoursTracking = extraHoursTracking;
+        this.projectActivityStatus = projectActivityStatus;
+        this.plannedStartDate = plannedStartDate;
+        this.ifaGivenHours = ifaGivenHours;
+        this.ifcGivenHours = ifcGivenHours;
+        this.ifaExtraHours = ifaExtraHours;
+        this.ifcExtraHours = ifcExtraHours;
+        this.ifaProdHours = ifaProdHours;
+        this.ifcProdHours = ifcProdHours;
+        this.ifaExtraProdHours = ifaExtraProdHours;
+        this.ifcExtraProdHours = ifcExtraProdHours;
+        this.plannedIfaDate = plannedIfaDate;
+        this.actualIfaDate = actualIfaDate;
+        this.plannedIfcDate = plannedIfcDate;
+        this.actualIfcDate = actualIfcDate;
+        this.extraHoursNote = extraHoursNote;
+        this.plannedReifaDate = plannedReifaDate;
+        this.actualReifaDate = actualReifaDate;
+        this.plannedReifcDate = plannedReifcDate;
+        this.actualReifcDate = actualReifcDate;
     }
 
     // ===== Getters and Setters =====

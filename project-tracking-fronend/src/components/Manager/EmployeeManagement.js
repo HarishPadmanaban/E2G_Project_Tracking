@@ -5,7 +5,6 @@ import axiosInstance from "../axiosConfig";
 const EmployeesUnderManager = () => {
     const employee = JSON.parse(sessionStorage.getItem("employee"));
     const [employees, setEmployees] = useState([]);
-    const [filteredEmployees, setFilteredEmployees] = useState([]);
 
     const [searchTerm, setSearchTerm] = useState("");
     const [designationFilter, setDesignationFilter] = useState("");
@@ -14,56 +13,27 @@ const EmployeesUnderManager = () => {
     const [selectedEmp, setSelectedEmp] = useState(null);
     const [worklogs, setWorklogs] = useState([]);
 
-
+    // ✅ Fetch employees from backend whenever filters change
     useEffect(() => {
         if (!employee?.empId) return;
 
-        axiosInstance
-            .get(`/employee/getbymgr?mgrid=${employee.empId}`)
-            .then((res) => {
-                setEmployees(res.data);
-                setFilteredEmployees(res.data);
-            })
-            
-    }, [employee]);
+        const params = { managerId: employee.empId };
+        if (searchTerm.trim()) params.search = searchTerm.trim();
+        if (designationFilter) params.designation = designationFilter;
 
-    const applyFilter = (list, search, designation) => {
-        let result = list;
+        const timeout = setTimeout(() => {
+            axiosInstance
+                .get(`/employee/filtered`, { params })
+                .then((res) => setEmployees(res.data))
+                .catch((err) => console.error("Error fetching employees:", err));
+        }, 300); // debounce mainly benefits the search box
 
-        if (search.trim()) {
-            const term = search.toLowerCase();
-            result = result.filter(
-                (e) =>
-                    e.name.toLowerCase().includes(term) ||
-                    e.empId.toString().toLowerCase().includes(term)
-            );
-        }
-
-        if (designation) {
-            result = result.filter((e) =>
-                e.designation.trim().toLowerCase().includes(designation.toLowerCase())
-            );
-        }
-
-        setFilteredEmployees(result);
-    };
-
-    const handleSearch = (e) => {
-        const text = e.target.value;
-        setSearchTerm(text);
-        applyFilter(employees, text, designationFilter);
-    };
-
-    const handleDesignationFilter = (e) => {
-        const value = e.target.value;
-        setDesignationFilter(value);
-        applyFilter(employees, searchTerm, value);
-    };
+        return () => clearTimeout(timeout);
+    }, [employee, searchTerm, designationFilter]);
 
     const clearFilters = () => {
         setSearchTerm("");
         setDesignationFilter("");
-        setFilteredEmployees(employees);
     };
 
     const handleEmployeeClick = async (empId) => {
@@ -94,17 +64,11 @@ const EmployeesUnderManager = () => {
             const worklogRes = await axiosInstance.get(`/workdetails/employee/${empId}`);
             setWorklogs(worklogRes.data || []);
 
-            
-            
-
             setShowModal(true);
         } catch (err) {
-            
+            console.error("Error loading employee detail:", err);
         }
     };
-
-
-
 
     return (
         <div className={styles.dashboardContainer}>
@@ -116,15 +80,14 @@ const EmployeesUnderManager = () => {
                     type="text"
                     placeholder="Search id/name..."
                     value={searchTerm}
-                    onChange={handleSearch}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     className={styles.searchInput}
-
                 />
 
                 <div style={{ marginLeft: "auto", display: "flex", gap: "15px", marginRight: "18px" }}>
                     <select
                         value={designationFilter}
-                        onChange={handleDesignationFilter}
+                        onChange={(e) => setDesignationFilter(e.target.value)}
                         className={styles.filterSelect}
                     >
                         <option value="">All Designation</option>
@@ -136,7 +99,6 @@ const EmployeesUnderManager = () => {
                     <button onClick={clearFilters} className={styles.clearBtn}>
                         Clear
                     </button>
-
                 </div>
             </div>
 
@@ -151,14 +113,14 @@ const EmployeesUnderManager = () => {
                 </thead>
 
                 <tbody>
-                    {filteredEmployees.length === 0 ? (
+                    {employees.length === 0 ? (
                         <tr>
                             <td colSpan="3" className={styles.noData}>
                                 No employees found.
                             </td>
                         </tr>
                     ) : (
-                        filteredEmployees.map((emp) => (
+                        employees.map((emp) => (
                             <tr key={emp.empId} onClick={() => handleEmployeeClick(emp.empId)}>
                                 <td>{emp.empId}</td>
                                 <td>{emp.name}</td>
@@ -172,53 +134,50 @@ const EmployeesUnderManager = () => {
             {showModal && (
                 <div className={styles.overlay} onClick={() => setShowModal(false)}>
                     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                        
-
-                        {/* ✅ NEW: Worklogs section */}
+                        {/* ✅ Worklogs section */}
                         <h3 style={{ marginTop: "20px" }}>Worklogs</h3>
                         <div className={styles.memberTableWrapper}>
-                        <table className={styles.memberTable}>
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Employee</th>
-                                    <th>Project Name</th>
-                                    <th>Assigned Work</th>
-                                    <th>Activity Name</th>
-                                    <th>Status</th>
-                                    <th>Hours Worked</th>
-                                    <th>Remarks</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {worklogs.length === 0 ? (
+                            <table className={styles.memberTable}>
+                                <thead>
                                     <tr>
-                                        <td colSpan="4" className={styles.noData}>No worklogs found.</td>
+                                        <th>Date</th>
+                                        <th>Employee</th>
+                                        <th>Project Name</th>
+                                        <th>Assigned Work</th>
+                                        <th>Activity Name</th>
+                                        <th>Status</th>
+                                        <th>Hours Worked</th>
+                                        <th>Remarks</th>
                                     </tr>
-                                ) : (
-                                    worklogs.map((log, index) => (
-                                        <tr key={index}>
-                                            <td>{log.date}</td>
-                                            <td>{log.employeeName}</td>
-                                            <td>{log.projectName}</td>
-                                            <td>{log.assignedWork}</td>
-                                            <td>{log.activityName}</td>
-                                            <td>{log.status}</td>
-                                            <td>{log.workHours}</td>
-                                            <td>{log.remarks}</td>
+                                </thead>
+                                <tbody>
+                                    {worklogs.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="4" className={styles.noData}>No worklogs found.</td>
                                         </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                                </div>
+                                    ) : (
+                                        worklogs.map((log, index) => (
+                                            <tr key={index}>
+                                                <td>{log.date}</td>
+                                                <td>{log.employeeName}</td>
+                                                <td>{log.projectName}</td>
+                                                <td>{log.assignedWork}</td>
+                                                <td>{log.activityName}</td>
+                                                <td>{log.status}</td>
+                                                <td>{log.workHours}</td>
+                                                <td>{log.remarks}</td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                         <button className={styles.closeBtn} onClick={() => setShowModal(false)}>
-                            X   
+                            X
                         </button>
                     </div>
                 </div>
             )}
-
         </div>
     );
 };

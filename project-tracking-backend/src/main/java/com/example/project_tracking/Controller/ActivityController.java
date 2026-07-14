@@ -30,10 +30,11 @@ public class ActivityController {
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @GetMapping("/all")
-    public ResponseEntity<?> getAll()
+    public ResponseEntity<?> getAll(@RequestParam(required = false) String type,
+                                    @RequestParam(required = false) String category,
+                                    @RequestParam(required = false) String query)
     {
-        List<Activity> response = activityService.findAllActivity();
-        return response!=null ? ResponseEntity.ok(response) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok(activityService.findAllActivity(type,category,query));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")

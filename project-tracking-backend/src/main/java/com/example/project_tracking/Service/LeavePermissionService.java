@@ -6,7 +6,10 @@ import com.example.project_tracking.Model.LeaveBalance;
 import com.example.project_tracking.Model.LeavePermission;
 import com.example.project_tracking.Repository.LeaveBalanceRepository;
 import com.example.project_tracking.Repository.LeavePermissionRepository;
+import com.example.project_tracking.Specification.LeavePermissionSpecification;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,11 +34,20 @@ public class LeavePermissionService {
     }
 
     // Get all requests as DTOs
-    public List<LeavePermissionResponse> getAllRequests() {
-        return leavePermissionRepository.findAll()
-                .stream()
+    public List<LeavePermissionResponse> getAllRequests(String status, LocalDate from, LocalDate to,Long managerId,String query) {
+        Specification<LeavePermission> spec = Specification.allOf(
+                LeavePermissionSpecification.isActive(),
+                LeavePermissionSpecification.hasStatus(status),
+                LeavePermissionSpecification.hasManagerId(managerId),
+                LeavePermissionSpecification.appliedFrom(from),
+                LeavePermissionSpecification.appliedTo(to)
+        );
+
+        Sort sort = Sort.by("appliedDate").descending();
+
+        return leavePermissionRepository.findAll(spec, sort).stream()
                 .map(this::mapToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // Get request by ID as DTO

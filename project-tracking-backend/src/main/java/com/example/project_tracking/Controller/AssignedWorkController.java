@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -46,8 +47,13 @@ public class AssignedWorkController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/manager/{managerId}")
-    public ResponseEntity<?> getAssignedWorksByManager(@PathVariable Long managerId) {
-        return ResponseEntity.ok(assignedWorkService.getAssignedWorksByManager(managerId));
+    public ResponseEntity<?> getAssignedWorksByManager(@PathVariable Long managerId,
+                                                       @RequestParam(required = false) String query,
+                                                       @RequestParam(required = false) String status,
+                                                       @RequestParam(required = false)LocalDate from,
+                                                       @RequestParam(required = false)LocalDate to
+                                                       ) {
+        return ResponseEntity.ok(assignedWorkService.getAssignedWorksByManager(managerId,query,status,from,to));
     }
 
     @PreAuthorize("isAuthenticated()")

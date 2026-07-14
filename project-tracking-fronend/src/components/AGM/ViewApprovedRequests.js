@@ -3,118 +3,94 @@ import axiosInstance from "../axiosConfig";
 import styles from "../../styles/Manager/ViewRequests.module.css";
 import XLSX from "xlsx-js-style";
 
-const ViewApprovedRequests = () => {
+
+  const ViewApprovedRequests = () => {
   const [requests, setRequests] = useState([]);
-  const [filteredRequests, setFilteredRequests] = useState([]);
   const [managerList, setManagerList] = useState([]);
-  const [selectedManager, setSelectedManager] = useState("All");
+  const [selectedManager, setSelectedManager] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [dateFilter, setDateFilter] = useState("All");
   const [customRange, setCustomRange] = useState({ from: "", to: "" });
   const [showCustomBox, setShowCustomBox] = useState(false);
 
-
+  // fetch manager list once (or derive from a dedicated /employee/getallmanagers endpoint)
   useEffect(() => {
-    axiosInstance
-      .get("/leave/all")
-      .then((res) => {
-        setRequests(res.data);
-        setFilteredRequests(res.data);
-        const managers = [...new Set(res.data.map((r) => r.managerName))];
-        setManagerList(managers);
-      })
+    axiosInstance.get("/employee/getallmanagers").then((res) => {
+      const mgrMap = {};
+      res.data.forEach((m) => {
+        mgrMap[m.empId] = m.name;
+      });
+      setManagerList(mgrMap);
+    });
   }, []);
 
-  const parseLocalDate = (dateStr) => {
-    if (!dateStr) return null;
-    const [y, m, d] = dateStr.split("-");
-    return new Date(y, m - 1, d);  // Local timezone (not UTC!)
+
+  const toISO = (d) => d.toISOString().slice(0, 10);
+
+  const computeDateRange = () => {
+    const today = new Date();
+    switch (dateFilter) {
+      case "Today":
+        return { from: toISO(today), to: toISO(today) };
+      case "Yesterday": {
+        const y = new Date();
+        y.setDate(today.getDate() - 1);
+        return { from: toISO(y), to: toISO(y) };
+      }
+      case "Last 7 Days": {
+        const past = new Date();
+        past.setDate(today.getDate() - 7);
+        return { from: toISO(past), to: toISO(today) };
+      }
+      case "Last 30 Days": {
+        const past = new Date();
+        past.setDate(today.getDate() - 30);
+        return { from: toISO(past), to: toISO(today) };
+      }
+      case "Custom":
+        return customRange.from && customRange.to
+          ? { from: customRange.from, to: customRange.to }
+          : { from: undefined, to: undefined };
+      default:
+        return { from: undefined, to: undefined };
+    }
   };
 
+  const fetchRequests = async () => {
+    const { from, to } = computeDateRange();
+    const res = await axiosInstance.get("/leave/all", {
+      params: {
+        managerId: selectedManager || undefined,
+        status: statusFilter !== "All" ? statusFilter : undefined,
+        from,
+        to,
+      },
+    });
+    setRequests(res.data);
+  };
 
   useEffect(() => {
-    let data = [...requests];
-    const today = new Date();
+    fetchRequests();
+  }, [selectedManager, statusFilter, dateFilter, customRange]);
 
-    // Filter by Manager
-    if (selectedManager !== "All") {
-      data = data.filter((r) => r.managerName === selectedManager);
-    }
-
-    // Filter by Status
-    if (statusFilter !== "All") {
-      data = data.filter((r) => r.status === statusFilter);
-    }
-
-    // DATE FILTER FIXED
-    if (dateFilter === "Today") {
-      data = data.filter(
-        (r) => parseLocalDate(r.appliedDate).toDateString() === today.toDateString()
-      );
-    }
-    else if (dateFilter === "Yesterday") {
-      const yesterday = new Date();
-      yesterday.setDate(today.getDate() - 1);
-      data = data.filter(
-        (r) =>
-          parseLocalDate(r.appliedDate).toDateString() ===
-          yesterday.toDateString()
-      );
-    }
-    else if (dateFilter === "Last 7 Days") {
-      const past7 = new Date();
-      past7.setDate(today.getDate() - 7);
-      data = data.filter(
-        (r) =>
-          parseLocalDate(r.appliedDate) >= past7 &&
-          parseLocalDate(r.appliedDate) <= today
-      );
-    }
-    else if (dateFilter === "Last 30 Days") {
-      const past30 = new Date();
-      past30.setDate(today.getDate() - 30);
-      data = data.filter(
-        (r) =>
-          parseLocalDate(r.appliedDate) >= past30 &&
-          parseLocalDate(r.appliedDate) <= today
-      );
-    }
-    else if (dateFilter === "Custom" && customRange.from && customRange.to) {
-      const from = parseLocalDate(customRange.from);
-      const to = parseLocalDate(customRange.to);
-      data = data.filter(
-        (r) =>
-          parseLocalDate(r.appliedDate) >= from &&
-          parseLocalDate(r.appliedDate) <= to
-      );
-    }
-
-    data.sort(
-      (a, b) =>
-        parseLocalDate(b.appliedDate) - parseLocalDate(a.appliedDate)
-    );
-
-    setFilteredRequests(data);
-  }, [selectedManager, statusFilter, dateFilter, customRange, requests]);
-
-
-  // 🔹 Clear Filters
   const clearFilters = () => {
-    setSelectedManager("All");
+    setSelectedManager("");
     setStatusFilter("All");
     setDateFilter("All");
     setCustomRange({ from: "", to: "" });
-    setFilteredRequests(requests);
     setShowCustomBox(false);
   };
 
+
+  
+
   const exportToExcel = () => {
-    if (filteredRequests.length === 0) {
+    if (requests.length === 0) {
       alert("No data available to export!");
       return;
     }
 
-    const worksheetData = filteredRequests.map((r) => ({
+    const worksheetData = requests.map((r) => ({
       Manager: r.managerName || "-",
       Employee: r.employeeName || "-",
       AppliedDate: r.appliedDate || "-",
@@ -252,11 +228,11 @@ const ViewApprovedRequests = () => {
           onChange={(e) => setSelectedManager(e.target.value)}
           className={styles.filterSelect}
         >
-          <option value="All">All Managers</option>
-          {managerList.map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
+          <option value="">All Managers</option>
+  {Object.entries(managerList).map(([id, name]) => (
+    <option key={id} value={id}>
+      {name}
+    </option>
           ))}
         </select>
 
@@ -342,14 +318,14 @@ const ViewApprovedRequests = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredRequests.length === 0 ? (
+            {requests.length === 0 ? (
               <tr>
                 <td colSpan="13" className={styles.noData}>
                   No requests found.
                 </td>
               </tr>
             ) : (
-              filteredRequests.map((r) => (
+              requests.map((r) => (
                 <tr key={r.id}>
                   <td>{r.managerName || "-"}</td>
                   <td>{r.employeeName || "-"}</td>

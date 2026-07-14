@@ -3,6 +3,7 @@ package com.example.project_tracking.Repository;
 import com.example.project_tracking.Model.AssignedWork;
 import com.example.project_tracking.Model.WorkDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -10,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface WorkDetailsRepository extends JpaRepository<WorkDetails,Long> {
+public interface WorkDetailsRepository extends JpaRepository<WorkDetails,Long>, JpaSpecificationExecutor<WorkDetails> {
 
         // Fetch all work details by employee ID
         List<WorkDetails> findByAssignedWorkId_Employee_EmpId(Long employeeId);

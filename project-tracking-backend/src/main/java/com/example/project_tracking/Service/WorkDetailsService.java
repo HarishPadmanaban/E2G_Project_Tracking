@@ -4,7 +4,13 @@ import com.example.project_tracking.DTO.WorkDetailsRequest;
 import com.example.project_tracking.DTO.WorkDetailsResponse;
 import com.example.project_tracking.Model.*;
 import com.example.project_tracking.Repository.*;
+import com.example.project_tracking.Specification.WorkDetailsSpecification;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -199,6 +205,29 @@ public class WorkDetailsService {
                 .stream().filter(workDetails ->!Boolean.TRUE.equals(workDetails.getIs_Deleted()))
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
+    }
+
+    public Page<WorkDetailsResponse> getByProjectPaged(
+            Long projectId, String status, String employeeName,
+            LocalDate fromDate, LocalDate toDate,
+            int page, int size) {
+
+        Specification<WorkDetails> spec = Specification.allOf(
+                WorkDetailsSpecification.notDeleted(),
+                WorkDetailsSpecification.belongsToProject(projectId),
+                WorkDetailsSpecification.hasStatus(status),
+                WorkDetailsSpecification.employeeNameContains(employeeName),
+                WorkDetailsSpecification.dateFrom(fromDate),
+                WorkDetailsSpecification.dateTo(toDate)
+        );
+
+        Sort sort = Sort.by("date").descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<WorkDetails> workPage = workDetailsRepository.findAll(spec, pageable);
+
+        return workPage.map(this::convertToResponse);
     }
 
     // ✅ 6. Get all logs by activity ID
@@ -1013,6 +1042,24 @@ public class WorkDetailsService {
         }
 
         System.out.println("Negative workHours correction completed!");
+    }
+
+    public Page<WorkDetailsResponse> getFilteredWorkDetails(
+            Long managerId, Long projectId, LocalDate from, LocalDate to, String search,
+            int page, int size) {
+
+        Specification<WorkDetails> spec = Specification.allOf(
+                WorkDetailsSpecification.notDeleted(),
+                WorkDetailsSpecification.hasManagerId(managerId),
+                WorkDetailsSpecification.belongsToProject(projectId),
+                WorkDetailsSpecification.dateFrom(from),
+                WorkDetailsSpecification.dateTo(to),
+                WorkDetailsSpecification.searchTerm(search)
+        );
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("date").descending());
+
+        return workDetailsRepository.findAll(spec, pageable).map(this::convertToResponse);
     }
 
 }

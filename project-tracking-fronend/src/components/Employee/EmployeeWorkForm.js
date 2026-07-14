@@ -85,7 +85,7 @@ const EmployeeWorkForm = () => {
   }, [activities]);
 
   // Resume or restore logic — ONLY run for employee mode (skip when manager view is present)
-  useEffect(() => {
+   useEffect(() => {
     // CASE 1: If there's an activeWorkId (stopped-but-not-submitted), fetch by ID
       console.log("[resume-effect] fired", {
     employee: employee?.empId,
@@ -162,7 +162,7 @@ const EmployeeWorkForm = () => {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employee, projects, activities, activeWorkId]);
-
+  
   const fetchAssignedActivities = async (projectId, employeeId) => {
     try {
       const response = await axiosInstance.get(

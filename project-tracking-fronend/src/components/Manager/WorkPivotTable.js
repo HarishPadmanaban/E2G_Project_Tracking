@@ -182,7 +182,7 @@ const WorkPivotTable = () => {
         Date:            row.date,
         "Assigned Work": row.assignedWork,
       }));
-
+ 
       setRows(formattedRows);
       setManagerList(mgrs || []);
 

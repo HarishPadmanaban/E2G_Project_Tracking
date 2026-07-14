@@ -2,9 +2,12 @@ package com.example.project_tracking.Controller;
 import com.example.project_tracking.DTO.LeavePermissionResponse;
 import com.example.project_tracking.Model.LeavePermission;
 import com.example.project_tracking.Service.LeavePermissionService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -34,13 +37,20 @@ public class LeavePermissionController {
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @GetMapping("/all")
-    public ResponseEntity<?> getAllRequests() {
-        return ResponseEntity.ok(leavePermissionService.getAllRequests());
+    public ResponseEntity<?> getAllRequests(@RequestParam(required = false) String status,
+                                            @RequestParam(required = false) Long managerId,
+                                            @RequestParam(required = false) String query,
+                                            @RequestParam(required = false)
+                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                            @RequestParam(required = false)
+                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        return ResponseEntity.ok(leavePermissionService.getAllRequests(status,from,to,managerId,query));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/manager/{managerId}")
-    public ResponseEntity<?> getByManagerPending(@PathVariable Long managerId) {
+    public ResponseEntity<?> getByManagerPending(@PathVariable Long managerId,
+                                                 @RequestParam(required = false) String status) {
         return ResponseEntity.ok(leavePermissionService.getRequestsByManagerId(managerId));
     }
 

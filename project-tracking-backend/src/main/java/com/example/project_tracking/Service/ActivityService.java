@@ -2,6 +2,8 @@ package com.example.project_tracking.Service;
 
 import com.example.project_tracking.Model.Activity;
 import com.example.project_tracking.Repository.ActivityRepository;
+import com.example.project_tracking.Specification.ActivitySpecification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,10 +16,15 @@ public class ActivityService {
         this.activityRepository = activityRepository;
     }
 
-    public List<Activity> findAllActivity() {
-        return activityRepository.findAll()
+    public List<Activity> findAllActivity(String type,String category,String query) {
+        Specification<Activity> spec = Specification.allOf(
+                ActivitySpecification.notDeleted(),
+                ActivitySpecification.hasType(type),
+                ActivitySpecification.hasCategory(category),
+                ActivitySpecification.hasSearchTerm(query)
+        );
+        return activityRepository.findAll(spec)
                 .stream()
-                .filter(activity -> !activity.getSoftDelete()) // assuming softDelete is boolean
                 .toList();
     }
 

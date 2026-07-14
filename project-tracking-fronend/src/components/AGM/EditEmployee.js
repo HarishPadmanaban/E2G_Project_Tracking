@@ -121,51 +121,39 @@ const EditEmployee = () => {
   // Redirect if not logged in
 
 
-  // Fetch employees + managers
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const empRes = await axiosInstance.get("/employee/getallemployees");
-        setEmployees(empRes.data);
-        setFilteredEmployees(empRes.data);
 
-        const mgrRes = await axiosInstance.get("/employee/getallmanagers");
-        setManagerList(mgrRes.data);
-      } catch (err) {
+// fetch managers once (for the "Reporting Manager" dropdown, unrelated to filtering)
+useEffect(() => {
+  axiosInstance.get("/employee/getallmanagers").then((res) => {
+    setManagerList(res.data);
+  });
+}, []);
 
-      }
-    };
-    fetchData();
-  }, []);
+const fetchEmployees = async () => {
+  try {
+    const res = await axiosInstance.get("/employee/filtered", {
+      params: {
+        designation: selectedDesignation !== "All" ? selectedDesignation : undefined,
+        search: searchTerm || undefined,
+      },
+    });
+    setEmployees(res.data);
+  } catch (err) {
+    console.error(err);
+  }
+};
 
-  // Apply filters
-  useEffect(() => {
-    let data = [...employees];
-
-    if (selectedDesignation !== "All") {
-      data = data.filter((emp) => emp.designation.trim().trim().trim() === selectedDesignation);
-    }
-
-    if (searchTerm.trim() !== "") {
-      const term = searchTerm.toLowerCase();
-      data = data.filter(
-        (e) =>
-          e.name?.toLowerCase().includes(term) ||
-          String(e.empId).toLowerCase().includes(term)
-          ||
-          e.designation.trim().trim().trim()?.toLowerCase().includes(term)
-      );
-    }
-
-    data.sort((a, b) => a.id - b.id);
-    setFilteredEmployees(data);
-  }, [searchTerm, selectedDesignation, employees]);
+useEffect(() => {
+  const timer = setTimeout(() => {
+    fetchEmployees();
+  }, 300);
+  return () => clearTimeout(timer);
+}, [selectedDesignation, searchTerm]);
 
   // Clear filters
   const clearFilters = () => {
     setSelectedDesignation("All");
     setSearchTerm("");
-    setFilteredEmployees(employees);
   };
 
   const handleDelete = async (empId) => {
@@ -173,11 +161,7 @@ const EditEmployee = () => {
       try {
         await axiosInstance.put(`/employee/soft-delete/${empId}`);
         showToast("🗑️ Employee deleted successfully!", "success");
-
-        // Remove deleted employee from the table
-        const updated = employees.filter((e) => e.empId !== empId);
-        setEmployees(updated);
-        setFilteredEmployees(updated);
+        await fetchEmployees();
       } catch (error) {
         showToast("Error deleting employee!", "error");
       }
@@ -246,11 +230,7 @@ const EditEmployee = () => {
       await axiosInstance.put("/employee/editemployee", payload);
       showToast("✅ Employee updated successfully!", "success");
       setSelectedEmployee(null);
-
-      // Refresh list
-      const refreshed = await axiosInstance.get("/employee/getallemployees");
-      setEmployees(refreshed.data);
-      setFilteredEmployees(refreshed.data);
+await fetchEmployees();
     } catch (error) {
 
       showToast("Error updating employee!", "error");
@@ -313,14 +293,14 @@ const EditEmployee = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredEmployees.length === 0 ? (
+              {employees.length === 0 ? (
                 <tr>
                   <td colSpan="7" className={styles.noData}>
                     No employees found.
                   </td>
                 </tr>
               ) : (
-                filteredEmployees.map((emp) => (
+                employees.map((emp) => (
                   <tr key={emp.id} >
                     <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.empId}</td>
                     <td onClick={() => handleEmployeeClick(emp.empId)}>{emp.name}</td>

@@ -4,6 +4,7 @@ import com.example.project_tracking.DTO.WorkDetailsRequest;
 import com.example.project_tracking.DTO.WorkDetailsResponse;
 import com.example.project_tracking.Service.PivotService;
 import com.example.project_tracking.Service.WorkDetailsService;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -188,7 +189,38 @@ public class WorkDetailsController {
         return "Fixed!!!";
     }
 
+    @GetMapping("/project/{id}/paged")
+    public ResponseEntity<Page<WorkDetailsResponse>> getByProjectPaged(
+            @PathVariable Long id,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String employeeName,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(
+                workDetailsService.getByProjectPaged(id, status, employeeName, from, to, page, size)
+        );
+    }
 
+    @GetMapping("/filtered")
+    public ResponseEntity<Page<WorkDetailsResponse>> getFilteredWorkDetails(
+            @RequestParam(required = false) Long managerId,
+            @RequestParam(required = false) Long projectId,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        return ResponseEntity.ok(
+                workDetailsService.getFilteredWorkDetails(managerId, projectId, from, to, search, page, size)
+        );
+    }
 
 }
 

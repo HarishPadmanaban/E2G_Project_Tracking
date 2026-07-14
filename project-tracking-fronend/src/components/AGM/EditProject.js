@@ -12,9 +12,10 @@ const EditProject = () => {
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [managerList, setManagerList] = useState([]);
-  const [selectedManager, setSelectedManager] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const { showToast } = useToast();
+  const [managers, setManagers] = useState({}); // { empId: name }
+const [selectedManager, setSelectedManager] = useState(""); // "" = All
 
   const [formData, setFormData] = useState({
     id: "",
@@ -32,42 +33,44 @@ const EditProject = () => {
   // Redirect if not logged in
 
 
-  // Fetch all projects initially
-  // Fetch all projects & managers together
-  useEffect(() => {
-    const fetchProjectsAndManagers = async () => {
-      try {
-        const [projectsRes, managersRes] = await Promise.all([
-          axiosInstance.get("/project/"),
-          axiosInstance.get("/employee/getallmanagers")
-        ]);
+  // Fetch manager list once
+useEffect(() => {
+  axiosInstance.get("/employee/getallmanagers").then((res) => {
+    const mgrMap = {};
+    res.data.forEach((m) => {
+      mgrMap[m.empId] = m.name;
+    });
+    setManagers(mgrMap);
+  });
+}, []);
 
-        const projects = projectsRes.data;
-        const managers = managersRes.data;
+const fetchProjects = async () => {
+  try {
+    const endpoint = selectedManager
+      ? `/project/${selectedManager}`
+      : `/project/`;
 
-        // Map managerId → managerName
-        const projectsWithManagerNames = projects.map((project) => {
-          const manager = managers.find((m) => m.empId === project.managerId);
-          return {
-            ...project,
-            managerName: manager ? manager.name : "—",
-          };
-        });
+    const res = await axiosInstance.get(endpoint, {
+      params: { query: searchTerm || undefined },
+    });
 
-        // Set project and filtered data
-        setProjects(projectsWithManagerNames);
-        setFilteredProjects(projectsWithManagerNames);
+    const withNames = res.data.map((p) => ({
+      ...p,
+      managerName: managers[p.managerId] || "—",
+    }));
+    setProjects(withNames);
+  } catch (err) {
+    console.error(err);
+  }
+};
 
-        // Populate manager dropdown list
-        const managerNames = managers.map((m) => m.name);
-        setManagerList(managerNames);
-
-      } catch (err) {
-      }
-    };
-
-    fetchProjectsAndManagers();
-  }, []);
+// Debounce: fires on mount too, once managers are loaded
+useEffect(() => {
+  const timer = setTimeout(() => {
+    fetchProjects();
+  }, 300);
+  return () => clearTimeout(timer);
+}, [selectedManager, searchTerm, managers]);
 
 
 
@@ -100,10 +103,9 @@ const EditProject = () => {
 
   // 🔹 Clear Filters
   const clearFilters = () => {
-    setSelectedManager("All");
-    setSearchTerm("");
-    setFilteredProjects(projects);
-  };
+  setSelectedManager("");
+  setSearchTerm("");
+};
 
   // When clicking edit, populate form
   const handleEdit = (project) => {
@@ -138,11 +140,7 @@ const EditProject = () => {
       try {
         await axiosInstance.put(`/project/soft-delete/${projectId}`);
         showToast("🗑️ Project deleted successfully!", "success");
-
-        // Remove deleted project from state
-        const updated = projects.filter((p) => p.id !== projectId);
-        setProjects(updated);
-        setFilteredProjects(updated);
+        await fetchProjects();
       } catch (error) {
         showToast("Error deleting project!", "error");
       }
@@ -203,13 +201,7 @@ const EditProject = () => {
       setSelectedProject(null);
 
       // Refresh list
-      const refreshed = await axiosInstance.get("/project/");
-      setProjects(refreshed.data);
-      setFilteredProjects(refreshed.data);
-
-      // Refresh manager list
-      const managers = [...new Set(refreshed.data.map((p) => p.managerName).filter(Boolean))];
-      setManagerList(managers);
+       await fetchProjects();
     } catch (error) {
 
       showToast("Error updating project!", "error");
@@ -228,7 +220,7 @@ const EditProject = () => {
             <div className={styles.searchBox}>
               <input
                 type="text"
-                placeholder="Search projects, clients, managers..."
+                placeholder="Search projects, clients"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={styles.searchInput}
@@ -237,17 +229,17 @@ const EditProject = () => {
 
             {/* Manager Filter */}
             <select
-              value={selectedManager}
-              onChange={(e) => setSelectedManager(e.target.value)}
-              className={styles.filterSelect}
-            >
-              <option value="All">All Managers</option>
-              {managerList.filter((pm) => pm.empId!==1004 && pm.empId!==1196).map((m) => (
-                <option key={m} value={m}>
-                  {m}
-                </option>
-              ))}
-            </select>
+  value={selectedManager}
+  onChange={(e) => setSelectedManager(e.target.value)}
+  className={styles.filterSelect}
+>
+  <option value="">All Managers</option>
+  {Object.entries(managers).map(([id, name]) => (
+    <option key={id} value={id}>
+      {name}
+    </option>
+  ))}
+</select>
 
             {/* Clear Button */}
             <button className={styles.clearBtn} onClick={clearFilters}>
@@ -276,14 +268,14 @@ const EditProject = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredProjects.length === 0 ? (
+              {projects.length === 0 ? (
                 <tr>
                   <td colSpan="7" className={styles.noData}>
                     No projects found.
                   </td>
                 </tr>
               ) : (
-                filteredProjects.map((proj) => (
+                projects.map((proj) => (
                   <tr key={proj.id}>
                     <td>{proj.id}</td>
                     <td>{proj.projectName}</td>

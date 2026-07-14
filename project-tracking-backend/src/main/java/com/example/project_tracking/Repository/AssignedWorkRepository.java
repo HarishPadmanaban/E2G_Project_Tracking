@@ -2,13 +2,14 @@ package com.example.project_tracking.Repository;
 
 import com.example.project_tracking.Model.AssignedWork;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AssignedWorkRepository extends JpaRepository<AssignedWork, Long> {
+public interface AssignedWorkRepository extends JpaRepository<AssignedWork, Long>, JpaSpecificationExecutor<AssignedWork> {
 
     // Get all assigned works for a specific employee
     List<AssignedWork> findByEmployeeEmpId(Long empId);

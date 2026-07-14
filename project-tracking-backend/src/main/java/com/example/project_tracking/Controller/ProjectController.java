@@ -25,17 +25,26 @@ public class ProjectController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public ResponseEntity<?> getProjectsByManagerId(@PathVariable long id)
+//    @GetMapping("/{id}")
+//    public ResponseEntity<?> getProjectsByManagerId(@PathVariable long id)
+//    {
+//        System.out.println(id);
+//        return ResponseEntity.ok(projectService.getProjectsByManager(id));
+//    }
+
+    @GetMapping(value = {"/","/{mgrId}"})
+    public ResponseEntity<?> getAllProjects(@PathVariable(required = false) Long mgrId,@RequestParam(required = false) String query)
     {
-        System.out.println(id);
-        return ResponseEntity.ok(projectService.getProjectsByManager(id));
+        return ResponseEntity.ok(projectService.getAll(mgrId,query));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @GetMapping("/")
     public ResponseEntity<?> getAllProjects()
+    @GetMapping(value = {"/all","/all/{mgrId}"})
+    public ResponseEntity<?> getProjectsByProjectStatus(@RequestParam(required = false) String projectStatus,@PathVariable(required = false) Long mgrId,@RequestParam(required = false) String query)
     {
-
-        return ResponseEntity.ok(projectService.getAll());
+        return ResponseEntity.ok(projectService.getProjectsByProjectStatus(projectStatus,mgrId,query));
     }
 
     @PreAuthorize("isAuthenticated()")
