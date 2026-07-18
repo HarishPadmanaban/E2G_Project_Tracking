@@ -282,6 +282,14 @@ const EmployeeWorkForm = () => {
     }
   };
 
+  const getLocalDate = () => {
+  const now = new Date();
+
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(
+    now.getDate()
+  ).padStart(2, "0")}`;
+};
+
   // Employee's Start/Stop flow (preserved)
   const handleStartStop = () => {
     if (!isRunning) {
@@ -302,7 +310,7 @@ const EmployeeWorkForm = () => {
         projectId: formData.projectId,
         activityId: formData.activityId,
         activityName: formData.activityName,
-        date: new Date().toISOString().split("T")[0],
+        date: getLocalDate(),
         startTime: start + ":00",
         projectActivity: formData.projectActivity,
         assignedWork: formData.assignedWork,
@@ -701,7 +709,7 @@ const EmployeeWorkForm = () => {
               <label>Date</label>
               <input
                 type="text"
-                value={new Date().toISOString().split("T")[0]}
+                value={getLocalDate()}
                 readOnly
               />
             </div>
