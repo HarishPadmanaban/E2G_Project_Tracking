@@ -37,6 +37,8 @@ public class EmployeeService {
 
     public EmployeeService(EmployeeRepository employeeRepository, AuthenticationManager authenticationManager, JWTService jwtService) {
         this.employeeRepository = employeeRepository;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     public DataTransfer userLogin(String username, String password) {
@@ -64,8 +66,6 @@ public class EmployeeService {
         } else {
             return null; // Will trigger 401 in controller
         }
-        this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
     }
 
     public DataTransfer getEmployeeById(long id)

@@ -83,47 +83,26 @@ const ManagerDashboard = () => {
     setWorklogPage(0);
   }, [filterStatus, filterEmployee, filterFromDate, filterToDate]);
 
-  const isAGM =
-    employee?.designation.trim() === "Assistant General Manager" ||
-    employee?.designation.trim() === "Assistant IT Manager";
+useEffect(() => {
+  if (!employee?.empId) return;
 
-  useEffect(() => {
-    if (!employee.empId) return;
-
-  const isAGM =
-    employee.designation.trim() === "Assistant IT Manager" ||
-    employee.designation.trim() === "Assistant General Manager";
-
-  const managerIdToUse = employee.manager
-    ? employee.empId
-    : employee.reportingToId;
-
-    // const endpoint = isAGM
-    //   ? `/project/all?projectStatus=${"pending"}`
-    //   : `/project/all/${managerIdToUse}?projectStatus=${"pending"}`;
-
-    // axiosInstance
-    //   .get(endpoint)
-    //   .then((res) => {
-    //     setProjects(res.data);
-    //     setFilteredProjects(res.data);
-    //     setFilter("In Progress");
-
-    //     if (isAGM) {
+  if (isAGM) {
     axiosInstance
       .get("/employee/getallmanagers")
       .then((res) => {
         const mgrMap = {};
+
         res.data.forEach((m) => {
           mgrMap[m.empId] = m.name;
         });
+
         setManagers(mgrMap);
       })
-
-    //   }
-    // })
-
-  }, [employee]);
+      .catch((err) => {
+        console.error("Failed to fetch managers:", err);
+      });
+  }
+}, [employee, isAGM]);
 
 
   console.log(projects);

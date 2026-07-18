@@ -1,10 +1,11 @@
 package com.example.project_tracking.Model;
 
+import com.example.project_tracking.Audit.Auditable;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Notification {
+public class Notification extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

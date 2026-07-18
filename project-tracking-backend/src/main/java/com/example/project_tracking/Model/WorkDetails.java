@@ -1,6 +1,7 @@
 package com.example.project_tracking.Model;
 
 
+import com.example.project_tracking.Audit.Auditable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -10,7 +11,7 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "work_details")
 
-public class WorkDetails {
+public class WorkDetails extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

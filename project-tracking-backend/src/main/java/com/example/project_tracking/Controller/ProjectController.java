@@ -21,16 +21,16 @@ public class ProjectController {
     public ProjectController(ProjectService projectService) {
         this.projectService = projectService;
     }
-
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getProjectsByManagerId(@PathVariable long id)
+//
+//    @PreAuthorize("isAuthenticated()")
 //    @GetMapping("/{id}")
 //    public ResponseEntity<?> getProjectsByManagerId(@PathVariable long id)
-//    {
-//        System.out.println(id);
-//        return ResponseEntity.ok(projectService.getProjectsByManager(id));
-//    }
+////    @GetMapping("/{id}")
+////    public ResponseEntity<?> getProjectsByManagerId(@PathVariable long id)
+////    {
+////        System.out.println(id);
+////        return ResponseEntity.ok(projectService.getProjectsByManager(id));
+////    }
 
     @GetMapping(value = {"/","/{mgrId}"})
     public ResponseEntity<?> getAllProjects(@PathVariable(required = false) Long mgrId,@RequestParam(required = false) String query)
@@ -38,9 +38,6 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.getAll(mgrId,query));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    @GetMapping("/")
-    public ResponseEntity<?> getAllProjects()
     @GetMapping(value = {"/all","/all/{mgrId}"})
     public ResponseEntity<?> getProjectsByProjectStatus(@RequestParam(required = false) String projectStatus,@PathVariable(required = false) Long mgrId,@RequestParam(required = false) String query)
     {
@@ -78,7 +75,7 @@ public class ProjectController {
             @RequestParam BigDecimal studyHours,
             @RequestParam String projectActivity,
             @RequestParam LocalDate startDate
-            ) {
+    ) {
         return projectService.updateProjectHours(tlId,projectId, modellingHours, checkingHours, detailingHours,studyHours,projectActivity,startDate);
     }
 

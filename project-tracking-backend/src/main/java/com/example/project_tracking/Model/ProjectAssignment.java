@@ -1,10 +1,11 @@
 package com.example.project_tracking.Model;
 
+import com.example.project_tracking.Audit.Auditable;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "project_assignment")
-public class ProjectAssignment {
+public class ProjectAssignment extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

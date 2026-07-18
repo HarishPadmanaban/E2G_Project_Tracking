@@ -317,7 +317,6 @@ const AssignActivityForm = () => {
               <option value="Checking">Checking</option>
               <option value="Detailing">Detailing</option>
               <option value="Studying">Studying</option>
-              <option value="Common">Common</option>
             </select>
           </div>
 

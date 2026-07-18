@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../axiosConfig";
 import styles from "../../styles/AGM/EditProject.module.css";
-import { useEmployee } from "../../context/EmployeeContext";
 import ViewWorkDetails from "./ViewWorkDetails";
 
 const EditWorkDetails = () => {

@@ -1,5 +1,6 @@
 package com.example.project_tracking.Model;
 
+import com.example.project_tracking.Audit.Auditable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -8,7 +9,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "employee")
-public class Employee {
+public class Employee extends Auditable {
 
     @Id
     @Column(name = "emp_id", unique = true, nullable = false)

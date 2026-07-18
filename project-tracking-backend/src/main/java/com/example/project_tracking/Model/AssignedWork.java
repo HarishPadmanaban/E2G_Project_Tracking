@@ -1,5 +1,6 @@
 package com.example.project_tracking.Model;
 
+import com.example.project_tracking.Audit.Auditable;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -8,7 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "assigned_work")
-public class AssignedWork {
+public class AssignedWork extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

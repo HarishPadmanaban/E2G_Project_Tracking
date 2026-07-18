@@ -1,11 +1,12 @@
 package com.example.project_tracking.Model;
+import com.example.project_tracking.Audit.Auditable;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
 @Table(name = "leave_permission")
-public class LeavePermission {
+public class LeavePermission extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
